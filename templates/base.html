@@ -8,7 +8,7 @@
         <title>Jobless</title>
     </head>
     <body>
-        <!-- <nav class="fixed left-0 top-0 h-full w-64 bg-black text-white p-4 shadow-lg">
+        <nav class="fixed left-0 top-0 h-full w-64 bg-black text-white p-4 shadow-lg">
             <div class="flex flex-col h-full">
                 <div class="mb-8 text-4xl font-bold text-center mt-2">
                     Jobless
@@ -19,15 +19,15 @@
                         <i class="fas fa-home mr-3"></i>
                         Dashboard
                     </a>
-                    <a href="#" class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <a href="{% url 'jobs:list' %}" class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
                         <i class="fas fa-briefcase mr-3"></i>
                         Jobs
                     </a>
-                    <a href="#" class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <a href="{% url 'events:list' %}" class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
                         <i class="fas fa-calendar mr-3"></i>
                         Events
                     </a>
-                    <a href="#" class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <a href="{% url 'contacts:list' %}" class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
                         <i class="fas fa-address-book mr-3"></i>
                         Contacts
                     </a>
@@ -46,7 +46,7 @@
         <div class="ml-64 p-4">
             <h1 class="text-4xl font-bold mt-3">BLOCK CONTENT</h1>
             <p class="my-2">Content</p>
-        </div> -->
+        </div>
 
     {% block content %}
     {% endblock %}
