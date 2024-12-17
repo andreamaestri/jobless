@@ -47,11 +47,19 @@ INSTALLED_APPS = [
     'django.contrib.sites',    
     'allauth',
     'allauth.account',
+    'tagulous',
     'jobs',
     'contacts',
     'events',
     'home',
 ]
+
+SERIALIZATION_MODULES = {
+    'xml':    'tagulous.serializers.xml_serializer',
+    'json':   'tagulous.serializers.json',
+    'python': 'tagulous.serializers.python',
+    'yaml':   'tagulous.serializers.pyyaml',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
