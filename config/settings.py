@@ -47,11 +47,26 @@ INSTALLED_APPS = [
     'django.contrib.sites',    
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'django_summernote',
+    'crispy_forms',
+    'tagulous',
     'jobs',
     'contacts',
     'events',
     'home',
 ]
+
+SERIALIZATION_MODULES = {
+    'xml':    'tagulous.serializers.xml_serializer',
+    'json':   'tagulous.serializers.json',
+    'python': 'tagulous.serializers.python',
+    'yaml':   'tagulous.serializers.pyyaml',
+}
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
