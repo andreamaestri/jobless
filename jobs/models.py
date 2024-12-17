@@ -1,7 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-from tagalous.models import TagField
+from tagulous.models import TagField
+from django.contrib.auth.models import User
 
 
 class JobPosting(models.Model):
@@ -29,7 +30,7 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    favourites = models.ManyToManyField(user, related_name="favourited_jobs", blank=True)
+    favourites = models.ManyToManyField(User, related_name="favourited_jobs", blank=True)
 
     class Meta:
         ordering = ['-updated_at']

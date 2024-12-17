@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<p>HELLO WORLD!</p>
+
+<a href="{% url 'jobs:add' %}"
+                    class="text-center bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition flex-1">
+                    Add Job
+                </a>
+{% endblock %}
