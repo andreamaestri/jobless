@@ -3,13 +3,31 @@
 ## Overview
 
 ### Purpose
-An application to track job searching activities. Site users
+An application to track job searching activities. Logged in users can make a lists of jobs, contacts and events. Jobs can be marked as 'favourites'. Users can update and delete items they have added to their lists to keep an up to date record. 
 
 ### Target Audience
-Identify the target audience for your website and explain why this audience will benefit from the project.  
-**Guidance:** Use this section to identify who will benefit from your project and why. This should be informed by your user stories and overall project objectives.
+The target audience is all job seekers, both out of work and currently employed. Users will benefit from having an easy to use record of their job seeking activities. 
 
 ## User Stories
+
+| Prioritisation | User Story |
+| ----------- | ----------- |
+| Must Have| As a **user** I want to **see a list of all the jobs I've added** so that **I can get an overview of my job search progress** |
+| Must Have | As a **user** I want to **see a list of contacts associated with each job application** so that **I can quickly find their information** | 
+| Must Have | As a **user** I want to **delete an event that I no longer need** so that **I can keep my calendar organized** |
+| Must Have | As a **user** I want to **see a list of events associated with each job application** so that **I can see my progress** |
+| Must Have | As a **user** I want to**add contact information for people I've interacted with at a company** so that I can **easily keep track of my network** |
+| Must Have | As a **user** I want to **edit the details of an event** so that I can **update information if needed** |
+| Must Have | As a **user** I want to **add an event to a job application** so that I can **track my interactions** |
+| Must Have | As a **user** I want to **easily use the forms for adding and editing information** so that I can **quickly input data without frustration** |
+| Must Have | As a **user** I want to **access the website on different screen sizes** so that I can **manage my job applications on any device** |
+| Must Have | As a **user** I want to **create an account with an email and password** so that I can **track my applications securely** |
+| Must Have | As a **user** I want to **add notes to each job posting** so that I can **record interview details, contact information, and personal observations** |
+| Must Have | As a **user** I want to **c**ategorize the job postings by status** so that I can **track my progress** |
+| Must Have | As a **user** I want to **update the status of the job postings** so that I can **keep track of them** |
+| Must Have | As a **user** I want to **add the details of a job I would like to apply for** so that I can **track potential job opportunities** |
+| Should Have | As a **user** I want **the website to look appealing** so that I am **more likely to use it** |
+| Could Have | As a **user** I want to **upload my CV** so that **AI can send me suggestions on how to tailor it to each job listing** |
 
 ### Must-Have User Stories
 - **User Story 1:** Briefly describe the must-have feature.  
