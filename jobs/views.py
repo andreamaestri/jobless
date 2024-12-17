@@ -1,4 +1,4 @@
-# jobs/views.py
+
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
