@@ -29,7 +29,7 @@ class EventForm(forms.ModelForm):
     date = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter event date and time'
+            'placeholder': 'Enter event date and time (YYYY-MM-DD HH:MM)'
         })
     )
 
