@@ -2,20 +2,160 @@
 {% load static %}
 
 {% block content %}
-<!-- <p>HELLO WORLD!</p>
+<div class="min-h-screen py-12 px-8 bg-[#fce8dd]">
+    <div class="max-w-7xl mx-auto">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#2c2c2c]">Welcome, {{ user.username }}</h1>
+            <p class="text-[#666666] mt-2">Here's an overview of your job search journey</p>
+        </div>
 
-<a href="{% url 'jobs:add' %}"
-    class="text-center bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition flex-1">
-    Add Job
-</a>
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 gap-6">
+            
+            <!-- Recent Jobs Card -->
+            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-[#2c2c2c]">Recent Jobs</h2>
+                    <a href="{% url 'jobs:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
+                        <span class="sr-only">Add Job</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                </div>
+                {% if recent_jobs %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-[#fce8dd]">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Title</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Location</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Status</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#fce8dd]">
+                                {% for job in recent_jobs %}
+                                    <tr class="hover:bg-white">
+                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ job.title }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ job.company }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ job.location }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs rounded-full
+                                                {% if job.status == 'interested' %}bg-blue-100 text-blue-800
+                                                {% elif job.status == 'applied' %}bg-yellow-100 text-yellow-800
+                                                {% elif job.status == 'interviewing' %}bg-purple-100 text-purple-800
+                                                {% elif job.status == 'rejected' %}bg-red-100 text-red-800
+                                                {% else %}bg-green-100 text-green-800{% endif %}">
+                                                {{ job.status|title }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ job.updated_at|date:"M d, Y" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-[#666666] text-center py-4">No jobs added yet</p>
+                {% endif %}
+                <a href="{% url 'jobs:list' %}" class="block mt-4 text-center text-sm text-[#e28b67] hover:text-[#c77857]">
+                    View all jobs →
+                </a>
+            </div>
 
-<a href="{% url 'contacts:add' %}"
-    class="text-center bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition flex-1">
-    Add contact
-</a>
+            <!-- Upcoming Events Card -->
+            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-[#2c2c2c]">Upcoming Events</h2>
+                    <a href="{% url 'events:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
+                        <span class="sr-only">Add Event</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                </div>
+                {% if upcoming_events %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-[#fce8dd]">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Title</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Type</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Date & Time</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Location</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#fce8dd]">
+                                {% for event in upcoming_events %}
+                                    <tr class="hover:bg-white">
+                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ event.title }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs rounded-full bg-[#e28b67] text-white">
+                                                {{ event.event_type|title }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ event.date|date:"M d, Y - g:i A" }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ event.location }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-[#666666] text-center py-4">No upcoming events</p>
+                {% endif %}
+                <a href="{% url 'events:list' %}" class="block mt-4 text-center text-sm text-[#e28b67] hover:text-[#c77857]">
+                    View all events →
+                </a>
+            </div>
 
-<a href="{% url 'events:add' %}"
-    class="text-center bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition flex-1">
-    Add Event
-</a> -->
+            <!-- Recent Contacts Card -->
+            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-[#2c2c2c]">Recent Contacts</h2>
+                    <a href="{% url 'contacts:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
+                        <span class="sr-only">Add Contact</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                </div>
+                {% if recent_contacts %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-[#fce8dd]">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Name</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Position</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Email</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Phone</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#fce8dd]">
+                                {% for contact in recent_contacts %}
+                                    <tr class="hover:bg-white">
+                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ contact.name }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.company }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.position }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.email }}</td>
+                                        <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.phone }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-[#666666] text-center py-4">No contacts added yet</p>
+                {% endif %}
+                <a href="{% url 'contacts:list' %}" class="block mt-4 text-center text-sm text-[#e28b67] hover:text-[#c77857]">
+                    View all contacts →
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

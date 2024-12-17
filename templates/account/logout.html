@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-[65vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#fce8dd]">
+    <div class="max-w-md w-full space-y-8 bg-[#fff5ef] p-8 rounded-2xl shadow-lg">
+        <!-- Header -->
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-bold text-[#2c2c2c]">
+                {% trans "Sign Out" %}
+            </h2>
+            <p class="mt-4 text-center text-[#666666]">
+                {% trans 'Are you sure you want to sign out?' %}
+            </p>
+        </div>
+
+        <!-- Form -->
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+
+            <div class="flex justify-center space-x-4 mt-8">
+                <!-- Cancel Button -->
+                <a href="{% url 'home:home' %}"
+                    class="inline-flex justify-center py-3 px-6 border border-[#e6d5cc] text-sm font-medium rounded-xl text-[#666666] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e28b67] transition-colors">
+                    {% trans "Cancel" %}
+                </a>
+
+                <!-- Sign Out Button -->
+                <button type="submit"
+                    class="inline-flex justify-center py-3 px-6 border border-transparent text-sm font-medium rounded-xl text-white bg-[#e28b67] hover:bg-[#c77857] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e28b67] transition-colors">
+                    {% trans "Sign Out" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
