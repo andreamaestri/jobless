@@ -4,6 +4,7 @@
   - [Purpose](#purpose)
   - [Target Audience](#target-audience)
 - [User Stories](#user-stories)
+- [Wireframes](#user-stories)
 ## Overview
 
 ### Purpose
@@ -33,23 +34,21 @@ The target audience is all job seekers, both out of work and currently employed.
 | Should Have | As a **user** I want **the website to look appealing** so that I am **more likely to use it** |
 | Could Have | As a **user** I want to **upload my CV** so that **AI can send me suggestions on how to tailor it to each job listing** |
 
-## Design Decisions
+## Wireframes
 
-### Wireframes
-
-#### Home page
-##### Desktop
+### Home page
+#### Desktop
 ![Home Page Desktop](static/readme_images/home-desk.JPG)
 
-##### Mobile
+#### Mobile
 ![Home Page Desktop](static/readme_images/home-desk.JPG)
 
-#### Contacts Page
+### Contacts Page
 Jobs and Events pages would have a similar wireframe.
-##### Desktop
+#### Desktop
 ![Contacts Page Desktop](static/readme_images/contacts-desk.JPG)
 
-##### Mobile
+#### Mobile
 ![Contacts Page Mobile](static/readme_images/contacts-mobile.JPG)
 
 
