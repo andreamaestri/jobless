@@ -5,6 +5,8 @@
  * https://unpkg.com/browse/tailwindcss@latest/stubs/defaultConfig.stub.js
  */
 
+const { default: daisyui } = require('daisyui');
+
 module.exports = {
     content: [
         /**
@@ -41,8 +43,51 @@ module.exports = {
          */
         // '../../**/*.py'
     ],
-    theme: {
-        extend: {},
+    daisyui: {
+        themes: [
+            {
+                'Jobless': {
+                    'primary' : '#ec8751',
+                    'primary-focus' : '#ca5516',
+                    'primary-content' : '#f5f0eb',
+
+                    'secondary' : '#cb581a',
+                    'secondary-focus' : '#a04718',
+                    'secondary-content' : '#f5f0eb',
+
+                    'accent' : '#9c3116',
+                    'accent-focus' : '#be3513',
+                    'accent-content' : '#f5f0eb',
+
+                    'neutral' : '#34322f',
+                    'neutral-focus' : '#868179',
+                    'neutral-content' : '#ebe7e2',
+
+                    'base-100' : '#ebe7e2',
+                    'base-200' : '#6b6761',
+                    'base-300' : '#1b1a18',
+                    'base-content' : '#34322f',
+
+                    'info' : '#ec8751',
+                    'success' : '#f2a982',
+                    'warning' : '#b88b75',
+                    'error' : '#bd6b56',
+
+                    '--rounded-box': '1rem',          
+                    '--rounded-btn': '.5rem',        
+                    '--rounded-badge': '1.9rem',      
+
+                    '--animation-btn': '.25s',       
+                    '--animation-input': '.2s',       
+
+                    '--btn-text-case': 'uppercase',   
+                    '--navbar-padding': '.5rem',      
+                    '--border-btn': '1px',            
+                },
+            },
+            "lofi",
+            "pastel",
+        ],
     },
     plugins: [
         /**
