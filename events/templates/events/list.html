@@ -2,39 +2,110 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto p-4 sm:px-6 lg:px-8 py-12">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-medium text-gray-900 pl-4">Events</h1>
-        <a href="{% url 'events:add' %}" class="px-4 mr-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            Add Event
-        </a>
-    </div>
+<div class="min-h-screen py-12 px-8 bg-base-100">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-[#2c2c2c]">Events</h1>
+                <p class="text-[#666666] mt-1">Manage your upcoming events and interviews</p>
+            </div>
+            <a href="{% url 'events:add' %}"
+                class="px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Add Event
+            </a>
+        </div>
 
-    {% if messages %}
-    {% for message in messages %}
-    <div class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-700{% endif %}">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-100 text-green-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-    {% if events %}
-    <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul class="divide-y divide-gray-200">
-            {% for event in events %}
-            <li class="px-6 py-4">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div class="flex-1">
-                        <p class="text-lg font-medium text-gray-900">
-                            {{ event.title }}
-                        </p>
-                        <p class="text-lg font-medium text-gray-900">
-                            {{ event.date }}
-                        </p>
-            {% endfor %}              
-    {% else %}
-    <div class="text-center py-12 bg-white rounded-lg shadow">
-        <p class="text-gray-500">No events added yet.</p>
+        {% if events %}
+        <div class="bg-base-100 shadow-lg rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-primary text-primary-content">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Event</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Type</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Date & Time</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Location</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Related Job</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#fce8dd]">
+                        {% for event in events %}
+                        <tr class="hover:bg-white transition-colors duration-150">
+                            <td class="px-6 py-4">
+                                <div>
+                                    <h3 class="text-[#2c2c2c] font-medium">{{ event.title }}</h3>
+                                    {% if event.notes %}
+                                    <p class="text-xs text-[#666666]">{{ event.notes|truncatechars:50 }}</p>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs rounded-full bg-[#e28b67] text-white">
+                                    {{ event.event_type|title }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-[#666666]">{{ event.date|date:"M d, Y - g:i A" }}</td>
+                            <td class="px-6 py-4 text-sm text-[#666666]">{{ event.location }}</td>
+                            <td class="px-6 py-4 text-sm text-[#666666]">
+                                {% if event.job_posting %}
+                                {{ event.job_posting.title }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <a href="{% url 'events:edit' event.pk %}"
+                                        class="text-[#e28b67] hover:text-[#c77857] transition-colors duration-200">
+                                        <span class="sr-only">Edit</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                    <a href="{% url 'events:delete' event.pk %}"
+                                        class="text-red-600 hover:text-red-800 transition-colors duration-200">
+                                        <span class="sr-only">Delete</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
+            <p class="text-[#666666] mb-6">No events added yet</p>
+            <a href="{% url 'events:add' %}"
+                class="inline-flex items-center px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Schedule Your First Event
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-    {% endblock %}
+</div>
+{% endblock %}
