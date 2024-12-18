@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- Tailwind -->
     {% tailwind_css %}
     <!-- Marked library -->
@@ -15,189 +15,6 @@
     <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.7/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
-    <script>
-        const { animate, spring, stagger, inView } = Motion;
-
-        // Enhanced animation configurations
-        const iconAnimations = {
-            hover: {
-                scale: 1.2,
-                rotate: 5,
-                duration: 0.3,
-                ease: [0.34, 1.56, 0.64, 1]
-            },
-            click: {
-                scale: 0.9,
-                rotate: -5, 
-                duration: 0.15,
-                ease: [0.34, 1.56, 0.64, 1]
-            },
-            toggle: {
-                rotate: 180,
-                scale: [0.9, 1],
-                duration: 0.3,
-                ease: [0.34, 1.56, 0.64, 1]
-            }
-        };
-
-        // Icon spring configurations 
-        const iconSpring = {
-            stiffness: 300,
-            damping: 15,
-            mass: 0.5
-        };
-
-        // Enhanced spring configurations
-        const smoothSpring = {
-            stiffness: 80,
-            damping: 20,
-            mass: 0.8,
-            restSpeed: 0.2
-        };
-
-        const floatySpring = {
-            stiffness: 150,
-            damping: 20,
-            mass: 0.5,
-            restSpeed: 0.5
-        };
-
-        // Combined animation presets
-        const animationPresets = {
-            hover: {
-                scale: 1.02,
-                x: 4,
-                duration: 0.2,
-                space: 'transform-gpu'
-            },
-            menuReveal: {
-                opacity: [0, 1],
-                scale: [0.95, 1],
-                y: [-8, 0],
-                duration: 0.2,
-                space: 'transform-gpu'
-            },
-            sidebarCollapse: {
-                transform: {
-                    duration: 0.4,
-                    easing: [0.6, 0.01, 0.05, 0.95]
-                }
-            },
-            sidebarToggle: {
-                duration: 0.4,
-                easing: [0.32, 0.72, 0, 1],
-                space: 'transform-gpu'
-            }
-        };
-
-        // Icon interaction handler
-        function handleIconInteraction(el, type) {
-            const animations = {
-                hover: {
-                    scale: 1.2,
-                    rotate: 5,
-                    duration: 0.3,
-                    ease: [0.34, 1.56, 0.64, 1]
-                },
-                click: {
-                    scale: 0.9,
-                    rotate: -5,
-                    duration: 0.15,
-                    ease: [0.34, 1.56, 0.64, 1]
-                },
-                reset: {
-                    scale: 1,
-                    rotate: 0,
-                    duration: 0.3,
-                    ease: [0.34, 1.56, 0.64, 1]
-                }
-            };
-
-            animate(el, animations[type], {
-                duration: animations[type].duration,
-                ease: animations[type].ease
-            });
-        }
-
-        // Sidebar animation orchestrator
-        function animateSidebar(sidebar, content, items, isCollapsing) {
-            const sidebarWidth = isCollapsing ? '5rem' : '20rem';
-
-            return Promise.all([
-                // Animate width and position together
-                animate(sidebar, 
-                    { width: sidebarWidth },
-                    { 
-                        duration: 0.4,
-                        easing: [0.4, 0, 0.2, 1]
-                    }
-                ),
-
-                // Animate text elements with fade
-                animate(items, {
-                    opacity: isCollapsing ? [1, 0] : [0, 1],
-                    x: isCollapsing ? [0, -8] : [-8, 0]
-                }, {
-                    duration: 0.3,
-                    delay: isCollapsing ? 0 : 0.2,
-                    easing: [0.4, 0, 0.2, 1]
-                }),
-
-                // Animate content margin smoothly
-                animate(content, {
-                    marginLeft: sidebarWidth
-                }, {
-                    duration: 0.4,
-                    easing: [0.4, 0, 0.2, 1]
-                })
-            ]);
-        }
-
-        // Define the sequence function
-        function sequence(animations, options = {}) {
-            return animations.reduce((promise, { el, props, opts }) => {
-                return promise.then(() => animate(el, props, { ...opts, ...options }));
-            }, Promise.resolve());
-        }
-
-        // Alpine initialization
-        document.addEventListener('alpine:init', () => {
-            Alpine.magic('motion', () => Motion.animate);
-
-            // Original Alpine stores and initialization code...
-
-            // Add common animation presets
-            Alpine.data('animations', () => ({
-                hover: {
-                    scale: 1.02,
-                    x: 4,
-                    transition: { duration: 0.2 }
-                },
-                click: {
-                    scale: 0.95,
-                    transition: { duration: 0.1 }
-                },
-                menuEnter: {
-                    opacity: 1,
-                    scale: 1,
-                    y: 0,
-                    transition: { duration: 0.2 }
-                },
-                menuLeave: {
-                    opacity: 0,
-                    scale: 0.95,
-                    y: -10,
-                    transition: { duration: 0.15 }
-                }
-            }));
-        });
-
-        // Add passive event listeners
-        document.addEventListener('scroll', () => {}, { passive: true });
-        document.addEventListener('touchstart', () => {}, { passive: true });
-        document.addEventListener('touchmove', () => {}, { passive: true });
-    </script>
-    <title>Jobless</title>
     <style>
         [x-cloak] { display: none !important; }
 
@@ -279,7 +96,386 @@
         .sidebar-slide {
             @apply transition-transform duration-300 ease-in-out;
         }
+
+        /* Enhanced icon animations - only on hover */
+        .icon-animate {
+            @apply transform-gpu transition-all duration-300 relative;
+            /* Remove constant floating animation */
+        }
+
+        .icon-animate:hover {
+            @apply scale-110;
+            filter: drop-shadow(0 0 8px var(--p));
+            transform: translateY(-2px) rotate(5deg);
+            /* Add floating animation only on hover */
+            animation: icon-float 2s ease-in-out infinite;
+        }
+
+        .icon-animate:active {
+            @apply scale-90;
+            transform: translateY(1px) rotate(-5deg);
+            /* Stop animation on click */
+            animation: none;
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Update float animation to be smoother */
+        @keyframes icon-float {
+            0%, 100% { 
+                transform: translateY(-2px) rotate(5deg) scale(1.1);
+            }
+            50% { 
+                transform: translateY(-6px) rotate(8deg) scale(1.1);
+            }
+        }
+
+        /* Remove animation from nav-item hover */
+        .nav-item:hover .icon-animate {
+            @apply scale-110;
+            filter: drop-shadow(0 0 8px var(--p));
+        }
+
+        /* Remove duplicate animations */
+        .icon-animate::before {
+            content: '';
+            @apply absolute inset-0 opacity-0 rounded-full transition-all duration-300;
+            background: radial-gradient(circle at center, var(--p) 0%, transparent 70%);
+            filter: blur(12px);
+            transform: scale(1.5);
+            z-index: -1;
+        }
+
+        .icon-animate:hover::before {
+            @apply opacity-30;
+            transform: scale(2);
+        }
+
+        /* Enhanced button animations */
+        .btn-animate {
+            @apply transform-gpu transition-all duration-300 relative overflow-visible ring-0;
+        }
+
+        /* Button hover effects */
+        .btn-animate:hover {
+            @apply -translate-y-1 shadow-lg scale-105 ring-2 ring-primary ring-offset-2 ring-offset-base-100;
+        }
+
+        /* Button active effects */
+        .btn-animate:active {
+            @apply translate-y-0.5 scale-95 shadow-md ring-0;
+        }
+
+        /* Button hover effects with icon and text */
+        .btn-animate:hover .icon-animate,
+        .btn-animate:hover span {
+            @apply scale-110;
+            transform: translateY(-1px) rotate(3deg);
+        }
+
+        /* Nav item enhancements */
+        .nav-item {
+            @apply relative overflow-visible ring-0;
+        }
+
+        .nav-item:hover {
+            @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
+        }
+
+        /* Theme dropdown button specific styles */
+        .theme-dropdown button:hover {
+            @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
+        }
+
+        /* Enhanced animation performance classes */
+        .nav-item {
+            @apply transform-gpu backface-hidden;
+            transform-origin: left center;
+            will-change: transform, opacity;
+        }
+
+        .icon-animate {
+            transform-origin: center;
+            backface-visibility: hidden;
+            will-change: transform;
+        }
+
+        .sidebar-content {
+            @apply transform-gpu backface-hidden;
+            transform-origin: left center;
+            will-change: transform, width, opacity;
+        }
+
+        .main-content {
+            @apply transform-gpu backface-hidden;
+            transform-origin: left center;
+            will-change: transform, margin;
+        }
+
+        .transition-smooth {
+            @apply transition-all duration-300 ease-in-out;
+        }
     </style>
+    <script>
+        // Single Motion destructuring
+        const { animate, spring, stagger, inView } = Motion;
+
+        // Consolidated animation configurations
+        const animationConfig = {
+            spring: {
+                stiffness: 300,
+                damping: 30,
+                mass: 1,
+                ease: [0.34, 1.56, 0.64, 1]
+            },
+
+            timings: {
+                sidebar: 0.3,
+                content: 0.4,
+                stagger: 0.03
+            },
+        };
+
+        const createAnimationSequence = {
+            sidebar: {
+                open: {
+                    transform: [
+                        'translateX(-100%) scale(0.98)',
+                        'translateX(0%) scale(1)'
+                    ],
+                    opacity: [0, 1],
+                    timing: {
+                        duration: animationConfig.timings.sidebar,
+                        easing: animationConfig.easings.spring
+                    }
+                },
+                close: {
+                    transform: [
+                        'translateX(0%) scale(1)',
+                        'translateX(-100%) scale(0.98)'
+                    ],
+                    opacity: [1, 0],
+                    timing: {
+                        duration: animationConfig.timings.sidebar,
+                        easing: animationConfig.easings.smooth
+                    }
+                }
+            },
+            content: {
+                expand: {
+                    transform: [
+                        'translateX(0) scale(0.98)',
+                        'translateX(20rem) scale(1)'
+                    ],
+                    timing: {
+                        duration: animationConfig.timings.content,
+                        easing: animationConfig.easings.smooth
+                    }
+                },
+                collapse: {
+                    transform: [
+                        'translateX(20rem) scale(1)',
+                        'translateX(5rem) scale(0.98)'
+                    ],
+                    timing: {
+                        duration: animationConfig.timings.content,
+                        easing: animationConfig.easings.smooth
+                    }
+                }
+            }
+        };
+            
+
+        // Touch gesture support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diffX = touchStartX - touchEndX;
+            
+            if (Math.abs(diffX) > 50) {
+                if (diffX > 0 && window.innerWidth < 1024) {
+                    Alpine.store('sidebar').open = false;
+                } else if (diffX < 0 && window.innerWidth < 1024) {
+                    Alpine.store('sidebar').open = true;
+                }
+            }
+        }, { passive: true });
+
+        // Single Alpine initialization
+        document.addEventListener('alpine:init', () => {
+            // Motion helper
+            Alpine.magic('motion', () => ({
+                animate: (el, keyframes, options = {}) => animate(el, keyframes, options)
+            }));
+
+            Alpine.store('sidebar', {
+                open: window.innerWidth >= 1024,
+                collapsed: JSON.parse(localStorage.getItem('sidebarCollapsed') || 'false'),
+
+                async toggle() {
+                    const elements = {
+                        sidebar: document.querySelector('aside'),
+                        content: document.querySelector('main'),
+                        items: document.querySelectorAll('.nav-item'),
+                        icons: document.querySelectorAll('.icon-animate')
+                    };
+
+                    this.open = !this.open;
+
+                    if (this.open) {
+                        await Promise.all([
+                            animate(
+                                elements.sidebar,
+                                createAnimationSequence.sidebar.open,
+                                createAnimationSequence.sidebar.open.timing
+                            ),
+                            animate(
+                                elements.content,
+                                createAnimationSequence.content.expand,
+                                createAnimationSequence.content.expand.timing
+                            )
+                        ]);
+
+                        animate(
+                            elements.items,
+                            {
+                                opacity: [0, 1],
+                                transform: [
+                                    'translateX(-20px) scale(0.9)',
+                                    'translateX(0) scale(1)'
+                                ]
+                            },
+                            {
+                                delay: stagger(animationConfig.timings.stagger),
+                                duration: animationConfig.timings.sidebar,
+                                easing: animationConfig.easings.spring
+                            }
+                        );
+                    } else {
+                        await animate(
+                            elements.items,
+                            {
+                                opacity: [1, 0],
+                                transform: [
+                                    'translateX(0) scale(1)',
+                                    'translateX(-20px) scale(0.9)'
+                                ]
+                            },
+                            {
+                                duration: animationConfig.timings.sidebar * 0.5,
+                                easing: animationConfig.easings.smooth
+                            }
+                        ).finished;
+
+                        await Promise.all([
+                            animate(
+                                elements.sidebar,
+                                createAnimationSequence.sidebar.close,
+                                createAnimationSequence.sidebar.close.timing
+                            ),
+                            animate(
+                                elements.content,
+                                createAnimationSequence.content.collapse,
+                                createAnimationSequence.content.collapse.timing
+                            )
+                        ]);
+                    }
+                },
+
+                collapse() {
+                    this.collapsed = !this.collapsed;
+                    localStorage.setItem('sidebarCollapsed', this.collapsed);
+
+                    const elements = {
+                        sidebar: document.querySelector('aside'),
+                        items: document.querySelectorAll('.nav-item'),
+                        icons: document.querySelectorAll('.icon-animate')
+                    };
+
+                    elements.sidebar.style.willChange = 'transform, width';
+                    
+                    animate(elements.sidebar, {
+                        width: this.collapsed ? '5rem' : '20rem'
+                    }, {
+                        duration: 0.3,
+                        ease: animationConfig.spring.ease
+                    }).finished.then(() => {
+                        elements.sidebar.style.willChange = 'auto';
+                    });
+
+                    animate(elements.icons, {
+                        scale: this.collapsed ? [1, 1.2] : [1.2, 1],
+                        rotate: this.collapsed ? [0, 10] : [10, 0]
+                    }, {
+                        duration: 0.3,
+                        ease: animationConfig.spring.ease
+                    });
+                },
+
+                init() {
+                    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+                    
+                    const handleViewportChange = (e) => {
+                        this.open = e.matches;
+                        this.collapsed = e.matches ? this.collapsed : false;
+                        
+                        if (!e.matches) {
+                            document.body.style.overflow = this.open ? 'hidden' : '';
+                        }
+                    };
+                    
+                    mediaQuery.addListener(handleViewportChange);
+                    handleViewportChange(mediaQuery);
+                }
+            });
+
+            Alpine.store('theme', {
+                themes: ['Jobless', 'Dark', 'lofi', 'pastel'],
+                current: localStorage.getItem('theme') || 'Jobless',
+
+                init() {
+                    this.apply();
+                },
+
+                apply() {
+                    document.documentElement.setAttribute('data-theme', this.current);
+                },
+
+                set(theme) {
+                    this.current = theme;
+                    localStorage.setItem('theme', theme);
+                    this.apply();
+                }
+            });
+
+            // Define the pageState store
+            Alpine.store('pageState', {
+                isLoading: true,
+                init() {
+                    setTimeout(() => {
+                        this.isLoading = false;
+                    }, 100);
+                }
+            });
+
+            // Initialize page state
+            if (Alpine.store('pageState')) {
+                Alpine.store('pageState').init();
+            }
+        });
+
+        // Add passive scroll handler for mobile
+        document.addEventListener('scroll', () => {}, { passive: true });
+
+        // Add passive touch handlers for mobile gestures
+        document.addEventListener('touchstart', () => {}, { passive: true });
+        document.addEventListener('touchmove', () => {}, { passive: true });
+    </script>
 </head>
 
 <body x-data class="bg-base-100 min-h-screen">
@@ -299,16 +495,13 @@
         <div class="flex items-center justify-between h-full">
             <div class="flex items-center gap-3">
                 <button @click="$store.sidebar.toggle()"
-                        class="btn btn-ghost btn-circle"
+                        class="btn btn-ghost btn-animate btn-circle"
                         :class="{ 'active': $store.sidebar.open }">
                     <iconify-icon icon="octicon:three-bars-16" 
-                        class="text-xl transform-gpu transition-all duration-300"
-                        x-transition:enter="transition-transform"
-                        x-transition:enter-start="rotate-0 scale-95 opacity-0"
-                        x-transition:enter-end="rotate-0 scale-100 opacity-100"
-                        @mouseenter="$motion($el, { scale: 1.2, rotate: 5 })"
-                        @mouseleave="$motion($el, { scale: 1, rotate: 0 })"
-                        @click="$motion($el, { scale: 0.9, rotate: -5, duration: 0.15 })"
+                        class="icon-animate relative text-xl"
+                        x-transition:enter="transition-all ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                        x-transition:enter-end="opacity-100 scale-100 rotate-0"
                         :class="{ 'rotate-90': $store.sidebar.open }">
                     </iconify-icon>
                 </button>
@@ -332,7 +525,7 @@
 
     <!-- Sidebar with improved mobile handling -->
     <aside x-cloak
-           class="fixed top-0 left-0 h-full bg-base-200/95 backdrop-blur-sm shadow-lg z-40"
+           class="fixed top-0 left-0 h-full bg-base-200/95 backdrop-blur-sm shadow-lg z-40 transform-gpu"
            :class="{
                'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024,
                'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024,
@@ -340,12 +533,20 @@
                '-translate-x-full lg:translate-x-0': !$store.sidebar.open,
                'top-16 h-[calc(100vh-4rem)]': window.innerWidth < 1024,
                'top-0 h-full': window.innerWidth >= 1024
-           }"
-           @mouseenter="$store.sidebar.open || $store.sidebar.collapsed ? $motion($el, 'itemHover') : null"
-           @mouseleave="$store.sidebar.open || $store.sidebar.collapsed ? $motion($el, { scale: 1, x: 0 }) : null">
+           }">
         <!-- Sidebar Header -->
-        <div class="relative flex items-center min-h-[4rem] px-4"
-             :class="{ 'justify-between': !$store.sidebar.collapsed, 'justify-center': $store.sidebar.collapsed }">
+        <div class="relative flex items-center min-h-[4rem] px-4 transition-all duration-300 ease-spring"
+             x-transition:enter="transition-all duration-300 ease-spring"
+             x-transition:enter-start="opacity-0 -translate-y-4"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition-all duration-200 ease-in"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-4"
+             :class="{
+            'justify-between transform-gpu hover:bg-base-100/50 rounded-lg': !$store.sidebar.collapsed,
+            'justify-center scale-95 hover:scale-100': $store.sidebar.collapsed,
+            'motion-safe:animate-fadeIn': true
+             }">
             <!-- Logo -->
             <span class="text-2xl font-bold text-primary truncate"
                   x-show="!$store.sidebar.collapsed || window.innerWidth < 1024"
@@ -353,22 +554,13 @@
 
             <!-- Toggle Button mobile style -->
             <button @click="$store.sidebar.collapse()"
-                    class="hidden lg:flex btn btn-ghost btn-circle"
+                    class="hidden lg:flex btn btn-ghost btn-animate btn-circle"
                     x-show="!$store.sidebar.collapsed || window.innerWidth >= 1024">
                 <iconify-icon icon="octicon:three-bars-16" 
-                    class="text-xl transform-gpu transition-all duration-200"
-                    @mouseenter="$motion($el, { 
-                        scale: 1.2,
-                        rotate: 5,
-                        duration: 0.3,
-                        ease: [0.34, 1.56, 0.64, 1]
-                    })"
-                    @mouseleave="$motion($el, { 
-                        scale: 1,
-                        rotate: 0,
-                        duration: 0.3,
-                        ease: [0.34, 1.56, 0.64, 1]
-                    })"
+                    class="icon-animate relative text-xl"
+                    x-transition:enter="transition-all ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                    x-transition:enter-end="opacity-100 scale-100 rotate-0"
                     :class="{ 'rotate-90': $store.sidebar.collapsed }">
                 </iconify-icon>
             </button>
@@ -378,27 +570,18 @@
         <nav class="p-2 space-y-2">
             {% for item in navigation_items %}
             <a href="{{ item.url }}"
-               class="nav-item flex items-center p-2 rounded-lg hover:bg-base-100/50 transition-all duration-200"
+               class="nav-item btn-animate flex items-center p-2 rounded-lg hover:bg-base-100/80 hover:ring-2 hover:ring-primary/70 hover:ring-offset-2 hover:ring-offset-base-100 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 transform-gpu"
                :class="{ 'justify-center': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
                 <iconify-icon icon="{{ item.icon }}" 
-                    class="text-xl transform-gpu transition-all duration-200"
-                    @mouseenter="$motion($el, { 
-                        scale: 1.2,
-                        rotate: 5,
-                        duration: 0.3,
-                        ease: [0.34, 1.56, 0.64, 1]
-                    })"
-                    @mouseleave="$motion($el, { 
-                        scale: 1,
-                        rotate: 0,
-                        duration: 0.3,
-                        ease: [0.34, 1.56, 0.64, 1]
-                    })"
+                    class="icon-animate relative text-xl"
+                    x-transition:enter="transition-all ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                    x-transition:enter-end="opacity-100 scale-100 rotate-0"
                     :class="{ 'scale-110': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
                 </iconify-icon>
                 <span x-show="!$store.sidebar.collapsed || window.innerWidth < 1024" 
                       x-transition.duration.200ms
-                      class="ml-3">{{ item.label }}</span>
+                      class="ml-3 transition-transform duration-300">{{ item.label }}</span>
             </a>
             {% endfor %}
 
@@ -408,12 +591,13 @@
                  @click.outside="open = false"
                  @keydown.escape.window="open = false">
                 <button @click="open = !open"
-                        class="nav-item flex items-center p-2 rounded-lg hover:bg-base-100/50 transition-all duration-200 w-full"
+                        class="nav-item btn-animate flex items-center p-2 rounded-lg hover:bg-base-100/50 transition-all duration-200 w-full"
                         :class="{ 'justify-center': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
                     <iconify-icon icon="octicon:paintbrush-24" 
-                        class="text-xl transform-gpu transition-all duration-200"
-                        @mouseenter="$motion($el, iconAnimations.hover)"
-                        @mouseleave="$motion($el, { scale: 1, rotate: 0 })"
+                        class="icon-animate relative text-xl"
+                        x-transition:enter="transition-all ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                        x-transition:enter-end="opacity-100 scale-100 rotate-0"
                         :class="{ 'scale-110': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
                     </iconify-icon>
                     <span x-show="!$store.sidebar.collapsed || window.innerWidth < 1024" 
@@ -422,7 +606,12 @@
                 </button>
 
                 <div x-show="open"
-                     @before-enter="$motion($el, 'menuReveal')"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
                      class="absolute z-50 mt-1 w-56 rounded-lg bg-base-200 shadow-lg ring-1 ring-base-content/10 p-1"
                      :class="{ 'left-full ml-2': $store.sidebar.collapsed, 'top-0': $store.sidebar.collapsed, 'left-0': !$store.sidebar.collapsed }">
                     <div class="p-1 space-y-1">
@@ -466,9 +655,10 @@
                         </div>
                         <iconify-icon x-show="!$store.sidebar.collapsed || window.innerWidth < 1024"
                                      icon="heroicons:chevron-up-down" 
-                                     class="text-base-content/50"
-                                     @mouseenter="$motion($el, iconAnimations.hover)"
-                                     @mouseleave="$motion($el, { scale: 1, rotate: 0 })"
+                                     class="icon-animate relative text-base-content/50"
+                                     x-transition:enter="transition-all ease-out duration-300"
+                                     x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                                     x-transition:enter-end="opacity-100 scale-100 rotate-0"
                                      :class="{ 'rotate-180': menuOpen }">
                         </iconify-icon>
                     </button>
@@ -485,9 +675,10 @@
                         <a href="{% url 'account_logout' %}"
                            class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-base-100/50 transition-colors duration-200">
                             <iconify-icon icon="heroicons:arrow-left-on-rectangle"
-                                class="text-error transform-gpu transition-all duration-200"
-                                @mouseenter="$motion($el, iconAnimations.hover)"
-                                @mouseleave="$motion($el, { scale: 1, rotate: 0 })">
+                                class="icon-animate relative text-error"
+                                x-transition:enter="transition-all ease-out duration-300"
+                                x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                                x-transition:enter-end="opacity-100 scale-100 rotate-0">
                             </iconify-icon>
                             <span>Logout</span>
                         </a>
@@ -495,12 +686,13 @@
                 </div>
             {% else %}
                 <a href="{% url 'account_login' %}"
-                   class="btn btn-primary w-full gap-2 normal-case font-medium"
+                   class="btn btn-primary btn-animate w-full gap-2 normal-case font-medium"
                    :class="{ 'btn-circle': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
                     <iconify-icon icon="heroicons:arrow-right-on-rectangle"
-                        class="transform-gpu transition-all duration-200"
-                        @mouseenter="$motion($el, iconAnimations.hover)"
-                        @mouseleave="$motion($el, { scale: 1, rotate: 0 })"
+                        class="icon-animate relative"
+                        x-transition:enter="transition-all ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-90 rotate-12"
+                        x-transition:enter-end="opacity-100 scale-100 rotate-0"
                         :class="{ 'text-xl': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
                     </iconify-icon>
                     <span x-show="!$store.sidebar.collapsed || window.innerWidth < 1024">Sign In</span>
@@ -530,6 +722,24 @@
 
     <!-- Original scripts remain unchanged -->
     <script>
+        // Add Motion helpers at the start of your script
+        const sidebarAnimations = {
+            open: {
+                x: ['0%', '0%'],
+                scale: [0.98, 1],
+                opacity: [0.5, 1],
+            },
+            closed: {
+                x: ['0%', '-100%'],
+                scale: [1, 0.98],
+                opacity: [1, 0.5],
+            },
+            spring: {
+                duration: 0.2,
+                ease: [0.22, 1, 0.36, 1]
+            }
+        };
+
         document.addEventListener('alpine:init', () => {
             Alpine.store('sidebar', {
                 open: window.innerWidth >= 1024,
@@ -538,14 +748,37 @@
                 toggle() {
                     this.open = !this.open;
                     const sidebar = document.querySelector('aside');
-
-                    if (sidebar) {
+                    const navItems = sidebar.querySelectorAll('.nav-item');
+                    
+                    if (this.open) {
+                        // Opening animation
                         animate(sidebar, {
-                            x: this.open ? ['-100%', '0%'] : ['0%', '-100%'],
-                            opacity: this.open ? [0.5, 1] : [1, 0.5]
+                            x: ['-100%', '0%'],
+                            scale: [0.98, 1],
+                            opacity: [0.5, 1]
                         }, {
+                            duration: 0.5,
+                            ease: [0.22, 1, 0.36, 1]
+                        });
+
+                        // Animate nav items
+                        animate(navItems, {
+                            x: [-20, 0],
+                            opacity: [0, 1]
+                        }, {
+                            delay: stagger(0.05),
                             duration: 0.3,
-                            easing: [0.32, 0.72, 0, 1]
+                            ease: [0.22, 1, 0.36, 1]
+                        });
+                    } else {
+                        // Closing animation
+                        animate(sidebar, {
+                            x: ['0%', '-100%'],
+                            scale: [1, 0.98],
+                            opacity: [1, 0.5]
+                        }, {
+                            duration: 0.1,
+                            ease: [0.22, 1, 0.36, 1]
                         });
                     }
                 },
@@ -553,37 +786,27 @@
                 collapse() {
                     this.collapsed = !this.collapsed;
                     localStorage.setItem('sidebarCollapsed', this.collapsed);
-
+                    
                     const sidebar = document.querySelector('aside');
-                    const content = document.querySelector('main');
-                    const sidebarItems = document.querySelectorAll('aside .nav-item span');
+                    const navItems = sidebar.querySelectorAll('.nav-item');
+                    const labels = sidebar.querySelectorAll('.nav-item span');
+                    
+                    // Collapse animation
+                    animate(sidebar, {
+                        width: this.collapsed ? '5rem' : '20rem'
+                    }, {
+                        duration: 0.15,
+                        ease: [0.22, 1, 0.36, 1]
+                    });
 
-                    if (sidebar) {
-                        const targetWidth = this.collapsed ? '5rem' : '20rem';
-
-                        // Use inView to handle sidebar animations
-                        inView(sidebar, (info) => {
-                            if (info.entering) {
-                                animate(sidebar, {
-                                    transform: "translateX(0px) scale(1.02)"
-                                }, { ...smoothSpring });
-                                animate(content, {
-                                    marginLeft: targetWidth
-                                }, {
-                                    duration: 0.3
-                                });
-                            } else {
-                                animate(sidebar, {
-                                    transform: "translateX(-4px) scale(0.98)"
-                                }, { ...smoothSpring });
-                                animate(content, {
-                                    marginLeft: targetWidth
-                                }, {
-                                    duration: 0.3
-                                });
-                            }
-                        });
-                    }
+                    // Animate labels
+                    animate(labels, {
+                        opacity: this.collapsed ? 0 : 1,
+                        x: this.collapsed ? -10 : 0
+                    }, {
+                        duration: 0.2,
+                        delay: this.collapsed ? 0 : 0.1
+                    });
                 },
 
                 init() {
