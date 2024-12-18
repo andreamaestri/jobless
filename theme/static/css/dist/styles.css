@@ -2826,6 +2826,10 @@ details.collapse summary::-webkit-details-marker {
   gap: 1.5rem;
 }
 
+.gap-4 {
+  gap: 1rem;
+}
+
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.5rem * var(--tw-space-x-reverse));
@@ -3625,6 +3629,11 @@ details.collapse summary::-webkit-details-marker {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-\[\#fce8dd\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(252 232 221 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-\[\#c77857\]:hover {
