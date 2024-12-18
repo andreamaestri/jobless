@@ -1,33 +1,58 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">CV Assistant</h1>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
-                <div>
-                    <label class="block text-sm font-medium mb-2">Paste CV Content Here:</label>
-                    <textarea name="cv_content" rows="10" class="w-full p-2 border rounded-lg"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2">Your Question</label>
-                    <textarea name="user_input" rows="3" class="w-full p-2 border rounded-lg" placeholder="Ask for CV improvements, suggestions, or feedback..."></textarea>
-                </div>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Get Feedback</button>
-                <small class="block text-xs mb-2"> Please allow some time for the response </small>
-            </form>
+<div class="min-h-screen py-12 px-8 bg-[#fce8dd]">
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#2c2c2c]">CV Assistant</h1>
+            <p class="text-[#666666] mt-2">Get AI-powered insights and improvements for your CV</p>
         </div>
-        
-        <div>
-            {% if response %}
-            <div class="bg-gray-100 p-4 rounded-lg">
-                <h2 class="font-semibold mb-2">AI Assistant Response:</h2>
-                <div class="whitespace-pre-wrap">{{ response }}</div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-sm font-semibold text-[#2c2c2c] mb-2">Paste CV Content Here:</label>
+                        <textarea 
+                            name="cv_content" 
+                            rows="10" 
+                            class="w-full p-3 border-2 border-[#e28b67]/30 rounded-lg focus:outline-none focus:border-[#e28b67] transition-all duration-300"
+                        ></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#2c2c2c] mb-2">Your Question</label>
+                        <textarea 
+                            name="user_input" 
+                            rows="3" 
+                            class="w-full p-3 border-2 border-[#e28b67]/30 rounded-lg focus:outline-none focus:border-[#e28b67] transition-all duration-300" 
+                            placeholder="Ask for CV improvements, suggestions, or feedback..."
+                        ></textarea>
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-[#e28b67] text-white px-4 py-3 rounded-lg hover:bg-[#c77857] transition-colors duration-300"
+                    >
+                        Get AI Feedback
+                    </button>
+                    <small class="block text-xs text-center text-[#666666] mt-2">
+                        Please allow some time for the response
+                    </small>
+                </form>
             </div>
-            {% endif %}
+            
+            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+                {% if response %}
+                <div class="bg-white p-4 rounded-lg border border-[#fce8dd]">
+                    <h2 class="text-xl font-semibold text-[#2c2c2c] mb-4">AI Assistant Response:</h2>
+                    <div class="whitespace-pre-wrap text-[#2c2c2c] leading-relaxed">{{ response }}</div>
+                </div>
+                {% else %}
+                <div class="text-center text-[#666666] py-8">
+                    <p>Your CV suggestions will appear here</p>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
