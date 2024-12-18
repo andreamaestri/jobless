@@ -2830,6 +2830,10 @@ details.collapse summary::-webkit-details-marker {
   height: 100%;
 }
 
+.h-screen {
+  height: 100vh;
+}
+
 .min-h-\[65vh\] {
   min-height: 65vh;
 }
@@ -3104,6 +3108,10 @@ details.collapse summary::-webkit-details-marker {
 
 .overflow-x-auto {
   overflow-x: auto;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
 }
 
 .overflow-x-hidden {
