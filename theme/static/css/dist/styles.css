@@ -1025,6 +1025,40 @@ select {
   }
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 .alert {
   display: grid;
   width: 100%;
@@ -3402,6 +3436,14 @@ details.collapse summary::-webkit-details-marker {
   width: 100%;
 }
 
+.w-12 {
+  width: 3rem;
+}
+
+.w-32 {
+  width: 8rem;
+}
+
 .min-w-\[12rem\] {
   min-width: 12rem;
 }
@@ -3732,6 +3774,15 @@ details.collapse summary::-webkit-details-marker {
   border-color: transparent;
 }
 
+.border-accent {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-a,oklch(var(--a)/var(--tw-border-opacity, 1)));
+}
+
+.border-base-300\/50 {
+  border-color: var(--fallback-b3,oklch(var(--b3)/0.5));
+}
+
 .bg-\[\#e28b67\] {
   --tw-bg-opacity: 1;
   background-color: rgb(226 139 103 / var(--tw-bg-opacity, 1));
@@ -3826,6 +3877,36 @@ details.collapse summary::-webkit-details-marker {
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 249 195 / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-n,oklch(var(--n)/var(--tw-bg-opacity, 1)));
+}
+
+.bg-secondary {
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-s,oklch(var(--s)/var(--tw-bg-opacity, 1)));
+}
+
+.bg-secondary\/20 {
+  background-color: var(--fallback-s,oklch(var(--s)/0.2));
+}
+
+.bg-secondary\/10 {
+  background-color: var(--fallback-s,oklch(var(--s)/0.1));
+}
+
+.bg-secondary\/95 {
+  background-color: var(--fallback-s,oklch(var(--s)/0.95));
+}
+
+.bg-secondary\/25 {
+  background-color: var(--fallback-s,oklch(var(--s)/0.25));
+}
+
+.bg-accent\/15 {
+  background-color: var(--fallback-a,oklch(var(--a)/0.15));
 }
 
 .fill-current {
@@ -4096,6 +4177,11 @@ details.collapse summary::-webkit-details-marker {
   color: rgb(133 77 14 / var(--tw-text-opacity, 1));
 }
 
+.text-secondary-content {
+  --tw-text-opacity: 1;
+  color: var(--fallback-sc,oklch(var(--sc)/var(--tw-text-opacity, 1)));
+}
+
 .placeholder-\[\#999999\]::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(153 153 153 / var(--tw-placeholder-opacity, 1));
@@ -4162,8 +4248,25 @@ details.collapse summary::-webkit-details-marker {
   --tw-ring-color: var(--fallback-p,oklch(var(--p)/0.3));
 }
 
+.blur-md {
+  --tw-blur: blur(12px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 .backdrop-blur-sm {
   --tw-backdrop-blur: blur(4px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.backdrop-blur-md {
+  --tw-backdrop-blur: blur(12px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.backdrop-blur-lg {
+  --tw-backdrop-blur: blur(16px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
   backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
@@ -5028,6 +5131,18 @@ aside {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-base-100\/10:hover {
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.1));
+}
+
+.hover\:bg-base-100\/90:hover {
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.9));
+}
+
+.hover\:bg-base-100\/95:hover {
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.95));
 }
 
 .hover\:text-\[\#c77857\]:hover {
