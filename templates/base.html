@@ -8,85 +8,237 @@
     <!-- Tailwind -->
     {% tailwind_css %}
     <!-- Iconify -->
-    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.2.0/dist/iconify-icon.min.js"></script>
-    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.7/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
     <title>Jobless</title>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
-<body x-data="{ open: true }">
-    <!-- Mobile Nav -->
-    <div class="lg:hidden navbar bg-base-200">
-        <div class="flex-none">
-            <label for="my-drawer" class="btn btn-square btn-ghost drawer-button">
-                <iconify-icon icon="lets-icons:menu"></iconify-icon>
-            </label>
-        </div>
-        <div class="flex-1">
-            <a class="text-xl font-bold">Jobless</a>
-        </div>
-    </div>
+<body x-data="{ 
+    open: false,
+    collapsed: false,
+    init() {
+        // Watch window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 1024) {
+                this.open = false;
+                this.collapsed = false;
+            } else {
+                this.open = true;
+            }
+        });
+        // Check initial window size
+        if (window.innerWidth >= 1024) {
+            this.open = true;
+        }
 
+        // Initialize collapsed state from localStorage
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState !== null) {
+            this.collapsed = JSON.parse(savedState);
+        }
+
+        // Watch collapsed state and save to localStorage
+        this.$watch('collapsed', value => {
+            localStorage.setItem('sidebarCollapsed', value);
+
+            // Animate sidebar width
+            const sidebar = this.$el.querySelector('.drawer-side > div');
+            const content = document.querySelector('.drawer-content');
+
+            Motion.animate(sidebar, {
+                width: value ? '5rem' : '20rem'
+            }, { 
+                duration: 0.4,
+                easing: [0.4, 0.0, 0.2, 1]
+            });
+
+            // Animate main content margin
+            if (window.innerWidth >= 1024) {
+                Motion.animate(content, {
+                    marginLeft: value ? '5rem' : '20rem'
+                }, { 
+                    duration: 0.4,
+                    easing: [0.4, 0.0, 0.2, 1]
+                });
+            }
+        });
+
+        // Initial animation for menu items
+        const menuItems = this.$el.querySelectorAll('.menu li');
+        Motion.animate(menuItems, {
+            opacity: [0, 1],
+            x: [-20, 0],
+            scale: [0.9, 1]
+        }, {
+            delay: Motion.stagger(0.1),
+            duration: 0.5,
+            easing: [0.4, 0.0, 0.2, 1]
+        });
+    }
+}" class="bg-base-100">
     <div class="drawer lg:drawer-open">
         <input id="my-drawer" type="checkbox" class="drawer-toggle" x-model="open"/>
-        <div class="drawer-content">
-            <div class="lg:ml-80 p-4">
-                {% block content %}
-                {% endblock %}
+        
+        <!-- Main content -->
+        <div class="drawer-content bg-base-100 flex flex-col transition-all duration-300"
+             :class="{ 'lg:ml-20': collapsed, 'lg:ml-80': !collapsed }">
+            <!-- Mobile Nav -->
+            <div class="sticky top-0 z-40 lg:hidden">
+                <div class="navbar bg-base-100 shadow-sm">
+                    <div class="flex-none">
+                        <label for="my-drawer" 
+                               class="btn btn-square btn-ghost drawer-button"
+                               @click="open = !open">
+                            <iconify-icon icon="octicon:three-bars-16" 
+                                        class="text-xl"></iconify-icon>
+                        </label>
+                    </div>
+                    <div class="flex-1">
+                        <a class="text-xl font-bold text-primary">Jobless</a>
+                    </div>
+                </div>
             </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 p-4">
+                <div class="max-w-6xl mx-auto">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
         </div>
-        <div class="drawer-side">
-            <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-            <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content flex flex-col">
-                <div class="hidden lg:block mb-8 text-4xl font-bold text-center mt-2">
-                    Jobless
+        
+        <!-- Drawer side -->
+        <div class="drawer-side z-40">
+            <label for="my-drawer" 
+                   @click="open = false"
+                   class="drawer-overlay bg-base-200/50"></label>
+            <div class="menu p-4 min-h-full w-80 bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-all duration-300"
+                 :class="{ 'w-20': collapsed && window.innerWidth >= 1024, 'backdrop-blur-md lg:backdrop-blur-none': open }">
+                <!-- Toggle and Logo -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="hidden lg:block text-4xl font-bold text-center text-primary transition-all duration-300"
+                         x-show="!collapsed">
+                        Jobless
+                    </div>
+                    <button @click="collapsed = !collapsed"
+                            class="btn btn-ghost btn-circle lg:ml-2"
+                            :class="{ 'ml-auto': !collapsed }">
+                        <iconify-icon :icon="collapsed ? 'octicon:chevron-right-24' : 'octicon:chevron-left-24'"
+                                    class="text-primary"></iconify-icon>
+                    </button>
                 </div>
 
-                <ul class="menu menu-vertical flex-1">
+                <!-- Menu Items -->
+                <ul class="menu menu-vertical flex-1 gap-1"
+                    x-init="Motion.animate('li', {
+                        opacity: [0, 1],
+                        x: [-20, 0]
+                    }, {
+                        delay: Motion.stagger(0.05),
+                        duration: 0.5
+                    })">
                     <li>
-                        <a href="{% url 'home:home' %}" class="text-lg">
-                            <iconify-icon icon="lets-icons:home-alt"></iconify-icon>
-                            Dashboard
+                        <a href="{% url 'home:home' %}" 
+                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
+                           :class="{ 'justify-center': collapsed }"
+                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:home-24" 
+                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
+                            <span x-show="!collapsed" 
+                                  x-transition:enter="transition-opacity"
+                                  x-transition:enter-start="opacity-0"
+                                  x-transition:enter-end="opacity-100">Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'jobs:list' %}" class="text-lg">
-                            <iconify-icon icon="lets-icons:briefcase"></iconify-icon>
-                            Jobs
+                        <a href="{% url 'jobs:list' %}" 
+                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
+                           :class="{ 'justify-center': collapsed }"
+                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:briefcase-24" 
+                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
+                            <span x-show="!collapsed" 
+                                  x-transition:enter="transition-opacity"
+                                  x-transition:enter-start="opacity-0"
+                                  x-transition:enter-end="opacity-100">Jobs</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'events:list' %}" class="text-lg">
-                            <iconify-icon icon="lets-icons:calendar"></iconify-icon>
-                            Events
+                        <a href="{% url 'events:list' %}" 
+                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
+                           :class="{ 'justify-center': collapsed }"
+                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:calendar-24" 
+                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
+                            <span x-show="!collapsed" 
+                                  x-transition:enter="transition-opacity"
+                                  x-transition:enter-start="opacity-0"
+                                  x-transition:enter-end="opacity-100">Events</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'contacts:list' %}" class="text-lg">
-                            <iconify-icon icon="lets-icons:users"></iconify-icon>
-                            Contacts
+                        <a href="{% url 'contacts:list' %}" 
+                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
+                           :class="{ 'justify-center': collapsed }"
+                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:people-24" 
+                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
+                            <span x-show="!collapsed" 
+                                  x-transition:enter="transition-opacity"
+                                  x-transition:enter-start="opacity-0"
+                                  x-transition:enter-end="opacity-100">Contacts</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'ai_assistant:assistant' %}" class="text-lg">
-                            <iconify-icon icon="lets-icons:robot"></iconify-icon>
-                            AI Assistant
+                        <a href="{% url 'ai_assistant:assistant' %}" 
+                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
+                           :class="{ 'justify-center': collapsed }"
+                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:copilot-24" 
+                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
+                            <span x-show="!collapsed" 
+                                  x-transition:enter="transition-opacity"
+                                  x-transition:enter-start="opacity-0"
+                                  x-transition:enter-end="opacity-100">AI Assistant</span>
                         </a>
                     </li>
                 </ul>
 
-                <div class="mt-4">
-                    <a href="{% url 'account_logout' %}" class="btn btn-error btn-sm w-full">
-                        <iconify-icon icon="lets-icons:sign-out"></iconify-icon>
-                        Logout
+                <div class="mt-4 space-y-4 flex flex-col items-center"
+                     :class="{ 'items-center': collapsed, 'items-start': !collapsed }">
+                    <a href="{% url 'account_logout' %}" 
+                       class="flex items-center justify-center text-sm btn btn-error btn-sm w-full rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                       :class="{ 'px-0 w-12': collapsed }">
+                        <iconify-icon icon="octicon:sign-out-24" class="transition-transform"></iconify-icon>
+                        <span x-show="!collapsed" class="ml-2">Logout</span>
                     </a>
-                </div>
 
-                <div class="mt-4 text-sm text-center opacity-50">
-                    © 2024 Jobless
+                    <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md w-full"
+                         x-show="!collapsed">
+                        © 2024 Jobless
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Fix for mobile vh issue
+        window.addEventListener('resize', () => {
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+        });
+        document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    </script>
 </body>
 
 </html>
