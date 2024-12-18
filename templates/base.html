@@ -221,6 +221,16 @@
                 }
             });
 
+            // Define the pageState store
+            Alpine.store('pageState', {
+                isLoading: true,
+                init() {
+                    setTimeout(() => {
+                        this.isLoading = false;
+                    }, 100);
+                }
+            });
+
             // Initialize page state
             if (Alpine.store('pageState')) {
                 Alpine.store('pageState').init();
@@ -229,7 +239,7 @@
     </script>
 </head>
 
-<body x-data class="bg-base-100 min-h-screen overflow-x-hidden">
+<body x-data class="bg-base-100 min-h-screen overflow-hidden">
     <!-- Page Loading Overlay -->
     <div x-data
          x-cloak
@@ -267,7 +277,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="$store.sidebar.toggle()"
-         @touchstart.prevent="$store.sidebar.toggle()"
+         @touchstart.passive.prevent="$store.sidebar.toggle()"
          class="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden">
     </div>
 
@@ -393,17 +403,21 @@
     </aside>
 
     <!-- Main content with mobile header spacing -->
-    <main x-cloak class="w-full transition-all duration-300"
+    <main x-cloak 
+          class="w-full h-screen overflow-hidden transition-all duration-300"
           :class="{ 'pt-16': window.innerWidth < 1024 }">
         <!-- Page Content -->
-        <div class="p-4">
-            <div class="max-w-6xl mx-auto w-full">
-                {% block content %}
-                {% endblock %}
+        <div class="h-full overflow-y-auto">
+            <div class="p-4">
+                <div class="max-w-6xl mx-auto w-full">
+                    {% block content %}
+                    {% endblock %}
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- Sidebar script modifications -->
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('sidebar', {
@@ -427,6 +441,7 @@
                 init() {
                     this.open = window.innerWidth >= 1024;
                     
+                    // Add passive option to scroll event
                     window.addEventListener('resize', () => {
                         if (window.innerWidth >= 1024) {
                             this.open = true;
@@ -434,9 +449,9 @@
                         } else {
                             this.open = false;
                         }
-                    });
+                    }, { passive: true });
                     
-                    // Close sidebar when clicking outside on mobile
+                    // Add passive option to click event
                     document.addEventListener('click', (e) => {
                         if (window.innerWidth < 1024 && 
                             this.open && 
@@ -444,7 +459,7 @@
                             !e.target.closest('.btn-circle')) {
                             this.toggle();
                         }
-                    });
+                    }, { passive: true });
                 }
             });
 
@@ -466,7 +481,29 @@
                     this.apply();
                 }
             });
+
+            // Define the pageState store
+            Alpine.store('pageState', {
+                isLoading: true,
+                init() {
+                    setTimeout(() => {
+                        this.isLoading = false;
+                    }, 100);
+                }
+            });
+
+            // Initialize page state
+            if (Alpine.store('pageState')) {
+                Alpine.store('pageState').init();
+            }
         });
+
+        // Add passive scroll handler for mobile
+        document.addEventListener('scroll', () => {}, { passive: true });
+        
+        // Add passive touch handlers for mobile gestures
+        document.addEventListener('touchstart', () => {}, { passive: true });
+        document.addEventListener('touchmove', () => {}, { passive: true });
     </script>
 </body>
 </html>
