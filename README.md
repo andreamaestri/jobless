@@ -10,7 +10,7 @@
 An application to track job searching activities. Logged in users can make a lists of jobs, contacts and events. Jobs can be marked as 'favourites'. Users can update and delete items they have added to their lists to keep an up to date record. 
 
 ### Target Audience
-The target audience is all job seekers, both out of work and currently employed. Users will benefit from having an easy to use record of their job seeking activities. 
+The target audience is all job seekers, both out of work and currently employed. Users will benefit from having an easy to use record of their job seeking activities, contacts and appointments. 
 
 ## User Stories
 
@@ -36,13 +36,24 @@ The target audience is all job seekers, both out of work and currently employed.
 ## Design Decisions
 
 ### Wireframes
-Include wireframes for key sections of your website.  
-Briefly describe the design choices, including layout, colour schemes, and fonts.  
-**Guidance:** Start this section during Phase 1: Ideation & Initial Setup and update it throughout Phase 2 and Phase 3. Include digital wireframes created in Phase 1. Document the reasoning behind your layout choices, colour schemes, and font selections.
+
+#### Home page
+##### Desktop
+![Home Page Desktop](static/readme_images/home-desk.JPG)
+
+##### Mobile
+![Home Page Desktop](static/readme_images/home-desk.JPG)
+
+#### Contacts Page
+Jobs and Events pages would have a similar wireframe.
+##### Desktop
+![Contacts Page Desktop](static/readme_images/contacts-desk.JPG)
+
+##### Mobile
+![Contacts Page Mobile](static/readme_images/contacts-mobile.JPG)
+
 
 ### Accessibility Considerations
-Discuss how accessibility guidelines were adhered to, including colour contrast and alt text for images.  
-**Guidance:** Outline how you've incorporated accessibility into your design, ensuring that your project adheres to guidelines such as WCAG.
 
 ## AI Tools Usage
 
@@ -53,7 +64,7 @@ Describe how DALL-E was used for image generation, including examples of success
 ## Features Implementation
 
 ### Core Features (Must-Haves)
-- **Feature 1:** Description of the implemented feature.
+- **Feature 1:** Dashboard
 - **Feature 2:** Description of the implemented feature.
 
 (Include all must-have features)  
