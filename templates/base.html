@@ -117,6 +117,61 @@
             background-color: var(--primary);
             color: var(--primary-content);
         }
+
+        /* Enhanced Theme Controller Styles */
+        .theme-dropdown {
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .theme-content {
+            transform-origin: top;
+            backface-visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .theme-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .theme-preview {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 2px solid hsl(var(--bc) / 0.2);
+            position: relative;
+        }
+        
+        .theme-preview::before {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, hsl(var(--p)), hsl(var(--s)));
+        }
+        
+        .theme-item {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-item:hover {
+            background: hsl(var(--bc) / 0.1);
+        }
+        
+        .theme-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: hsl(var(--p));
+            border-radius: 0 3px 3px 0;
+        }
     </style>
     <script>
         document.addEventListener('alpine:init', () => {
@@ -257,39 +312,53 @@
             {% endfor %}
 
             <!-- Theme Controller -->
-            <div class="dropdown" 
-                 :class="{ 'dropdown-right': $store.sidebar.collapsed }"
-                 @mouseleave="$el.querySelector('.dropdown-content').classList.remove('dropdown-open')">
-                <button @mouseenter="animate($el, { scale: 1.02, translateX: 4 })"
+            <div class="theme-dropdown" 
+                 x-data="{ open: false }"
+                 @click.outside="open = false"
+                 @keydown.escape.window="open = false">
+                <button @click="open = !open"
+                        @mouseenter="animate($el, { scale: 1.02, translateX: 4 })"
                         @mouseleave="animate($el, { scale: 1, translateX: 0 })"
-                        class="nav-item w-full flex items-center p-2 rounded-lg hover:bg-base-100/50 transition-all duration-200"
+                        class="nav-item flex items-center p-2 rounded-lg hover:bg-base-100/50 transition-all duration-200 w-full"
                         :class="{ 'justify-center': $store.sidebar.collapsed }">
                     <iconify-icon icon="heroicons:paint-brush" 
-                                 class="text-xl transition-transform duration-200"
-                                 :class="{ 'scale-110': $store.sidebar.collapsed }">
+                                  class="text-xl transition-transform duration-200 relative"
+                                  :class="{ 'scale-110': $store.sidebar.collapsed }">
+                        <div class="theme-preview absolute -right-1.5 -top-1.5 scale-75"
+                             x-show="!$store.sidebar.collapsed">
+                        </div>
                     </iconify-icon>
                     <span x-show="!$store.sidebar.collapsed" 
                           x-transition.duration.200ms
                           class="ml-3">Theme</span>
                 </button>
-                <ul class="dropdown-content menu shadow-lg bg-base-200 rounded-box w-52 p-2"
-                    :class="{ 'ml-2': !$store.sidebar.collapsed, 'ml-20': $store.sidebar.collapsed }">
-                    <template x-for="theme in $store.theme.themes" :key="theme">
-                        <li>
-                            <button @click="$store.theme.set(theme)"
-                                    @mouseenter="animate($el, { scale: 1.02, translateX: 4 })"
-                                    @mouseleave="animate($el, { scale: 1, translateX: 0 })"
-                                    class="theme-item flex items-center gap-2 rounded-lg p-2 w-full transition-all duration-200"
+                
+                <div x-show="open"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute z-50 mt-1 w-56 rounded-lg bg-base-200 shadow-lg ring-1 ring-base-content/10 p-1"
+                     :class="{ 'left-full ml-2': $store.sidebar.collapsed, 'top-0': $store.sidebar.collapsed, 'left-0': !$store.sidebar.collapsed }">
+                    <div class="p-1 space-y-1">
+                        <template x-for="theme in $store.theme.themes" :key="theme">
+                            <button @click="$store.theme.set(theme); open = false"
+                                    @mouseenter="animate($el, { x: 4 })"
+                                    @mouseleave="animate($el, { x: 0 })"
+                                    class="theme-item flex items-center gap-3 w-full p-2 rounded-lg"
                                     :class="{ 'active': $store.theme.current === theme }">
+                                <div class="theme-preview"></div>
+                                <span x-text="theme" class="flex-1 text-left"></span>
                                 <iconify-icon icon="heroicons:check" 
-                                            class="text-lg transition-all duration-200"
-                                            :class="{ 'opacity-100 scale-100': $store.theme.current === theme, 'opacity-0 scale-90': $store.theme.current !== theme }">
+                                            class="text-lg transition-all duration-200 opacity-0"
+                                            :class="{ '!opacity-100': $store.theme.current === theme }">
                                 </iconify-icon>
-                                <span x-text="theme" class="flex-1"></span>
                             </button>
-                        </li>
-                    </template>
-                </ul>
+                        </template>
+                    </div>
+                </div>
             </div>
         </nav>
 
