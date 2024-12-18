@@ -2987,6 +2987,15 @@ details.collapse summary::-webkit-details-marker {
   border-color: transparent;
 }
 
+.border-\[\#e28b67\]\/30 {
+  border-color: rgb(226 139 103 / 0.3);
+}
+
+.border-\[\#fce8dd\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(252 232 221 / var(--tw-border-opacity, 1));
+}
+
 .bg-\[\#e28b67\] {
   --tw-bg-opacity: 1;
   background-color: rgb(226 139 103 / var(--tw-bg-opacity, 1));
@@ -3148,6 +3157,10 @@ details.collapse summary::-webkit-details-marker {
   padding: 2rem;
 }
 
+.p-3 {
+  padding: 0.75rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -3271,6 +3284,10 @@ details.collapse summary::-webkit-details-marker {
 
 .leading-tight {
   line-height: 1.25;
+}
+
+.leading-relaxed {
+  line-height: 1.625;
 }
 
 .text-\[\#2c2c2c\] {
