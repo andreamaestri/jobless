@@ -45,7 +45,7 @@
                 {% if response %}
                 <div class="bg-white p-4 rounded-lg border border-[#fce8dd]">
                     <h2 class="text-xl font-semibold text-[#2c2c2c] mb-4">AI Assistant Response:</h2>
-                    <div class="whitespace-pre-wrap text-[#2c2c2c] leading-relaxed">{{ response }}</div>
+                    <div id="aiResponse" class="whitespace-pre-wrap text-[#2c2c2c] leading-relaxed">{{ response }}</div>
                 </div>
                 {% else %}
                 <div class="text-center text-[#666666] py-8">
@@ -56,4 +56,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const responseElement = document.getElementById('aiResponse');
+        if (responseElement) {
+            const markdownContent = responseElement.textContent;
+            responseElement.innerHTML = marked.parse(markdownContent);
+        }
+    });
+</script>
+
 {% endblock %}
