@@ -4,7 +4,9 @@
   - [Purpose](#purpose)
   - [Target Audience](#target-audience)
 - [User Stories](#user-stories)
-- [Wireframes](#user-stories)
+- [UX Design and Planning](#ux-design-and-planning)
+  - [Wireframes](#wireframes)
+  - [Accessibility Considerations](#accessibility-considerations)
 ## Overview
 
 ### Purpose
@@ -34,31 +36,30 @@ The target audience is all job seekers, both out of work and currently employed.
 | Should Have | As a **user** I want **the website to look appealing** so that I am **more likely to use it** |
 | Could Have | As a **user** I want to **upload my CV** so that **AI can send me suggestions on how to tailor it to each job listing** |
 
-## Wireframes
+## UX Design and Planning
 
-### Home page
-#### Desktop
+### Wireframes
+
+#### Home page
+##### Desktop
 ![Home Page Desktop](static/readme_images/home-desk.JPG)
 
-#### Mobile
+##### Mobile
 ![Home Page Desktop](static/readme_images/home-desk.JPG)
 
-### Contacts Page
+#### Contacts Page
 Jobs and Events pages would have a similar wireframe.
-#### Desktop
+##### Desktop
 ![Contacts Page Desktop](static/readme_images/contacts-desk.JPG)
 
-#### Mobile
+##### Mobile
 ![Contacts Page Mobile](static/readme_images/contacts-mobile.JPG)
 
 
 ### Accessibility Considerations
+Pastel colours were selected as desirable and Realtime Colors was used to choose a colour palette with the following chosen for accessibility.
 
-## AI Tools Usage
 
-### DALL-E
-Describe how DALL-E was used for image generation, including examples of successes and challenges.  
-**Guidance:** Specifically mention how you used DALL-E for image generation and the impact this had on your design process.
 
 ## Features Implementation
 
