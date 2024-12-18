@@ -1,67 +1,81 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
 <div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
     <div class="max-w-3xl mx-auto">
-        <div class="bg-base-100 shadow-lg rounded-2xl p-8">
-            <!-- Header -->
-            <div class="flex justify-between items-start mb-8">
-                <div>
-                    <h1 class="text-2xl font-bold text-base-content">{{ job.title }}</h1>
-                    <p class="text-base-content/70 mt-2">{{ job.company }}</p>
-                </div>
-                <div class="flex space-x-3">
-                    <a href="{% url 'jobs:edit' job.pk %}"
-                        class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus">
-                        Edit
-                    </a>
-                    <a href="{% url 'jobs:delete' job.pk %}"
-                        class="px-4 py-2 bg-error text-error-content rounded-xl hover:bg-error-focus">
-                        Delete
-                    </a>
+        <div class="bg-base-100 rounded-2xl shadow-lg p-8">
+            <!-- Header Section -->
+            <div class="border-b border-base-300 pb-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-base-content">{{ object.title }}</h1>
+                        <p class="text-xl text-primary mt-2">{{ object.company }}</p>
+                    </div>
+                    <span class="badge badge-{{ object.status|lower }} badge-lg">{{ object.get_status_display }}</span>
                 </div>
             </div>
 
-            <!-- Job Details -->
-            <div class="space-y-6">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-sm font-medium text-base-content/70">Location</h3>
-                        <p class="mt-1 text-base-content">{{ job.location }}</p>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-medium text-base-content/70">Status</h3>
-                        <span class="px-2 py-1 text-xs rounded-full inline-block mt-1
-                            {% if job.status == 'interested' %}bg-info/20 text-info
-                            {% elif job.status == 'applied' %}bg-warning/20 text-warning
-                            {% elif job.status == 'interviewing' %}bg-secondary/20 text-secondary
-                            {% elif job.status == 'rejected' %}bg-error/20 text-error
-                            {% else %}bg-success/20 text-success{% endif %}">
-                            {{ job.status|title }}
-                        </span>
-                    </div>
+            <!-- Details Table -->
+            <div class="divide-y divide-base-300">
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content">Location</div>
+                    <div class="col-span-2 text-base-content">{{ object.location }}</div>
                 </div>
 
-                {% if job.skills.all %}
-                <div>
-                    <h3 class="text-sm font-medium text-base-content/70 mb-2">Skills</h3>
-                    <div class="flex flex-wrap gap-2">
-                        {% for skill in job.skills.all %}
-                        <span class="px-3 py-1 rounded-full text-xs bg-base-200 text-base-content">
-                            {{ skill }}
-                        </span>
-                        {% endfor %}
+                {% if object.salary_range %}
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content">Salary Range</div>
+                    <div class="col-span-2 text-base-content">{{ object.salary_range }}</div>
+                </div>
+                {% endif %}
+
+                {% if object.url %}
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content">Job URL</div>
+                    <div class="col-span-2">
+                        <a href="{{ object.url }}" target="_blank" class="text-primary hover:text-primary-focus">
+                            View Original Posting
+                        </a>
                     </div>
                 </div>
                 {% endif %}
 
-                {% if job.notes %}
-                <div>
-                    <h3 class="text-sm font-medium text-base-content/70 mb-2">Notes</h3>
-                    <p class="text-base-content whitespace-pre-line">{{ job.notes }}</p>
+                {% if object.skills.count > 0 %}
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content">Skills</div>
+                    <div class="col-span-2">
+                        <div class="flex flex-wrap gap-2">
+                            {% for skill in object.skills.all %}
+                            <span class="badge badge-accent">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content">Description</div>
+                    <div class="col-span-2 text-base-content">
+                        <div class="prose prose-base-content max-w-none">
+                            {{ object.description|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content">Last Updated</div>
+                    <div class="col-span-2 text-base-content">{{ object.updated_at|date:"F j, Y" }}</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-base-300">
+                <a href="{% url 'jobs:list' %}" class="btn btn-ghost">
+                    Back to List
+                </a>
+                <a href="{% url 'jobs:edit' object.pk %}" class="btn btn-primary">
+                    Edit Job
+                </a>
             </div>
         </div>
     </div>
