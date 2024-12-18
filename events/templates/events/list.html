@@ -7,8 +7,8 @@
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-[#2c2c2c]">Events</h1>
-                <p class="text-[#666666] mt-1">Manage your upcoming events and interviews</p>
+                <h1 class="text-2xl font-bold text-base-content">Events</h1>
+                <p class="text-base-content/70 mt-1">Manage your upcoming events and interviews</p>
             </div>
             <a href="{% url 'events:add' %}"
                 class="px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
@@ -48,7 +48,7 @@
                         <tr class="hover:bg-white transition-colors duration-150">
                             <td class="px-6 py-4">
                                 <div>
-                                    <h3 class="text-[#2c2c2c] font-medium">{{ event.title }}</h3>
+                                    <h3 class="text-base-content font-medium">{{ event.title }}</h3>
                                     {% if event.notes %}
                                     <p class="text-xs text-[#666666]">{{ event.notes|truncatechars:50 }}</p>
                                     {% endif %}
@@ -59,9 +59,9 @@
                                     {{ event.event_type|title }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-[#666666]">{{ event.date|date:"M d, Y - g:i A" }}</td>
-                            <td class="px-6 py-4 text-sm text-[#666666]">{{ event.location }}</td>
-                            <td class="px-6 py-4 text-sm text-[#666666]">
+                            <td class="px-6 py-4 text-sm text-base-content">{{ event.date|date:"M d, Y - g:i A" }}</td>
+                            <td class="px-6 py-4 text-sm text-base-content">{{ event.location }}</td>
+                            <td class="px-6 py-4 text-sm text-base-content">
                                 {% if event.job_posting %}
                                 {{ event.job_posting.title }}
                                 {% else %}
