@@ -4,13 +4,23 @@
   - [Purpose](#purpose)
   - [Target Audience](#target-audience)
 - [User Stories](#user-stories)
+- [UX Design and Planning](#ux-design-and-planning)
+  - [Wireframes](#wireframes)
+  - [Accessibility Considerations](#accessibility-considerations)
+  - [Database Design](#database-design)
+- [Features Implementation](#features-implementation)
+ - [Core Features](#core-features)
+ - [Advanced Features](#advanced-features)
+- [Testing and Validation](#testing-and-validation)
+ - [Testing Results](#testing-results)
+ - [Validation](#validation)
 ## Overview
 
 ### Purpose
 An application to track job searching activities. Logged in users can make a lists of jobs, contacts and events. Jobs can be marked as 'favourites'. Users can update and delete items they have added to their lists to keep an up to date record. 
 
 ### Target Audience
-The target audience is all job seekers, both out of work and currently employed. Users will benefit from having an easy to use record of their job seeking activities. 
+The target audience is all job seekers, both out of work and currently employed. Users will benefit from having an easy to use record of their job seeking activities, contacts and appointments. 
 
 ## User Stories
 
@@ -33,58 +43,113 @@ The target audience is all job seekers, both out of work and currently employed.
 | Should Have | As a **user** I want **the website to look appealing** so that I am **more likely to use it** |
 | Could Have | As a **user** I want to **upload my CV** so that **AI can send me suggestions on how to tailor it to each job listing** |
 
-## Design Decisions
+## UX Design and Planning
 
 ### Wireframes
-Include wireframes for key sections of your website.  
-Briefly describe the design choices, including layout, colour schemes, and fonts.  
-**Guidance:** Start this section during Phase 1: Ideation & Initial Setup and update it throughout Phase 2 and Phase 3. Include digital wireframes created in Phase 1. Document the reasoning behind your layout choices, colour schemes, and font selections.
+
+#### Home page
+##### Desktop
+![Home Page Desktop](readme_images/home-desk.JPG)
+
+##### Mobile
+![Home Page Desktop](readme_images/home-desk.JPG)
+
+#### Contacts Page
+Jobs and Events pages would have a similar wireframe.
+##### Desktop
+![Contacts Page Desktop](readme_images/contacts-desk.JPG)
+
+##### Mobile
+![Contacts Page Mobile](readme_images/contacts-mobile.JPG)
+
 
 ### Accessibility Considerations
-Discuss how accessibility guidelines were adhered to, including colour contrast and alt text for images.  
-**Guidance:** Outline how you've incorporated accessibility into your design, ensuring that your project adheres to guidelines such as WCAG.
+Pastel colours were selected as desirable and Realtime Colors was used to choose a colour palette with the following chosen for accessibility.
 
-## AI Tools Usage
+![Colour Palette](readme_images/palette1.jpg)
+![Contacts Page Mobile](readme_images/realtimecolors1.jpg)
 
-### DALL-E
-Describe how DALL-E was used for image generation, including examples of successes and challenges.  
-**Guidance:** Specifically mention how you used DALL-E for image generation and the impact this had on your design process.
+### Database Design
+The following database schema was created from the user stories and used as a basis for model creation.
+![ERD](readme_images/erd1.jpg)
+
+The following changes were made to the original database schema:
+- JobPosting:
+  - skills field added to implement tags
+  - favourites field added to allow for future developement of an add to favourites feature
+- Events:
+  - contacts field added to allow for the linking of contacts to an event, not currently in use
+
+## Agile Methodology
+
+An agile working methodology was used during the project with a GitHub project board being the basis of this method.
+
+[Project board link](https://github.com/users/katepz/projects/6)
+
+This completed sprint involved the completion of 16 items. The MoSCoW approach to prioritisation was used to ensure that the MVP was completed in good time. Initially all items were placed in the Backlog and as they were moved to To Do, In Progress and Done columns in the board the milestone was changed for a visual check on the progress of the project. Of the 16 items completed 14 had been designated as Must Haves, 1 as a Should Have and 1 as a Could Have. There are no items remaining in the Backlog after this sprint. 
+
+### Images of the Project Board 
+#### In Progress:
+![Project Board in Progress](readme_images/projectboard-progress1.JPG)
+
+#### Completed:
+![Project Board Completed](readme_images/projectboard-done1.JPG)
+
 
 ## Features Implementation
 
 ### Core Features (Must-Haves)
-- **Feature 1:** Description of the implemented feature.
-- **Feature 2:** Description of the implemented feature.
+- **Feature 1:** Responsive design, visual design. These can been seen in the images showing the remaining features.
 
-(Include all must-have features)  
-**Guidance:** Use this section as you complete Phase 2: Must User Stories Implementation & Testing. Document all the must-have features you implemented, explaining how they align with the user stories and acceptance criteria.
+- **Feature 2:** Account creation. Users can create an account to use the features of the application.
+![alt text](image.jpg)
 
-### Advanced Features (Should-Haves)
-- **Feature 1:** Description of the implemented feature.
-- **Feature 2:** Description of the implemented feature.
+- **Feature 3:** Jobs section. Users can add a job with associated details to a list which can be viewed. Jobs can be categorized, a status attached and notes submitted. Once added jobs can be updated or deleted.
+![alt text](image.jpg)
 
-(Include all should-have features)  
-**Guidance:** Include any advanced features you implemented during Phase 3: Should User Stories Implementation & Any Advanced Features. Explain how these features enhance user experience and their alignment with the acceptance criteria.
+- **Feature 4:** Contacts section. Users can add a contact with associated details to a list which can be viewed. Once added jobs can be updated or deleted.
+![alt text](image.jpg)
 
-### Optional Features (Could-Haves)
-- **Feature 1:** Description of the implemented feature (if any).
-- **Feature 2:** Description of the implemented feature (if any).
+- **Feature 5:** Events section. Users can add an event with associated details to a list which can be viewed. Once added events can be updated or deleted.
+![alt text](image.jpg)
 
-(Include any could-have features that were implemented or considered)  
-**Guidance:** If any could-have features were implemented, describe them here. This is an opportunity to showcase extra work done beyond the initial scope. But remember - keep it simple! Focus on the Must stories first. Could user story features are commonly earmarked for future project iterations.
+- **Feature 6:** Forms. Forms are intuitive to use for swift input and feedback.
+![alt text](image.jpg)
 
-## AI Tools Usage
-
-### GitHub Copilot
-Describe how GitHub Copilot assisted in coding, including any challenges or adjustments needed.  
-**Guidance:** Reflect on how GitHub Copilot assisted in coding, particularly any challenges or adjustments that were needed to align with project goals.
+### Advanced Features (Could-Haves)
+- **Feature 7:** AI CV assistant. Users can upload their CV to ask AI to suggest improvements, eg for a particular job application
+![alt text](image.jpg)
 
 ## Testing and Validation
 
 ### Testing Results
-Summarize the results of testing across different devices and screen sizes.  
-Mention any issues found and how they were resolved.  
-**Guidance:** Summarize the results of your testing across various devices using tools like Chrome DevTools, as outlined in Phase 2. Mention any issues found and how they were resolved.
+| Feature | Test | Result |
+| ----------- | ----------- | ----------- |
+| Responsive design | Application displays as required on different size devices | Success |
+| Account | Click on sign up button to enter details | Success |
+| Account | Click on submit button to create an account | Success |
+| Account | Click on sign in button to log in | Success |
+| Account | Click on sign out button to log out | Success |
+| Jobs | Click on icon on navbar to display jobs list | Success |
+| Jobs | Click on add job button to display jobs form | Success |
+| Jobs, Forms | Click on submit button to enter details | Success |
+| Jobs | Click on update job button to update job details | Success |
+| Jobs | Click on delete job button to delete job | Success |
+| Contacts | Click on icon on navbar to display contacts list | Success |
+| Contacts | Click on add contact button to display contacts form | Success |
+| Contacts, Forms | Click on submit button to enter details | Success |
+| Contacts | Click on update contact button to update contact details | Success |
+| Contacts | Click on delete contact button to delete contact | Success |
+| Events | Click on icon on navbar to display events list | Success |
+| Events | Click on add event button to display events form | Success |
+| Events, Forms | Click on submit button to enter details | Success |
+| Events | Click on update event button to update event details | Success |
+| Events | Click on delete event button to delete event | Success |
+| AI Assistant | Click on icon on navbar to display AI Assistant | Success |
+| AI Assistant | Paste Cv into text area | Success |
+| AI Assistant | Type question into text area | Success |
+| AI Assistant | Click on ?? button to activate AI Assistant | Success |
+
 
 ### Validation
 Discuss the validation process for HTML and CSS using W3C and Jigsaw validators.  
