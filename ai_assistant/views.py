@@ -25,7 +25,7 @@ def ai_assistant(request):
             },
             {
                 "role": "user",
-                "content": f"Here is my CV content:\n{cv_content}\n\nUser question: {user_input} please don't use markdown in your response",
+                "content": f"Here is my CV content:\n{cv_content}\n\nUser question: {user_input}",
             },
         ]
 
