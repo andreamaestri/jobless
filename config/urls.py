@@ -20,13 +20,13 @@ from django.urls import path, include
 
 
 urlpatterns = [
+    path("__reload__/", include("django_browser_reload.urls")),
     path("accounts/", include("allauth.urls")),
     path('admin/', admin.site.urls),
     path('ai-assistant/', include('ai_assistant.urls', namespace='ai_assistant')),
     path('contacts/', include('contacts.urls')),
     path('events/', include('events.urls')),
     path('jobs/', include('jobs.urls')),
-    path('events/', include('events.urls')),
     path('', include ('home.urls')),
     
 ]
