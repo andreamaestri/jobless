@@ -9,7 +9,9 @@ urlpatterns = [
     path('add/', views.JobPostingCreateView.as_view(), name='add'),
     path('<int:pk>/edit/', views.JobPostingUpdateView.as_view(), name='edit'),
     path('<int:pk>/delete/', views.JobPostingDeleteView.as_view(), name='delete'),
+    path('<int:pk>/', views.JobPostingDetailView.as_view(), name='detail'),
     path('toggle_favourite/<int:job_id>/', views.favourited_jobs,
             name='toggle_favourite'),
     path('favourited_jobs/', views.favourited_jobs, name='favourites.html'),
+    
 ]

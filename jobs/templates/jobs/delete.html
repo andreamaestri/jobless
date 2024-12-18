@@ -12,20 +12,20 @@
             </p>
 
             <div class="bg-base-200 p-4 rounded-xl mb-6">
-                <p class="font-medium text-base-content">{{ job.title }}</p>
-                <p class="text-base-content/70">{{ job.company }}</p>
-                <p class="text-base-content/70">{{ job.location }}</p>
+                <p class="font-medium text-base-content">{{ object.title }}</p>
+                <p class="text-base-content/70">{{ object.company }}</p>
+                <p class="text-base-content/70">{{ object.location }}</p>
             </div>
 
             <form method="POST">
                 {% csrf_token %}
                 <div class="flex justify-end space-x-4">
                     <a href="{% url 'jobs:list' %}"
-                        class="px-4 py-2 border border-base-300 rounded-xl text-base-content/70 hover:bg-base-200">
+                        class="px-4 py-2 border border-base-300 rounded-xl text-base-content hover:bg-base-200">
                         Cancel
                     </a>
                     <button type="submit" 
-                        class="px-4 py-2 bg-error text-error-content rounded-xl hover:bg-error-focus">
+                        class="btn btn-primary">
                         Delete
                     </button>
                 </div>
