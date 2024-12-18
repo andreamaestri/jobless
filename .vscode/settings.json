@@ -12,8 +12,13 @@
       "**/core.python*": true,
       "**/CVS": true
    },
+<<<<<<< HEAD
    "files.autoSave": "afterDelay",
    "workbench.colorTheme": "Catppuccin Noctis Mocha",
+=======
+   "files.autoSave": "off",
+   "workbench.colorTheme": "Catppuccin Mocha",
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
    "terminal.integrated.gpuAcceleration": "canvas",
    "djlint.showInstallError": false,
 }

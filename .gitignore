@@ -9,5 +9,8 @@ node_modules/
 .github/
 cloudinary_python.txt
 heroku.txt
+<<<<<<< HEAD
 /staticfiles
 db.sqlite3
+=======
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a

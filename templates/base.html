@@ -1,13 +1,19 @@
+<<<<<<< HEAD
 {% load static tailwind_tags %}
 {% load account %}
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="en" x-data :data-theme="$store.theme.current">
+=======
+<!DOCTYPE html>
+<html lang="en">
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Tailwind -->
+<<<<<<< HEAD
     {% tailwind_css %}
     <!-- Iconify -->
     <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
@@ -380,6 +386,68 @@
             </div>
         </div>
     </div>
+=======
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Jobless</title>
+</head>
+
+<body>
+    <nav class="fixed left-0 top-0 h-full w-64 bg-black text-white p-4 shadow-lg">
+        <div class="flex flex-col h-full">
+            <div class="mb-8 text-4xl font-bold text-center mt-2">
+                Jobless
+            </div>
+
+            <div class="space-y-2">
+                <a href="{% url 'home:home' %}"
+                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-home mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="{% url 'jobs:list' %}"
+                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-briefcase mr-3"></i>
+                    Jobs
+                </a>
+                <a href="{% url 'events:list' %}"
+                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-calendar mr-3"></i>
+                    Events
+                </a>
+                <a href="{% url 'contacts:list' %}"
+                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-address-book mr-3"></i>
+                    Contacts
+                </a>
+                <a href="{% url 'ai_assistant:assistant' %}"
+                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-robot mr-3"></i>
+                    AI Assistant
+                </a>
+            </div>
+            <div>
+                <a href="{% url 'account_logout' %}"
+                    class="text-sm bg-orange-700 px-3 mt-auto py-2 rounded font-semibold hover:bg-orange-900 transition">
+                    Logout
+                </a>
+
+            </div>
+
+            <div class="mt-auto mb-4 text-sm text-center text-gray-400">
+                © 2024 Jobless
+            </div>
+        </div>
+    </nav>
+
+    <div class="ml-64">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/0d8c169f78.js" crossorigin="anonymous"></script>
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
 </body>
 
 </html>

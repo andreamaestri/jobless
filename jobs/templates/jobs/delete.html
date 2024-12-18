@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<<<<<<< HEAD
 <div class="min-h-screen py-12 px-8 bg-base-200">
     <div class="max-w-md mx-auto">
         <div class="bg-base-100 rounded-2xl shadow-lg p-8">
@@ -31,6 +32,34 @@
                 </div>
             </form>
         </div>
+=======
+<div class="max-w-md mx-auto p-4">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-medium mb-4">Delete Job</h1>
+
+        <p class="text-gray-600 mb-6">
+            Are you sure you want to delete this meal entry from {{ object.date|date:"F j, Y" }}?
+        </p>
+
+        <div class="bg-gray-50 p-4 rounded-md mb-6">
+            <p class="font-medium">{{ food.food_name }}</p>
+            <p class="font-medium">{{ food.date }}</p>
+            <p class="font-medium">{{ food.eaten_at }}</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'jobs:list' %}"
+                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    Cancel
+                </a>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Delete
+                </button>
+            </div>
+        </form>
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     </div>
 </div>
 {% endblock %}

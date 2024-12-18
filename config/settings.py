@@ -40,26 +40,36 @@ CSRF_TRUSTED_ORIGINS = ['https://*.codeinstitute-ide.net', 'https://*.herokuapp.
 # Application definition
 
 INSTALLED_APPS = [
+<<<<<<< HEAD
     "unfold", 
     "unfold.contrib.filters", 
     "unfold.contrib.forms", 
     "unfold.contrib.inlines", 
+=======
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'django.contrib.sites',   
     'django_browser_reload', 
+=======
+    'django.contrib.sites',    
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'django_summernote',
     'crispy_forms',
     'tagulous',
+<<<<<<< HEAD
     'tailwind',
     'theme',
+=======
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     'jobs',
     'contacts',
     'events',
@@ -67,8 +77,11 @@ INSTALLED_APPS = [
     'ai_assistant',
 ]
 
+<<<<<<< HEAD
 TAILWIND_APP_NAME = 'theme'
 
+=======
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
 SERIALIZATION_MODULES = {
     'xml':    'tagulous.serializers.xml_serializer',
     'json':   'tagulous.serializers.json',
@@ -87,7 +100,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+<<<<<<< HEAD
     'django_browser_reload.middleware.BrowserReloadMiddleware',
+=======
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
@@ -177,7 +193,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+<<<<<<< HEAD
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+=======
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
