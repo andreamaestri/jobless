@@ -14,130 +14,165 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.7/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
     <script>
-        const { animate, scroll, inView, spring, backOut, circOut, cubicBezier } = Motion;
+        const { animate, spring, stagger } = Motion;
         
-        // Define custom easing curves
-        const softSpring = cubicBezier(0.34, 1.56, 0.64, 1);
-        const gentleBack = cubicBezier(0.25, 0.46, 0.45, 0.94);
-        
-        // Animation presets
+        // Enhanced spring configurations
+        const smoothSpring = {
+            stiffness: 80,
+            damping: 20,
+            mass: 0.8,
+            restSpeed: 0.2
+        };
+
+        const floatySpring = {
+            stiffness: 150,
+            damping: 20,
+            mass: 0.5,
+            restSpeed: 0.5
+        };
+
+        // Combined animation presets
         const animationPresets = {
             hover: {
                 scale: 1.02,
                 x: 4,
-                transition: { 
-                    duration: 0.2,
-                    easing: softSpring
-                }
+                duration: 0.2,
+                space: 'transform-gpu'
             },
             menuReveal: {
                 opacity: [0, 1],
                 scale: [0.95, 1],
                 y: [-8, 0],
-                transition: {
-                    duration: 0.2,
-                    easing: gentleBack
-                }
+                duration: 0.2,
+                space: 'transform-gpu'
             },
             sidebarCollapse: {
-                duration: 0.3,
-                easing: spring({ stiffness: 100, damping: 15 })
-            },
-            itemHover: {
-                x: [-2, 4],
-                scale: 1.02,
-                transition: {
-                    duration: 0.2,
-                    easing: backOut
+                transform: {
+                    duration: 0.4,
+                    easing: [0.6, 0.01, 0.05, 0.95]
                 }
+            },
+            sidebarToggle: {
+                duration: 0.4,
+                easing: [0.32, 0.72, 0, 1],
+                space: 'transform-gpu'
             }
         };
 
-        // Make animations available to Alpine
-        document.addEventListener('alpine:init', () => {
-            Alpine.magic('motion', () => (el, animation) => {
-                return animate(el, 
-                    typeof animation === 'string' ? animationPresets[animation] : animation
-                );
-            });
-        });
-    </script>
-    <title>Jobless</title>
-    <style>
-        [x-cloak] { display: none !important; }
-        
-        /* Essential animations that can't be handled by Tailwind */
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        /* Only keep minimal required custom CSS */
-        .nav-item::after {
-            content: '';
-            @apply absolute bottom-0 left-0 right-0 h-0.5 bg-current transform scale-x-0 transition-transform duration-300;
-        }
-        
-        .theme-preview {
-            @apply w-6 h-6 rounded-full border-2 border-base-content/20 relative;
-        }
-        
-        .theme-preview::before {
-            content: '';
-            @apply absolute inset-[2px] rounded-full bg-gradient-to-tr from-primary to-secondary;
-        }
-        
-        .user-avatar::after {
-            content: '';
-            @apply absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-200;
-        }
-        
-        /* Spring easing for smoother transitions */
-        .ease-spring {
-            transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        // Sidebar animation orchestrator
+        function animateSidebar(sidebar, content, items, isCollapsing) {
+            const sidebarWidth = isCollapsing ? '5rem' : '20rem';
+
+            return Promise.all([
+                // Animate width and position together
+                animate(sidebar, 
+                    { width: sidebarWidth },
+                    { 
+                        duration: 0.4,
+                        easing: [0.4, 0, 0.2, 1]
+                    }
+                ),
+                
+                // Animate text elements with fade
+                animate(items, {
+                    opacity: isCollapsing ? [1, 0] : [0, 1],
+                    x: isCollapsing ? [0, -8] : [-8, 0]
+                }, {
+                    duration: 0.3,
+                    delay: isCollapsing ? 0 : 0.2,
+                    easing: [0.4, 0, 0.2, 1]
+                }),
+
+                // Animate content margin smoothly
+                animate(content, {
+                    marginLeft: sidebarWidth
+                }, {
+                    duration: 0.4,
+                    easing: [0.4, 0, 0.2, 1]
+                })
+            ]);
         }
 
-        /* Add smooth content shifting */
-        .content-shift {
-            @apply transition-[margin,width] duration-300 ease-in-out;
+        // Define the sequence function
+        function sequence(animations, options = {}) {
+            return animations.reduce((promise, { el, props, opts }) => {
+                return promise.then(() => animate(el, props, { ...opts, ...options }));
+            }, Promise.resolve());
         }
-        
-        /* Enhanced sidebar transitions */
-        .sidebar-slide {
-            @apply transition-transform duration-300 ease-in-out;
-        }
-    </style>
-    <script>
+
+        // Alpine initialization
         document.addEventListener('alpine:init', () => {
+            Alpine.magic('motion', () => Motion.animate);
+
+            // Sidebar store
             Alpine.store('sidebar', {
-                open: false,
+                open: window.innerWidth >= 1024,
                 collapsed: JSON.parse(localStorage.getItem('sidebarCollapsed') || 'false'),
 
                 toggle() {
                     this.open = !this.open;
+                    const sidebar = document.querySelector('aside');
+                    
+                    if (sidebar) {
+                        animate(sidebar, {
+                            x: this.open ? ['-100%', '0%'] : ['0%', '-100%']
+                        }, {
+                            duration: 0.4,
+                            easing: [0.4, 0, 0.2, 1]
+                        });
+                    }
                 },
 
                 collapse() {
                     this.collapsed = !this.collapsed;
                     localStorage.setItem('sidebarCollapsed', this.collapsed);
                     
-                    // Animate chevron on collapse
-                    const chevron = document.querySelector('.sidebar-toggle iconify-icon');
-                    if (chevron) {
-                        Motion.animate(chevron, {
-                            rotate: this.collapsed ? 180 : 0,
-                            duration: 0.3
+                    const sidebar = document.querySelector('aside');
+                    const content = document.querySelector('main');
+                    const sidebarItems = document.querySelectorAll('aside .nav-item span');
+                    
+                    if (sidebar) {
+                        const targetWidth = this.collapsed ? '5rem' : '20rem';
+                        
+                        // Sequence the animations for better performance
+                        sequence([
+                            // First animate the text
+                            {
+                                el: sidebarItems,
+                                props: {
+                                    opacity: this.collapsed ? [1, 0] : [0, 1],
+                                    x: this.collapsed ? [0, -10] : [-10, 0]
+                                },
+                                opts: { duration: 0.2 }
+                            },
+                            // Then animate the sidebar with spring physics
+                            {
+                                el: sidebar,
+                                props: {
+                                    width: targetWidth,
+                                    x: this.collapsed ? [-4, 0] : [0, -4, 0],
+                                    scale: this.collapsed ? [1, 0.98, 1] : [1, 1.02, 1]
+                                },
+                                opts: { ...smoothSpring }
+                            },
+                            // Finally animate the content margin
+                            {
+                                el: content,
+                                props: { marginLeft: targetWidth },
+                                opts: { duration: 0.3 }
+                            }
+                        ], {
+                            delay: this.collapsed ? 0 : 0.1
                         });
                     }
                 },
 
                 init() {
-                    if (window.innerWidth >= 1024) {
-                        this.open = true;
-                    }
+                    // ...existing init code...
                 }
             });
 
+            // Theme store
             Alpine.store('theme', {
                 themes: ['Jobless', 'Jobless Dark', 'lofi', 'pastel'],
                 current: localStorage.getItem('theme') || 'Jobless',
@@ -179,9 +214,6 @@
                 Alpine.store('pageState').init();
             }
 
-            // Initialize Motion animations
-            Alpine.magic('motion', () => Motion.animate);
-            
             // Add common animation presets
             Alpine.data('animations', () => ({
                 hover: {
@@ -207,7 +239,68 @@
                 }
             }));
         });
+
+        // Add passive event listeners
+        document.addEventListener('scroll', () => {}, { passive: true });
+        document.addEventListener('touchstart', () => {}, { passive: true });
+        document.addEventListener('touchmove', () => {}, { passive: true });
     </script>
+    <title>Jobless</title>
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        /* Essential animations that can't be handled by Tailwind */
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Only keep minimal required custom CSS */
+        .nav-item::after {
+            content: '';
+            @apply absolute bottom-0 left-0 right-0 h-0.5 bg-current transform scale-x-0 transition-transform duration-300;
+        }
+        
+        .theme-preview {
+            @apply w-6 h-6 rounded-full border-2 border-base-content/20 relative;
+        }
+        
+        .theme-preview::before {
+            content: '';
+            @apply absolute inset-[2px] rounded-full bg-gradient-to-tr from-primary to-secondary;
+        }
+        
+        .user-avatar::after {
+            content: '';
+            @apply absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-200;
+        }
+        
+        /* Spring easing for smoother transitions */
+        .ease-spring {
+            transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Remove existing transition classes */
+        /* 
+        .content-shift {
+            @apply transition-[margin,width] duration-300 ease-in-out;
+        }
+        
+        .sidebar-slide {
+            @apply transition-transform duration-300 ease-in-out;
+        }
+        */
+        
+        /* Add smooth content shifting */
+        .content-shift {
+            @apply transition-[margin,width] duration-300 ease-in-out;
+        }
+        
+        /* Enhanced sidebar transitions */
+        .sidebar-slide {
+            @apply transition-transform duration-300 ease-in-out;
+        }
+    </style>
 </head>
 
 <!-- Update body class to remove overflow-hidden -->
@@ -257,7 +350,7 @@
 
     <!-- Sidebar with improved mobile handling -->
     <aside x-cloak
-           class="fixed top-0 left-0 h-full bg-base-200/95 backdrop-blur-sm shadow-lg z-40 sidebar-slide"
+           class="fixed top-0 left-0 h-full bg-base-200/95 backdrop-blur-sm shadow-lg z-40"
            :class="{
                'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024,
                'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024,
@@ -265,7 +358,9 @@
                '-translate-x-full lg:translate-x-0': !$store.sidebar.open,
                'top-16 h-[calc(100vh-4rem)]': window.innerWidth < 1024,
                'top-0 h-full': window.innerWidth >= 1024
-           }">
+           }"
+           @mouseenter="$store.sidebar.open || $store.sidebar.collapsed ? $motion($el, 'itemHover') : null"
+           @mouseleave="$store.sidebar.open || $store.sidebar.collapsed ? $motion($el, { scale: 1, x: 0 }) : null">
         <!-- Sidebar Header -->
         <div class="relative flex items-center min-h-[4rem] px-4"
              :class="{ 'justify-between': !$store.sidebar.collapsed, 'justify-center': $store.sidebar.collapsed }">
@@ -438,10 +533,16 @@
                 
                 toggle() {
                     this.open = !this.open;
-                    if (this.open) {
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.body.style.overflow = '';
+                    const sidebar = document.querySelector('aside');
+                    
+                    if (sidebar) {
+                        animate(sidebar, {
+                            x: this.open ? ['-100%', '0%'] : ['0%', '-100%'],
+                            opacity: this.open ? [0.5, 1] : [1, 0.5]
+                        }, {
+                            duration: 0.3,
+                            easing: [0.32, 0.72, 0, 1]
+                        });
                     }
                 },
                 
@@ -449,13 +550,42 @@
                     this.collapsed = !this.collapsed;
                     localStorage.setItem('sidebarCollapsed', this.collapsed);
                     
-                    // Animate with spring physics
                     const sidebar = document.querySelector('aside');
+                    const content = document.querySelector('main');
+                    const sidebarItems = document.querySelectorAll('aside .nav-item span');
+                    
                     if (sidebar) {
-                        animate(sidebar, {
-                            x: this.collapsed ? [-20, 0] : [0, -20, 0]
-                        }, {
-                            ...animationPresets.sidebarCollapse
+                        const targetWidth = this.collapsed ? '5rem' : '20rem';
+                        
+                        // Sequence the animations for better performance
+                        sequence([
+                            // First animate the text
+                            {
+                                el: sidebarItems,
+                                props: {
+                                    opacity: this.collapsed ? [1, 0] : [0, 1],
+                                    x: this.collapsed ? [0, -10] : [-10, 0]
+                                },
+                                opts: { duration: 0.2 }
+                            },
+                            // Then animate the sidebar with spring physics
+                            {
+                                el: sidebar,
+                                props: {
+                                    width: targetWidth,
+                                    x: this.collapsed ? [-4, 0] : [0, -4, 0],
+                                    scale: this.collapsed ? [1, 0.98, 1] : [1, 1.02, 1]
+                                },
+                                opts: { ...smoothSpring }
+                            },
+                            // Finally animate the content margin
+                            {
+                                el: content,
+                                props: { marginLeft: targetWidth },
+                                opts: { duration: 0.3 }
+                            }
+                        ], {
+                            delay: this.collapsed ? 0 : 0.1
                         });
                     }
                 },
