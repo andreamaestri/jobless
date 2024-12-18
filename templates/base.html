@@ -49,12 +49,12 @@
     </script>
 </head>
 
-<body x-data class="bg-base-100">
-    <div class="drawer lg:drawer-open">
+<body x-data class="bg-base-100 min-h-screen">
+    <div class="drawer lg:drawer-open min-h-screen">
         <input id="my-drawer" type="checkbox" class="drawer-toggle" x-model="$store.sidebar.open"/>
         
         <!-- Main content -->
-        <div class="drawer-content bg-base-100 flex flex-col transition-all duration-300"
+        <div class="drawer-content bg-base-100 flex flex-col min-h-screen transition-[margin] duration-300 ease-in-out"
              :class="{ 'lg:ml-20': $store.sidebar.collapsed, 'lg:ml-80': !$store.sidebar.collapsed }">
             <!-- Mobile Nav -->
             <div class="sticky top-0 z-40 lg:hidden">
@@ -82,8 +82,8 @@
             </div>
 
             <!-- Page Content -->
-            <main class="flex-1 p-4">
-                <div class="max-w-6xl mx-auto">
+            <main class="flex-1 flex flex-col p-4">
+                <div class="max-w-6xl mx-auto w-full flex-1">
                     {% block content %}
                     {% endblock %}
                 </div>
@@ -95,19 +95,21 @@
             <label for="my-drawer" 
                    @click="$store.sidebar.toggle()"
                    class="drawer-overlay bg-base-200/50"></label>
-            <div class="menu p-4 min-h-full w-80 bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-all duration-300"
-                 :class="{ 'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024 }">
+            <div class="menu p-4 min-h-full bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-[width] duration-300 ease-in-out"
+                 :class="{ 'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024, 'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024 }">
                 <!-- Toggle and Logo -->
-                <div class="flex items-center justify-between mb-4">
-                    <div class="hidden lg:block text-4xl font-bold text-center text-primary transition-all duration-300"
-                         x-show="!$store.sidebar.collapsed">
-                        Jobless
+                <div class="flex items-center justify-between mb-4 overflow-hidden">
+                    <div class="transition-all duration-300 overflow-hidden whitespace-nowrap"
+                         :class="{ 'w-0 opacity-0': $store.sidebar.collapsed, 'w-full opacity-100': !$store.sidebar.collapsed }">
+                        <span class="hidden lg:block text-4xl font-bold text-primary">
+                            Jobless
+                        </span>
                     </div>
                     <button @click="$store.sidebar.collapse()"
-                            class="btn btn-ghost btn-circle lg:ml-2"
+                            class="btn btn-ghost btn-circle hidden lg:flex"
                             :class="{ 'ml-auto': !$store.sidebar.collapsed }">
                         <iconify-icon :icon="$store.sidebar.collapsed ? 'octicon:chevron-right-24' : 'octicon:chevron-left-24'"
-                                    class="text-primary"></iconify-icon>
+                                    class="text-primary transition-transform duration-300"></iconify-icon>
                     </button>
                 </div>
 
@@ -185,17 +187,20 @@
                     </li>
                 </ul>
 
-                <div class="mt-4 space-y-4 flex flex-col items-center"
-                     :class="{ 'items-center': $store.sidebar.collapsed, 'items-start': !$store.sidebar.collapsed }">
+                <div class="mt-4 space-y-4 flex flex-col"
+                     :class="{ 'items-center': $store.sidebar.collapsed, 'items-stretch': !$store.sidebar.collapsed }">
                     <a href="{% url 'account_logout' %}" 
-                       class="flex items-center justify-center text-sm btn btn-error btn-sm w-full rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                       :class="{ 'px-0 w-12': $store.sidebar.collapsed }">
-                        <iconify-icon icon="octicon:sign-out-24" class="transition-transform"></iconify-icon>
-                        <span x-show="!$store.sidebar.collapsed" class="ml-2">Logout</span>
+                       class="flex items-center justify-center text-sm btn btn-error btn-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                       :class="{ 'w-12 px-0': $store.sidebar.collapsed, 'w-full': !$store.sidebar.collapsed }">
+                        <iconify-icon icon="octicon:sign-out-24"></iconify-icon>
+                        <span class="ml-2 transition-opacity duration-200"
+                              :class="{ 'opacity-0 w-0': $store.sidebar.collapsed, 'opacity-100': !$store.sidebar.collapsed }">
+                            Logout
+                        </span>
                     </a>
 
-                    <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md w-full"
-                         x-show="!$store.sidebar.collapsed">
+                    <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md transition-opacity duration-200"
+                         :class="{ 'opacity-0 h-0 overflow-hidden': $store.sidebar.collapsed, 'opacity-100': !$store.sidebar.collapsed }">
                         © 2024 Jobless
                     </div>
                 </div>

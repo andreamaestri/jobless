@@ -5,7 +5,7 @@
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
-<div class="h-[calc(100vh-2rem)] w-full flex items-center justify-center p-4" 
+<div class="flex-1 w-full min-h-full flex items-center justify-center" 
      x-data="{ 
         showPassword: false, 
         loading: false,
@@ -23,10 +23,10 @@
             this.$refs.loginForm.submit();
         }
      }">
-    <div class="w-full max-w-sm mx-auto">
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h1 class="text-3xl font-bold text-center text-primary">{% trans "Welcome Back" %}</h1>
+    <div class="w-full sm:max-w-sm mx-auto min-h-full sm:min-h-0">
+        <div class="card bg-primary shadow-xl min-h-full sm:min-h-0 rounded-none sm:rounded-2xl">
+            <div class="card-body justify-center text-primary-content">
+                <h1 class="text-3xl font-bold text-center">{% trans "Welcome Back" %}</h1>
                 
                 <form method="POST" 
                       action="{% url 'account_login' %}" 
@@ -85,14 +85,14 @@
                     <!-- Email/Username Field -->
                     <div class="form-control">
                         <label class="label">
-                            <span class="label-text text-base-content/80">{% trans "Email or Username" %}</span>
+                            <span class="label-text text-primary-content/90">{% trans "Email or Username" %}</span>
                         </label>
                         <input type="text" 
                                name="login" 
                                id="id_login" 
                                x-model="formData.login"
                                :disabled="loading"
-                               class="input input-bordered focus:border-primary focus:ring-1 focus:ring-primary disabled:bg-base-200" 
+                               class="input bg-primary-content/10 input-bordered border-primary-content/20 focus:border-primary-content focus:ring-1 focus:ring-primary-content disabled:bg-primary-content/5 text-primary-content placeholder-primary-content/50" 
                                placeholder="{% trans 'Enter your email or username' %}"
                                {% if form.login.value %}value="{{ form.login.value }}"{% endif %}
                                required />
@@ -106,7 +106,7 @@
                     <!-- Password Field with Toggle -->
                     <div class="form-control">
                         <label class="label">
-                            <span class="label-text text-base-content/80">{% trans "Password" %}</span>
+                            <span class="label-text text-primary-content/90">{% trans "Password" %}</span>
                         </label>
                         <div class="relative">
                             <input :type="showPassword ? 'text' : 'password'"
@@ -114,12 +114,12 @@
                                    id="id_password"
                                    x-model="formData.password"
                                    :disabled="loading"
-                                   class="input input-bordered w-full pr-10 focus:border-primary focus:ring-1 focus:ring-primary disabled:bg-base-200" 
+                                   class="input bg-primary-content/10 input-bordered border-primary-content/20 w-full pr-10 focus:border-primary-content focus:ring-1 focus:ring-primary-content disabled:bg-primary-content/5 text-primary-content" 
                                    required />
                             <button type="button" 
                                     @click="showPassword = !showPassword" 
                                     :disabled="loading"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-sm btn-circle disabled:bg-transparent">
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-sm btn-circle text-primary-content disabled:bg-transparent">
                                 <iconify-icon :icon="showPassword ? 'octicon:eye-closed-24' : 'octicon:eye-24'"
                                             class="transition-opacity"
                                             :class="loading ? 'opacity-50' : 'opacity-100'">
@@ -134,7 +134,7 @@
                     </div>
 
                     <!-- Options Row -->
-                    <div class="flex items-center justify-between text-base-content/80">
+                    <div class="flex items-center justify-between text-primary-content/90">
                         <label class="label cursor-pointer gap-2" :class="{ 'cursor-not-allowed': loading }">
                             <input type="checkbox" 
                                    name="remember" 
@@ -142,10 +142,10 @@
                                    x-model="formData.remember"
                                    :disabled="loading"
                                    class="checkbox checkbox-primary checkbox-sm" />
-                            <span class="label-text" :class="{ 'opacity-50': loading }">{% trans "Remember me" %}</span>
+                            <span class="label-text text-primary-content/90" :class="{ 'opacity-50': loading }">{% trans "Remember me" %}</span>
                         </label>
                         <a href="{% url 'account_reset_password' %}" 
-                           class="link link-primary link-hover text-sm">
+                           class="link link-hover text-primary-content/90 hover:text-primary-content text-sm">
                             {% trans "Forgot Password?" %}
                         </a>
                     </div>
@@ -156,7 +156,7 @@
 
                     <!-- Submit Button -->
                     <button type="submit" 
-                            class="btn btn-primary w-full hover:bg-primary/90" 
+                            class="btn bg-primary-content text-primary hover:bg-primary-content/90 w-full border-none" 
                             :disabled="loading || !formData.login || !formData.password">
                         <div class="flex items-center justify-center gap-2">
                             <span class="loading loading-spinner loading-sm" 
@@ -168,10 +168,10 @@
 
                     <!-- Sign Up Link -->
                     <div class="text-center">
-                        <p class="text-sm text-base-content/70">
+                        <p class="text-sm text-primary-content/80">
                             {% blocktrans %}
                             New here?
-                            <a href="{{ signup_url }}" class="link link-primary font-medium">Create an account</a>
+                            <a href="{{ signup_url }}" class="link hover:text-primary-content font-medium">Create an account</a>
                             {% endblocktrans %}
                         </p>
                     </div>
