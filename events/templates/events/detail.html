@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-base-100 rounded-2xl shadow-lg p-8">
+            <!-- Header Section -->
+            <div class="border-b border-base-300 pb-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-base-content">{{ object.title }}</h1>
+                        <p class="text-xl text-base-content/70 mt-2">{{ object.date|date:"F j, Y g:i A" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Table -->
+            <div class="divide-y divide-base-300">
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content/70">Event Type</div>
+                    <div class="col-span-2 text-base-content">{{ object.get_event_type_display }}</div>
+                </div>
+
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content/70">Location</div>
+                    <div class="col-span-2 text-base-content">{{ object.location }}</div>
+                </div>
+
+                
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content/70">Related Job</div>
+                    <div class="col-span-2">
+                        {% if object.job_posting %}
+                        <a href="{% url 'jobs:detail' object.job_posting.pk %}"
+                            class="text-primary hover:text-primary-focus">
+                            {{ object.job_posting.title }} at {{ object.job_posting.company }}
+                        </a>
+                        {% else %}
+                        <p>None</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content/70">Notes</div>
+                    <div class="col-span-2 text-base-content">
+                        {% if object.notes %}
+                        <div class="prose prose-base-content max-w-none">
+                            {{ object.notes|linebreaks }}
+                        </div>
+                        {% else %}
+                        <p>-</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-3 py-4">
+                    <div class="text-sm font-semibold text-base-content/70">Created</div>
+                    <div class="col-span-2 text-base-content">{{ object.created_at|date:"F j, Y" }}</div>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-base-300">
+                <a href="{% url 'events:list' %}" class="btn btn-ghost">
+                    Back to List
+                </a>
+                <a href="{% url 'events:edit' object.pk %}" class="btn btn-primary">
+                    Edit Event
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

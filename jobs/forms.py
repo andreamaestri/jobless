@@ -6,9 +6,9 @@ import tagulous.models
 
 class JobPostingForm(forms.ModelForm):
     BASE_CLASS = (
-        "w-full rounded-xl border-[#e6d5cc] bg-white px-4 py-3 "
-        "text-[#2c2c2c] shadow-sm focus:border-[#e28b67] focus:ring-[#e28b67] "
-        "placeholder-[#999999] text-sm"
+        "w-full rounded-xl border-base-300 bg-base-100 px-4 py-3 "
+        "text-base-content shadow-sm focus:border-primary focus:ring-primary "
+        "placeholder-base-content/50 text-sm"
     )
 
     title = forms.CharField(

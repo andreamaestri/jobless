@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen py-12 px-8 bg-base-200">
+<div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
     <div class="max-w-7xl mx-auto">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-[#2c2c2c]">Contacts</h1>
-                <p class="text-[#666666] mt-1">Manage your professional network</p>
+                <h1 class="text-2xl font-bold text-base-content">Contacts</h1>
+                <p class="text-base-content/70 mt-1">Manage your professional network</p>
             </div>
             <a href="{% url 'contacts:add' %}"
                 class="px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
@@ -49,21 +49,21 @@
                         <tr class="hover:bg-white transition-colors duration-150">
                             <td class="px-6 py-4">
                                 <div>
-                                    <h3 class="text-[#2c2c2c] font-medium">{{ contact.name }}</h3>
+                                    <h3 class="text-base-content font-medium">{{ contact.name }}</h3>
                                     {% if contact.notes %}
                                     <p class="text-xs text-[#666666]">{{ contact.notes|truncatechars:50 }}</p>
                                     {% endif %}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-[#666666]">{{ contact.company|default:"-" }}</td>
-                            <td class="px-6 py-4 text-sm text-[#666666]">{{ contact.position|default:"-" }}</td>
+                            <td class="px-6 py-4 text-sm text-base-content">{{ contact.company|default:"-" }}</td>
+                            <td class="px-6 py-4 text-sm text-base-content">{{ contact.position|default:"-" }}</td>
                             <td class="px-6 py-4 text-sm">
                                 {% if contact.email %}
                                 <a href="mailto:{{ contact.email }}" class="text-[#e28b67] hover:text-[#c77857]">
                                     {{ contact.email }}
                                 </a>
                                 {% else %}
-                                <span class="text-[#666666]">-</span>
+                                <span class="text-base-content">-</span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4 text-sm">
@@ -72,7 +72,7 @@
                                     {{ contact.phone }}
                                 </a>
                                 {% else %}
-                                <span class="text-[#666666]">-</span>
+                                <span class="text-base-content">-</span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4 text-sm">
@@ -82,11 +82,20 @@
                                     View Profile →
                                 </a>
                                 {% else %}
-                                <span class="text-[#666666]">-</span>
+                                <span class="text-base-content">-</span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3">
+                                    <a href="{% url 'contacts:detail' contact.pk %}" class="text-black hover:bg-base-100"
+                                        aria-label="View Details">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </a>
                                     <a href="{% url 'contacts:edit' contact.pk %}"
                                         class="text-[#e28b67] hover:text-[#c77857] transition-colors duration-200">
                                         <span class="sr-only">Edit</span>
