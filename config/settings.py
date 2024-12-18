@@ -28,6 +28,8 @@ TEMPLATES_DIR = os.path.join(BASE_DIR,'templates')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.path.exists('.env')
 print(f"Debug mode is set to: {DEBUG}")
@@ -47,11 +49,27 @@ INSTALLED_APPS = [
     'django.contrib.sites',    
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'django_summernote',
+    'crispy_forms',
+    'tagulous',
     'jobs',
     'contacts',
     'events',
     'home',
+    'ai_assistant',
 ]
+
+SERIALIZATION_MODULES = {
+    'xml':    'tagulous.serializers.xml_serializer',
+    'json':   'tagulous.serializers.json',
+    'python': 'tagulous.serializers.python',
+    'yaml':   'tagulous.serializers.pyyaml',
+}
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,6 +136,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_USERNAME_REQUIRED = True
 
 
 # Internationalization
