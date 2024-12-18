@@ -2,6 +2,46 @@
 {% load static %}
 
 {% block content %}
+<<<<<<< HEAD
+<div class="min-h-screen py-12 px-8 bg-base-200">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-base-100 shadow-lg rounded-2xl p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-base-content">Edit Job</h1>
+                <p class="text-base-content/70 mt-2">Update job details</p>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div class="space-y-4">
+                    {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <p class="text-error text-xs mt-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <a href="{% url 'jobs:list' %}"
+                        class="px-4 py-2 border border-base-300 rounded-xl text-base-content/70 hover:bg-base-200">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                        class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+=======
 <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="bg-white shadow rounded-lg p-6">
         <h1 class="text-2xl font-medium text-gray-900 mb-6">Edit Meal</h1>
@@ -33,6 +73,7 @@
                 </button>
             </div>
         </form>
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     </div>
 </div>
 {% endblock %}

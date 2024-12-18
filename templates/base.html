@@ -1,10 +1,392 @@
+<<<<<<< HEAD
+{% load static tailwind_tags %}
+{% load account %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en" x-data :data-theme="$store.theme.current">
+=======
 <!DOCTYPE html>
 <html lang="en">
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Tailwind -->
+<<<<<<< HEAD
+    {% tailwind_css %}
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.7/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
+    <title>Jobless</title>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('sidebar', {
+                open: false,
+                collapsed: JSON.parse(localStorage.getItem('sidebarCollapsed') || 'false'),
+                
+                toggle() {
+                    this.open = !this.open;
+                },
+                
+                collapse() {
+                    this.collapsed = !this.collapsed;
+                    localStorage.setItem('sidebarCollapsed', this.collapsed);
+                },
+                
+                init() {
+                    if (window.innerWidth >= 1024) {
+                        this.open = true;
+                    }
+                }
+            });
+
+            Alpine.store('theme', {
+                themes: ['Jobless', 'Jobless Dark', 'lofi', 'pastel'],
+                current: localStorage.getItem('theme') || 'Jobless',
+                
+                init() {
+                    this.apply();
+                },
+                
+                apply() {
+                    document.documentElement.setAttribute('data-theme', this.current);
+                },
+                
+                toggle() {
+                    // Toggle between Jobless and Jobless Dark
+                    this.current = this.current === 'Jobless' ? 'Jobless Dark' : 'Jobless';
+                    localStorage.setItem('theme', this.current);
+                    this.apply();
+                },
+                
+                set(theme) {
+                    this.current = theme;
+                    localStorage.setItem('theme', theme);
+                    this.apply();
+                }
+            });
+        });
+    </script>
+</head>
+
+<body x-data class="bg-base-100 min-h-screen">
+    <div class="drawer lg:drawer-open min-h-screen">
+        <input id="my-drawer" type="checkbox" class="drawer-toggle" x-model="$store.sidebar.open"/>
+        
+        <!-- Main content -->
+        <div class="drawer-content bg-base-100 flex flex-col min-h-screen transition-[margin] duration-300 ease-in-out"
+             :class="{ 'lg:ml-20': $store.sidebar.collapsed, 'lg:ml-80': !$store.sidebar.collapsed }">
+            <!-- Mobile Nav -->
+            <div class="sticky top-0 z-40 lg:hidden">
+                <div class="navbar bg-base-100 shadow-sm">
+                    <div class="flex-none">
+                        <label for="my-drawer" 
+                               class="btn btn-square btn-ghost drawer-button"
+                               @click="$store.sidebar.toggle()">
+                            <iconify-icon icon="octicon:three-bars-16" 
+                                        class="text-xl"></iconify-icon>
+                        </label>
+                    </div>
+                    <div class="flex-1">
+                        <a class="text-xl font-bold text-primary">Jobless</a>
+                    </div>
+                    <!-- Theme Toggle -->
+                    <div class="flex-none">
+                        <button @click="$store.theme.toggle()" 
+                                class="btn btn-ghost btn-circle">
+                            <iconify-icon :icon="$store.theme.current === 'Jobless Dark' ? 'octicon:sun-24' : 'octicon:moon-24'" 
+                                        class="text-xl"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 flex flex-col p-4">
+                <div class="max-w-6xl mx-auto w-full flex-1">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </main>
+        </div>
+        
+        <!-- Drawer side -->
+        <div class="drawer-side z-40">
+            <label for="my-drawer" 
+                   @click="$store.sidebar.toggle()"
+                   class="drawer-overlay bg-base-200/50"></label>
+            <div class="menu p-4 min-h-full bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-[width] duration-300 ease-in-out overflow-hidden"
+                 :class="{ 'w-20 p-2': $store.sidebar.collapsed && window.innerWidth >= 1024, 'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024 }">
+                <!-- Toggle and Logo -->
+                <div class="flex items-center h-12 mb-4 relative">
+                    <!-- Logo -->
+                    <div class="transition-all duration-300 overflow-hidden whitespace-nowrap"
+                         :class="{ 'w-0 opacity-0': $store.sidebar.collapsed, 'flex-1 opacity-100': !$store.sidebar.collapsed }">
+                        <span class="hidden lg:block text-4xl font-bold text-primary">
+                            Jobless
+                        </span>
+                    </div>
+                    <!-- Collapse Button -->
+                    <button @click="$store.sidebar.collapse()"
+                            class="btn btn-ghost w-8 h-8 rounded-lg hover:bg-base-100/50 transition-all duration-300 hidden lg:flex items-center justify-center group absolute"
+                            :class="{ 'left-1/2 -translate-x-1/2': $store.sidebar.collapsed, '-right-2': !$store.sidebar.collapsed }">
+                        <iconify-icon :icon="$store.sidebar.collapsed ? 'octicon:chevron-right-24' : 'octicon:chevron-left-24'"
+                                     class="text-primary text-xl transition-all duration-300 group-hover:scale-110">
+                        </iconify-icon>
+                    </button>
+                </div>
+
+                <!-- User Info -->
+                <div class="mb-6" x-cloak>
+                    <!-- Full User Info -->
+                    <div x-show="!$store.sidebar.collapsed" 
+                         class="flex flex-col gap-2">
+                        {% if user.is_authenticated %}
+                            {% user_display user as user_display %}
+                            <div class="flex items-center gap-3 px-2">
+                                <div class="avatar placeholder">
+                                    <div class="w-10 h-10 rounded-xl bg-primary text-primary-content">
+                                        <span class="text-lg">{{ user_display|slice:":1"|upper }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ user_display }}</span>
+                                    <span class="text-xs text-base-content/70">{{ user }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mini User Info -->
+                    <div x-show="$store.sidebar.collapsed" 
+                         class="flex justify-center">
+                        {% if user.is_authenticated %}
+                            {% user_display user as user_display %}
+                            <div class="avatar placeholder">
+                                <div class="w-10 h-10 rounded-xl bg-primary text-primary-content">
+                                    <span class="text-lg">{{ user_display|slice:":1"|upper }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Menu Items -->
+                <ul class="menu menu-vertical flex-1 gap-2">
+                    <li>
+                        <!-- Mini version -->
+                        <a href="{% url 'home:home' %}" 
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:home-24" 
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'home:home' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:home-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Mini version -->
+                        <a href="{% url 'jobs:list' %}" 
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:briefcase-24" 
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'jobs:list' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:briefcase-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Jobs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Mini version -->
+                        <a href="{% url 'events:list' %}" 
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:calendar-24" 
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'events:list' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:calendar-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Events</span>
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Mini version -->
+                        <a href="{% url 'contacts:list' %}" 
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:people-24" 
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'contacts:list' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:people-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Contacts</span>
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Mini version -->
+                        <a href="{% url 'ai_assistant:assistant' %}" 
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:copilot-24" 
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'ai_assistant:assistant' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:copilot-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">AI Assistant</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Theme Selector -->
+                <div class="mt-auto mb-4 px-2"
+                     :class="{ 'text-center': $store.sidebar.collapsed }">
+                    <div x-show="!$store.sidebar.collapsed" 
+                         class="text-sm font-medium mb-2 text-base-content/70">
+                        Theme
+                    </div>
+                    <div class="relative">
+                        <button x-show="$store.sidebar.collapsed"
+                                @click="$refs.themeDropdown.classList.toggle('hidden')"
+                                class="btn btn-ghost btn-square rounded-xl">
+                            <iconify-icon icon="octicon:paint-brush-16" 
+                                         class="text-xl"></iconify-icon>
+                        </button>
+                        
+                        <select x-show="!$store.sidebar.collapsed"
+                                x-model="$store.theme.current"
+                                @change="$store.theme.set($event.target.value)"
+                                class="select select-sm w-full bg-base-100/50 rounded-xl border-base-content/20"
+                                @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                                @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <template x-for="theme in $store.theme.themes" :key="theme">
+                                <option :value="theme" x-text="theme"></option>
+                            </template>
+                        </select>
+
+                        <!-- Dropdown for collapsed state -->
+                        <div x-ref="themeDropdown"
+                             class="hidden absolute bottom-full left-0 mb-2 w-48 rounded-xl bg-base-200 shadow-lg border border-base-content/10"
+                             @click.outside="$el.classList.add('hidden')">
+                            <div class="p-2">
+                                <template x-for="theme in $store.theme.themes" :key="theme">
+                                    <button @click="$store.theme.set(theme); $refs.themeDropdown.classList.add('hidden')"
+                                            class="w-full px-4 py-2 text-left rounded-lg hover:bg-base-100/50 transition-colors"
+                                            :class="{ 'bg-primary/10': $store.theme.current === theme }"
+                                            x-text="theme">
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Actions -->
+                <div class="mt-auto space-y-4 flex flex-col"
+                     :class="{ 'items-center': $store.sidebar.collapsed, 'items-stretch': !$store.sidebar.collapsed }">
+                    {% if user.is_authenticated %}
+                        <!-- Mini logout -->
+                        <button x-show="$store.sidebar.collapsed"
+                                @click="window.location.href='{% url 'account_logout' %}'"
+                                class="btn btn-error btn-square w-12 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <iconify-icon icon="octicon:sign-out-24" class="text-2xl"></iconify-icon>
+                        </button>
+                        <!-- Full logout -->
+                        <a x-show="!$store.sidebar.collapsed"
+                           href="{% url 'account_logout' %}" 
+                           class="btn btn-error px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <iconify-icon icon="octicon:sign-out-24" class="text-xl"></iconify-icon>
+                            <span class="ml-2">{% trans "Logout" %}</span>
+                        </a>
+                    {% else %}
+                        <!-- Mini sign in -->
+                        <a x-show="$store.sidebar.collapsed"
+                           href="{% url 'account_login' %}"
+                           class="btn btn-primary btn-square w-12 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <iconify-icon icon="octicon:sign-in-16" class="text-2xl"></iconify-icon>
+                        </a>
+                        <!-- Full auth buttons -->
+                        <div x-show="!$store.sidebar.collapsed"
+                             class="flex flex-col gap-2">
+                            <a href="{% url 'account_login' %}" 
+                               class="btn btn-primary px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <iconify-icon icon="octicon:sign-in-16" class="text-xl"></iconify-icon>
+                                <span class="ml-2">{% trans "Sign In" %}</span>
+                            </a>
+                            <a href="{% url 'account_signup' %}" 
+                               class="btn btn-ghost px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <iconify-icon icon="octicon:person-add-16" class="text-xl"></iconify-icon>
+                                <span class="ml-2">{% trans "Create Account" %}</span>
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md transition-all duration-300"
+                         :class="{ 'hidden': $store.sidebar.collapsed }">
+                        © 2024 Jobless
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+=======
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Jobless</title>
 </head>
@@ -65,6 +447,7 @@
 
     <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/0d8c169f78.js" crossorigin="anonymous"></script>
+>>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
 </body>
 
 </html>
