@@ -2,37 +2,61 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="bg-white shadow rounded-lg p-6">
-        <h1 class="text-2xl font-medium text-gray-900 mb-6">Add New Contact</h1>
+<div class="min-h-screen py-12 px-8 bg-base-200">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-[#fff5ef] shadow-lg rounded-2xl p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-[#2c2c2c]">Add New Contact</h1>
+                <p class="text-[#666666] mt-2">Add a new connection to your network</p>
+            </div>
 
-        <form method="post" class="space-y-6">
-            {% csrf_token %}
+            <!-- Form -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
 
-            <div class="space-y-4">
-                {% for field in form %}
-                <div>
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ field.label }}
-                    </label>
-                    {{ field }}
-                    {% if field.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ field.errors.0 }}</p>
-                    {% endif %}
+                {% if form.errors %}
+                <div class="rounded-xl bg-red-50 p-4 mb-4">
+                    <div class="flex">
+                        <div class="text-sm text-red-700">
+                            {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
-            </div>
+                {% endif %}
 
-            <div class="flex justify-end space-x-3 mt-6">
-                <a href="{% url 'jobs:list' %}"
-                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                    Cancel
-                </a>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    Save Contact
-                </button>
-            </div>
-        </form>
+                <div class="space-y-4">
+                    {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <p class="text-[#666666] text-xs mt-1">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6 mt-8 border-t border-[#fce8dd]">
+                    <a href="{% url 'contacts:list' %}"
+                        class="px-6 py-3 border border-[#e6d5cc] rounded-xl text-[#666666] hover:bg-[#fce8dd] transition-colors duration-200">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-6 py-3 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
+                        Save Contact
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
