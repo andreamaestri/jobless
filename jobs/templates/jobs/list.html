@@ -2,28 +2,16 @@
 {% load static %}
 
 {% block content %}
-<<<<<<< HEAD
 <div class="min-h-screen py-12 px-8 bg-base-200">
-=======
-<div class="min-h-screen py-12 px-8 bg-[#fce8dd]">
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
     <div class="max-w-7xl mx-auto">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
             <div>
-<<<<<<< HEAD
                 <h1 class="text-2xl font-bold text-base-content">Jobs</h1>
                 <p class="text-base-content/70 mt-1">Manage your job applications</p>
             </div>
             <a href="{% url 'jobs:add' %}"
                 class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus transition-colors duration-200 flex items-center">
-=======
-                <h1 class="text-2xl font-bold text-[#2c2c2c]">Jobs</h1>
-                <p class="text-[#666666] mt-1">Manage your job applications</p>
-            </div>
-            <a href="{% url 'jobs:add' %}"
-                class="px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -42,17 +30,10 @@
         {% endif %}
 
         {% if jobs %}
-<<<<<<< HEAD
         <div class="bg-base-100 shadow-lg rounded-2xl overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-primary text-primary-content">
-=======
-        <div class="bg-[#fff5ef] shadow-lg rounded-2xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-[#e28b67]">
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
                         <tr>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Job Title</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
@@ -62,7 +43,6 @@
                             <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Actions</th>
                         </tr>
                     </thead>
-<<<<<<< HEAD
                     <tbody class="divide-y divide-base-200">
                         {% for job in jobs %}
                         <tr class="hover:bg-base-200 transition-colors duration-150">
@@ -76,30 +56,11 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-sm text-base-content/70">{{ job.company }}</td>
-=======
-                    <tbody class="divide-y divide-[#fce8dd]">
-                        {% for job in jobs %}
-                        <tr class="hover:bg-white transition-colors duration-150">
-                            <td class="px-6 py-4">
-                                <div>
-                                    <h3 class="text-[#2c2c2c] font-medium">{{ job.title }}</h3>
-                                    {% if job.url %}
-                                    <a href="{{ job.url }}" target="_blank"
-                                        class="text-xs text-[#e28b67] hover:text-[#c77857]">View posting →</a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-[#666666]">{{ job.company }}</td>
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
                             <td class="px-6 py-4 text-sm text-[#666666]">{{ job.location }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-wrap gap-1">
                                     {% for skill in job.skills.all %}
-<<<<<<< HEAD
                                     <span class="px-2 py-1 text-xs rounded-full bg-base-200 text-base-content">
-=======
-                                    <span class="px-2 py-1 text-xs rounded-full bg-[#fce8dd] text-[#2c2c2c]">
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
                                         {{ skill }}
                                     </span>
                                     {% endfor %}
@@ -142,17 +103,10 @@
             </div>
         </div>
         {% else %}
-<<<<<<< HEAD
         <div class="bg-base-100 rounded-2xl shadow-lg p-12 text-center">
             <p class="text-base-content/70 mb-6">No jobs added yet</p>
             <a href="{% url 'jobs:add' %}"
                 class="inline-flex items-center px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus transition-colors duration-200">
-=======
-        <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
-            <p class="text-[#666666] mb-6">No jobs added yet</p>
-            <a href="{% url 'jobs:add' %}"
-                class="inline-flex items-center px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
