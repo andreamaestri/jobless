@@ -84,7 +84,7 @@ module.exports = {
                     '--navbar-padding': '.5rem',
                     '--border-btn': '1px',
                 },
-                'Jobless Dark': {
+                'Dark': {
                     'primary': '#ff8e52',
                     'primary-focus': '#e26c2c',
                     'primary-content': '#34322f',
