@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">CV Assistant</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-medium mb-2">Paste CV Content Here:</label>
+                    <textarea name="cv_content" rows="10" class="w-full p-2 border rounded-lg"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Your Question</label>
+                    <textarea name="user_input" rows="3" class="w-full p-2 border rounded-lg" placeholder="Ask for CV improvements, suggestions, or feedback..."></textarea>
+                </div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Get Feedback</button>
+                <small class="block text-xs mb-2"> Please allow some time for the response </small>
+            </form>
+        </div>
+        
+        <div>
+            {% if response %}
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <h2 class="font-semibold mb-2">AI Assistant Response:</h2>
+                <div class="whitespace-pre-wrap">{{ response }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
