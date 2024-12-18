@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-medium text-gray-900 pl-4">Events</h1>
+        <a href="{% url 'events:add' %}" class="px-4 mr-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+            Add Event
+        </a>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="mb-4 p-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-700{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if events %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            {% for event in events %}
+            <li class="px-6 py-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div class="flex-1">
+                        <p class="text-lg font-medium text-gray-900">
+                            {{ event.title }}
+                        </p>
+                        <p class="text-lg font-medium text-gray-900">
+                            {{ event.date }}
+                        </p>
+            {% endfor %}              
+    {% else %}
+    <div class="text-center py-12 bg-white rounded-lg shadow">
+        <p class="text-gray-500">No events added yet.</p>
+    </div>
+    {% endif %}
+    {% endblock %}
