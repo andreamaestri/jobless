@@ -95,112 +95,164 @@
             <label for="my-drawer" 
                    @click="$store.sidebar.toggle()"
                    class="drawer-overlay bg-base-200/50"></label>
-            <div class="menu p-4 min-h-full bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-[width] duration-300 ease-in-out"
-                 :class="{ 'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024, 'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024 }">
+            <div class="menu p-4 min-h-full bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-[width] duration-300 ease-in-out overflow-hidden"
+                 :class="{ 'w-20 p-2': $store.sidebar.collapsed && window.innerWidth >= 1024, 'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024 }">
                 <!-- Toggle and Logo -->
-                <div class="flex items-center justify-between mb-4 overflow-hidden">
+                <div class="flex items-center h-12 mb-6 relative">
+                    <!-- Logo -->
                     <div class="transition-all duration-300 overflow-hidden whitespace-nowrap"
-                         :class="{ 'w-0 opacity-0': $store.sidebar.collapsed, 'w-full opacity-100': !$store.sidebar.collapsed }">
+                         :class="{ 'w-0 opacity-0': $store.sidebar.collapsed, 'flex-1 opacity-100': !$store.sidebar.collapsed }">
                         <span class="hidden lg:block text-4xl font-bold text-primary">
                             Jobless
                         </span>
                     </div>
+                    <!-- Collapse Button -->
                     <button @click="$store.sidebar.collapse()"
-                            class="btn btn-ghost btn-circle hidden lg:flex"
-                            :class="{ 'ml-auto': !$store.sidebar.collapsed }">
+                            class="btn btn-ghost w-8 h-8 rounded-lg hover:bg-base-100/50 transition-all duration-300 hidden lg:flex items-center justify-center group absolute"
+                            :class="{ 'left-1/2 -translate-x-1/2': $store.sidebar.collapsed, '-right-2': !$store.sidebar.collapsed }">
                         <iconify-icon :icon="$store.sidebar.collapsed ? 'octicon:chevron-right-24' : 'octicon:chevron-left-24'"
-                                    class="text-primary transition-transform duration-300"></iconify-icon>
+                                     class="text-primary text-xl transition-all duration-300 group-hover:scale-110">
+                        </iconify-icon>
                     </button>
                 </div>
 
                 <!-- Menu Items -->
-                <ul class="menu menu-vertical flex-1 gap-1">
+                <ul class="menu menu-vertical flex-1 gap-2">
                     <li>
+                        <!-- Mini version -->
                         <a href="{% url 'home:home' %}" 
-                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
-                           :class="{ 'justify-center': $store.sidebar.collapsed }"
-                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
-                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
                             <iconify-icon icon="octicon:home-24" 
-                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
-                            <span x-show="!$store.sidebar.collapsed" 
-                                  x-transition:enter="transition-opacity"
-                                  x-transition:enter-start="opacity-0"
-                                  x-transition:enter-end="opacity-100">Dashboard</span>
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'home:home' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:home-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Dashboard</span>
                         </a>
                     </li>
                     <li>
+                        <!-- Mini version -->
                         <a href="{% url 'jobs:list' %}" 
-                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
-                           :class="{ 'justify-center': $store.sidebar.collapsed }"
-                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
-                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
                             <iconify-icon icon="octicon:briefcase-24" 
-                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
-                            <span x-show="!$store.sidebar.collapsed" 
-                                  x-transition:enter="transition-opacity"
-                                  x-transition:enter-start="opacity-0"
-                                  x-transition:enter-end="opacity-100">Jobs</span>
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'jobs:list' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:briefcase-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Jobs</span>
                         </a>
                     </li>
                     <li>
+                        <!-- Mini version -->
                         <a href="{% url 'events:list' %}" 
-                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
-                           :class="{ 'justify-center': $store.sidebar.collapsed }"
-                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
-                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
                             <iconify-icon icon="octicon:calendar-24" 
-                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
-                            <span x-show="!$store.sidebar.collapsed" 
-                                  x-transition:enter="transition-opacity"
-                                  x-transition:enter-start="opacity-0"
-                                  x-transition:enter-end="opacity-100">Events</span>
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'events:list' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:calendar-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Events</span>
                         </a>
                     </li>
                     <li>
+                        <!-- Mini version -->
                         <a href="{% url 'contacts:list' %}" 
-                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
-                           :class="{ 'justify-center': $store.sidebar.collapsed }"
-                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
-                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
                             <iconify-icon icon="octicon:people-24" 
-                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
-                            <span x-show="!$store.sidebar.collapsed" 
-                                  x-transition:enter="transition-opacity"
-                                  x-transition:enter-start="opacity-0"
-                                  x-transition:enter-end="opacity-100">Contacts</span>
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'contacts:list' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:people-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">Contacts</span>
                         </a>
                     </li>
                     <li>
+                        <!-- Mini version -->
                         <a href="{% url 'ai_assistant:assistant' %}" 
-                           class="flex items-center text-sm rounded-md p-2 hover:bg-base-100/50 transition-all duration-300 group"
-                           :class="{ 'justify-center': $store.sidebar.collapsed }"
-                           @mouseenter="Motion.animate($el, { scale: 1.02, y: -2 }, { duration: 0.2 })"
-                           @mouseleave="Motion.animate($el, { scale: 1, y: 0 }, { duration: 0.2 })">
+                           x-show="$store.sidebar.collapsed"
+                           class="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.05 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
                             <iconify-icon icon="octicon:copilot-24" 
-                                        class="transition-all duration-300 group-hover:rotate-6 group-hover:scale-110"></iconify-icon>
-                            <span x-show="!$store.sidebar.collapsed" 
-                                  x-transition:enter="transition-opacity"
-                                  x-transition:enter-start="opacity-0"
-                                  x-transition:enter-end="opacity-100">AI Assistant</span>
+                                        class="text-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                        </a>
+                        <!-- Full version -->
+                        <a href="{% url 'ai_assistant:assistant' %}" 
+                           x-show="!$store.sidebar.collapsed"
+                           class="flex items-center px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-base-100/50"
+                           @mouseenter="Motion.animate($el, { scale: 1.02 }, { duration: 0.2 })"
+                           @mouseleave="Motion.animate($el, { scale: 1 }, { duration: 0.2 })">
+                            <iconify-icon icon="octicon:copilot-24" 
+                                        class="text-xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110">
+                            </iconify-icon>
+                            <span class="ml-3 text-sm">AI Assistant</span>
                         </a>
                     </li>
                 </ul>
 
-                <div class="mt-4 space-y-4 flex flex-col"
+                <div class="mt-auto space-y-4 flex flex-col"
                      :class="{ 'items-center': $store.sidebar.collapsed, 'items-stretch': !$store.sidebar.collapsed }">
-                    <a href="{% url 'account_logout' %}" 
-                       class="flex items-center justify-center text-sm btn btn-error btn-sm rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                       :class="{ 'w-12 px-0': $store.sidebar.collapsed, 'w-full': !$store.sidebar.collapsed }">
-                        <iconify-icon icon="octicon:sign-out-24"></iconify-icon>
-                        <span class="ml-2 transition-opacity duration-200"
-                              :class="{ 'opacity-0 w-0': $store.sidebar.collapsed, 'opacity-100': !$store.sidebar.collapsed }">
-                            Logout
-                        </span>
+                    <!-- Mini logout -->
+                    <button x-show="$store.sidebar.collapsed"
+                            @click="window.location.href='{% url 'account_logout' %}'"
+                            class="btn btn-error btn-square w-12 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <iconify-icon icon="octicon:sign-out-24" class="text-2xl"></iconify-icon>
+                    </button>
+                    <!-- Full logout -->
+                    <a x-show="!$store.sidebar.collapsed"
+                       href="{% url 'account_logout' %}" 
+                       class="btn btn-error px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <iconify-icon icon="octicon:sign-out-24" class="text-xl"></iconify-icon>
+                        <span class="ml-2">Logout</span>
                     </a>
 
-                    <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md transition-opacity duration-200"
-                         :class="{ 'opacity-0 h-0 overflow-hidden': $store.sidebar.collapsed, 'opacity-100': !$store.sidebar.collapsed }">
+                    <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md transition-all duration-300"
+                         :class="{ 'hidden': $store.sidebar.collapsed }">
                         © 2024 Jobless
                     </div>
                 </div>
