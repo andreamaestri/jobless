@@ -6,7 +6,6 @@
 - [User Stories](#user-stories)
 ## Overview
 
-
 ### Purpose
 An application to track job searching activities. Logged in users can make a lists of jobs, contacts and events. Jobs can be marked as 'favourites'. Users can update and delete items they have added to their lists to keep an up to date record. 
 
