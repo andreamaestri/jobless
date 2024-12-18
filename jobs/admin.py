@@ -1,5 +1,4 @@
 from django.contrib import admin
-<<<<<<< HEAD
 from unfold.admin import ModelAdmin
 from .models import JobPosting
 
@@ -46,9 +45,3 @@ class JobPostingAdmin(ModelAdmin):
     def mark_as_rejected(self, request, queryset):
         queryset.update(status='rejected')
     mark_as_rejected.short_description = "Mark selected jobs as Rejected"
-=======
-from.models import JobPosting
-
-admin.site.register(JobPosting)
-
->>>>>>> 336107e031fd801cd8e364b15cd823a0d8b89e2a
