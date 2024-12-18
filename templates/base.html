@@ -1,71 +1,92 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Tailwind -->
     {% tailwind_css %}
+    <!-- Iconify -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.2.0/dist/iconify-icon.min.js"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
     <title>Jobless</title>
 </head>
 
-<body>
-    <nav class="fixed left-0 top-0 h-full w-64 bg-black text-white p-4 shadow-lg">
-        <div class="flex flex-col h-full">
-            <div class="mb-8 text-4xl font-bold text-center mt-2">
-                Jobless
-            </div>
-
-            <div class="space-y-2">
-                <a href="{% url 'home:home' %}"
-                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
-                    <i class="fas fa-home mr-3"></i>
-                    Dashboard
-                </a>
-                <a href="{% url 'jobs:list' %}"
-                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
-                    <i class="fas fa-briefcase mr-3"></i>
-                    Jobs
-                </a>
-                <a href="{% url 'events:list' %}"
-                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
-                    <i class="fas fa-calendar mr-3"></i>
-                    Events
-                </a>
-                <a href="{% url 'contacts:list' %}"
-                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
-                    <i class="fas fa-address-book mr-3"></i>
-                    Contacts
-                </a>
-                <a href="{% url 'ai_assistant:assistant' %}"
-                    class="flex items-center p-3 rounded-lg text-gray-300 hover:text-white transition-colors duration-200">
-                    <i class="fas fa-robot mr-3"></i>
-                    AI Assistant
-                </a>
-            </div>
-            <div>
-                <a href="{% url 'account_logout' %}"
-                    class="text-sm bg-orange-700 px-3 mt-auto py-2 rounded font-semibold hover:bg-orange-900 transition">
-                    Logout
-                </a>
-
-            </div>
-
-            <div class="mt-auto mb-4 text-sm text-center text-gray-400">
-                © 2024 Jobless
-            </div>
+<body x-data="{ open: true }">
+    <!-- Mobile Nav -->
+    <div class="lg:hidden navbar bg-base-200">
+        <div class="flex-none">
+            <label for="my-drawer" class="btn btn-square btn-ghost drawer-button">
+                <iconify-icon icon="lets-icons:menu"></iconify-icon>
+            </label>
         </div>
-    </nav>
-
-    <div class="ml-64">
-        {% block content %}
-        {% endblock %}
+        <div class="flex-1">
+            <a class="text-xl font-bold">Jobless</a>
+        </div>
     </div>
 
+    <div class="drawer lg:drawer-open">
+        <input id="my-drawer" type="checkbox" class="drawer-toggle" x-model="open"/>
+        <div class="drawer-content">
+            <div class="lg:ml-80 p-4">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        <div class="drawer-side">
+            <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content flex flex-col">
+                <div class="hidden lg:block mb-8 text-4xl font-bold text-center mt-2">
+                    Jobless
+                </div>
 
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/0d8c169f78.js" crossorigin="anonymous"></script>
+                <ul class="menu menu-vertical flex-1">
+                    <li>
+                        <a href="{% url 'home:home' %}" class="text-lg">
+                            <iconify-icon icon="lets-icons:home-alt"></iconify-icon>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'jobs:list' %}" class="text-lg">
+                            <iconify-icon icon="lets-icons:briefcase"></iconify-icon>
+                            Jobs
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'events:list' %}" class="text-lg">
+                            <iconify-icon icon="lets-icons:calendar"></iconify-icon>
+                            Events
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contacts:list' %}" class="text-lg">
+                            <iconify-icon icon="lets-icons:users"></iconify-icon>
+                            Contacts
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'ai_assistant:assistant' %}" class="text-lg">
+                            <iconify-icon icon="lets-icons:robot"></iconify-icon>
+                            AI Assistant
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-4">
+                    <a href="{% url 'account_logout' %}" class="btn btn-error btn-sm w-full">
+                        <iconify-icon icon="lets-icons:sign-out"></iconify-icon>
+                        Logout
+                    </a>
+                </div>
+
+                <div class="mt-4 text-sm text-center opacity-50">
+                    © 2024 Jobless
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
