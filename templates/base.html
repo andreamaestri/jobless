@@ -112,11 +112,11 @@
             Alpine.store('sidebar', {
                 open: false,
                 collapsed: JSON.parse(localStorage.getItem('sidebarCollapsed') || 'false'),
-                
+
                 toggle() {
                     this.open = !this.open;
                 },
-                
+
                 collapse() {
                     this.collapsed = !this.collapsed;
                     localStorage.setItem('sidebarCollapsed', this.collapsed);
@@ -130,7 +130,7 @@
                         });
                     }
                 },
-                
+
                 init() {
                     if (window.innerWidth >= 1024) {
                         this.open = true;
@@ -141,22 +141,22 @@
             Alpine.store('theme', {
                 themes: ['Jobless', 'Jobless Dark', 'lofi', 'pastel'],
                 current: localStorage.getItem('theme') || 'Jobless',
-                
+
                 init() {
                     this.apply();
                 },
-                
+
                 apply() {
                     document.documentElement.setAttribute('data-theme', this.current);
                 },
-                
+
                 toggle() {
                     // Toggle between Jobless and Jobless Dark
                     this.current = this.current === 'Jobless' ? 'Jobless Dark' : 'Jobless';
                     localStorage.setItem('theme', this.current);
                     this.apply();
                 },
-                
+
                 set(theme) {
                     this.current = theme;
                     localStorage.setItem('theme', theme);
