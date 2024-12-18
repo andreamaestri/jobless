@@ -47,7 +47,7 @@ module.exports = {
         themes: [
             {
                 'Jobless': {
-                    'primary' : '#ec8751',
+                    'primary' : '#e5855d',
                     'primary-focus' : '#ca5516',
                     'primary-content' : '#f5f0eb',
 
@@ -60,12 +60,12 @@ module.exports = {
                     'accent-content' : '#f5f0eb',
 
                     'neutral' : '#34322f',
-                    'neutral-focus' : '#868179',
+                    'neutral-focus' : '#ebddd0',
                     'neutral-content' : '#ebe7e2',
 
-                    'base-100' : '#ebe7e2',
-                    'base-200' : '#6b6761',
-                    'base-300' : '#1b1a18',
+                    'base-100' : '#fff4eb',
+                    'base-200' : '#ffede2',
+                    'base-300' : '#d8bdab',
                     'base-content' : '#34322f',
 
                     'info' : '#ec8751',
