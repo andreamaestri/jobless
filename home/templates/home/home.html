@@ -2,19 +2,19 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen py-12 px-8 bg-[#fce8dd]">
+<div class="min-h-screen py-12 px-8 bg-base-200">
     <div class="max-w-7xl mx-auto">
         <!-- Welcome Section -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-[#2c2c2c]">Welcome, {{ user.username }}</h1>
-            <p class="text-[#666666] mt-2">Here's an overview of your job search journey</p>
+            <h1 class="text-3xl font-bold text-base-content">Welcome, {{ user.username }}</h1>
+            <p class="text-base-content/70 mt-2">Here's an overview of your job search journey</p>
         </div>
 
         <!-- Grid Layout -->
         <div class="grid grid-cols-1 gap-6">
             
             <!-- Recent Jobs Card -->
-            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-[#2c2c2c]">Recent Jobs</h2>
                     <a href="{% url 'jobs:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
@@ -26,8 +26,8 @@
                 </div>
                 {% if recent_jobs %}
                     <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-[#fce8dd]">
+                        <table class="rounded-2xl w-full">
+                            <thead class="bg-primary text-primary-content">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Title</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
@@ -67,7 +67,7 @@
             </div>
 
             <!-- Upcoming Events Card -->
-            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-[#2c2c2c]">Upcoming Events</h2>
                     <a href="{% url 'events:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
@@ -80,7 +80,7 @@
                 {% if upcoming_events %}
                     <div class="overflow-x-auto">
                         <table class="w-full">
-                            <thead class="bg-[#fce8dd]">
+                            <thead class="bg-primary text-primary-content">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Title</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Type</th>
@@ -113,7 +113,7 @@
             </div>
 
             <!-- Recent Contacts Card -->
-            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-[#2c2c2c]">Recent Contacts</h2>
                     <a href="{% url 'contacts:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
@@ -126,7 +126,7 @@
                 {% if recent_contacts %}
                     <div class="overflow-x-auto">
                         <table class="w-full">
-                            <thead class="bg-[#fce8dd]">
+                            <thead class="bg-primary text-primary-content">
                                 <tr>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Name</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
