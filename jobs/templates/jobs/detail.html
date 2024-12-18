@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-8 bg-base-200">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-base-100 shadow-lg rounded-2xl p-8">
+            <!-- Header -->
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-base-content">{{ job.title }}</h1>
+                    <p class="text-base-content/70 mt-2">{{ job.company }}</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'jobs:edit' job.pk %}"
+                        class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus">
+                        Edit
+                    </a>
+                    <a href="{% url 'jobs:delete' job.pk %}"
+                        class="px-4 py-2 bg-error text-error-content rounded-xl hover:bg-error-focus">
+                        Delete
+                    </a>
+                </div>
+            </div>
+
+            <!-- Job Details -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-sm font-medium text-base-content/70">Location</h3>
+                        <p class="mt-1 text-base-content">{{ job.location }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-base-content/70">Status</h3>
+                        <span class="px-2 py-1 text-xs rounded-full inline-block mt-1
+                            {% if job.status == 'interested' %}bg-info/20 text-info
+                            {% elif job.status == 'applied' %}bg-warning/20 text-warning
+                            {% elif job.status == 'interviewing' %}bg-secondary/20 text-secondary
+                            {% elif job.status == 'rejected' %}bg-error/20 text-error
+                            {% else %}bg-success/20 text-success{% endif %}">
+                            {{ job.status|title }}
+                        </span>
+                    </div>
+                </div>
+
+                {% if job.skills.all %}
+                <div>
+                    <h3 class="text-sm font-medium text-base-content/70 mb-2">Skills</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for skill in job.skills.all %}
+                        <span class="px-3 py-1 rounded-full text-xs bg-base-200 text-base-content">
+                            {{ skill }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if job.notes %}
+                <div>
+                    <h3 class="text-sm font-medium text-base-content/70 mb-2">Notes</h3>
+                    <p class="text-base-content whitespace-pre-line">{{ job.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
