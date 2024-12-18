@@ -4,13 +4,15 @@
 {% block content %}
 <div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
     <div class="max-w-3xl mx-auto">
-        <div class="bg-base-100 shadow-lg rounded-2xl p-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold text-[#2c2c2c]">Add New Job</h1>
-                <p class="text-[#666666] mt-2">Track a new job opportunity</p>
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-base-content">Add New Job</h1>
+                <p class="text-base-content/70 mt-2">Track a new job opportunity</p>
             </div>
+        </div>
 
+        <div class="bg-base-100 shadow-lg rounded-2xl p-8">
             <!-- Form -->
             <form method="post" class="space-y-6">
                 {% csrf_token %}
@@ -30,7 +32,8 @@
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Title -->
                     <div>
-                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.title.id_for_label }}"
+                            class="block text-sm font-medium text-base-content mb-2">
                             Job Title
                         </label>
                         {{ form.title }}
@@ -42,7 +45,8 @@
                     <!-- Company and Location -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.company.id_for_label }}"
+                                class="block text-sm font-medium text-base-content mb-2">
                                 Company
                             </label>
                             {{ form.company }}
@@ -51,7 +55,8 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.location.id_for_label }}"
+                                class="block text-sm font-medium text-base-content mb-2">
                                 Location
                             </label>
                             {{ form.location }}
@@ -64,7 +69,8 @@
                     <!-- URL and Salary -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.url.id_for_label }}"
+                                class="block text-sm font-medium text-base-content mb-2">
                                 Job URL
                             </label>
                             {{ form.url }}
@@ -73,7 +79,8 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.salary_range.id_for_label }}"
+                                class="block text-sm font-medium text-base-content mb-2">
                                 Salary Range
                             </label>
                             {{ form.salary_range }}
@@ -85,19 +92,21 @@
 
                     <!-- Skills -->
                     <div>
-                        <label for="{{ form.skills.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.skills.id_for_label }}"
+                            class="block text-sm font-medium text-base-content mb-2">
                             Skills
                         </label>
                         {{ form.skills }}
                         {% if form.skills.errors %}
                         <p class="text-red-500 text-xs mt-1">{{ form.skills.errors.0 }}</p>
                         {% endif %}
-                        <p class="text-[#666666] text-xs mt-1">Enter skills separated by commas</p>
+                        <p class="text-base-content/70 text-xs mt-1">Enter skills separated by commas</p>
                     </div>
 
                     <!-- Status -->
                     <div>
-                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.status.id_for_label }}"
+                            class="block text-sm font-medium text-base-content mb-2">
                             Application Status
                         </label>
                         {{ form.status }}
@@ -108,7 +117,8 @@
 
                     <!-- Description -->
                     <div>
-                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.description.id_for_label }}"
+                            class="block text-sm font-medium text-base-content mb-2">
                             Job Description
                         </label>
                         {{ form.description }}
@@ -119,13 +129,13 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="flex justify-end space-x-4 pt-6 mt-8 border-t border-[#fce8dd]">
+                <div class="flex justify-end space-x-4 pt-6 mt-8 border-t border-base-200">
                     <a href="{% url 'jobs:list' %}"
-                        class="px-6 py-3 border border-[#e6d5cc] rounded-xl text-[#666666] hover:bg-[#fce8dd] transition-colors duration-200">
+                        class="px-4 py-2 border border-gray-300 rounded-xl text-base-content/70 hover:bg-base-200 transition-colors duration-200">
                         Cancel
                     </a>
                     <button type="submit"
-                        class="px-6 py-3 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
+                        class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus transition-colors duration-200">
                         Save Job
                     </button>
                 </div>
