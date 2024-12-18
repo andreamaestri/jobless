@@ -6,8 +6,9 @@ from .models import Contact
 
 class ContactForm(forms.ModelForm):
     BASE_CLASS = (
-        "mt-1 block w-full rounded-md border-gray-300 shadow-sm "
-        "focus:border-blue-500 focus:ring-blue-500"
+        "w-full rounded-xl border-[#e6d5cc] bg-white px-4 py-3 "
+        "text-[#2c2c2c] shadow-sm focus:border-[#e28b67] focus:ring-[#e28b67] "
+        "placeholder-[#999999] text-sm"
     )
 
     name = forms.CharField(
