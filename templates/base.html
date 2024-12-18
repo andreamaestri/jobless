@@ -14,24 +14,51 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.7/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
     <script>
-        const { animate, scroll, inView } = Motion;
+        const { animate, scroll, inView, spring, backOut, circOut, cubicBezier } = Motion;
         
-        // Initialize Alpine store before DOM loads
-        document.addEventListener('DOMContentLoaded', () => {
-            Alpine.store('pageState', {
-                isLoading: true,
-                init() {
-                    setTimeout(() => {
-                        this.isLoading = false;
-                    }, 100);
+        // Define custom easing curves
+        const softSpring = cubicBezier(0.34, 1.56, 0.64, 1);
+        const gentleBack = cubicBezier(0.25, 0.46, 0.45, 0.94);
+        
+        // Animation presets
+        const animationPresets = {
+            hover: {
+                scale: 1.02,
+                x: 4,
+                transition: { 
+                    duration: 0.2,
+                    easing: softSpring
                 }
-            });
-        });
-        
-        // Make Motion available to Alpine
+            },
+            menuReveal: {
+                opacity: [0, 1],
+                scale: [0.95, 1],
+                y: [-8, 0],
+                transition: {
+                    duration: 0.2,
+                    easing: gentleBack
+                }
+            },
+            sidebarCollapse: {
+                duration: 0.3,
+                easing: spring({ stiffness: 100, damping: 15 })
+            },
+            itemHover: {
+                x: [-2, 4],
+                scale: 1.02,
+                transition: {
+                    duration: 0.2,
+                    easing: backOut
+                }
+            }
+        };
+
+        // Make animations available to Alpine
         document.addEventListener('alpine:init', () => {
-            Alpine.magic('motion', () => {
-                return (el, options) => animate(el, options);
+            Alpine.magic('motion', () => (el, animation) => {
+                return animate(el, 
+                    typeof animation === 'string' ? animationPresets[animation] : animation
+                );
             });
         });
     </script>
@@ -68,6 +95,16 @@
         /* Spring easing for smoother transitions */
         .ease-spring {
             transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Add smooth content shifting */
+        .content-shift {
+            @apply transition-[margin,width] duration-300 ease-in-out;
+        }
+        
+        /* Enhanced sidebar transitions */
+        .sidebar-slide {
+            @apply transition-transform duration-300 ease-in-out;
         }
     </style>
     <script>
@@ -173,7 +210,8 @@
     </script>
 </head>
 
-<body x-data class="bg-base-100 min-h-screen overflow-hidden">
+<!-- Update body class to remove overflow-hidden -->
+<body x-data class="bg-base-100 min-h-screen">
     <!-- Page Loading Overlay -->
     <div x-data
          x-cloak
@@ -190,6 +228,8 @@
         <div class="flex items-center justify-between h-full">
             <div class="flex items-center gap-3">
                 <button @click="$store.sidebar.toggle()"
+                        @mouseenter="$motion($el, 'hover')"
+                        @mouseleave="$motion($el, { scale: 1, x: 0 })"
                         class="btn btn-ghost btn-circle"
                         :class="{ 'active': $store.sidebar.open }">
                     <iconify-icon icon="octicon:three-bars-16" 
@@ -217,7 +257,7 @@
 
     <!-- Sidebar with improved mobile handling -->
     <aside x-cloak
-           class="fixed top-0 left-0 h-full bg-base-200 shadow-xl z-40 transition-all duration-300 sidebar-mobile"
+           class="fixed top-0 left-0 h-full bg-base-200/95 backdrop-blur-sm shadow-lg z-40 sidebar-slide"
            :class="{
                'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024,
                'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024,
@@ -283,11 +323,7 @@
                 </button>
                 
                 <div x-show="open"
-                     x-transition
-                     @before-enter="$motion($el, { opacity: 0, scale: 0.95, y: -10 })"
-                     @enter="$motion($el, { opacity: 1, scale: 1, y: 0, transition: { duration: 0.2 } })"
-                     @before-leave="$motion($el, { opacity: 1, scale: 1, y: 0 })"
-                     @leave="$motion($el, { opacity: 0, scale: 0.95, y: -10, transition: { duration: 0.15 } })"
+                     @before-enter="$motion($el, 'menuReveal')"
                      class="absolute z-50 mt-1 w-56 rounded-lg bg-base-200 shadow-lg ring-1 ring-base-content/10 p-1"
                      :class="{ 'left-full ml-2': $store.sidebar.collapsed, 'top-0': $store.sidebar.collapsed, 'left-0': !$store.sidebar.collapsed }">
                     <div class="p-1 space-y-1">
@@ -376,10 +412,14 @@
 
     <!-- Main content with mobile header spacing -->
     <main x-cloak 
-          class="w-full h-screen overflow-hidden transition-all duration-300"
-          :class="{ 'pt-16': window.innerWidth < 1024 }">
+          class="min-h-screen content-shift"
+          :class="{ 
+              'pt-16 lg:pt-0': window.innerWidth < 1024,
+              'lg:ml-80': !$store.sidebar.collapsed && window.innerWidth >= 1024,
+              'lg:ml-20': $store.sidebar.collapsed && window.innerWidth >= 1024
+          }">
         <!-- Page Content -->
-        <div class="h-full overflow-y-auto">
+        <div class="h-full">
             <div class="p-4">
                 <div class="max-w-6xl mx-auto w-full">
                     {% block content %}
@@ -409,12 +449,13 @@
                     this.collapsed = !this.collapsed;
                     localStorage.setItem('sidebarCollapsed', this.collapsed);
                     
-                    // Animate chevron on collapse
-                    const chevron = document.querySelector('.sidebar-toggle iconify-icon');
-                    if (chevron) {
-                        Motion.animate(chevron, {
-                            rotate: this.collapsed ? 180 : 0,
-                            duration: 0.3
+                    // Animate with spring physics
+                    const sidebar = document.querySelector('aside');
+                    if (sidebar) {
+                        animate(sidebar, {
+                            x: this.collapsed ? [-20, 0] : [0, -20, 0]
+                        }, {
+                            ...animationPresets.sidebarCollapse
                         });
                     }
                 },
