@@ -1,12 +1,6 @@
-asgiref==3.8.1
-dj-database-url==2.3.0
+dj_database_url==2.3.0
 Django==5.1.4
-django-allauth==65.3.0
-django-crispy-forms==2.3
-django-summernote==0.8.20.0
-django-tagulous==2.1.0
-gunicorn==23.0.0
-psycopg2-binary==2.9.10
+django_crispy_forms==2.3
+django_summernote==0.8.20.0
 python-dotenv==1.0.1
-sqlparse==0.5.3
-whitenoise==6.8.2
+Requests==2.32.3
