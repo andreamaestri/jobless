@@ -2,9 +2,7 @@ from django import forms
 from django_summernote.widgets import SummernoteWidget
 from crispy_forms.helper import FormHelper
 from .models import JobPosting
-from django.utils import timezone
 import tagulous.models
-
 
 class JobPostingForm(forms.ModelForm):
     BASE_CLASS = (
@@ -58,14 +56,10 @@ class JobPostingForm(forms.ModelForm):
         })
     )
 
-    skills = tagulous.models.TagField()
-    
-
     status = forms.ChoiceField(
         choices=JobPosting.STATUS_CHOICES,
         widget=forms.Select(attrs={
             'class': BASE_CLASS,
-            'id': 'status-select'
         })
     )
 
@@ -75,27 +69,18 @@ class JobPostingForm(forms.ModelForm):
             'title', 'company', 'location', 'salary_range',
             'url', 'description', 'skills', 'status'
         ]
-        
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'space-y-4'
 
-        # Format skills as comma-separated string if instance exists
-        if self.instance.pk and self.instance.skills:
-            self.initial['skills'] = ', '.join(self.instance.skills.names())
+        # Style the skills field
+        self.fields['skills'].widget = forms.TextInput(attrs={
+            'class': self.BASE_CLASS,
+            'placeholder': 'Enter skills (comma-separated)'
+        })
 
-    def clean_skills(self):
-        """
-        Convert comma-separated skills string to list and clean it
-        """
-        skills = self.cleaned_data.get('skills', '')
-        if skills:
-            # Split by comma, strip whitespace, and filter out empty strings
-            return [
-                skill.strip() 
-                for skill in skills.split(',') 
-                if skill.strip()
-            ]
-        return []
+        # Properly handle the skills field for editing
+        if self.instance.pk:
+            self.initial['skills'] = ', '.join(str(tag) for tag in self.instance.skills.all())
