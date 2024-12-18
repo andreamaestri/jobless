@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}{% endblock %}</title>
     <!-- Tailwind -->
     {% tailwind_css %}
     <!-- Marked library -->
@@ -15,205 +16,9 @@
     <script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.7/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
     <style>
         [x-cloak] { display: none !important; }
-
-        /* Essential animations that can't be handled by Tailwind */
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        /* Icon animations */
-        .icon-hover {
-            @apply transform-gpu transition-all duration-200;
-        }
-
-        .icon-pulse {
-            animation: icon-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes icon-pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.8;
-                transform: scale(0.95);
-            }
-        }
-
-        .icon-spin {
-            animation: icon-spin 1s linear infinite;
-        }
-
-        @keyframes icon-spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Smooth icon transitions */
-        .icon-transition {
-            @apply transition-all duration-300 ease-spring transform-gpu;
-        }
-
-        /* Only keep minimal required custom CSS */
-        .nav-item::after {
-            content: '';
-            @apply absolute bottom-0 left-0 right-0 h-0.5 bg-current transform scale-x-0 transition-transform duration-300;
-        }
-
-        .theme-preview {
-            @apply w-6 h-6 rounded-full border-2 border-base-content/20 relative;
-        }
-
-        .theme-preview::before {
-            content: '';
-            @apply absolute inset-[2px] rounded-full bg-gradient-to-tr from-primary to-secondary;
-        }
-
-        .user-avatar::after {
-            content: '';
-            @apply absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-200;
-        }
-
-        /* Spring easing for smoother transitions */
-        .ease-spring {
-            transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* Add smooth content shifting */
-        .content-shift {
-            @apply transition-[margin,width] duration-300 ease-in-out;
-        }
-
-        /* Enhanced sidebar transitions */
-        .sidebar-slide {
-            @apply transition-transform duration-300 ease-in-out;
-        }
-
-        /* Enhanced icon animations - only on hover */
-        .icon-animate {
-            @apply transform-gpu transition-all duration-300 relative;
-            /* Remove constant floating animation */
-        }
-
-        .icon-animate:hover {
-            @apply scale-110;
-            filter: drop-shadow(0 0 8px var(--p));
-            transform: translateY(-2px) rotate(5deg);
-            /* Add floating animation only on hover */
-            animation: icon-float 2s ease-in-out infinite;
-        }
-
-        .icon-animate:active {
-            @apply scale-90;
-            transform: translateY(1px) rotate(-5deg);
-            /* Stop animation on click */
-            animation: none;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* Update float animation to be smoother */
-        @keyframes icon-float {
-            0%, 100% { 
-                transform: translateY(-2px) rotate(5deg) scale(1.1);
-            }
-            50% { 
-                transform: translateY(-6px) rotate(8deg) scale(1.1);
-            }
-        }
-
-        /* Remove animation from nav-item hover */
-        .nav-item:hover .icon-animate {
-            @apply scale-110;
-            filter: drop-shadow(0 0 8px var(--p));
-        }
-
-        /* Remove duplicate animations */
-        .icon-animate::before {
-            content: '';
-            @apply absolute inset-0 opacity-0 rounded-full transition-all duration-300;
-            background: radial-gradient(circle at center, var(--p) 0%, transparent 70%);
-            filter: blur(12px);
-            transform: scale(1.5);
-            z-index: -1;
-        }
-
-        .icon-animate:hover::before {
-            @apply opacity-30;
-            transform: scale(2);
-        }
-
-        /* Enhanced button animations */
-        .btn-animate {
-            @apply transform-gpu transition-all duration-300 relative overflow-visible ring-0;
-        }
-
-        /* Button hover effects */
-        .btn-animate:hover {
-            @apply -translate-y-1 shadow-lg scale-105 ring-2 ring-primary ring-offset-2 ring-offset-base-100;
-        }
-
-        /* Button active effects */
-        .btn-animate:active {
-            @apply translate-y-0.5 scale-95 shadow-md ring-0;
-        }
-
-        /* Button hover effects with icon and text */
-        .btn-animate:hover .icon-animate,
-        .btn-animate:hover span {
-            @apply scale-110;
-            transform: translateY(-1px) rotate(3deg);
-        }
-
-        /* Nav item enhancements */
-        .nav-item {
-            @apply relative overflow-visible ring-0;
-        }
-
-        .nav-item:hover {
-            @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
-        }
-
-        /* Theme dropdown button specific styles */
-        .theme-dropdown button:hover {
-            @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
-        }
-
-        /* Enhanced animation performance classes */
-        .nav-item {
-            @apply transform-gpu backface-hidden;
-            transform-origin: left center;
-            will-change: transform, opacity;
-        }
-
-        .icon-animate {
-            transform-origin: center;
-            backface-visibility: hidden;
-            will-change: transform;
-        }
-
-        .sidebar-content {
-            @apply transform-gpu backface-hidden;
-            transform-origin: left center;
-            will-change: transform, width, opacity;
-        }
-
-        .main-content {
-            @apply transform-gpu backface-hidden;
-            transform-origin: left center;
-            will-change: transform, margin;
-        }
-
-        .transition-smooth {
-            @apply transition-all duration-300 ease-in-out;
-        }
     </style>
     <script>
         // Single Motion destructuring
@@ -245,7 +50,7 @@
                     opacity: [0, 1],
                     timing: {
                         duration: animationConfig.timings.sidebar,
-                        easing: animationConfig.easings.spring
+                        easing: animationConfig.spring.ease
                     }
                 },
                 close: {
@@ -256,7 +61,7 @@
                     opacity: [1, 0],
                     timing: {
                         duration: animationConfig.timings.sidebar,
-                        easing: animationConfig.easings.smooth
+                        easing: animationConfig.spring.ease
                     }
                 }
             },
@@ -268,7 +73,7 @@
                     ],
                     timing: {
                         duration: animationConfig.timings.content,
-                        easing: animationConfig.easings.smooth
+                        easing: animationConfig.spring.ease
                     }
                 },
                 collapse: {
@@ -278,7 +83,7 @@
                     ],
                     timing: {
                         duration: animationConfig.timings.content,
-                        easing: animationConfig.easings.smooth
+                        easing: animationConfig.spring.ease
                     }
                 }
             }
@@ -353,7 +158,7 @@
                             {
                                 delay: stagger(animationConfig.timings.stagger),
                                 duration: animationConfig.timings.sidebar,
-                                easing: animationConfig.easings.spring
+                                easing: animationConfig.spring.ease
                             }
                         );
                     } else {
@@ -368,7 +173,7 @@
                             },
                             {
                                 duration: animationConfig.timings.sidebar * 0.5,
-                                easing: animationConfig.easings.smooth
+                                easing: animationConfig.spring.ease
                             }
                         ).finished;
 
@@ -409,8 +214,7 @@
                     });
 
                     animate(elements.icons, {
-                        scale: this.collapsed ? [1, 1.2] : [1.2, 1],
-                        rotate: this.collapsed ? [0, 10] : [10, 0]
+                        scale: this.collapsed ? [1, 1.2] : [1.2, 1]
                     }, {
                         duration: 0.3,
                         ease: animationConfig.spring.ease
@@ -790,8 +594,9 @@
                     const sidebar = document.querySelector('aside');
                     const navItems = sidebar.querySelectorAll('.nav-item');
                     const labels = sidebar.querySelectorAll('.nav-item span');
+                    const icons = sidebar.querySelectorAll('.icon-animate');
                     
-                    // Collapse animation
+                    // Collapse animation with spring easing
                     animate(sidebar, {
                         width: this.collapsed ? '5rem' : '20rem'
                     }, {
@@ -799,13 +604,31 @@
                         ease: [0.22, 1, 0.36, 1]
                     });
 
-                    // Animate labels
-                    animate(labels, {
-                        opacity: this.collapsed ? 0 : 1,
-                        x: this.collapsed ? -10 : 0
-                    }, {
-                        duration: 0.2,
-                        delay: this.collapsed ? 0 : 0.1
+                    // Animate labels with fade and slide
+                    labels.forEach(label => {
+                        label.style.display = 'inline-block';
+                        label.style.overflow = 'hidden';
+                        
+                        animate(label, {
+                            opacity: this.collapsed ? [1, 0] : [0, 1],
+                            transform: this.collapsed ? 
+                                ['translateX(0) scale(1)', 'translateX(-10px) scale(0.95)'] : 
+                                ['translateX(-10px) scale(0.95)', 'translateX(0) scale(1)']
+                        }, {
+                            duration: 0.2,
+                            delay: this.collapsed ? 0 : 0.1,
+                            ease: [0.22, 1, 0.36, 1]
+                        });
+                    });
+
+                    // Icon animation - only scale, no rotation
+                    icons.forEach(icon => {
+                        animate(icon, {
+                            scale: this.collapsed ? [1, 1.2] : [1.2, 1]
+                        }, {
+                            duration: 0.3,
+                            ease: [0.34, 1.56, 0.64, 1]
+                        });
                     });
                 },
 

@@ -4,8 +4,7 @@
  * If you need the full config, get it from here:
  * https://unpkg.com/browse/tailwindcss@latest/stubs/defaultConfig.stub.js
  */
-
-const { default: daisyui } = require('daisyui');
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
     content: [
@@ -43,6 +42,13 @@ module.exports = {
          */
         // '../../**/*.py'
     ],
+    theme: {
+        extend: {
+            fontFamily: {
+                'sans': ['Work Sans Variable', ...defaultTheme.fontFamily.sans],
+            },
+        },
+    },
     daisyui: {
         themes: [
             {
