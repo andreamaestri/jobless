@@ -10,3 +10,4 @@ node_modules/
 cloudinary_python.txt
 heroku.txt
 /staticfiles
+db.sqlite3
