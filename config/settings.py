@@ -53,12 +53,16 @@ INSTALLED_APPS = [
     'django_summernote',
     'crispy_forms',
     'tagulous',
+    'tailwind',
+    'theme',
     'jobs',
     'contacts',
     'events',
     'home',
     'ai_assistant',
 ]
+
+TAILWIND_APP_NAME = 'theme'
 
 SERIALIZATION_MODULES = {
     'xml':    'tagulous.serializers.xml_serializer',
@@ -167,3 +171,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
