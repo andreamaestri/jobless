@@ -1,4 +1,6 @@
 {% load static tailwind_tags %}
+{% load account %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en" x-data :data-theme="$store.theme.current">
 
@@ -98,7 +100,7 @@
             <div class="menu p-4 min-h-full bg-base-200 text-base-content border-r border-base-content/5 shadow-xl lg:rounded-r-3xl transition-[width] duration-300 ease-in-out overflow-hidden"
                  :class="{ 'w-20 p-2': $store.sidebar.collapsed && window.innerWidth >= 1024, 'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024 }">
                 <!-- Toggle and Logo -->
-                <div class="flex items-center h-12 mb-6 relative">
+                <div class="flex items-center h-12 mb-4 relative">
                     <!-- Logo -->
                     <div class="transition-all duration-300 overflow-hidden whitespace-nowrap"
                          :class="{ 'w-0 opacity-0': $store.sidebar.collapsed, 'flex-1 opacity-100': !$store.sidebar.collapsed }">
@@ -114,6 +116,41 @@
                                      class="text-primary text-xl transition-all duration-300 group-hover:scale-110">
                         </iconify-icon>
                     </button>
+                </div>
+
+                <!-- User Info -->
+                <div class="mb-6" x-cloak>
+                    <!-- Full User Info -->
+                    <div x-show="!$store.sidebar.collapsed" 
+                         class="flex flex-col gap-2">
+                        {% if user.is_authenticated %}
+                            {% user_display user as user_display %}
+                            <div class="flex items-center gap-3 px-2">
+                                <div class="avatar placeholder">
+                                    <div class="w-10 h-10 rounded-xl bg-primary text-primary-content">
+                                        <span class="text-lg">{{ user_display|slice:":1"|upper }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ user_display }}</span>
+                                    <span class="text-xs text-base-content/70">{{ user }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mini User Info -->
+                    <div x-show="$store.sidebar.collapsed" 
+                         class="flex justify-center">
+                        {% if user.is_authenticated %}
+                            {% user_display user as user_display %}
+                            <div class="avatar placeholder">
+                                <div class="w-10 h-10 rounded-xl bg-primary text-primary-content">
+                                    <span class="text-lg">{{ user_display|slice:":1"|upper }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <!-- Menu Items -->
@@ -235,21 +272,45 @@
                     </li>
                 </ul>
 
+                <!-- User Actions -->
                 <div class="mt-auto space-y-4 flex flex-col"
                      :class="{ 'items-center': $store.sidebar.collapsed, 'items-stretch': !$store.sidebar.collapsed }">
-                    <!-- Mini logout -->
-                    <button x-show="$store.sidebar.collapsed"
-                            @click="window.location.href='{% url 'account_logout' %}'"
-                            class="btn btn-error btn-square w-12 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                        <iconify-icon icon="octicon:sign-out-24" class="text-2xl"></iconify-icon>
-                    </button>
-                    <!-- Full logout -->
-                    <a x-show="!$store.sidebar.collapsed"
-                       href="{% url 'account_logout' %}" 
-                       class="btn btn-error px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                        <iconify-icon icon="octicon:sign-out-24" class="text-xl"></iconify-icon>
-                        <span class="ml-2">Logout</span>
-                    </a>
+                    {% if user.is_authenticated %}
+                        <!-- Mini logout -->
+                        <button x-show="$store.sidebar.collapsed"
+                                @click="window.location.href='{% url 'account_logout' %}'"
+                                class="btn btn-error btn-square w-12 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <iconify-icon icon="octicon:sign-out-24" class="text-2xl"></iconify-icon>
+                        </button>
+                        <!-- Full logout -->
+                        <a x-show="!$store.sidebar.collapsed"
+                           href="{% url 'account_logout' %}" 
+                           class="btn btn-error px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <iconify-icon icon="octicon:sign-out-24" class="text-xl"></iconify-icon>
+                            <span class="ml-2">{% trans "Logout" %}</span>
+                        </a>
+                    {% else %}
+                        <!-- Mini sign in -->
+                        <a x-show="$store.sidebar.collapsed"
+                           href="{% url 'account_login' %}"
+                           class="btn btn-primary btn-square w-12 h-12 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <iconify-icon icon="octicon:sign-in-16" class="text-2xl"></iconify-icon>
+                        </a>
+                        <!-- Full auth buttons -->
+                        <div x-show="!$store.sidebar.collapsed"
+                             class="flex flex-col gap-2">
+                            <a href="{% url 'account_login' %}" 
+                               class="btn btn-primary px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <iconify-icon icon="octicon:sign-in-16" class="text-xl"></iconify-icon>
+                                <span class="ml-2">{% trans "Sign In" %}</span>
+                            </a>
+                            <a href="{% url 'account_signup' %}" 
+                               class="btn btn-ghost px-4 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <iconify-icon icon="octicon:person-add-16" class="text-xl"></iconify-icon>
+                                <span class="ml-2">{% trans "Create Account" %}</span>
+                            </a>
+                        </div>
+                    {% endif %}
 
                     <div class="text-xs text-center text-base-content/50 bg-base-100/20 py-2 rounded-md transition-all duration-300"
                          :class="{ 'hidden': $store.sidebar.collapsed }">
