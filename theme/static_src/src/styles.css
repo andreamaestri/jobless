@@ -1,3 +1,622 @@
 @tailwind base;
+
+@layer base {
+    /* work-sans-latin-wght-normal */
+    @font-face {
+        font-family: 'Work Sans Variable';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 900;
+        src: url(https://cdn.jsdelivr.net/fontsource/fonts/work-sans:vf@latest/latin-wght-normal.woff2) format('woff2-variations');
+        unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+}
+
 @tailwind components;
+
+@layer components {
+    .nav-item {
+        @apply relative overflow-visible ring-0 transform-gpu;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        transform-origin: left center;
+        will-change: transform, opacity;
+    }
+
+    .nav-item::after {
+        content: '';
+        @apply absolute bottom-0 left-0 right-0 h-0.5 bg-current transform scale-x-0 transition-transform duration-300;
+    }
+
+    .nav-item:hover {
+        @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
+    }
+
+    .theme-preview {
+        @apply w-6 h-6 rounded-full border-2 border-base-content/20 relative;
+    }
+
+    .theme-preview::before {
+        content: '';
+        @apply absolute inset-[2px] rounded-full bg-gradient-to-tr from-primary to-secondary;
+    }
+
+    .user-avatar::after {
+        content: '';
+        @apply absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-200;
+    }
+
+    .btn-animate {
+        @apply transform-gpu transition-all duration-300 relative overflow-visible ring-0;
+    }
+}
+
 @tailwind utilities;
+
+@layer utilities {
+    .icon-hover {
+        @apply transform-gpu transition-all duration-200;
+    }
+
+    .icon-animate {
+        @apply transform-gpu transition-all duration-300 relative backface-hidden;
+        transform-origin: center;
+        will-change: transform;
+    }
+
+    .icon-pulse {
+        animation: icon-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .icon-spin {
+        animation: icon-spin 1s linear infinite;
+    }
+
+    .icon-transition {
+        @apply transition-all duration-300 ease-spring transform-gpu;
+    }
+
+    .ease-spring {
+        transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .content-shift {
+        @apply transition-[margin,width] duration-300 ease-in-out;
+    }
+
+    .sidebar-slide {
+        @apply transition-transform duration-300 ease-in-out;
+    }
+
+    .transition-smooth {
+        @apply transition-all duration-300 ease-in-out;
+    }
+
+    /* Add backface-visibility utility */
+    .backface-hidden {
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+    }
+
+    /* Update existing classes to use the new utility */
+    .sidebar-content {
+        @apply transform-gpu backface-hidden;
+        transform-origin: left center;
+        will-change: transform, width, opacity;
+    }
+
+    .main-content {
+        @apply transform-gpu backface-hidden;
+        transform-origin: left center;
+        will-change: transform, margin;
+    }
+}
+
+/* Essential animations that can't be handled by Tailwind */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Icon animations */
+.icon-hover {
+    @apply transform-gpu transition-all duration-200;
+}
+
+.icon-pulse {
+    animation: icon-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes icon-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(0.95);
+    }
+}
+
+.icon-spin {
+    animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Smooth icon transitions */
+.icon-transition {
+    @apply transition-all duration-300 ease-spring transform-gpu;
+}
+
+/* Only keep minimal required custom CSS */
+.nav-item::after {
+    content: '';
+    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-current transform scale-x-0 transition-transform duration-300;
+}
+
+.theme-preview {
+    @apply w-6 h-6 rounded-full border-2 border-base-content/20 relative;
+}
+
+.theme-preview::before {
+    content: '';
+    @apply absolute inset-[2px] rounded-full bg-gradient-to-tr from-primary to-secondary;
+}
+
+.user-avatar::after {
+    content: '';
+    @apply absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-200;
+}
+
+/* Spring easing for smoother transitions */
+.ease-spring {
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Add smooth content shifting */
+.content-shift {
+    @apply transition-[margin,width] duration-300 ease-in-out;
+}
+
+/* Enhanced sidebar transitions */
+.sidebar-slide {
+    @apply transition-transform duration-300 ease-in-out;
+}
+
+/* Enhanced icon animations - only on hover */
+.icon-animate {
+    @apply transform-gpu transition-all duration-300 relative backface-hidden;
+    /* Remove constant floating animation */
+}
+
+.icon-animate:hover {
+    @apply scale-110;
+    filter: drop-shadow(0 0 8px var(--p));
+    transform: translateY(-2px) rotate(5deg);
+    /* Add floating animation only on hover */
+    animation: icon-float 2s ease-in-out infinite;
+}
+
+.icon-animate:active {
+    @apply scale-90;
+    transform: translateY(1px) rotate(-5deg);
+    /* Stop animation on click */
+    animation: none;
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Update float animation to be smoother */
+@keyframes icon-float {
+    0%, 100% { 
+        transform: translateY(-2px) rotate(5deg) scale(1.1);
+    }
+    50% { 
+        transform: translateY(-6px) rotate(8deg) scale(1.1);
+    }
+}
+
+/* Remove animation from nav-item hover */
+.nav-item:hover .icon-animate {
+    @apply scale-110;
+    filter: drop-shadow(0 0 8px var(--p));
+}
+
+/* Remove duplicate animations */
+.icon-animate::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 rounded-full transition-all duration-300;
+    background: radial-gradient(circle at center, var(--p) 0%, transparent 70%);
+    filter: blur(12px);
+    transform: scale(1.5);
+    z-index: -1;
+}
+
+.icon-animate:hover::before {
+    @apply opacity-30;
+    transform: scale(2);
+}
+
+/* Enhanced button animations */
+.btn-animate {
+    @apply transform-gpu transition-all duration-300 relative overflow-visible ring-0;
+}
+
+/* Button hover effects */
+.btn-animate:hover {
+    @apply -translate-y-1 shadow-lg scale-105 ring-2 ring-primary ring-offset-2 ring-offset-base-100;
+}
+
+/* Button active effects */
+.btn-animate:active {
+    @apply translate-y-0.5 scale-95 shadow-md ring-0;
+}
+
+/* Button hover effects with icon and text */
+.btn-animate:hover .icon-animate,
+.btn-animate:hover span {
+    @apply scale-110;
+    transform: translateY(-1px) rotate(3deg);
+}
+
+/* Nav item enhancements */
+.nav-item {
+    @apply relative overflow-visible ring-0;
+}
+
+.nav-item:hover {
+    @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
+}
+
+/* Theme dropdown button specific styles */
+.theme-dropdown button:hover {
+    @apply ring-2 ring-primary/50 ring-offset-1 ring-offset-base-100 scale-105;
+}
+
+/* Enhanced animation performance classes */
+.nav-item {
+    @apply transform-gpu backface-hidden;
+    transform-origin: left center;
+    will-change: transform, opacity;
+}
+
+.icon-animate {
+    transform-origin: center;
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+.sidebar-content {
+    @apply transform-gpu backface-hidden;
+    transform-origin: left center;
+    will-change: transform, width, opacity;
+}
+
+.main-content {
+    @apply transform-gpu backface-hidden;
+    transform-origin: left center;
+    will-change: transform, margin;
+}
+
+.transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+}
+
+/* View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+    height: 100%;
+}
+
+/* Forward transitions */
+[data-transition="forward"] ::view-transition-old(root) {
+    animation: 
+        fade-out 0.5s ease-in-out forwards,
+        slide-to-left 0.5s ease-in-out forwards;
+}
+
+[data-transition="forward"] ::view-transition-new(root) {
+    animation: 
+        fade-in 0.5s ease-in-out forwards,
+        slide-from-right 0.5s ease-in-out forwards;
+}
+
+/* Backward transitions */
+[data-transition="backward"] ::view-transition-old(root) {
+    animation: 
+        fade-out 0.5s ease-in-out forwards,
+        slide-to-right 0.5s ease-in-out forwards;
+}
+
+[data-transition="backward"] ::view-transition-new(root) {
+    animation: 
+        fade-in 0.5s ease-in-out forwards,
+        slide-from-left 0.5s ease-in-out forwards;
+}
+
+/* Enhanced animations */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes slide-from-right {
+    from { transform: translateX(30%) scale(0.95); }
+    to { transform: translateX(0) scale(1); }
+}
+
+@keyframes slide-to-left {
+    from { transform: translateX(0) scale(1); }
+    to { transform: translateX(-30%) scale(0.95); }
+}
+
+@keyframes slide-from-left {
+    from { transform: translateX(-30%) scale(0.95); }
+    to { transform: translateX(0) scale(1); }
+}
+
+@keyframes slide-to-right {
+    from { transform: translateX(0) scale(1); }
+    to { transform: translateX(30%) scale(0.95); }
+}
+
+/* Ensure main content transitions smoothly */
+main {
+    view-transition-name: main;
+    transform-origin: center;
+    will-change: transform, opacity;
+}
+
+/* Keep sidebar stable during transitions */
+aside {
+    view-transition-name: none !important;
+    position: fixed !important;
+    z-index: 40;
+}
+
+.view-transition-prepare,
+.old-content,
+[data-transitioning="true"] {
+    display: none !important;
+}
+
+/* Modern Scale Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+    display: grid;
+    place-items: center;
+}
+
+::view-transition-old(root) {
+    animation: 
+        scale-down 0.2s ease-in-out forwards;
+}
+
+::view-transition-new(root) {
+    animation: 
+        scale-up 0.2s ease-in-out forwards;
+}
+
+@keyframes scale-down {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(0.75);
+        opacity: 0;
+    }
+}
+
+@keyframes scale-up {
+    from {
+        transform: scale(1.15);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Snappy transition styles */
+.transition-active {
+    @apply overflow-x-hidden;
+}
+
+.transition-active main {
+    @apply transform-gpu backface-hidden;
+    transform-origin: center 33%;
+}
+
+/* Keep sidebar stable */
+aside {
+    view-transition-name: none !important;
+}
+
+/* Remove old transition styles */
+.view-transition-prepare,
+.old-content,
+[data-transitioning="true"] {
+    display: none !important;
+}
+
+/* Modern View Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+/* Target main content specifically */
+main {
+    view-transition-name: main-content;
+    transform-origin: center 30%;
+}
+
+/* Target sidebar specifically */
+aside {
+    view-transition-name: sidebar;
+}
+
+/* Main content animations */
+::view-transition-old(main-content) {
+    animation: scale-fade-out 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+::view-transition-new(main-content) {
+    animation: scale-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Sidebar animations */
+::view-transition-old(sidebar) {
+    animation: fade-out 0.3s ease-in-out forwards;
+}
+
+::view-transition-new(sidebar) {
+    animation: fade-in 0.3s ease-in-out forwards;
+}
+
+/* Snappy scale animations */
+@keyframes scale-fade-out {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+}
+
+@keyframes scale-fade-in {
+    from {
+        transform: scale(1.05);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    to { opacity: 0; }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+}
+
+/* Remove old transition styles */
+.view-transition-prepare,
+.old-content,
+[data-transitioning="true"] {
+    display: none !important;
+}
+
+/* Active transition state */
+.transition-active {
+    @apply overflow-hidden;
+}
+
+.transition-active main {
+    @apply transform-gpu backface-hidden;
+}
+
+/* Modern View Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+/* Target main content */
+main {
+    view-transition-name: main-content;
+    transform-origin: center;
+}
+
+/* Target sidebar */
+aside {
+    view-transition-name: sidebar;
+}
+
+/* Main content animations */
+::view-transition-old(main-content) {
+    animation: slideOutScale 0.25s cubic-bezier(0.3, 0, 0.2, 1) forwards;
+}
+
+::view-transition-new(main-content) {
+    animation: slideInScale 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+/* Sidebar subtle fade */
+::view-transition-old(sidebar),
+::view-transition-new(sidebar) {
+    animation: subtleFade 0.2s ease forwards;
+}
+
+/* Sleek animations */
+@keyframes slideOutScale {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(-20px, 0, 0) scale(0.85);
+        opacity: 0;
+    }
+}
+
+@keyframes slideInScale {
+    0% {
+        transform: translate3d(40px, 0, 0) scale(0.85);
+        opacity: 0;
+    }
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes subtleFade {
+    to { opacity: 0.85; }
+}
+
+/* Active transition state */
+.transition-active {
+    @apply overflow-hidden;
+}
+
+.transition-active main {
+    @apply transform-gpu backface-hidden;
+}
+
+/* Clean up old transition styles */
+.view-transition-prepare,
+.old-content,
+[data-transitioning="true"] {
+    display: none !important;
+}
