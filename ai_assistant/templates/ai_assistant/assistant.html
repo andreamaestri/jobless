@@ -1,54 +1,56 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
-<div class="min-h-screen py-12 px-8 bg-[#fce8dd]">
+<div class="min-h-screen py-12 px-8 bg-base-200">
     <div class="max-w-7xl mx-auto">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-[#2c2c2c]">CV Assistant</h1>
-            <p class="text-[#666666] mt-2">Get AI-powered insights and improvements for your CV</p>
+            <h1 class="text-3xl font-bold text-base-content">CV Assistant</h1>
+            <p class="text-base-content/70 mt-2">Get AI-powered insights and improvements for your CV</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <form method="POST" class="space-y-4">
                     {% csrf_token %}
                     <div>
-                        <label class="block text-sm font-semibold text-[#2c2c2c] mb-2">Paste CV Content Here:</label>
+                        <label class="block text-sm font-semibold text-base-content mb-2">Paste CV Content Here:</label>
                         <textarea 
                             name="cv_content" 
                             rows="10" 
-                            class="w-full p-3 border-2 border-[#e28b67]/30 rounded-lg focus:outline-none focus:border-[#e28b67] transition-all duration-300"
+                            class="w-full p-3 textarea textarea-bordered focus:outline-primary"
+                            placeholder="Enter CV information..."
                         ></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-[#2c2c2c] mb-2">Your Question</label>
+                        <label class="block text-sm font-semibold text-base-content mb-2">Your Question</label>
                         <textarea 
                             name="user_input" 
                             rows="3" 
-                            class="w-full p-3 border-2 border-[#e28b67]/30 rounded-lg focus:outline-none focus:border-[#e28b67] transition-all duration-300" 
+                            class="w-full p-3 textarea textarea-bordered focus:outline-primary" 
                             placeholder="Ask for CV improvements, suggestions, or feedback..."
                         ></textarea>
                     </div>
                     <button 
                         type="submit" 
-                        class="w-full bg-[#e28b67] text-white px-4 py-3 rounded-lg hover:bg-[#c77857] transition-colors duration-300"
+                        class="btn btn-primary w-full"
                     >
                         Get AI Feedback
                     </button>
-                    <small class="block text-xs text-center text-[#666666] mt-2">
+                    <small class="block text-xs text-center text-base-content/70 mt-2">
                         Please allow some time for the response
                     </small>
                 </form>
             </div>
             
-            <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-6">
+            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 {% if response %}
-                <div class="bg-white p-4 rounded-lg border border-[#fce8dd]">
-                    <h2 class="text-xl font-semibold text-[#2c2c2c] mb-4">AI Assistant Response:</h2>
-                    <div class="whitespace-pre-wrap text-[#2c2c2c] leading-relaxed">{{ response }}</div>
+                <div class="bg-base-200 p-4 rounded-lg">
+                    <h2 class="text-xl font-semibold text-base-content mb-4">AI Assistant Response:</h2>
+                    <div id="aiResponse" class="whitespace-pre-wrap text-[#2c2c2c] leading-relaxed space-y-1">{{ response }}</div>
                 </div>
                 {% else %}
-                <div class="text-center text-[#666666] py-8">
+                <div class="text-center text-base-content/70 py-8">
                     <p>Your CV suggestions will appear here</p>
                 </div>
                 {% endif %}
@@ -56,4 +58,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const responseElement = document.getElementById('aiResponse');
+        if (responseElement) {
+            const markdownContent = responseElement.textContent;
+            responseElement.innerHTML = marked.parse(markdownContent);
+        }
+    });
+</script>
+
 {% endblock %}
