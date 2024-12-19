@@ -282,18 +282,46 @@
         });
 
         // Define the pageState store
-        Alpine.store("pageState", {
-          isLoading: true,
-          init() {
-            setTimeout(() => {
-              this.isLoading = false;
-            }, 100);
-          },
+        Alpine.store('pageState', {
+            isLoading: true,
+            init() {
+                // Initial loading state
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 100);
+
+                // Initialize after Alpine is ready
+                document.addEventListener('alpine:initialized', () => {
+                    this.setupEventListeners();
+                });
+            },
+
+            setupEventListeners() {
+                // Passive event listeners for better performance
+                const passiveListenerOpts = { passive: true };
+
+                // Touch events for mobile
+                document.addEventListener('touchstart', () => {}, passiveListenerOpts);
+                document.addEventListener('touchmove', () => {}, passiveListenerOpts);
+                document.addEventListener('scroll', () => {}, passiveListenerOpts);
+
+                // Handle page visibility changes
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        this.isLoading = false;
+                    }
+                });
+
+                // Handle page transitions
+                window.addEventListener('beforeunload', () => {
+                    this.isLoading = true;
+                });
+            }
         });
 
-        // Initialize page state
-        if (Alpine.store("pageState")) {
-          Alpine.store("pageState").init();
+        // Initialize page state if store exists
+        if (Alpine.store('pageState')) {
+            Alpine.store('pageState').init();
         }
       });
 

@@ -3128,6 +3128,10 @@ details.collapse summary::-webkit-details-marker {
   border-width: 0;
 }
 
+.visible {
+  visibility: visible;
+}
+
 .collapse {
   visibility: collapse;
 }
