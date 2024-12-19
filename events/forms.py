@@ -27,10 +27,11 @@ class EventForm(forms.ModelForm):
         })
     )
 
-    date = forms.DateTimeField(
+    date = forms.DateTimeField(  # Changed from DateField to DateTimeField
         widget=forms.DateTimeInput(attrs={
+            'type': 'datetime-local',
             'class': BASE_CLASS,
-            'placeholder': 'Enter event date and time (YYYY-MM-DD HH:MM)'
+            'min': timezone.now().strftime('%Y-%m-%dT%H:%M')
         })
     )
 
@@ -55,7 +56,7 @@ class EventForm(forms.ModelForm):
         widget=forms.Select(attrs={
             'class': BASE_CLASS,
         }),
-        required=True
+        
     )
 
     class Meta:
