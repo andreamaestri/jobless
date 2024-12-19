@@ -1,3 +1,5 @@
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -28,6 +30,19 @@ class EventListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Event.objects.filter(user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        events = self.get_queryset().values('id', 'title', 'date', 'event_type', 'location')
+        events_data = [{
+            'title': event['title'],
+            'start': event['date'].isoformat(),
+            'end': event['date'].isoformat(),
+            'type': event['event_type'],
+            'location': event['location']
+        } for event in events]
+        context['events_json'] = json.dumps(events_data, cls=DjangoJSONEncoder)
+        return context
 
 
 class EventCreateView(LoginRequiredMixin, CreateView):
@@ -133,13 +148,13 @@ def calendar_events(request):
             'title': event.title,
             'start': event.date.isoformat(),
             'type': event.event_type,
-            'className': f'event-type-{event.event_type}',
+            'className': f'event-type-{event.event_type.lower().replace(" ", "-")}',
             'extendedProps': {
                 'type': event.get_event_type_display(),
                 'location': event.location,
+                'notes': event.notes,
             }
         }
-        
         event_list.append(event_data)
     
     return JsonResponse(event_list, safe=False)
