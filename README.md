@@ -17,7 +17,7 @@
   - [Testing Results](#testing-results)
   - [Validation](#validation)
 - [Deployment Process](#deployment-process)
-- [Refelection](#reflection)
+- [Reflection](#reflection)
 - [Code Attribution](#code-attribution)
 - [Future Improvements](#future-improvements)
 ## Overview
@@ -105,7 +105,9 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 ## Features Implementation
 
 ### Core Features (Must-Haves)
-- **Feature 1:** Responsive design, visual design. These can been seen in the images showing the remaining features.
+- **Feature 1:** Responsive design, visual design. 
+
+![Responsivity](readme_images/Jobless-Mockup1.png)
 
 - **Feature 2:** Account creation. Users can create an account to use the features of the application.
 
@@ -155,7 +157,7 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 - Figma - planning board and wireframes
 - Claude - ERD for database
 - Realtime Colors - colour palette and accesibility testing
-- Favicon generator - to produce favicon
+- Flaticon for favicon
 - Techsini.com - mockup generator
 
 ### Languages
@@ -229,11 +231,11 @@ Lighthouse testing results leave some scope for improvements in accessibility.
 
 ### Validation
 
-HTML - errors detected using W3C markup validation. To be addressed in next sprint.
+HTML - errors detected using W3C markup validation. To be addressed in next sprint. Most linked to use of Tailwind.
 
 ![HTML results](readme_images/htmltest1.JPG)
 
-CSS - errors detected using W3C css validation. To be addressed in next sprint.
+CSS - errors detected using W3C css validation. To be addressed in next sprint. Most linked to use of Tailwind.
 
 ![CSS results](readme_images/csstest1.JPG)
 
@@ -282,10 +284,13 @@ The project was reployed  after new features were made functional so that contin
 Effective use of AI, implementation of features, final product is visually appealing and useful.
 
 ### Challenges
-Integration of frameworks, one merge conflict issue
+Integration of frameworks, one merge conflict issue.
 
 ## Code Attribution
-- Guy Clements - use of his project as a basis for Jobless
+- Guy Clements - use of his capstone project as a basis for Jobless.
 - Claude AI for models
 
 ## Future Improvements
+Favourites feature for contacts and events.
+Link calendar to personal calendar.
+
