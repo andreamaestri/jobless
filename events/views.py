@@ -33,11 +33,15 @@ class EventListView(LoginRequiredMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        events_json = json.dumps(
-            list(self.get_queryset().values('title', 'start_date', 'end_date')),
-            cls=DjangoJSONEncoder
-        )
-        context['events_json'] = events_json
+        events = self.get_queryset().values('id', 'title', 'date', 'event_type', 'location')
+        events_data = [{
+            'title': event['title'],
+            'start': event['date'].isoformat(),
+            'end': event['date'].isoformat(),
+            'type': event['event_type'],
+            'location': event['location']
+        } for event in events]
+        context['events_json'] = json.dumps(events_data, cls=DjangoJSONEncoder)
         return context
 
 
@@ -144,13 +148,13 @@ def calendar_events(request):
             'title': event.title,
             'start': event.date.isoformat(),
             'type': event.event_type,
-            'className': f'event-type-{event.event_type}',
+            'className': f'event-type-{event.event_type.lower().replace(" ", "-")}',
             'extendedProps': {
                 'type': event.get_event_type_display(),
                 'location': event.location,
+                'notes': event.notes,
             }
         }
-        
         event_list.append(event_data)
     
     return JsonResponse(event_list, safe=False)
