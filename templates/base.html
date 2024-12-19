@@ -175,6 +175,14 @@
         },
       };
 
+      // Constants
+      const MOBILE_BREAKPOINT = 1024;
+      const SWIPE_THRESHOLD = 100; // Increased from 50px
+      const SIDEBAR_WIDTH = {
+        EXPANDED: '20rem',
+        COLLAPSED: '5rem'
+      };
+
       // Touch gesture support
       let touchStartX = 0;
       let touchEndX = 0;
@@ -217,6 +225,48 @@
           collapsed: JSON.parse(
             localStorage.getItem("sidebarCollapsed") || "false"
           ),
+
+          // Touch handling state
+          touchState: {
+            startX: 0,
+            startY: 0,
+            endX: 0,
+            endY: 0,
+            isSwiping: false
+          },
+
+          handleTouchStart(e) {
+            if (e.target.closest('.scrollable, .slider')) return;
+
+            this.touchState.startX = e.touches[0].clientX;
+            this.touchState.startY = e.touches[0].clientY;
+            this.touchState.isSwiping = true;
+          },
+
+          handleTouchMove(e) {
+            if (!this.touchState.isSwiping) return;
+
+            this.touchState.endX = e.touches[0].clientX;
+            this.touchState.endY = e.touches[0].clientY;
+          },
+
+          handleTouchEnd() {
+            if (!this.touchState.isSwiping) return;
+
+            const diffX = this.touchState.startX - this.touchState.endX;
+            const diffY = Math.abs(this.touchState.startY - this.touchState.endY);
+
+            // Only handle horizontal swipes
+            if (Math.abs(diffX) > SWIPE_THRESHOLD && diffY < SWIPE_THRESHOLD / 2) {
+              if (diffX > 0 && window.innerWidth < MOBILE_BREAKPOINT) {
+                this.open = false;
+              } else if (diffX < 0 && window.innerWidth < MOBILE_BREAKPOINT) {
+                this.open = true;
+              }
+            }
+
+            this.touchState.isSwiping = false;
+          },
 
           async toggle() {
             const elements = {
@@ -1188,6 +1238,53 @@
           Alpine.store("pageState").init();
         }
       });
+
+      // Add passive scroll handler for mobile
+      document.addEventListener("scroll", () => {}, { passive: true });
+
+      // Add passive touch handlers for mobile gestures
+      document.addEventListener("touchstart", () => {}, { passive: true });
+      document.addEventListener("touchmove", () => {}, { passive: true });
     </script>
+
+    {% if messages %}
+    <!-- DaisyUI Toast Container -->
+    <div x-data="{ toasts: [] }" x-init="
+        @if messages
+            toasts = [
+                {% for message in messages %}
+                {
+                    id: {{ forloop.counter }},
+                    type: '{{ message.tags }}',
+                    text: '{{ message|escapejs }}'
+                }{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            ];
+        @endif
+
+        // Auto-remove toasts after 5 seconds
+        setInterval(() => {
+            if (toasts.length > 0) {
+                toasts.shift();
+            }
+        }, 5000);
+    ">
+        <div class="toast toast-end space-y-2">
+            <template x-for="toast in toasts" :key="toast.id">
+                <div class="alert" :class="{
+                    'alert-success': toast.type === 'success',
+                    'alert-error': toast.type === 'error',
+                    'alert-info': toast.type === 'info',
+                    'alert-warning': toast.type === 'warning'
+                }">
+                    <span x-text="toast.text"></span>
+                    <button class="btn btn-sm btn-circle btn-ghost" @click="toasts = toasts.filter(t => t.id !== toast.id)">
+                        ✕
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+    {% endif %}
   </body>
 </html>
