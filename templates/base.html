@@ -1,6 +1,6 @@
 {% load static tailwind_tags %} {% load account %} {% load i18n %}
 <!DOCTYPE html>
-<html lang="en" x-data :data-theme="$store.theme.current">
+<html lang="en" class="h-dvh" x-data :data-theme="$store.theme.current">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -305,7 +305,7 @@
     </script>
   </head>
 
-  <body x-data class="bg-base-100 min-h-screen">
+  <body x-data class="bg-base-100 min-h-min ">
     <!-- Page Loading Overlay -->
     <div
       x-data
@@ -691,7 +691,7 @@
     <!-- Main content with mobile header spacing -->
     <main
       x-cloak
-      class="min-h-screen content-shift"
+      class="min-h-min  content-shift"
       :class="{ 
               'pt-16 lg:pt-0': window.innerWidth < 1024,
               'lg:ml-80': !$store.sidebar.collapsed && window.innerWidth >= 1024,
