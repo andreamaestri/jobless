@@ -673,7 +673,7 @@
         {% for item in navigation_items %}
         <a
           href="{{ item.url }}"
-          @click="window.innerWidth < 1024 && $store.sidebar.toggle()"
+          @click="if(window.innerWidth < 1024) { $store.sidebar.open = false }"
           class="nav-item btn-animate flex items-center p-2 rounded-lg hover:bg-base-100/80 hover:ring-2 hover:ring-primary/70 hover:ring-offset-2 hover:ring-offset-base-100 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 transform-gpu"
           :class="{ 'justify-center': $store.sidebar.collapsed && window.innerWidth >= 1024 }"
         >
