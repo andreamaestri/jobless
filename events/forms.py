@@ -3,6 +3,7 @@ from django_summernote.widgets import SummernoteWidget
 from crispy_forms.helper import FormHelper
 from .models import Event
 from jobs.models import JobPosting
+from contacts.models import Contact
 from django.utils import timezone
 
 class EventForm(forms.ModelForm):
@@ -56,13 +57,21 @@ class EventForm(forms.ModelForm):
         widget=forms.Select(attrs={
             'class': BASE_CLASS,
         }),
-        
+        required=False        
+    )
+    
+    contacts = forms.ModelChoiceField(  # Changed from contact to contacts to match model
+        queryset=Contact.objects.none(),
+        widget=forms.Select(attrs={
+            'class': BASE_CLASS,
+        }),
+        required=False  # Since your model allows null/blank
     )
 
     class Meta:
         model = Event
         fields = [
-            'title', 'event_type', 'date', 'location', 'notes', 'job_posting'
+            'title', 'event_type', 'date', 'location', 'notes', 'job_posting', 'contacts'  # Added contacts
         ]
 
     def __init__(self, *args, **kwargs):
@@ -72,8 +81,10 @@ class EventForm(forms.ModelForm):
         self.helper.form_class = 'space-y-4'
         
         if user:
-            # Filter job postings for users
+            # Filter both job postings and contacts for users
             self.fields['job_posting'].queryset = JobPosting.objects.filter(user=user)
+            self.fields['contacts'].queryset = Contact.objects.filter(user=user)
         else:
-            # Provide an empty queryset if no user
+            # Provide empty querysets if no user
             self.fields['job_posting'].queryset = JobPosting.objects.none()
+            self.fields['contacts'].queryset = Contact.objects.none()
