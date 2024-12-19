@@ -1248,43 +1248,34 @@
     </script>
 
     {% if messages %}
-    <!-- DaisyUI Toast Container -->
-    <div x-data="{ toasts: [] }" x-init="
-        @if messages
-            toasts = [
-                {% for message in messages %}
-                {
-                    id: {{ forloop.counter }},
-                    type: '{{ message.tags }}',
-                    text: '{{ message|escapejs }}'
-                }{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            ];
-        @endif
-
-        // Auto-remove toasts after 5 seconds
-        setInterval(() => {
-            if (toasts.length > 0) {
-                toasts.shift();
-            }
-        }, 5000);
-    ">
-        <div class="toast toast-end space-y-2">
-            <template x-for="toast in toasts" :key="toast.id">
-                <div class="alert" :class="{
-                    'alert-success': toast.type === 'success',
-                    'alert-error': toast.type === 'error',
-                    'alert-info': toast.type === 'info',
-                    'alert-warning': toast.type === 'warning'
-                }">
-                    <span x-text="toast.text"></span>
-                    <button class="btn btn-sm btn-circle btn-ghost" @click="toasts = toasts.filter(t => t.id !== toast.id)">
-                        ✕
-                    </button>
-                </div>
-            </template>
+    <div class="toast toast-end z-50">
+      {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% elif message.tags == 'info' %}alert-info{% elif message.tags == 'warning' %}alert-warning{% endif %}">
+        <div class="flex flex-col gap-2 w-full">
+          <div class="flex justify-between items-center">
+            <span>{{ message }}</span>
+            <button class="btn btn-ghost btn-circle btn-sm" onclick="this.parentElement.parentElement.parentElement.remove()">✕</button>
+          </div>
+          <progress class="progress w-full animate-[progress_10s_ease-in-out]"></progress>
         </div>
+      </div>
+      {% endfor %}
     </div>
+
+    <style>
+      @keyframes progress {
+        0% { value: 100; }
+        100% { value: 0; }
+      }
+      .toast > * {
+        animation: fade-out 10s ease-in-out;
+      }
+      @keyframes fade-out {
+        0% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+    </style>
     {% endif %}
   </body>
 </html>
