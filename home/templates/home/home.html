@@ -3,12 +3,11 @@
 
 {% block content %}
 
-
-<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-6 lg:px-8 rounded-2xl bg-base-200">
+<div class="min-h-min py-8 px-4 sm:py-10 sm:px-6 md:py-12 md:px-8 lg:py-6 lg:px-8 rounded-2xl bg-base-200">
     <div class="mb-8">
-        <form method="GET" class="flex flex-wrap gap-2 items-center">
-            <!-- Search Input -->
-            <div class="flex-1 min-w-[200px]">
+        <form method="GET" class="flex flex-wrap gap-2 items-center sm:flex-row flex-col">
+    <!-- Search Input -->
+            <div class="flex-1 min-w-[280px]">
                 <input 
                     type="text" 
                     name="search" 
@@ -18,7 +17,7 @@
                     class="w-full rounded-xl border-base-300 bg-base-100 px-4 py-3 text-base-content shadow-sm focus:border-primary focus:ring-primary"
                 >
             </div>
-            
+
             <!-- Status Filter -->
             <div class="w-48">
                 <select 
@@ -56,10 +55,11 @@
                 {% endif %}
             </div>
         </form>
+
     </div>
-    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Welcome Section -->
-        <div class="mb-8">
+            <div class="mb-8">
             <h1 class="text-3xl font-bold">Welcome, {{ user.username }}</h1>
             <p class="text-base-content/70 mt-2">Here's an overview of your job search journey</p>
         </div>
