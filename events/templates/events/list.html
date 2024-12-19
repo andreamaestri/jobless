@@ -11,7 +11,7 @@
                 <p class="text-base-content/70 mt-1">Manage your upcoming events and interviews</p>
             </div>
             <a href="{% url 'events:add' %}"
-                class="px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
+                class="px-4 py-2 bg-primary text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -55,7 +55,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full bg-[#e28b67] text-white">
+                                <span class="px-2 py-1 text-xs rounded-full bg-primary text-white">
                                     {{ event.event_type|title }}
                                 </span>
                             </td>
@@ -80,7 +80,7 @@
                                         </svg>
                                     </a>
                                     <a href="{% url 'events:edit' event.pk %}"
-                                        class="text-[#e28b67] hover:text-[#c77857] transition-colors duration-200">
+                                        class="text-primary hover:text-[#c77857] transition-colors duration-200">
                                         <span class="sr-only">Edit</span>
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -107,7 +107,7 @@
         <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
             <p class="text-[#666666] mb-6">No events added yet</p>
             <a href="{% url 'events:add' %}"
-                class="inline-flex items-center px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
+                class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>

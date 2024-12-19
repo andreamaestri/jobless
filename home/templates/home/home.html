@@ -17,7 +17,7 @@
             <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-primar-content">Recent Jobs</h2>
-                    <a href="{% url 'jobs:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
+                    <a href="{% url 'jobs:add' %}" class="text-primary hover:text-[#c77857]">
                         <span class="sr-only">Add Job</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -61,7 +61,7 @@
                 {% else %}
                     <p class="text-[#666666] text-center py-4">No jobs added yet</p>
                 {% endif %}
-                <a href="{% url 'jobs:list' %}" class="block mt-4 text-center text-sm text-[#e28b67] hover:text-[#c77857]">
+                <a href="{% url 'jobs:list' %}" class="block mt-4 text-center text-sm text-primary hover:text-[#c77857]">
                     View all jobs →
                 </a>
             </div>
@@ -70,7 +70,7 @@
             <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-primar-content">Upcoming Events</h2>
-                    <a href="{% url 'events:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
+                    <a href="{% url 'events:add' %}" class="text-primary hover:text-[#c77857]">
                         <span class="sr-only">Add Event</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -93,7 +93,7 @@
                                     <tr class="hover:bg-white">
                                         <td class="px-4 py-3 text-sm text-primar-content">{{ event.title }}</td>
                                         <td class="px-4 py-3">
-                                            <span class="px-2 py-1 text-xs rounded-full bg-[#e28b67] text-white">
+                                            <span class="px-2 py-1 text-xs rounded-full bg-primary text-white">
                                                 {{ event.event_type|title }}
                                             </span>
                                         </td>
@@ -107,7 +107,7 @@
                 {% else %}
                     <p class="text-[#666666] text-center py-4">No upcoming events</p>
                 {% endif %}
-                <a href="{% url 'events:list' %}" class="block mt-4 text-center text-sm text-[#e28b67] hover:text-[#c77857]">
+                <a href="{% url 'events:list' %}" class="block mt-4 text-center text-sm text-primary hover:text-[#c77857]">
                     View all events →
                 </a>
             </div>
@@ -116,7 +116,7 @@
             <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-primar-content">Recent Contacts</h2>
-                    <a href="{% url 'contacts:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
+                    <a href="{% url 'contacts:add' %}" class="text-primary hover:text-[#c77857]">
                         <span class="sr-only">Add Contact</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -151,7 +151,7 @@
                 {% else %}
                     <p class="text-[#666666] text-center py-4">No contacts added yet</p>
                 {% endif %}
-                <a href="{% url 'contacts:list' %}" class="block mt-4 text-center text-sm text-[#e28b67] hover:text-[#c77857]">
+                <a href="{% url 'contacts:list' %}" class="block mt-4 text-center text-sm text-primary hover:text-[#c77857]">
                     View all contacts →
                 </a>
             </div>
