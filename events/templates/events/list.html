@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
+<div x-data="calendar" x-init="initCalendar()" class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 bg-base-200">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
@@ -224,6 +224,32 @@
         @apply bg-info text-info-content border-info;
     }
 </style>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('calendar', () => ({
+            calendarInstance: null,
+            events: {{ events_json|safe }},
+            
+            initCalendar() {
+                this.calendarInstance = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                    initialView: 'dayGridMonth',
+                    events: this.events,
+                    // ...existing calendar options...
+                });
+                this.calendarInstance.render();
+            },
+
+            refreshCalendar() {
+                if (this.calendarInstance) {
+                    this.calendarInstance.refetchEvents();
+                }
+            }
+        }));
+    });
+</script>
+{% endblock %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
