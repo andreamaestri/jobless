@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
+<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
     <div class="max-w-3xl mx-auto">
         <div class="bg-[#fff5ef] shadow-lg rounded-2xl p-8">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-[#2c2c2c]">Edit Job</h1>
+                <h1 class="text-2xl font-bold text-primar-content">Edit Job</h1>
                 <p class="text-[#666666] mt-2">Update job details and status</p>
             </div>
 
@@ -30,7 +30,7 @@
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Title -->
                     <div>
-                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                             Job Title
                         </label>
                         {{ form.title }}
@@ -42,7 +42,7 @@
                     <!-- Company and Location -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                                 Company
                             </label>
                             {{ form.company }}
@@ -51,7 +51,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                                 Location
                             </label>
                             {{ form.location }}
@@ -64,7 +64,7 @@
                     <!-- URL and Salary -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                                 Job URL
                             </label>
                             {{ form.url }}
@@ -73,7 +73,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                            <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                                 Salary Range
                             </label>
                             {{ form.salary_range }}
@@ -85,7 +85,7 @@
 
                     <!-- Skills -->
                     <div>
-                        <label for="{{ form.skills.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.skills.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                             Skills
                         </label>
                         {{ form.skills }}
@@ -97,7 +97,7 @@
 
                     <!-- Status -->
                     <div>
-                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                             Application Status
                         </label>
                         {{ form.status }}
@@ -108,7 +108,7 @@
 
                     <!-- Description -->
                     <div>
-                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                             Job Description
                         </label>
                         {{ form.description }}
