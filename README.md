@@ -129,6 +129,15 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 
 ![AI Assistant](readme_images/AI1.JPG)
 
+### Additional Features Implemented
+- **Feature 8:** Favourite a job. Users can chose to add a job to a favourites list. 
+
+![Favourites](readme_images/favourite.JPG)
+
+- **Feature 9:** Calendar. Users can views events in a calendar ot list mode
+
+![Calendar](readme_images/calendar.JPG)
+
 ## Technologies Used
 
 ### Planning and Design
