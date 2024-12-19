@@ -1,8 +1,9 @@
 from django import forms
 from django_summernote.widgets import SummernoteWidget
 from crispy_forms.helper import FormHelper
-from .models import JobPosting
+from .models import JobPosting, SkillsTagModel
 import tagulous.models
+import tagulous.forms
 
 class JobPostingForm(forms.ModelForm):
     BASE_CLASS = (
@@ -75,12 +76,19 @@ class JobPostingForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'space-y-4'
 
-        # Style the skills field
-        self.fields['skills'].widget = forms.TextInput(attrs={
+        # Apply base class to all fields except skills
+        for field_name, field in self.fields.items():
+            if field_name != 'skills':
+                field.widget.attrs['class'] = self.BASE_CLASS
+                
+        # Configure the skills field
+        self.fields['skills'].widget.attrs.update({
             'class': self.BASE_CLASS,
-            'placeholder': 'Enter skills (comma-separated)'
+            'placeholder': 'Start typing to select skills...',
         })
 
-        # Properly handle the skills field for editing
-        if self.instance.pk:
-            self.initial['skills'] = ', '.join(str(tag) for tag in self.instance.skills.all())
+        # Optional: enhance the skills widget with better UX
+        self.fields['skills'].widget.tag_options.autocomplete_settings = {
+            'width': '100%',
+            'placeholder': 'Start typing to select skills...',
+        }
