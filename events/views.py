@@ -1,10 +1,12 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect  # unused right now
 from .models import Event
 from .forms import EventForm
+from django.http import JsonResponse
+from django.utils.formats import date_format
 
 
 class EventListView(LoginRequiredMixin, ListView):
@@ -113,3 +115,31 @@ class EventDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         # Ensure users can only view their own events
         return Event.objects.filter(user=self.request.user)
+    
+class CalendarView(LoginRequiredMixin, TemplateView):
+    template_name = 'events/calendar.html'
+
+def calendar_events(request):
+    """Return events in format required by FullCalendar."""
+    if not request.user.is_authenticated:
+        return JsonResponse({'events': []})
+    
+    events = Event.objects.filter(user=request.user)
+    event_list = []
+    
+    for event in events:
+        event_data = {
+            'id': event.id,
+            'title': event.title,
+            'start': event.date.isoformat(),
+            'type': event.event_type,
+            'className': f'event-type-{event.event_type}',
+            'extendedProps': {
+                'type': event.get_event_type_display(),
+                'location': event.location,
+            }
+        }
+        
+        event_list.append(event_data)
+    
+    return JsonResponse(event_list, safe=False)
