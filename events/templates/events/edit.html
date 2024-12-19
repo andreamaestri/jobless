@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
+<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
     <div class="max-w-3xl mx-auto">
         <div class="bg-[#fff5ef] shadow-lg rounded-2xl p-8">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-[#2c2c2c]">Edit Event</h1>
+                <h1 class="text-2xl font-bold text-primar-content">Edit Event</h1>
                 <p class="text-[#666666] mt-2">Update your event details</p>
             </div>
 
@@ -18,7 +18,7 @@
                 <div class="space-y-4">
                     {% for field in form %}
                     <div>
-                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-[#2c2c2c] mb-2">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
                             {{ field.label }}
                         </label>
                         {{ field }}
