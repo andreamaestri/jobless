@@ -140,9 +140,13 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 
 ![Favourites](readme_images/favourites1.JPG)
 
-- **Feature 9:** Calendar. Users can views events in a calendar ot list mode
+- **Feature 9:** Calendar. Users can views events in a calendar or list mode.
 
-![Calendar](readme_images/calendar.JPG)
+![Calendar](readme_images/calendar1.JPG)
+
+- **Feature 9:** Themes. Users can choose from 4 different themes.
+
+![Themes](readme_images/themes1.JPG)
 
 ## Technologies Used
 
@@ -285,5 +289,3 @@ Integration of frameworks, one merge conflict issue
 - Claude AI for models
 
 ## Future Improvements
-Briefly discuss potential future improvements or features that could be added to the project.  
-**Guidance:** Reflect on potential enhancements that could be made to the project after Phase 4: Final Testing, Debugging & Deployment. These could be Could user story features you didn’t have time to implement or improvements based on testing feedback.
