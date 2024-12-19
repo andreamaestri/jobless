@@ -12,34 +12,22 @@
             </div>
             <div class="flex items-center space-x-4">
                 <!-- View Toggle -->
-                <div class="flex items-center bg-primary rounded-xl p-1 shadow-sm">
+                <div class="flex items-center join bg-base-100 shadow-sm">
                     <button onclick="showListView()" id="listViewBtn"
-                        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 bg-primary/70 text-white">
-                        <span class="flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                            </svg>
-                            List
-                        </span>
+                        class="join-item btn btn-sm hover:btn-primary-focus">
+                        <iconify-icon icon="octicon:list-unordered-16"></iconify-icon>
+                        List
                     </button>
                     <button onclick="showCalendarView()" id="calendarViewBtn"
-                        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 text-gray-600 hover:text-gray-900">
-                        <span class="flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            Calendar
-                        </span>
+                        class="join-item btn btn-sm hover:btn-primary-focus">
+                        <iconify-icon icon="octicon:calendar-16"></iconify-icon>
+                        Calendar
                     </button>
                 </div>
                 <!-- Add Event Button -->
                 <a href="{% url 'events:add' %}"
-                    class="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary/70 transition-colors duration-200 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                    class="btn btn-primary btn-sm hover:btn-primary-focus">
+                    <iconify-icon icon="octicon:plus-16"></iconify-icon>
                     Add Event
                 </a>
             </div>
@@ -58,79 +46,62 @@
         <!-- List View -->
         <div id="listView" class="transition-all duration-300">
             {% if events %}
-            <div class="bg-base-100 shadow-lg rounded-2xl overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-primary text-primary-content">
-                            <tr>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Event</th>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Type</th>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Date & Time</th>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Location</th>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Related Job</th>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-[#fce8dd]">
-                            {% for event in events %}
-                            <tr class="hover:bg-white transition-colors duration-150">
-                                <td class="px-6 py-4">
-                                    <div>
-                                        <h3 class="text-base-content font-medium">{{ event.title }}</h3>
-                                        {% if event.notes %}
-                                        <p class="text-xs text-[#666666]">{{ event.notes|truncatechars:50 }}</p>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-[#e28b67] text-white">
-                                        {{ event.event_type|title }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-base-content">{{ event.date|date:"M d, Y - g:i A" }}
-                                </td>
-                                <td class="px-6 py-4 text-sm text-base-content">{{ event.location }}</td>
-                                <td class="px-6 py-4 text-sm text-base-content">
-                                    {% if event.job_posting %}
-                                    {{ event.job_posting.title }}
-                                    {% else %}
-                                    -
+            <div class="bg-base-100 rounded-box shadow-lg overflow-hidden">
+                <table class="table table-zebra">
+                    <thead class="bg-primary text-primary-content">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Event</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Type</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Date & Time</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Location</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Related Job</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#fce8dd]">
+                        {% for event in events %}
+                        <tr class="hover:bg-base-200 transition-colors duration-150">
+                            <td class="px-6 py-4">
+                                <div>
+                                    <h3 class="text-base-content font-medium">{{ event.title }}</h3>
+                                    {% if event.notes %}
+                                    <p class="text-xs text-[#666666]">{{ event.notes|truncatechars:50 }}</p>
                                     {% endif %}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center space-x-3">
-                                        <a href="{% url 'events:detail' event.pk %}"
-                                            class="text-black hover:bg-base-100" aria-label="View Details">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </a>
-                                        <a href="{% url 'events:edit' event.pk %}"
-                                            class="text-[#e28b67] hover:text-[#c77857] transition-colors duration-200">
-                                            <span class="sr-only">Edit</span>
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                        <a href="{% url 'events:delete' event.pk %}"
-                                            class="text-red-600 hover:text-red-800 transition-colors duration-200">
-                                            <span class="sr-only">Delete</span>
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="badge badge-primary">{{ event.event_type|title }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-base-content">{{ event.date|date:"M d, Y - g:i A" }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-base-content">{{ event.location }}</td>
+                            <td class="px-6 py-4 text-sm text-base-content">
+                                {% if event.job_posting %}
+                                {{ event.job_posting.title }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center space-x-3">
+                                    <a href="{% url 'events:detail' event.pk %}"
+                                        class="btn btn-ghost btn-sm btn-square" aria-label="View Details">
+                                        <iconify-icon icon="octicon:eye-16"></iconify-icon>
+                                    </a>
+                                    <a href="{% url 'events:edit' event.pk %}"
+                                        class="btn btn-ghost btn-sm btn-square text-warning hover:text-warning-focus">
+                                        <iconify-icon icon="octicon:pencil-16"></iconify-icon>
+                                    </a>
+                                    <a href="{% url 'events:delete' event.pk %}"
+                                        class="btn btn-ghost btn-sm btn-square text-error hover:text-error-focus">
+                                        <iconify-icon icon="octicon:trash-16"></iconify-icon>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             {% else %}
             <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
@@ -155,77 +126,110 @@
     </div>
 </div>
 
-<!-- Include the required FullCalendar packages -->
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/index.global.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/index.global.min.js'></script>
+<!-- Calendar Modal -->
+<dialog id="calendar-modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg" id="modal-title"></h3>
+        <p class="py-4" id="modal-description"></p>
+        <div class="modal-action">
+            <a href="#" id="modal-edit" class="btn btn-primary">Edit Event</a>
+            <button class="btn" onclick="document.getElementById('calendar-modal').close()">Close</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
 
 <style>
     /* Calendar Styling */
     .fc {
-        font-family: inherit;
+        --fc-border-color: hsl(var(--b2));
+        --fc-button-bg-color: hsl(var(--p));
+        --fc-button-border-color: hsl(var(--p));
+        --fc-button-hover-bg-color: hsl(var(--pf));
+        --fc-button-hover-border-color: hsl(var(--pf));
+        --fc-button-active-bg-color: hsl(var(--pf));
+        --fc-button-active-border-color: hsl(var(--pf));
+        --fc-event-bg-color: hsl(var(--p));
+        --fc-event-border-color: hsl(var(--p));
+        --fc-page-bg-color: hsl(var(--b1));
     }
 
-    .fc-header-toolbar {
-        padding: 1.5rem 1rem;
+    .fc .fc-toolbar {
+        @apply bg-base-200 rounded-box p-4 mb-4;
     }
 
-    .fc-toolbar-title {
-        font-size: 1.25rem !important;
-        font-weight: bold;
-        color: var(--fallback-bc, oklch(var(--bc)/1)) !important;
+    .fc .fc-toolbar-title {
+        @apply text-xl font-bold text-base-content;
     }
 
-    .fc-button-primary {
-        background-color: var(--fallback-p, oklch(var(--p)/1)) !important;
-        border-color: var(--fallback-p, oklch(var(--p)/1)) !important;
-        border-radius: 0.75rem !important;
-        transition: background-color 0.2s;
-        color: var(--fallback-pc, oklch(var(--pc)/1)) !important;
+    .fc .fc-button {
+        @apply btn btn-sm normal-case;
     }
 
-    .fc-button-primary:hover {
-        background-color: var(--fallback-p, oklch(var(--p)/1)) !important;
-        border-color: var(--fallback-p, oklch(var(--p)/1)) !important;
-        filter: brightness(0.9) !important;
+    .fc .fc-button-primary {
+        @apply btn-primary;
     }
 
-    .fc th {
-        padding: 1rem 0 !important;
-        font-weight: 600 !important;
-        color: var(--fallback-bc, oklch(var(--bc)/1)) !important;
-        background-color: var(--fallback-b2, oklch(var(--b2)/1)) !important;
-        border-color: var(--fallback-bc, oklch(var(--bc)/0.2)) !important;
+    .fc .fc-button-primary:disabled {
+        @apply btn-disabled;
     }
 
-    .fc td {
-        border-color: var(--fallback-bc, oklch(var(--bc)/0.2)) !important;
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active {
+        @apply btn-primary-focus;
     }
 
-    .fc-day {
-        background-color: var(--fallback-b1, oklch(var(--b1)/1)) !important;
+    .fc-theme-standard .fc-scrollgrid,
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+        @apply border-base-300;
+    }
+
+    .fc-theme-standard th {
+        @apply bg-base-200 text-base-content p-4;
+    }
+
+    .fc-theme-standard td {
+        @apply bg-base-100;
+    }
+
+    .fc .fc-daygrid-day.fc-day-today {
+        @apply bg-primary/5;
+    }
+
+    .fc-daygrid-event {
+        @apply rounded-btn shadow-sm;
     }
 
     .fc-event {
-        border: none !important;
-        padding: 2px 4px !important;
-        margin: 1px !important;
-        border-radius: 0.75rem !important;
+        @apply cursor-pointer transition-opacity hover:opacity-80;
     }
 
-    .fc-scrollgrid {
-        border-color: var(--fallback-bc, oklch(var(--bc)/0.2)) !important;
+    /* Event type colors */
+    .fc-event.event-interview {
+        @apply bg-primary text-primary-content border-primary;
     }
 
-    .fc-day-today {
-        background-color: var(--fallback-b2, oklch(var(--b2)/1)) !important;
+    .fc-event.event-meeting {
+        @apply bg-secondary text-secondary-content border-secondary;
+    }
+
+    .fc-event.event-follow-up {
+        @apply bg-accent text-accent-content border-accent;
+    }
+
+    .fc-event.event-networking {
+        @apply bg-info text-info-content border-info;
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
-
+        var modal = document.getElementById('calendar-modal');
+        
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             height: 800,
@@ -234,40 +238,62 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                week: 'Week',
+                day: 'Day'
+            },
             events: '{% url "events:calendar_events" %}',
-            eventClick: function (info) {
-                window.location.href = `/events/${info.event.id}/edit/`;
+            eventClick: function(info) {
+                const event = info.event;
+                const modal = document.getElementById('calendar-modal');
+                document.getElementById('modal-title').textContent = event.title;
+                document.getElementById('modal-description').innerHTML = `
+                    <div class="space-y-2">
+                        <p><span class="font-semibold">Type:</span> ${event.extendedProps.type}</p>
+                        <p><span class="font-semibold">Date:</span> ${event.start.toLocaleDateString()}</p>
+                        <p><span class="font-semibold">Time:</span> ${event.start.toLocaleTimeString()}</p>
+                        ${event.extendedProps.location ? `<p><span class="font-semibold">Location:</span> ${event.extendedProps.location}</p>` : ''}
+                        ${event.extendedProps.notes ? `<p><span class="font-semibold">Notes:</span> ${event.extendedProps.notes}</p>` : ''}
+                    </div>
+                `;
+                document.getElementById('modal-edit').href = `/events/${event.id}/edit/`;
+                modal.showModal();
             },
             eventContent: function (arg) {
+                let icon = 'octoicon:calendar-24';
+                switch (arg.event.extendedProps.type.toLowerCase()) {
+                    case 'interview':
+                        icon = 'octoicon:person-24';
+                        break;
+                    case 'meeting':
+                        icon = 'octoicon:people-24';
+                        break;
+                    case 'follow-up':
+                        icon = 'octoicon:reply-24';
+                        break;
+                    case 'networking event':
+                        icon = 'octoicon:organization-24';
+                        break;
+                }
+                
                 return {
                     html: `
-            <div class="p-1">
-                <div class="text-sm font-medium">${arg.event.title}</div>
-                <div class="text-xs">${arg.event.extendedProps.type || ''}</div>
-            </div>
-        `
+                        <div class="flex items-center gap-1 p-1">
+                            <iconify-icon icon="${icon}" class="text-current"></iconify-icon>
+                            <div>
+                                <div class="text-sm font-medium">${arg.event.title}</div>
+                                <div class="text-xs opacity-90">${arg.event.extendedProps.type || ''}</div>
+                            </div>
+                        </div>
+                    `
                 };
             },
             eventDidMount: function (info) {
-                let bgColor = '#e28b67'; // Default color matching your theme
-                switch (info.event.extendedProps.type.toLowerCase()) {
-                    case 'interview':
-                        bgColor = '#e28b67';
-                        break;
-                    case 'meeting':
-                        bgColor = '#3B82F6';
-                        break;
-                    case 'follow-up':
-                        bgColor = '#10B981';
-                        break;
-                    case 'networking event':
-                        bgColor = '#8B5CF6';
-                        break;
-                    default:
-                        bgColor = '#6B7280';
-                }
-                info.el.style.backgroundColor = bgColor;
-                info.el.style.color = 'white';
+                // Add event type class
+                const eventType = info.event.extendedProps.type.toLowerCase().replace(' ', '-');
+                info.el.classList.add(`event-${eventType}`);
             },
             dayMaxEvents: true,
             displayEventTime: true,
@@ -298,21 +324,20 @@
     function showListView() {
         document.getElementById('listView').classList.remove('hidden');
         document.getElementById('calendarView').classList.add('hidden');
-        document.getElementById('listViewBtn').classList.add('bg-[#e28b67]', 'text-white');
-        document.getElementById('listViewBtn').classList.remove('text-gray-600');
-        document.getElementById('calendarViewBtn').classList.remove('bg-[#e28b67]', 'text-white');
-        document.getElementById('calendarViewBtn').classList.add('text-gray-600');
+        document.getElementById('listViewBtn').classList.add('btn-primary');
+        document.getElementById('listViewBtn').classList.remove('btn-ghost');
+        document.getElementById('calendarViewBtn').classList.remove('btn-primary');
+        document.getElementById('calendarViewBtn').classList.add('btn-ghost');
     }
 
     function showCalendarView() {
         document.getElementById('listView').classList.add('hidden');
         document.getElementById('calendarView').classList.remove('hidden');
-        document.getElementById('calendarViewBtn').classList.add('bg-[#e28b67]', 'text-white');
-        document.getElementById('calendarViewBtn').classList.remove('text-gray-600');
-        document.getElementById('listViewBtn').classList.remove('bg-[#e28b67]', 'text-white');
-        document.getElementById('listViewBtn').classList.add('text-gray-600');
-
-        // Trigger a resize event to ensure calendar renders properly
+        document.getElementById('calendarViewBtn').classList.add('btn-primary');
+        document.getElementById('calendarViewBtn').classList.remove('btn-ghost');
+        document.getElementById('listViewBtn').classList.remove('btn-primary');
+        document.getElementById('listViewBtn').classList.add('btn-ghost');
+        
         window.dispatchEvent(new Event('resize'));
     }
 </script>

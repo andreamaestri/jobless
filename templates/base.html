@@ -1,5 +1,4 @@
-<!DOCTYPE html>{% load static tailwind_tags %} {% load account %} {% load i18n
-%}
+<!DOCTYPE html>{% load static tailwind_tags %} {% load account %} {% load static %}
 <html lang="en" class="h-dvh" x-data :data-theme="$store.theme.current">
   <head>
     <meta charset="UTF-8" />
@@ -87,6 +86,11 @@
 
     <!-- Tailwind -->
     {% tailwind_css %}
+    <!-- Full Calendar -->
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/index.global.min.js"></script>
+
     <!-- Marked library -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Iconify -->
@@ -497,7 +501,9 @@
               const isDesktop = window.innerWidth >= 1024;
               this.open = isDesktop;
               this.collapsed = isDesktop
-                ? JSON.parse(localStorage.getItem("sidebarCollapsed") || "false")
+                ? JSON.parse(
+                    localStorage.getItem("sidebarCollapsed") || "false"
+                  )
                 : false;
               document.body.style.overflow = "";
             };
