@@ -235,16 +235,79 @@
             initCalendar() {
                 this.calendarInstance = new FullCalendar.Calendar(document.getElementById('calendar'), {
                     initialView: 'dayGridMonth',
-                    events: this.events,
-                    // ...existing calendar options...
+                    height: 800,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    buttonText: {
+                        today: 'Today',
+                        month: 'Month',
+                        week: 'Week',
+                        day: 'Day'
+                    },
+                    events: '{% url "events:calendar_events" %}',
+                    eventClick: function(info) {
+                        const event = info.event;
+                        const modal = document.getElementById('calendar-modal');
+                        document.getElementById('modal-title').textContent = event.title;
+                        document.getElementById('modal-description').innerHTML = `
+                            <div class="space-y-2">
+                                <p><span class="font-semibold">Type:</span> ${event.extendedProps.type}</p>
+                                <p><span class="font-semibold">Date:</span> ${event.start.toLocaleDateString()}</p>
+                                <p><span class="font-semibold">Time:</span> ${event.start.toLocaleTimeString()}</p>
+                                ${event.extendedProps.location ? `<p><span class="font-semibold">Location:</span> ${event.extendedProps.location}</p>` : ''}
+                            </div>
+                        `;
+                        document.getElementById('modal-edit').href = `/events/${event.id}/edit/`;
+                        modal.showModal();
+                    },
+                    eventContent: function (arg) {
+                        let icon = 'octicon:calendar-24';
+                        switch (arg.event.extendedProps.type.toLowerCase()) {
+                            case 'interview':
+                                icon = 'octicon:person-24';
+                                break;
+                            case 'meeting':
+                                icon = 'octicon:people-24';
+                                break;
+                            case 'follow-up':
+                                icon = 'octicon:reply-24';
+                                break;
+                            case 'networking':
+                                icon = 'octicon:organization-24';
+                                break;
+                        }
+                        
+                        return {
+                            html: `
+                                <div class="flex items-center gap-1 p-1">
+                                    <iconify-icon icon="${icon}" class="text-current"></iconify-icon>
+                                    <div>
+                                        <div class="text-sm font-medium">${arg.event.title}</div>
+                                        <div class="text-xs opacity-90">${arg.event.extendedProps.type || ''}</div>
+                                    </div>
+                                </div>
+                            `
+                        };
+                    },
+                    eventDidMount: function (info) {
+                        const eventType = info.event.extendedProps.type.toLowerCase().replace(' ', '-');
+                        info.el.classList.add(`event-${eventType}`);
+                    }
                 });
                 this.calendarInstance.render();
-            },
 
-            refreshCalendar() {
-                if (this.calendarInstance) {
-                    this.calendarInstance.refetchEvents();
-                }
+                // Re-render calendar when theme changes
+                const observer = new MutationObserver(() => {
+                    this.calendarInstance.render();
+                });
+
+                observer.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['data-theme']
+                });
             }
         }));
     });
