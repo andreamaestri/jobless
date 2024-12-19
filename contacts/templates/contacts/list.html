@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
-    <div class="max-w-7xl mx-auto">
+<div class="min-h-min py-12 px-8 rounded-2xl bg-base-200">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
             <div>
@@ -11,10 +11,8 @@
                 <p class="text-base-content/70 mt-1">Manage your professional network</p>
             </div>
             <a href="{% url 'contacts:add' %}"
-                class="px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
+                class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary/90 transition-colors duration-200 flex items-center">
+                <iconify-icon icon="octicon:plus-16" class="text-xl mr-2"></iconify-icon>
                 Add Contact
             </a>
         </div>
@@ -35,23 +33,23 @@
                 <table class="w-full">
                     <thead class="bg-primary text-primary-content">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Name</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Position</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Email</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Phone</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">LinkedIn</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#2c2c2c]">Actions</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Name</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Company</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Position</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Email</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Phone</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">LinkedIn</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-[#fce8dd]">
+                    <tbody class="divide-y divide-base-200">
                         {% for contact in contacts %}
-                        <tr class="hover:bg-white transition-colors duration-150">
+                        <tr class="hover:bg-base-100/50 transition-colors duration-150">
                             <td class="px-6 py-4">
                                 <div>
                                     <h3 class="text-base-content font-medium">{{ contact.name }}</h3>
                                     {% if contact.notes %}
-                                    <p class="text-xs text-[#666666]">{{ contact.notes|truncatechars:50 }}</p>
+                                    <p class="text-xs text-base-content/60">{{ contact.notes|truncatechars:50 }}</p>
                                     {% endif %}
                                 </div>
                             </td>
@@ -59,7 +57,7 @@
                             <td class="px-6 py-4 text-sm text-base-content">{{ contact.position|default:"-" }}</td>
                             <td class="px-6 py-4 text-sm">
                                 {% if contact.email %}
-                                <a href="mailto:{{ contact.email }}" class="text-[#e28b67] hover:text-[#c77857]">
+                                <a href="mailto:{{ contact.email }}" class="text-primary hover:text-primary/80">
                                     {{ contact.email }}
                                 </a>
                                 {% else %}
@@ -68,7 +66,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm">
                                 {% if contact.phone %}
-                                <a href="tel:{{ contact.phone }}" class="text-[#e28b67] hover:text-[#c77857]">
+                                <a href="tel:{{ contact.phone }}" class="text-primary hover:text-primary/80">
                                     {{ contact.phone }}
                                 </a>
                                 {% else %}
@@ -78,7 +76,7 @@
                             <td class="px-6 py-4 text-sm">
                                 {% if contact.linkedin %}
                                 <a href="{{ contact.linkedin }}" target="_blank"
-                                    class="text-[#e28b67] hover:text-[#c77857]">
+                                    class="text-primary hover:text-primary/80">
                                     View Profile →
                                 </a>
                                 {% else %}
@@ -87,30 +85,19 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3">
-                                    <a href="{% url 'contacts:detail' contact.pk %}" class="text-black hover:bg-base-100"
+                                    <a href="{% url 'contacts:detail' contact.pk %}" class="text-base-content hover:text-primary"
                                         aria-label="View Details">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
+                                        <iconify-icon icon="octicon:eye-16" class="w-5 h-5"></iconify-icon>
                                     </a>
                                     <a href="{% url 'contacts:edit' contact.pk %}"
-                                        class="text-[#e28b67] hover:text-[#c77857] transition-colors duration-200">
+                                        class="text-primary hover:text-primary/80 transition-colors duration-200">
                                         <span class="sr-only">Edit</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        <iconify-icon icon="octicon:pencil-16" class="w-5 h-5"></iconify-icon>
                                     </a>
                                     <a href="{% url 'contacts:delete' contact.pk %}"
-                                        class="text-red-600 hover:text-red-800 transition-colors duration-200">
+                                        class="text-error hover:text-error/80 transition-colors duration-200">
                                         <span class="sr-only">Delete</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        <iconify-icon icon="octicon:trash-16" class="w-5 h-5"></iconify-icon>
                                     </a>
                                 </div>
                             </td>
@@ -121,13 +108,11 @@
             </div>
         </div>
         {% else %}
-        <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
-            <p class="text-[#666666] mb-6">No contacts added yet</p>
+        <div class="bg-base-100 rounded-2xl shadow-lg p-12 text-center">
+            <p class="text-base-content/70 mb-6">No contacts added yet</p>
             <a href="{% url 'contacts:add' %}"
-                class="inline-flex items-center px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
+                class="inline-flex items-center px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary/90 transition-colors duration-200">
+                <iconify-icon icon="octicon:plus-16" class="text-xl mr-2"></iconify-icon>
                 Add Your First Contact
             </a>
         </div>
