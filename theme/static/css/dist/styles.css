@@ -4129,6 +4129,10 @@ details.collapse summary::-webkit-details-marker {
   color: rgb(133 77 14 / var(--tw-text-opacity, 1));
 }
 
+.text-base-content\/60 {
+  color: var(--fallback-bc,oklch(var(--bc)/0.6));
+}
+
 .placeholder-\[\#999999\]::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(153 153 153 / var(--tw-placeholder-opacity, 1));
@@ -5067,6 +5071,14 @@ aside {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-base-100\/50:hover {
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.5));
+}
+
+.hover\:bg-primary\/90:hover {
+  background-color: var(--fallback-p,oklch(var(--p)/0.9));
+}
+
 .hover\:text-\[\#c77857\]:hover {
   --tw-text-opacity: 1;
   color: rgb(199 120 87 / var(--tw-text-opacity, 1));
@@ -5075,6 +5087,19 @@ aside {
 .hover\:text-red-800:hover {
   --tw-text-opacity: 1;
   color: rgb(153 27 27 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-error\/80:hover {
+  color: var(--fallback-er,oklch(var(--er)/0.8));
+}
+
+.hover\:text-primary:hover {
+  --tw-text-opacity: 1;
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
+}
+
+.hover\:text-primary\/80:hover {
+  color: var(--fallback-p,oklch(var(--p)/0.8));
 }
 
 .hover\:shadow-lg:hover {
@@ -5156,6 +5181,10 @@ aside {
 }
 
 @media (min-width: 640px) {
+  .sm\:p-6 {
+    padding: 1.5rem;
+  }
+
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -5170,6 +5199,10 @@ aside {
 @media (min-width: 768px) {
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .md\:p-8 {
+    padding: 2rem;
   }
 }
 
@@ -5202,6 +5235,11 @@ aside {
   .lg\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .lg\:py-12 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 
   .lg\:pt-0 {
