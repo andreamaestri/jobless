@@ -379,7 +379,6 @@
       x-transition:leave-start="opacity-100"
       x-transition:leave-end="opacity-0"
       @click="$store.sidebar.toggle()"
-      @touchstart.passive.prevent="$store.sidebar.toggle()"
       class="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
     ></div>
 
@@ -438,8 +437,7 @@
             </g>
             <g>
               <path
-                d="M20.2 73.4v-9h6.2c2.6 0 4.3-.6 5.4-1.8 1-1.2 1.5-3 1.5-5.3V31.5h9.6V58c0 4.9-1.4 8.6-4 11.3-2.7 2.7-6.7 4-11.9 4ZM72.7 74.2c-4.4 0-8.2-1-11.6-2.8-3.4-1.8-6-4.4-8-7.7-1.8-3.2-2.8-7-2.8-11.3 0-4.3 1-8 2.9-11.3 1.9-3.3 4.5-5.9 7.9-7.7 3.4-1.9 7.2-2.8 11.6-2.8 4.4 0 8.2 1 11.6 2.8 3.3 1.8 6 4.4 7.9 7.7 2 3.3 2.9 7 2.9 11.3 0 4.3-1 8-3 11.3-1.8 3.3-4.5 5.9-7.8 7.7a23.5 23.5 0 0 1-11.6 2.8ZM60 52.4c0 2.5.5 4.7 1.6 6.7 1 1.9 2.5 3.4 4.4 4.5 2 1 4.1 1.6 6.6 1.6s4.7-.6 6.6-1.6c1.9-1.1 3.4-2.6 4.4-4.5 1-2 1.6-4.2 1.6-6.7s-.5-4.7-1.6-6.6c-1-2-2.5-3.4-4.4-4.5-1.9-1.1-4.1-1.6-6.6-1.6a13 13 0 0 0-6.6 1.6c-1.9 1-3.4 2.6-4.4 4.5-1.1 1.9-1.6 4-1.6 6.6ZM102.7 73.4v-42h18.7c4.3 0 7.7 1 10.2 3.1a10 10 0 0 1 3.8 8.2c0 2-.5 3.7-1.4 5.3a9.6 9.6 0 0 1-3.7 3.8 10.3 10.3 0 0 1 6.3 9.8c0 2.4-.6 4.4-1.8 6.2a12 12 0 0 1-5 4c-2.1 1-4.6 1.6-7.4 1.6Zm9.4-7.6h8.8c2 0 3.4-.4 4.4-1.3 1-.9 1.6-2.1 1.6-3.7s-.6-2.8-1.6-3.7c-1-.9-2.5-1.3-4.4-1.3h-8.8Zm0-17.3h7.9c1.8 0 3.2-.4 4.2-1.2 1-.9 1.5-2 1.5-3.6 0-1.5-.5-2.7-1.5-3.5-1-.8-2.4-1.2-4.2-1.2h-8ZM155.3 101.5V59.6h9.5v33H183v9ZM189.8 101.5V59.6h27.5v8h-18v8.7h16.4v8h-16.5v9.2H218v8ZM240.6 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-5.9-5c-1.4-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.6-.4 4.7-1.1A3.7 3.7 0 0 0 247 90c0-1.5-.7-2.7-2-3.6-1.4-1-3.6-1.7-6.6-2.3-4.9-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.5 1.1 4.4 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3h-9.1c0-1.9-.7-3.3-2-4.4-1.1-1.1-2.9-1.6-5-1.6-2 0-3.6.4-4.8 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.3 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.4 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4ZM279 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-6-5c-1.3-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2.1 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.5-.4 4.7-1.1a3.7 3.7 0 0 0 1.7-3.3c0-1.5-.7-2.7-2-3.6-1.5-1-3.6-1.7-6.6-2.3-5-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.4 1.1 4.3 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3H285c0-1.9-.6-3.3-1.8-4.4-1.3-1.1-3-1.6-5.2-1.6-2 0-3.6.4-4.7 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.2 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.5 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4Zm0 0"
-              />
+                d="M20.2 73.4v-9h6.2c2.6 0 4.3-.6 5.4-1.8 1-1.2 1.5-3 1.5-5.3V31.5h9.6V58c0 4.9-1.4 8.6-4 11.3-2.7 2.7-6.7 4-11.9 4ZM72.7 74.2c-4.4 0-8.2-1-11.6-2.8-3.4-1.8-6-4.4-8-7.7-1.8-3.2-2.8-7-2.8-11.3 0-4.3 1-8 2.9-11.3 1.9-3.3 4.5-5.9 7.9-7.7 3.4-1.9 7.2-2.8 11.6-2.8 4.4 0 8.2 1 11.6 2.8 3.3 1.8 6 4.4 7.9 7.7 2 3.3 2.9 7 2.9 11.3 0 4.3-1 8-3 11.3-1.8 3.3-4.5 5.9-7.8 7.7a23.5 23.5 0 0 1-11.6 2.8ZM60 52.4c0 2.5.5 4.7 1.6 6.7 1 1.9 2.5 3.4 4.4 4.5 2 1 4.1 1.6 6.6 1.6s4.7-.6 6.6-1.6c1.9-1.1 3.4-2.6 4.4-4.5 1-2 1.6-4.2 1.6-6.7s-.5-4.7-1.6-6.6c-1-2-2.5-3.4-4.4-4.5-1.9-1.1-4.1-1.6-6.6-1.6a13 13 0 0 0-6.6 1.6c-1.9 1-3.4 2.6-4.4 4.5-1.1 1.9-1.6 4-1.6 6.6ZM102.7 73.4v-42h18.7c4.3 0 7.7 1 10.2 3.1a10 10 0 0 1 3.8 8.2c0 2-.5 3.7-1.4 5.3a9.6 9.6 0 0 1-3.7 3.8 10.3 10.3 0 0 1 6.3 9.8c0 2.4-.6 4.4-1.8 6.2a12 12 0 0 1-5 4c-2.1 1-4.6 1.6-7.4 1.6Zm9.4-7.6h8.8c2 0 3.4-.4 4.4-1.3 1-.9 1.6-2.1 1.6-3.7s-.6-2.8-1.6-3.7c-1-.9-2.5-1.3-4.4-1.3h-8.8Zm0-17.3h7.9c1.8 0 3.2-.4 4.2-1.2 1-.9 1.5-2 1.5-3.6 0-1.5-.5-2.7-1.5-3.5-1-.8-2.4-1.2-4.2-1.2h-8ZM155.3 101.5V59.6h9.5v33H183v9ZM189.8 101.5V59.6h27.5v8h-18v8.7h16.4v8h-16.5v9.2H218v8ZM240.6 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-5.9-5c-1.4-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.6-.4 4.7-1.1A3.7 3.7 0 0 0 247 90c0-1.5-.7-2.7-2-3.6-1.4-1-3.6-1.7-6.6-2.3-4.9-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.5 1.1 4.4 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3h-9.1c0-1.9-.7-3.3-2-4.4-1.1-1.1-2.9-1.6-5-1.6-2 0-3.6.4-4.8 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.3 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.4 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4ZM279 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-6-5c-1.3-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2.1 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.5-.4 4.7-1.1a3.7 3.7 0 0 0 1.7-3.3c0-1.5-.7-2.7-2-3.6-1.5-1-3.6-1.7-6.6-2.3-5-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.4 1.1 4.3 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3H285c0-1.9-.6-3.3-1.8-4.4-1.3-1.1-3-1.6-5.2-1.6-2 0-3.6.4-4.7 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.2 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.5 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4Zm0 0"/>
             </g>
           </svg>
         </div>
@@ -820,24 +818,49 @@
                   this.open = window.innerWidth >= 1024;
                   // Improved resize handling                    const handleResize = () => {                        const isMobile = window.innerWidth < 1024;                        if (isMobile) {                            this.open = false;                            this.collapsed = false;                        } else {                            this.open = true;                            document.body.style.overflow = '';                        }                    };                    window.addEventListener('resize', handleResize, { passive: true });                    handleResize(); // Initial check                    // Improved mobile touch handling                    document.addEventListener('touchstart', (e) => {                        if (window.innerWidth < 1024 && !e.target.closest('aside')) {                            this.open = false;                        }                    }, { passive: true });                }            });            Alpine.store('theme', {                themes: ['Jobless', 'Dark', 'lofi', 'pastel'],                current: localStorage.getItem('theme') || 'Jobless',                init() {                    this.apply();                },                apply() {                    document.documentElement.setAttribute('data-theme', this.current);                },                set(theme) {                    this.current = theme;                    localStorage.setItem('theme', theme);                    this.apply();                }            });            // Define the pageState store            Alpine.store('pageState', {                isLoading: true,
               init() {
-                  setTimeout(() => {
-                      this.isLoading = false;
-                  }, 100);
-              }
+                  const handleResize = () => {
+                      const isMobile = window.innerWidth < 1024;
+                      if (isMobile) {
+                          this.open = false;
+                          this.collapsed = false;
+                      } else {
+                          this.open = true;
+                          document.body.style.overflow = '';
+                      }
+                  };
+
+                  window.addEventListener('resize', handleResize, { passive: true });
+                  handleResize(); // Initial check
+
+                  // Handle touch events for mobile
+                  let touchStartX = 0;
+                  let touchEndX = 0;
+
+                  document.addEventListener('touchstart', (e) => {
+                      touchStartX = e.changedTouches[0].screenX;
+                  }, { passive: true });
+
+                  document.addEventListener('touchend', (e) => {
+                      touchEndX = e.changedTouches[0].screenX;
+                      const diffX = touchStartX - touchEndX;
+
+                      // Only handle swipe if it's significant (> 50px)
+                      if (Math.abs(diffX) > 50 && window.innerWidth < 1024) {
+                          if (diffX > 0) {
+                              // Swipe left - close sidebar
+                              this.open = false;
+                          } else {
+                              // Swipe right - open sidebar
+                              this.open = true;
+                          }
+                      }
+                  }, { passive: true });
+              },
+              // ...existing code...
           });
-
-          // Initialize page state
-          if (Alpine.store('pageState')) {
-              Alpine.store('pageState').init();
-          }
+          // ...existing code...
       });
-
-      // Add passive scroll handler for mobile
-      document.addEventListener('scroll', () => {}, { passive: true });
-
-      // Add passive touch handlers for mobile gestures
-      document.addEventListener('touchstart', () => {}, { passive: true });
-      document.addEventListener('touchmove', () => {}, { passive: true });
+      // ...existing code...
     </script>
   </body>
 </html>
