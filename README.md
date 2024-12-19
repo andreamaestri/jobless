@@ -9,11 +9,17 @@
   - [Accessibility Considerations](#accessibility-considerations)
   - [Database Design](#database-design)
 - [Features Implementation](#features-implementation)
- - [Core Features](#core-features)
- - [Advanced Features](#advanced-features)
+  - [Core Features](#core-features)
+  - [Advanced Features](#advanced-features)
+  - [Additional Features](#additional-features)
+- [Technologies Used](#technologies-used)
 - [Testing and Validation](#testing-and-validation)
   - [Testing Results](#testing-results)
   - [Validation](#validation)
+- [Deployment Process](#deployment-process)
+- [Refelection](#reflection)
+- [Code Attribution](#code-attribution)
+- [Future Improvements](#future-improvements)
 ## Overview
 
 ### Purpose
@@ -129,10 +135,10 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 
 ![AI Assistant](readme_images/AI1.JPG)
 
-### Additional Features Implemented
+### Additional Features
 - **Feature 8:** Favourite a job. Users can chose to add a job to a favourites list. 
 
-![Favourites](readme_images/favourite.JPG)
+![Favourites](readme_images/favourites1.JPG)
 
 - **Feature 9:** Calendar. Users can views events in a calendar ot list mode
 
@@ -166,7 +172,6 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 - Git - for version control
 - Gitpod 
 - GitHub 
-
 
 ### Validation and Testing
 - HTML - The W3C Markup validation Service
@@ -236,8 +241,6 @@ Python - errors detected using CI python linter
 
 ![Python results](readme_images/pythontest1.JPG)
 
-## Deployment
-
 ### Deployment Process
 ## Deployment
 
@@ -269,13 +272,13 @@ The project was reployed  after new features were made functional so that contin
 
 ![Deployment from Heroku](readme_images/deployment1.JPG)
 
-## Reflection on Development Process
+## Reflection
 
 ### Successes
-Effective use of AI, implementation of features, final product is visually appealing.
+Effective use of AI, implementation of features, final product is visually appealing and useful.
 
 ### Challenges
-Integration of frameworks, one merge conflict issue.
+Integration of frameworks, one merge conflict issue
 
 ## Code Attribution
 - Guy Clements - use of his project as a basis for Jobless
