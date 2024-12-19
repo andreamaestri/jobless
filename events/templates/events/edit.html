@@ -2,49 +2,50 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
-    <div class="max-w-3xl mx-auto">
-        <div class="bg-[#fff5ef] shadow-lg rounded-2xl p-8">
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold text-primar-content">Edit Event</h1>
-                <p class="text-[#666666] mt-2">Update your event details</p>
+<div class="card w-full max-w-3xl mx-auto bg-base-100 shadow-xl">
+    <div class="card-body">
+        <!-- Header -->
+        <div class="flex items-center gap-2 mb-6">
+            <span class="iconify" data-icon="octicon:pencil-16"></span>
+            <h1 class="card-title text-2xl">Edit Event</h1>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="space-y-4">
+                {% for field in form %}
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text font-medium">{{ field.label }}</span>
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <label class="label">
+                        <span class="label-text-alt text-error">{{ field.errors.0 }}</span>
+                    </label>
+                    {% endif %}
+                    {% if field.help_text %}
+                    <label class="label">
+                        <span class="label-text-alt">{{ field.help_text }}</span>
+                    </label>
+                    {% endif %}
+                </div>
+                {% endfor %}
             </div>
 
-            <!-- Form -->
-            <form method="post" class="space-y-6">
-                {% csrf_token %}
-
-                <div class="space-y-4">
-                    {% for field in form %}
-                    <div>
-                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-primar-content mb-2">
-                            {{ field.label }}
-                        </label>
-                        {{ field }}
-                        {% if field.errors %}
-                        <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
-                        {% endif %}
-                        {% if field.help_text %}
-                        <p class="text-[#666666] text-xs mt-1">{{ field.help_text }}</p>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Form Actions -->
-                <div class="flex justify-end space-x-4 pt-6 mt-8 border-t border-[#fce8dd]">
-                    <a href="{% url 'events:list' %}"
-                        class="px-6 py-3 border border-[#e6d5cc] rounded-xl text-[#666666] hover:bg-[#fce8dd] transition-colors duration-200">
-                        Cancel
-                    </a>
-                    <button type="submit"
-                        class="px-6 py-3 bg-primary text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
-                        Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
+            <!-- Form Actions -->
+            <div class="card-actions justify-end mt-6 pt-6 border-t">
+                <a href="{% url 'events:list' %}" class="btn btn-ghost">
+                    <span class="iconify mr-2" data-icon="octicon:x-circle-16"></span>
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <span class="iconify mr-2" data-icon="octicon:check-16"></span>
+                    Save Changes
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

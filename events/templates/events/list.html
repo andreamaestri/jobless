@@ -6,15 +6,13 @@
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
-            <div>
+            <div class="space-y-1">
                 <h1 class="text-2xl font-bold text-base-content">Events</h1>
-                <p class="text-base-content/70 mt-1">Manage your upcoming events and interviews</p>
+                <p class="text-base-content/70">Manage your upcoming events and interviews</p>
             </div>
             <a href="{% url 'events:add' %}"
-                class="px-4 py-2 bg-primary text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
+                class="btn btn-primary gap-2">
+                <span class="iconify" data-icon="octicon:plus-16"></span>
                 Add Event
             </a>
         </div>
@@ -32,68 +30,52 @@
         {% if events %}
         <div class="bg-base-100 shadow-lg rounded-2xl overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-primary text-primary-content">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Event</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Type</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Date & Time</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Location</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Related Job</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Actions</th>
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr class="bg-primary text-primary-content">
+                            <th class="text-left font-semibold">Event</th>
+                            <th class="text-left font-semibold">Type</th>
+                            <th class="text-left font-semibold">Date & Time</th>
+                            <th class="text-left font-semibold">Location</th>
+                            <th class="text-left font-semibold">Related Job</th>
+                            <th class="text-left font-semibold">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-[#fce8dd]">
+                    <tbody>
                         {% for event in events %}
-                        <tr class="hover:bg-white transition-colors duration-150">
-                            <td class="px-6 py-4">
-                                <div>
-                                    <h3 class="text-base-content font-medium">{{ event.title }}</h3>
+                        <tr class="hover">
+                            <td class="py-4">
+                                <div class="space-y-1">
+                                    <h3 class="font-medium">{{ event.title }}</h3>
                                     {% if event.notes %}
-                                    <p class="text-xs text-[#666666]">{{ event.notes|truncatechars:50 }}</p>
+                                    <p class="text-xs text-base-content/60">{{ event.notes|truncatechars:50 }}</p>
                                     {% endif %}
                                 </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full bg-primary text-white">
+                            <td class="py-4">
+                                <span class="badge badge-primary">
                                     {{ event.event_type|title }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-base-content">{{ event.date|date:"M d, Y - g:i A" }}</td>
-                            <td class="px-6 py-4 text-sm text-base-content">{{ event.location }}</td>
-                            <td class="px-6 py-4 text-sm text-base-content">
+                            <td class="py-4">{{ event.date|date:"M d, Y - g:i A" }}</td>
+                            <td class="py-4">{{ event.location }}</td>
+                            <td class="py-4">
                                 {% if event.job_posting %}
                                 {{ event.job_posting.title }}
                                 {% else %}
                                 -
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center space-x-3">
-                                    <a href="{% url 'events:detail' event.pk %}" class="text-black hover:bg-base-100"
-                                        aria-label="View Details">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
+                            <td class="py-4">
+                                <div class="flex items-center gap-3">
+                                    <a href="{% url 'events:detail' event.pk %}" class="btn btn-ghost btn-sm btn-square">
+                                        <span class="iconify" data-icon="octicon:eye-16"></span>
                                     </a>
-                                    <a href="{% url 'events:edit' event.pk %}"
-                                        class="text-primary hover:text-[#c77857] transition-colors duration-200">
-                                        <span class="sr-only">Edit</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                    <a href="{% url 'events:edit' event.pk %}" class="btn btn-ghost btn-sm btn-square text-primary">
+                                        <span class="iconify" data-icon="octicon:pencil-16"></span>
                                     </a>
-                                    <a href="{% url 'events:delete' event.pk %}"
-                                        class="text-red-600 hover:text-red-800 transition-colors duration-200">
-                                        <span class="sr-only">Delete</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                    <a href="{% url 'events:delete' event.pk %}" class="btn btn-ghost btn-sm btn-square text-error">
+                                        <span class="iconify" data-icon="octicon:trash-16"></span>
                                     </a>
                                 </div>
                             </td>
@@ -104,13 +86,10 @@
             </div>
         </div>
         {% else %}
-        <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
-            <p class="text-[#666666] mb-6">No events added yet</p>
-            <a href="{% url 'events:add' %}"
-                class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
+        <div class="bg-base-200 rounded-2xl shadow-lg p-12 text-center">
+            <p class="text-base-content/70 mb-6">No events added yet</p>
+            <a href="{% url 'events:add' %}" class="btn btn-primary gap-2">
+                <span class="iconify" data-icon="octicon:plus-16"></span>
                 Schedule Your First Event
             </a>
         </div>
