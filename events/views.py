@@ -29,23 +29,16 @@ class EventListView(LoginRequiredMixin, ListView):
 
 
 class EventCreateView(LoginRequiredMixin, CreateView):
-    """
-    View for creating new event entries.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        CreateView: Handles creation of Event objects
-
-    Attributes:
-        model: Event model
-        form_class: Form class for event creation
-        template_name: Path to the creation template
-        success_url: URL to redirect to after successful creation
-    """
     model = Event
     form_class = EventForm
     template_name = 'events/add.html'
     success_url = reverse_lazy('events:list')
+
+    def get_form_kwargs(self):
+        """Add the logged-in user to the form kwargs."""
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -54,23 +47,16 @@ class EventCreateView(LoginRequiredMixin, CreateView):
 
 
 class EventUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    View for updating existing event entries.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        UpdateView: Handles updating of Event objects
-
-    Attributes:
-        model: Event model
-        form_class: Form class for event updating
-        template_name: Path to the edit template
-        success_url: URL to redirect to after successful update
-    """
     model = Event
     form_class = EventForm
     template_name = 'events/edit.html'
     success_url = reverse_lazy('events:list')
+
+    def get_form_kwargs(self):
+        """Add the logged-in user to the form kwargs."""
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_queryset(self):
         # Ensure users can only edit their own events
