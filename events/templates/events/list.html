@@ -319,6 +319,8 @@
             attributes: true,
             attributeFilter: ['data-theme']
         });
+
+        initializeView();
     });
 
     function showListView() {
@@ -331,14 +333,22 @@
     }
 
     function showCalendarView() {
-        document.getElementById('listView').classList.add('hidden');
-        document.getElementById('calendarView').classList.remove('hidden');
-        document.getElementById('calendarViewBtn').classList.add('btn-primary');
-        document.getElementById('calendarViewBtn').classList.remove('btn-ghost');
-        document.getElementById('listViewBtn').classList.remove('btn-primary');
-        document.getElementById('listViewBtn').classList.add('btn-ghost');
-        
-        window.dispatchEvent(new Event('resize'));
+        window.location.href = window.location.pathname + '?view=calendar';
+    }
+
+    // Add this new function to handle initial view based on URL parameter
+    function initializeView() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get('view');
+        if (view === 'calendar') {
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('calendarView').classList.remove('hidden');
+            document.getElementById('calendarViewBtn').classList.add('btn-primary');
+            document.getElementById('calendarViewBtn').classList.remove('btn-ghost');
+            document.getElementById('listViewBtn').classList.remove('btn-primary');
+            document.getElementById('listViewBtn').classList.add('btn-ghost');
+            window.dispatchEvent(new Event('resize'));
+        }
     }
 </script>
 {% endblock %}
