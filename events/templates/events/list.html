@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block content %}
-<div x-data="calendar" x-init="initCalendar()" class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 bg-base-200">
+<div x-data="calendarComponent" 
+     x-init="init()"
+     class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 bg-base-200">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
@@ -13,12 +15,12 @@
             <div class="flex items-center space-x-4">
                 <!-- View Toggle -->
                 <div class="flex items-center join bg-base-100 shadow-sm">
-                    <button onclick="showListView()" id="listViewBtn"
+                    <button @click="handleListView()" id="listViewBtn"
                         class="join-item btn btn-sm hover:btn-primary-focus">
                         <iconify-icon icon="octicon:list-unordered-16"></iconify-icon>
                         List
                     </button>
-                    <button onclick="showCalendarView()" id="calendarViewBtn"
+                    <button @click="handleCalendarView()" id="calendarViewBtn"
                         class="join-item btn btn-sm hover:btn-primary-focus">
                         <iconify-icon icon="octicon:calendar-16"></iconify-icon>
                         Calendar
@@ -224,15 +226,25 @@
         @apply bg-info text-info-content border-info;
     }
 </style>
-
+{% endblock %}
 {% block extra_js %}
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('calendar', () => ({
+        Alpine.data('calendarComponent', () => ({
             calendarInstance: null,
             events: {{ events_json|safe }},
             
-            initCalendar() {
+            init() {
+                // Initialize after DOM is ready
+                this.$nextTick(() => {
+                    this.setupCalendar();
+                    this.handleCalendarView();
+                });
+            },
+
+            setupCalendar() {
+                if (!document.getElementById('calendar')) return;
+                
                 this.calendarInstance = new FullCalendar.Calendar(document.getElementById('calendar'), {
                     initialView: 'dayGridMonth',
                     height: 800,
@@ -297,137 +309,46 @@
                         info.el.classList.add(`event-${eventType}`);
                     }
                 });
+                
                 this.calendarInstance.render();
-
+                
                 // Re-render calendar when theme changes
                 const observer = new MutationObserver(() => {
-                    this.calendarInstance.render();
+                    if (this.calendarInstance) {
+                        this.calendarInstance.render();
+                    }
                 });
 
                 observer.observe(document.documentElement, {
                     attributes: true,
                     attributeFilter: ['data-theme']
                 });
-            }
-        }));
-    });
-</script>
-{% endblock %}
+            },
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
-        var modal = document.getElementById('calendar-modal');
-        
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            height: 800,
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            handleListView() {
+                document.getElementById('listView').classList.remove('hidden');
+                document.getElementById('calendarView').classList.add('hidden');
+                document.getElementById('listViewBtn').classList.add('btn-primary');
+                document.getElementById('listViewBtn').classList.remove('btn-ghost');
+                document.getElementById('calendarViewBtn').classList.remove('btn-primary');
+                document.getElementById('calendarViewBtn').classList.add('btn-ghost');
             },
-            buttonText: {
-                today: 'Today',
-                month: 'Month',
-                week: 'Week',
-                day: 'Day'
-            },
-            events: '{% url "events:calendar_events" %}',
-            eventClick: function(info) {
-                const event = info.event;
-                const modal = document.getElementById('calendar-modal');
-                document.getElementById('modal-title').textContent = event.title;
-                document.getElementById('modal-description').innerHTML = `
-                    <div class="space-y-2">
-                        <p><span class="font-semibold">Type:</span> ${event.extendedProps.type}</p>
-                        <p><span class="font-semibold">Date:</span> ${event.start.toLocaleDateString()}</p>
-                        <p><span class="font-semibold">Time:</span> ${event.start.toLocaleTimeString()}</p>
-                        ${event.extendedProps.location ? `<p><span class="font-semibold">Location:</span> ${event.extendedProps.location}</p>` : ''}
-                        ${event.extendedProps.notes ? `<p><span class="font-semibold">Notes:</span> ${event.extendedProps.notes}</p>` : ''}
-                    </div>
-                `;
-                document.getElementById('modal-edit').href = `/events/${event.id}/edit/`;
-                modal.showModal();
-            },
-            eventContent: function (arg) {
-                let icon = 'octoicon:calendar-24';
-                switch (arg.event.extendedProps.type.toLowerCase()) {
-                    case 'interview':
-                        icon = 'octoicon:person-24';
-                        break;
-                    case 'meeting':
-                        icon = 'octoicon:people-24';
-                        break;
-                    case 'follow-up':
-                        icon = 'octoicon:reply-24';
-                        break;
-                    case 'networking event':
-                        icon = 'octoicon:organization-24';
-                        break;
-                }
+
+            handleCalendarView() {
+                document.getElementById('listView').classList.add('hidden');
+                document.getElementById('calendarView').classList.remove('hidden');
+                document.getElementById('calendarViewBtn').classList.add('btn-primary');
+                document.getElementById('calendarViewBtn').classList.remove('btn-ghost');
+                document.getElementById('listViewBtn').classList.remove('btn-primary');
+                document.getElementById('listViewBtn').classList.add('btn-ghost');
                 
-                return {
-                    html: `
-                        <div class="flex items-center gap-1 p-1">
-                            <iconify-icon icon="${icon}" class="text-current"></iconify-icon>
-                            <div>
-                                <div class="text-sm font-medium">${arg.event.title}</div>
-                                <div class="text-xs opacity-90">${arg.event.extendedProps.type || ''}</div>
-                            </div>
-                        </div>
-                    `
-                };
-            },
-            eventDidMount: function (info) {
-                // Add event type class
-                const eventType = info.event.extendedProps.type.toLowerCase().replace(' ', '-');
-                info.el.classList.add(`event-${eventType}`);
-            },
-            dayMaxEvents: true,
-            displayEventTime: true,
-            eventTimeFormat: {
-                hour: 'numeric',
-                minute: '2-digit',
-                meridiem: 'short'
-            }
-        });
-
-        calendar.render();
-
-        // Re-render calendar when theme changes
-        const observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                if (mutation.attributeName === 'data-theme') {
-                    calendar.render();
+                // Ensure calendar is properly rendered
+                window.dispatchEvent(new Event('resize'));
+                if (this.calendarInstance) {
+                    this.calendarInstance.render();
                 }
-            });
-        });
-
-        observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['data-theme']
-        });
+            }
+        }))
     });
-
-    function showListView() {
-        document.getElementById('listView').classList.remove('hidden');
-        document.getElementById('calendarView').classList.add('hidden');
-        document.getElementById('listViewBtn').classList.add('btn-primary');
-        document.getElementById('listViewBtn').classList.remove('btn-ghost');
-        document.getElementById('calendarViewBtn').classList.remove('btn-primary');
-        document.getElementById('calendarViewBtn').classList.add('btn-ghost');
-    }
-
-    function showCalendarView() {
-        document.getElementById('listView').classList.add('hidden');
-        document.getElementById('calendarView').classList.remove('hidden');
-        document.getElementById('calendarViewBtn').classList.add('btn-primary');
-        document.getElementById('calendarViewBtn').classList.remove('btn-ghost');
-        document.getElementById('listViewBtn').classList.remove('btn-primary');
-        document.getElementById('listViewBtn').classList.add('btn-ghost');
-        
-        window.dispatchEvent(new Event('resize'));
-    }
 </script>
-{% endblock %}
+{% endblock extra_js %}
