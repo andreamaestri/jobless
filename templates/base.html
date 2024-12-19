@@ -682,6 +682,11 @@
                   </div>
                 </div>
               </div>
+              <!-- Favourites -->
+              <div class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-base-100/80 transition-colors duration-200">
+                <iconify-icon icon="octicon:star-24" class="text-base-content/70"></iconify-icon>
+                <a href="{% url 'jobs:favourites' %}" class="flex-1 text-left">Favourites</a>
+              </div>
               <a
                 href="{% url 'account_logout' %}"
                 class="flex items-center gap-2 w-full p-2 rounded-lg bg-accent text-accent-content hover:bg-accent/90 transition-colors duration-200"
