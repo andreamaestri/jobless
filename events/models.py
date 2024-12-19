@@ -16,7 +16,7 @@ class Event(models.Model):
     event_type = models.CharField(max_length=20, choices=EVENT_TYPES) 
     date = models.DateTimeField() 
     location = models.CharField(max_length=200) 
-    # contacts = models.ManyToManyField('contacts.Contact', blank=True)
+    contacts = models.ForeignKey('contacts.Contact', null=True, blank=True, on_delete=models.SET_NULL)
     job_posting = models.ForeignKey('jobs.JobPosting', null=True, blank=True, on_delete=models.SET_NULL)
     notes = models.TextField(blank=True) 
     created_at = models.DateTimeField(auto_now_add=True)
