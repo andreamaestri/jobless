@@ -1,12 +1,10 @@
-
-
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import JobPosting
-from .forms import JobPostingForm  # We'll need to create this
+from .forms import JobPostingForm
 
 
 class JobPostingListView(LoginRequiredMixin, ListView):
@@ -130,26 +128,22 @@ class JobPostingDetailView(LoginRequiredMixin, DetailView):
         # Ensure users can only view their own job postings
         return JobPosting.objects.filter(user=self.request.user)
     
-def toggle_favourite(request, LoginRequiredMixin, jobposting_id):
+def toggle_favourite(request, job_id):
+    """Toggle favourite status of a job posting"""
+    job = get_object_or_404(JobPosting, id=job_id)
     
-    jobposting = get_object_or_404(JobPosting, id=job_id)
     if request.method == "POST":
-        if request.user in jobposting.favourites.all():
-            jobposting.favourites.remove(request.user)
-            messages.add_message(
-                request, messages.SUCCESS, "Job removed from bookmarks!"
-            )
+        if request.user in job.favourites.all():
+            job.favourites.remove(request.user)
+            messages.success(request, "Job removed from favourites!")
         else:
-            jobposting.favourites.add(request.user)
-            messages.add_message(request, messages.SUCCESS,
-                                "Job added to bookmarks!")
-
-    return redirect("detail", slug=jobposting.slug)
-
-
-
-def favourited_jobs(request, LoginRequiredMixin):
+            job.favourites.add(request.user)
+            messages.success(request, "Job added to favourites!")
     
-    favourites = request.user.favourited_jobs.all()
-    return render(request, "favourites.html",
-                {"favourites": favourites})
+    return redirect("jobs:list")
+
+
+def favourited_jobs(request):
+    """Display user's favourited jobs"""
+    favorite_jobs = JobPosting.objects.filter(favourites=request.user)
+    return render(request, "jobs/favourites.html", {"favorite_jobs": favorite_jobs})
