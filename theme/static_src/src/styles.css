@@ -20,6 +20,18 @@
 @tailwind components;
 
 @layer components {
+    /* Calendar Styling */
+    .fc {
+        --fc-border-color: hsl(var(--b3));
+        --fc-button-text-color: hsl(var(--pc));
+        --fc-button-bg-color: hsl(var(--p));
+        --fc-button-border-color: hsl(var(--p));
+        --fc-button-hover-bg-color: hsl(var(--pf));
+        --fc-button-hover-border-color: hsl(var(--pf));
+        --fc-button-active-bg-color: hsl(var(--pf));
+        --fc-button-active-border-color: hsl(var(--pf));
+    }
+
     .nav-item {
         @apply relative overflow-visible ring-0 transform-gpu;
         transform-style: preserve-3d;
