@@ -12,8 +12,8 @@
  - [Core Features](#core-features)
  - [Advanced Features](#advanced-features)
 - [Testing and Validation](#testing-and-validation)
- - [Testing Results](#testing-results)
- - [Validation](#validation)
+  - [Testing Results](#testing-results)
+  - [Validation](#validation)
 ## Overview
 
 ### Purpose
@@ -102,23 +102,27 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 - **Feature 1:** Responsive design, visual design. These can been seen in the images showing the remaining features.
 
 - **Feature 2:** Account creation. Users can create an account to use the features of the application.
-![alt text](image.jpg)
+![Sign up](readme_images/account1.JPG)
 
 - **Feature 3:** Jobs section. Users can add a job with associated details to a list which can be viewed. Jobs can be categorized, a status attached and notes submitted. Once added jobs can be updated or deleted.
-![alt text](image.jpg)
+
+![Jobs List desktop](readme_images/joblisdesk1t.JPG)
+![Job Detail desktop](readme_images/jobdetail1.JPG)
 
 - **Feature 4:** Contacts section. Users can add a contact with associated details to a list which can be viewed. Once added jobs can be updated or deleted.
-![alt text](image.jpg)
+![Contacts List desktop](readme_images/contactslist1.JPG)
+![Contact Detail desktop](readme_images/contactsdetail1.JPG)
 
 - **Feature 5:** Events section. Users can add an event with associated details to a list which can be viewed. Once added events can be updated or deleted.
-![alt text](image.jpg)
+![Events List desktop](readme_images/eventslist1.JPG)
+![Event Detail desktop](readme_images/eventdetail1.JPG)
 
 - **Feature 6:** Forms. Forms are intuitive to use for swift input and feedback.
-![alt text](image.jpg)
+![Form](readme_images/forms.JPG)
 
 ### Advanced Features (Could-Haves)
 - **Feature 7:** AI CV assistant. Users can upload their CV to ask AI to suggest improvements, eg for a particular job application
-![alt text](image.jpg)
+![AI Assistant](readme_images/AI1.JPG)
 
 ## Testing and Validation
 
