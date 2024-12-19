@@ -26,7 +26,7 @@ urlpatterns = [
     path('ai-assistant/', include('ai_assistant.urls', namespace='ai_assistant')),
     path('contacts/', include('contacts.urls')),
     path('events/', include('events.urls')),
-    path('jobs/', include('jobs.urls')),
+    path('jobs/', include(('jobs.urls', 'jobs'), namespace='jobs')),
     path('', include ('home.urls')),
     
 ]
