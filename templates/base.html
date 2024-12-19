@@ -175,6 +175,14 @@
         },
       };
 
+      // Constants
+      const MOBILE_BREAKPOINT = 1024;
+      const SWIPE_THRESHOLD = 100; // Increased from 50px
+      const SIDEBAR_WIDTH = {
+        EXPANDED: '20rem',
+        COLLAPSED: '5rem'
+      };
+
       // Touch gesture support
       let touchStartX = 0;
       let touchEndX = 0;
@@ -217,6 +225,48 @@
           collapsed: JSON.parse(
             localStorage.getItem("sidebarCollapsed") || "false"
           ),
+
+          // Touch handling state
+          touchState: {
+            startX: 0,
+            startY: 0,
+            endX: 0,
+            endY: 0,
+            isSwiping: false
+          },
+
+          handleTouchStart(e) {
+            if (e.target.closest('.scrollable, .slider')) return;
+
+            this.touchState.startX = e.touches[0].clientX;
+            this.touchState.startY = e.touches[0].clientY;
+            this.touchState.isSwiping = true;
+          },
+
+          handleTouchMove(e) {
+            if (!this.touchState.isSwiping) return;
+
+            this.touchState.endX = e.touches[0].clientX;
+            this.touchState.endY = e.touches[0].clientY;
+          },
+
+          handleTouchEnd() {
+            if (!this.touchState.isSwiping) return;
+
+            const diffX = this.touchState.startX - this.touchState.endX;
+            const diffY = Math.abs(this.touchState.startY - this.touchState.endY);
+
+            // Only handle horizontal swipes
+            if (Math.abs(diffX) > SWIPE_THRESHOLD && diffY < SWIPE_THRESHOLD / 2) {
+              if (diffX > 0 && window.innerWidth < MOBILE_BREAKPOINT) {
+                this.open = false;
+              } else if (diffX < 0 && window.innerWidth < MOBILE_BREAKPOINT) {
+                this.open = true;
+              }
+            }
+
+            this.touchState.isSwiping = false;
+          },
 
           async toggle() {
             const elements = {
@@ -483,37 +533,6 @@
       document.addEventListener("touchstart", () => {}, { passive: true });
       document.addEventListener("touchmove", () => {}, { passive: true });
     </script>
-    <script>
-      document.addEventListener("alpine:init", () => {
-        Alpine.store("sidebar", {
-          open: false,
-          collapsed: false,
-
-          toggle() {
-            this.open = !this.open;
-            if (window.innerWidth < 1024) {
-              document.body.style.overflow = this.open ? "hidden" : "";
-            }
-          },
-
-          init() {
-            const handleResize = () => {
-              const isDesktop = window.innerWidth >= 1024;
-              this.open = isDesktop;
-              this.collapsed = isDesktop
-                ? JSON.parse(
-                    localStorage.getItem("sidebarCollapsed") || "false"
-                  )
-                : false;
-              document.body.style.overflow = "";
-            };
-
-            window.addEventListener("resize", handleResize, { passive: true });
-            handleResize();
-          },
-        });
-      });
-    </script>
   </head>
 
   <body x-data class="bg-base-100 min-h-min">
@@ -553,6 +572,10 @@
             </iconify-icon>
           </button>
           <svg
+            x-show="!$store.sidebar.open"
+            x-transition:enter="transition-all ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
             class="h-8 w-auto text-primary fill-current"
             width="422"
             viewBox="0 0 316.5 135.8"
@@ -679,7 +702,7 @@
         {% for item in navigation_items %}
         <a
           href="{{ item.url }}"
-          @click="if(window.innerWidth < 1024) { $store.sidebar.open = false }"
+          @click="if(window.innerWidth < 1024) { $store.sidebar.toggle() }"
           class="nav-item btn-animate flex items-center p-2 rounded-lg hover:bg-base-100/80 hover:ring-2 hover:ring-primary/70 hover:ring-offset-2 hover:ring-offset-base-100 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 transform-gpu"
           :class="{ 'justify-center': $store.sidebar.collapsed && window.innerWidth >= 1024 }"
         >
@@ -1215,6 +1238,53 @@
           Alpine.store("pageState").init();
         }
       });
+
+      // Add passive scroll handler for mobile
+      document.addEventListener("scroll", () => {}, { passive: true });
+
+      // Add passive touch handlers for mobile gestures
+      document.addEventListener("touchstart", () => {}, { passive: true });
+      document.addEventListener("touchmove", () => {}, { passive: true });
     </script>
+
+    {% if messages %}
+    <!-- DaisyUI Toast Container -->
+    <div x-data="{ toasts: [] }" x-init="
+        @if messages
+            toasts = [
+                {% for message in messages %}
+                {
+                    id: {{ forloop.counter }},
+                    type: '{{ message.tags }}',
+                    text: '{{ message|escapejs }}'
+                }{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            ];
+        @endif
+
+        // Auto-remove toasts after 5 seconds
+        setInterval(() => {
+            if (toasts.length > 0) {
+                toasts.shift();
+            }
+        }, 5000);
+    ">
+        <div class="toast toast-end space-y-2">
+            <template x-for="toast in toasts" :key="toast.id">
+                <div class="alert" :class="{
+                    'alert-success': toast.type === 'success',
+                    'alert-error': toast.type === 'error',
+                    'alert-info': toast.type === 'info',
+                    'alert-warning': toast.type === 'warning'
+                }">
+                    <span x-text="toast.text"></span>
+                    <button class="btn btn-sm btn-circle btn-ghost" @click="toasts = toasts.filter(t => t.id !== toast.id)">
+                        ✕
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+    {% endif %}
   </body>
 </html>
