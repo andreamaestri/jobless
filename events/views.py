@@ -1,3 +1,5 @@
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -28,6 +30,15 @@ class EventListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Event.objects.filter(user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        events_json = json.dumps(
+            list(self.get_queryset().values('title', 'start_date', 'end_date')),
+            cls=DjangoJSONEncoder
+        )
+        context['events_json'] = events_json
+        return context
 
 
 class EventCreateView(LoginRequiredMixin, CreateView):
