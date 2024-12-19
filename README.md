@@ -102,6 +102,7 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 - **Feature 1:** Responsive design, visual design. These can been seen in the images showing the remaining features.
 
 - **Feature 2:** Account creation. Users can create an account to use the features of the application.
+
 ![Sign up](readme_images/account1.JPG)
 
 - **Feature 3:** Jobs section. Users can add a job with associated details to a list which can be viewed. Jobs can be categorized, a status attached and notes submitted. Once added jobs can be updated or deleted.
@@ -110,90 +111,166 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 ![Job Detail desktop](readme_images/jobdetail1.JPG)
 
 - **Feature 4:** Contacts section. Users can add a contact with associated details to a list which can be viewed. Once added jobs can be updated or deleted.
+
 ![Contacts List desktop](readme_images/contactslist1.JPG)
 ![Contact Detail desktop](readme_images/contactsdetail1.JPG)
 
 - **Feature 5:** Events section. Users can add an event with associated details to a list which can be viewed. Once added events can be updated or deleted.
+
 ![Events List desktop](readme_images/eventslist1.JPG)
 ![Event Detail desktop](readme_images/eventdetail1.JPG)
 
 - **Feature 6:** Forms. Forms are intuitive to use for swift input and feedback.
+
 ![Form](readme_images/forms.JPG)
 
 ### Advanced Features (Could-Haves)
-- **Feature 7:** AI CV assistant. Users can upload their CV to ask AI to suggest improvements, eg for a particular job application
+- **Feature 7:** AI CV assistant. Users can upload their CV to ask AI to suggest improvements, eg for a particular job application.
+
 ![AI Assistant](readme_images/AI1.JPG)
+
+## Technologies Used
+
+### Planning and Design
+- GitHUb - project board
+- Figma - planning board and wireframes
+- Claude - ERD for database
+- Realtime Colors - colour palette and accesibility testing
+- Favicon generator - to produce favicon
+- Techsini.com - mockup generator
+
+### Languages
+- HTML5 
+- CSS3 
+- Python3
+- Javascript 
+- Markdown
+
+### Frameworks
+- Tailwind
+- Django4
+
+### Database
+- Postgres - supplied via Code Institute
+
+### Development
+- Git - for version control
+- Gitpod 
+- GitHub 
+
+
+### Validation and Testing
+- HTML - The W3C Markup validation Service
+- CSS - The W3C CSS Validation Service
+- Python - The Code Institute Python Linter
+- Lighthouse
+- JS Hint
+
+### Deployment
+- Heroku 
+
+### AI
+- Claude
 
 ## Testing and Validation
 
 ### Testing Results
 | Feature | Test | Result |
 | ----------- | ----------- | ----------- |
-| Responsive design | Application displays as required on different size devices | Success |
+| Responsive design | Application displays as required on different size devices | Success/Fail |
 | Account | Click on sign up button to enter details | Success |
 | Account | Click on submit button to create an account | Success |
 | Account | Click on sign in button to log in | Success |
 | Account | Click on sign out button to log out | Success |
 | Jobs | Click on icon on navbar to display jobs list | Success |
 | Jobs | Click on add job button to display jobs form | Success |
-| Jobs, Forms | Click on submit button to enter details | Success |
-| Jobs | Click on update job button to update job details | Success |
-| Jobs | Click on delete job button to delete job | Success |
+| Jobs, Forms | Click on save job button to enter details | Success |
+| Jobs | Click on view job icon to view full job details | Success |
+| Jobs | Click on edit job icon to update job details | Success |
+| Jobs | Click on delete job icon to delete job | Success |
 | Contacts | Click on icon on navbar to display contacts list | Success |
 | Contacts | Click on add contact button to display contacts form | Success |
-| Contacts, Forms | Click on submit button to enter details | Success |
-| Contacts | Click on update contact button to update contact details | Success |
+| Contacts, Forms | Click on save contact button to enter details | Success |
+| Contacts | Click on view contact icon to view full contact details | Success |
+| Contacts | Click on edit contact icon to update contact details | Success |
 | Contacts | Click on delete contact button to delete contact | Success |
 | Events | Click on icon on navbar to display events list | Success |
 | Events | Click on add event button to display events form | Success |
 | Events, Forms | Click on submit button to enter details | Success |
+| Events | Click on view event icon to view full event details | Success |
 | Events | Click on update event button to update event details | Success |
 | Events | Click on delete event button to delete event | Success |
 | AI Assistant | Click on icon on navbar to display AI Assistant | Success |
 | AI Assistant | Paste Cv into text area | Success |
 | AI Assistant | Type question into text area | Success |
-| AI Assistant | Click on ?? button to activate AI Assistant | Success |
+| AI Assistant | Click on get AI feedback button to activate AI Assistant | Success |
 
+Lighthouse testing results leave some scope for improvements in accessibility.
+
+![Lighthouse results](readme_images/lighthousedesktop.JPG)
 
 ### Validation
-Discuss the validation process for HTML and CSS using W3C and Jigsaw validators.  
-Include the results of the validation process.  
-**Guidance:** Document your use of W3C and Jigsaw validators to ensure your HTML and CSS meet web standards. Include any errors or warnings encountered and how they were resolved.
 
-## AI Tools Usage
+HTML - errors detected using W3C markup validation. To be addressed in next sprint.
 
-### GitHub Copilot
-Brief reflection on the effectiveness of using AI tools for debugging and validation.  
-**Guidance:** Reflect on how GitHub Copilot assisted with debugging and validation, particularly any issues it helped resolve.
+![HTML results](readme_images/htmltest1.JPG)
+
+CSS - errors detected using W3C css validation. To be addressed in next sprint.
+
+![CSS results](readme_images/csstest1.JPG)
+
+Javascript - no errors detected using JS Hint
+
+![JS Hint results](readme_images/jstest.JPG)
+
+Python - errors detected using CI python linter
+
+![Python results](readme_images/pythontest1.JPG)
 
 ## Deployment
 
 ### Deployment Process
-Briefly describe the deployment process to GitHub Pages or another cloud platform.  
-Mention any specific challenges encountered during deployment.  
-**Guidance:** Describe the steps you took to deploy your website during Phase 4: Final Testing, Debugging & Deployment, including any challenges encountered.
+## Deployment
 
-## AI Tools Usage
+The deployed project can be found at:
+[Deployed Site](https://jobless-339d5aae65c9.herokuapp.com/)
 
-### Reflection
-Describe the role AI tools played in the deployment process, including any benefits or challenges.  
-**Guidance:** Reflect on how AI tools assisted with the deployment process, particularly how they streamlined any tasks or presented challenges.
+This project was deployed to Heroku from the main branch of the Jobless repository on GitHub. 
+
+The project was reployed  after new features were made functional so that continuous checking of the deployed site could be made and any errors picked up early.
+
+### Pre Deployment
+- requirements.txt file to be up to date with installed Python modules needed for effective deployment
+- Procfile used to configure the application as a gunicorn web app
+- runtime.txt populated with Python version for Heroku to use
+- Add Heroku to allowed apps in IDE project settings.py file
+- Generate SECRET_KEY
+- Environment variables of a senstive nature - DATABASE_URL, CLOUDINARY_URL, SECRET_KEY - to be added to env.py file which is not pushed to GitHub
+
+### Deployment Steps
+- Create Heroku account
+- Create a new Heroku app
+- Select region as Europe
+- Add environment variables manually to Heroku in the Config Vars section
+- Connect Heroku to GitHub repository using the search function
+- Once branch is merged successfully with the main branch in the GitHub repo the main branch can be deployed
+- In Heroku dashboard click on Deploy tab - see image below
+- Make sure main branch is selected for deployment, click Deploy - see image below
+- Once the build process has finished click to open the app - see image below
+
+![Deployment from Heroku](readme_images/deployment1.JPG)
 
 ## Reflection on Development Process
 
 ### Successes
-Effective use of AI tools, including GitHub Copilot and DALL-E, and how they contributed to the development process.
+Effective use of AI, implementation of features, final product is visually appealing.
 
 ### Challenges
-Describe any challenges faced when integrating AI-generated content and how they were addressed.
-
-### Final Thoughts
-Provide any additional insights gained during the project and thoughts on the overall process.  
-**Guidance:** Begin drafting reflections during Phase 1 and update throughout the project. Finalize this section after Phase 4. Highlight successes and challenges, particularly regarding the use of AI tools, and provide overall insights into the project.
+Integration of frameworks, one merge conflict issue.
 
 ## Code Attribution
-Properly attribute any external code sources used in the project (excluding GitHub Copilot-generated code).  
-**Guidance:** Document any external code sources used throughout the entire project, especially during Phase 2 and Phase 3. Exclude GitHub Copilot-generated code from attribution.
+- Guy Clements - use of his project as a basis for Jobless
+- Claude AI for models
 
 ## Future Improvements
 Briefly discuss potential future improvements or features that could be added to the project.  
