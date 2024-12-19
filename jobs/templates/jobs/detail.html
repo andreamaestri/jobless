@@ -70,6 +70,18 @@
 
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-base-300">
+                <form method="POST" action="{% url 'jobs:toggle_favourite' object.pk %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-ghost flex items-center gap-2">
+                        {% if request.user in object.favourites.all %}
+                            <iconify-icon icon="octicon:star-fill-24" class="text-primary"></iconify-icon>
+                            <span>Remove from Favourites</span>
+                        {% else %}
+                            <iconify-icon icon="octicon:star-24"></iconify-icon>
+                            <span>Add to Favourites</span>
+                        {% endif %}
+                    </button>
+                </form>
                 <a href="{% url 'jobs:list' %}" class="btn btn-ghost">
                     Back to List
                 </a>
