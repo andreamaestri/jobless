@@ -95,15 +95,20 @@
                                         </button>
                                     </form>
                                     <a href="{% url 'jobs:edit' job.pk %}"
+                                        onclick="event.stopPropagation()"
                                         class="text-warning hover:text-warning-focus transition-colors duration-200 p-1 rounded-lg">
                                         <span class="sr-only">Edit</span>
                                         <iconify-icon icon="octicon:pencil-16" class="w-5 h-5"></iconify-icon>
                                     </a>
-                                    <a href="{% url 'jobs:delete' job.pk %}"
-                                        class="text-error hover:text-error-focus transition-colors duration-200 p-1 rounded-lg">
-                                        <span class="sr-only">Delete</span>
-                                        <iconify-icon icon="octicon:trash-16" class="w-5 h-5"></iconify-icon>
-                                    </a>
+                                    <form method="POST" action="{% url 'jobs:delete' job.pk %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" 
+                                                onclick="event.stopPropagation()"
+                                                class="text-error hover:text-error-focus transition-colors duration-200 p-1 rounded-lg">
+                                            <span class="sr-only">Delete</span>
+                                            <iconify-icon icon="octicon:trash-16" class="w-5 h-5"></iconify-icon>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
