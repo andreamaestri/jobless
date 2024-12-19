@@ -43,7 +43,9 @@
                     </thead>
                     <tbody class="divide-y divide-base-200">
                         {% for job in jobs %}
-                        <tr class="hover:bg-white transition-colors duration-150">
+                        <tr class="hover:bg-white transition-colors duration-150 cursor-pointer" 
+                            data-job-url="{% url 'jobs:detail' job.pk %}"
+                            onclick="window.location.href=this.dataset.jobUrl">
                             <td class="px-6 py-4">
                                 <div>
                                     <h3 class="text-base-content font-medium">{{ job.title }}</h3>
