@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-screen py-12 px-8 rounded-2xl bg-base-200">
-    <div class="max-w-7xl mx-auto">
+<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Welcome Section -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-base-content">Welcome, {{ user.username }}</h1>
@@ -16,7 +16,7 @@
             <!-- Recent Jobs Card -->
             <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-[#2c2c2c]">Recent Jobs</h2>
+                    <h2 class="text-xl font-semibold text-primar-content">Recent Jobs</h2>
                     <a href="{% url 'jobs:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
                         <span class="sr-only">Add Job</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,18 +29,18 @@
                         <table class="rounded-2xl w-full">
                             <thead class="bg-primary text-primary-content">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Title</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Location</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Status</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Updated</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Title</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Company</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Location</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Status</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Updated</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#fce8dd]">
                                 {% for job in recent_jobs %}
                                     <tr class="hover:bg-white">
-                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ job.title }}</td>
-                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ job.company }}</td>
+                                        <td class="px-4 py-3 text-sm text-primar-content">{{ job.title }}</td>
+                                        <td class="px-4 py-3 text-sm text-primar-content">{{ job.company }}</td>
                                         <td class="px-4 py-3 text-sm text-[#666666]">{{ job.location }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 text-xs rounded-full
@@ -69,7 +69,7 @@
             <!-- Upcoming Events Card -->
             <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-[#2c2c2c]">Upcoming Events</h2>
+                    <h2 class="text-xl font-semibold text-primar-content">Upcoming Events</h2>
                     <a href="{% url 'events:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
                         <span class="sr-only">Add Event</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,16 +82,16 @@
                         <table class="w-full">
                             <thead class="bg-primary text-primary-content">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Title</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Type</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Date & Time</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Location</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Title</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Type</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Date & Time</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Location</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#fce8dd]">
                                 {% for event in upcoming_events %}
                                     <tr class="hover:bg-white">
-                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ event.title }}</td>
+                                        <td class="px-4 py-3 text-sm text-primar-content">{{ event.title }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 text-xs rounded-full bg-[#e28b67] text-white">
                                                 {{ event.event_type|title }}
@@ -115,7 +115,7 @@
             <!-- Recent Contacts Card -->
             <div class="bg-base-100 rounded-2xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-[#2c2c2c]">Recent Contacts</h2>
+                    <h2 class="text-xl font-semibold text-primar-content">Recent Contacts</h2>
                     <a href="{% url 'contacts:add' %}" class="text-[#e28b67] hover:text-[#c77857]">
                         <span class="sr-only">Add Contact</span>
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,17 +128,17 @@
                         <table class="w-full">
                             <thead class="bg-primary text-primary-content">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Name</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Company</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Position</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Email</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-[#2c2c2c]">Phone</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Name</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Company</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Position</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Email</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-primar-content">Phone</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#fce8dd]">
                                 {% for contact in recent_contacts %}
                                     <tr class="hover:bg-white">
-                                        <td class="px-4 py-3 text-sm text-[#2c2c2c]">{{ contact.name }}</td>
+                                        <td class="px-4 py-3 text-sm text-primar-content">{{ contact.name }}</td>
                                         <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.company }}</td>
                                         <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.position }}</td>
                                         <td class="px-4 py-3 text-sm text-[#666666]">{{ contact.email }}</td>
