@@ -76,10 +76,22 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3">
-                                    <a href="{% url 'jobs:detail' job.pk %}" class="text-base-content hover:bg-base-200 p-1 rounded-lg"
+                                    <a href="{% url 'jobs:detail' job.pk %}" class="text-base-content p-1 rounded-lg"
                                         aria-label="View Details">
                                         <iconify-icon icon="octicon:eye-16" class="w-5 h-5"></iconify-icon>
                                     </a>
+                                    <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="transition-colors duration-200 p-1 rounded-lg">
+                                            {% if request.user in job.favourites.all %}
+                                                <iconify-icon icon="octicon:star-fill-24" class="w-5 h-5 text-primary"></iconify-icon>
+                                                <span class="sr-only">Remove from Favourites</span>
+                                            {% else %}
+                                                <iconify-icon icon="octicon:star-24" class="w-5 h-5"></iconify-icon>
+                                                <span class="sr-only">Add to Favourites</span>
+                                            {% endif %}
+                                        </button>
+                                    </form>
                                     <a href="{% url 'jobs:edit' job.pk %}"
                                         class="text-warning hover:text-warning-focus transition-colors duration-200 p-1 rounded-lg">
                                         <span class="sr-only">Edit</span>
