@@ -1,5 +1,5 @@
-{% load static tailwind_tags %} {% load account %} {% load i18n %}
-<!DOCTYPE html>
+<!DOCTYPE html>{% load static tailwind_tags %} {% load account %} {% load i18n
+%}
 <html lang="en" class="h-dvh" x-data :data-theme="$store.theme.current">
   <head>
     <meta charset="UTF-8" />
@@ -7,8 +7,84 @@
       name="viewport"
       content="width=device-width, maximum-scale=1.0, user-scalable=no"
     />
+
+    <!-- Primary Meta Tags -->
     <title>{% block title %}Jobless{% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="static/images/favicon-32x32.png">
+    <meta
+      name="title"
+      content="{% block meta_title %}Jobless - Your Job Search Assistant{% endblock %}"
+    />
+    <meta
+      name="description"
+      content="{% block meta_description %}Jobless helps you organize and track your job applications with an intelligent assistant to boost your job search success.{% endblock %}"
+    />
+    <meta
+      name="keywords"
+      content="{% block meta_keywords %}job search, job tracking, career assistant, application tracking{% endblock %}"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta
+      property="og:title"
+      content="{% block og_title %}{{ block.super }}{% endblock %}"
+    />
+    <meta
+      property="og:description"
+      content="{% block og_description %}{{ meta_description }}{% endblock %}"
+    />
+    <meta
+      property="og:image"
+      content="{% block og_image %}{% static 'images/jobless-social.png' %}{% endblock %}"
+    />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="{{ request.build_absolute_uri }}" />
+    <meta
+      property="twitter:title"
+      content="{% block twitter_title %}{{ block.super }}{% endblock %}"
+    />
+    <meta
+      property="twitter:description"
+      content="{% block twitter_description %}{{ meta_description }}{% endblock %}"
+    />
+    <meta
+      property="twitter:image"
+      content="{% block twitter_image %}{% static 'images/jobless-social.png' %}{% endblock %}"
+    />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'images/favicon-32x32.png' %}"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{% static 'images/apple-touch-icon.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{% static 'images/favicon-32x32.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{% static 'images/favicon-16x16.png' %}"
+    />
+    <link rel="manifest" href="{% static 'site.webmanifest' %}" />
+
+    <!-- Additional Meta -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Jobless" />
+    <meta name="theme-color" content="#570df8" />
+
     <!-- Tailwind -->
     {% tailwind_css %}
     <!-- Marked library -->
@@ -246,19 +322,82 @@
           },
 
           init() {
-            const mediaQuery = window.matchMedia("(min-width: 1024px)");
-
-            const handleViewportChange = (e) => {
-              this.open = e.matches;
-              this.collapsed = e.matches ? this.collapsed : false;
-
-              if (!e.matches) {
-                document.body.style.overflow = this.open ? "hidden" : "";
+            const handleResize = () => {
+              const isMobile = window.innerWidth < 1024;
+              if (isMobile) {
+                this.open = false;
+                this.collapsed = false;
+              } else {
+                this.open = true;
+                document.body.style.overflow = "";
               }
             };
 
-            mediaQuery.addListener(handleViewportChange);
-            handleViewportChange(mediaQuery);
+            window.addEventListener("resize", handleResize, { passive: true });
+            handleResize(); // Initial check
+
+            // Handle touch events for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener(
+              "touchstart",
+              (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+              },
+              { passive: true }
+            );
+
+            document.addEventListener(
+              "touchend",
+              (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diffX = touchStartX - touchEndX;
+
+                // Only handle swipe if it's significant (> 50px)
+                if (Math.abs(diffX) > 50 && window.innerWidth < 1024) {
+                  if (diffX > 0) {
+                    // Swipe left - close sidebar
+                    this.open = false;
+                  } else {
+                    // Swipe right - open sidebar
+                    this.open = true;
+                  }
+                }
+              },
+              { passive: true }
+            );
+
+            // Handle click outside to close sidebar on mobile
+            document.addEventListener(
+              "click",
+              (e) => {
+                if (
+                  window.innerWidth < 1024 &&
+                  this.open &&
+                  !e.target.closest("aside")
+                ) {
+                  this.open = false;
+                }
+              },
+              { passive: true }
+            );
+
+            // Handle escape key to close sidebar
+            document.addEventListener("keydown", (e) => {
+              if (e.key === "Escape" && this.open && window.innerWidth < 1024) {
+                this.open = false;
+              }
+            });
+
+            // Update initial state based on viewport
+            this.open = window.innerWidth >= 1024;
+            this.collapsed =
+              window.innerWidth >= 1024
+                ? JSON.parse(
+                    localStorage.getItem("sidebarCollapsed") || "false"
+                  )
+                : false;
           },
         });
 
@@ -282,46 +421,54 @@
         });
 
         // Define the pageState store
-        Alpine.store('pageState', {
-            isLoading: true,
-            init() {
-                // Initial loading state
-                setTimeout(() => {
-                    this.isLoading = false;
-                }, 100);
+        Alpine.store("pageState", {
+          isLoading: true,
+          init() {
+            // Initial loading state
+            setTimeout(() => {
+              this.isLoading = false;
+            }, 100);
 
-                // Initialize after Alpine is ready
-                document.addEventListener('alpine:initialized', () => {
-                    this.setupEventListeners();
-                });
-            },
+            // Initialize after Alpine is ready
+            document.addEventListener("alpine:initialized", () => {
+              this.setupEventListeners();
+            });
+          },
 
-            setupEventListeners() {
-                // Passive event listeners for better performance
-                const passiveListenerOpts = { passive: true };
+          setupEventListeners() {
+            // Passive event listeners for better performance
+            const passiveListenerOpts = { passive: true };
 
-                // Touch events for mobile
-                document.addEventListener('touchstart', () => {}, passiveListenerOpts);
-                document.addEventListener('touchmove', () => {}, passiveListenerOpts);
-                document.addEventListener('scroll', () => {}, passiveListenerOpts);
+            // Touch events for mobile
+            document.addEventListener(
+              "touchstart",
+              () => {},
+              passiveListenerOpts
+            );
+            document.addEventListener(
+              "touchmove",
+              () => {},
+              passiveListenerOpts
+            );
+            document.addEventListener("scroll", () => {}, passiveListenerOpts);
 
-                // Handle page visibility changes
-                document.addEventListener('visibilitychange', () => {
-                    if (document.visibilityState === 'visible') {
-                        this.isLoading = false;
-                    }
-                });
+            // Handle page visibility changes
+            document.addEventListener("visibilitychange", () => {
+              if (document.visibilityState === "visible") {
+                this.isLoading = false;
+              }
+            });
 
-                // Handle page transitions
-                window.addEventListener('beforeunload', () => {
-                    this.isLoading = true;
-                });
-            }
+            // Handle page transitions
+            window.addEventListener("beforeunload", () => {
+              this.isLoading = true;
+            });
+          },
         });
 
         // Initialize page state if store exists
-        if (Alpine.store('pageState')) {
-            Alpine.store('pageState').init();
+        if (Alpine.store("pageState")) {
+          Alpine.store("pageState").init();
         }
       });
 
@@ -332,9 +479,38 @@
       document.addEventListener("touchstart", () => {}, { passive: true });
       document.addEventListener("touchmove", () => {}, { passive: true });
     </script>
+    <script>
+      document.addEventListener("alpine:init", () => {
+        Alpine.store("sidebar", {
+          open: false,
+          collapsed: false,
+
+          toggle() {
+            this.open = !this.open;
+            if (window.innerWidth < 1024) {
+              document.body.style.overflow = this.open ? "hidden" : "";
+            }
+          },
+
+          init() {
+            const handleResize = () => {
+              const isDesktop = window.innerWidth >= 1024;
+              this.open = isDesktop;
+              this.collapsed = isDesktop
+                ? JSON.parse(localStorage.getItem("sidebarCollapsed") || "false")
+                : false;
+              document.body.style.overflow = "";
+            };
+
+            window.addEventListener("resize", handleResize, { passive: true });
+            handleResize();
+          },
+        });
+      });
+    </script>
   </head>
 
-  <body x-data class="bg-base-100 min-h-min ">
+  <body x-data class="bg-base-100 min-h-min">
     <!-- Page Loading Overlay -->
     <div
       x-data
@@ -391,7 +567,8 @@
             </g>
             <g>
               <path
-                d="M20.2 73.4v-9h6.2c2.6 0 4.3-.6 5.4-1.8 1-1.2 1.5-3 1.5-5.3V31.5h9.6V58c0 4.9-1.4 8.6-4 11.3-2.7 2.7-6.7 4-11.9 4ZM72.7 74.2c-4.4 0-8.2-1-11.6-2.8-3.4-1.8-6-4.4-8-7.7-1.8-3.2-2.8-7-2.8-11.3 0-4.3 1-8 2.9-11.3 1.9-3.3 4.5-5.9 7.9-7.7 3.4-1.9 7.2-2.8 11.6-2.8 4.4 0 8.2 1 11.6 2.8 3.3 1.8 6 4.4 7.9 7.7 2 3.3 2.9 7 2.9 11.3 0 4.3-1 8-3 11.3-1.8 3.3-4.5 5.9-7.8 7.7a23.5 23.5 0 0 1-11.6 2.8ZM60 52.4c0 2.5.5 4.7 1.6 6.7 1 1.9 2.5 3.4 4.4 4.5 2 1 4.1 1.6 6.6 1.6s4.7-.6 6.6-1.6c1.9-1.1 3.4-2.6 4.4-4.5 1-2 1.6-4.2 1.6-6.7s-.5-4.7-1.6-6.6c-1-2-2.5-3.4-4.4-4.5-1.9-1.1-4.1-1.6-6.6-1.6a13 13 0 0 0-6.6 1.6c-1.9 1-3.4 2.6-4.4 4.5-1.1 1.9-1.6 4-1.6 6.6ZM102.7 73.4v-42h18.7c4.3 0 7.7 1 10.2 3.1a10 10 0 0 1 3.8 8.2c0 2-.5 3.7-1.4 5.3a9.6 9.6 0 0 1-3.7 3.8 10.3 10.3 0 0 1 6.3 9.8c0 2.4-.6 4.4-1.8 6.2a12 12 0 0 1-5 4c-2.1 1-4.6 1.6-7.4 1.6Zm9.4-7.6h8.8c2 0 3.4-.4 4.4-1.3 1-.9 1.6-2.1 1.6-3.7s-.6-2.8-1.6-3.7c-1-.9-2.5-1.3-4.4-1.3h-8.8Zm0-17.3h7.9c1.8 0 3.2-.4 4.2-1.2 1-.9 1.5-2 1.5-3.6 0-1.5-.5-2.7-1.5-3.5-1-.8-2.4-1.2-4.2-1.2h-8ZM155.3 101.5V59.6h9.5v33H183v9ZM189.8 101.5V59.6h27.5v8h-18v8.7h16.4v8h-16.5v9.2H218v8ZM240.6 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-5.9-5c-1.4-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.6-.4 4.7-1.1A3.7 3.7 0 0 0 247 90c0-1.5-.7-2.7-2-3.6-1.4-1-3.6-1.7-6.6-2.3-4.9-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.5 1.1 4.4 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3h-9.1c0-1.9-.7-3.3-2-4.4-1.1-1.1-2.9-1.6-5-1.6-2 0-3.6.4-4.8 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.3 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.4 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4ZM279 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-6-5c-1.3-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2.1 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.5-.4 4.7-1.1a3.7 3.7 0 0 0 1.7-3.3c0-1.5-.7-2.7-2-3.6-1.5-1-3.6-1.7-6.6-2.3-5-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.4 1.1 4.3 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3H285c0-1.9-.6-3.3-1.8-4.4-1.3-1.1-3-1.6-5.2-1.6-2 0-3.6.4-4.7 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.2 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.5 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4Zm0 0"/>
+                d="M20.2 73.4v-9h6.2c2.6 0 4.3-.6 5.4-1.8 1-1.2 1.5-3 1.5-5.3V31.5h9.6V58c0 4.9-1.4 8.6-4 11.3-2.7 2.7-6.7 4-11.9 4ZM72.7 74.2c-4.4 0-8.2-1-11.6-2.8-3.4-1.8-6-4.4-8-7.7-1.8-3.2-2.8-7-2.8-11.3 0-4.3 1-8 2.9-11.3 1.9-3.3 4.5-5.9 7.9-7.7 3.4-1.9 7.2-2.8 11.6-2.8 4.4 0 8.2 1 11.6 2.8 3.3 1.8 6 4.4 7.9 7.7 2 3.3 2.9 7 2.9 11.3 0 4.3-1 8-3 11.3-1.8 3.3-4.5 5.9-7.8 7.7a23.5 23.5 0 0 1-11.6 2.8ZM60 52.4c0 2.5.5 4.7 1.6 6.7 1 1.9 2.5 3.4 4.4 4.5 2 1 4.1 1.6 6.6 1.6s4.7-.6 6.6-1.6c1.9-1.1 3.4-2.6 4.4-4.5 1-2 1.6-4.2 1.6-6.7s-.5-4.7-1.6-6.6c-1-2-2.5-3.4-4.4-4.5-1.9-1.1-4.1-1.6-6.6-1.6a13 13 0 0 0-6.6 1.6c-1.9 1-3.4 2.6-4.4 4.5-1.1 1.9-1.6 4-1.6 6.6ZM102.7 73.4v-42h18.7c4.3 0 7.7 1 10.2 3.1a10 10 0 0 1 3.8 8.2c0 2-.5 3.7-1.4 5.3a9.6 9.6 0 0 1-3.7 3.8 10.3 10.3 0 0 1 6.3 9.8c0 2.4-.6 4.4-1.8 6.2a12 12 0 0 1-5 4c-2.1 1-4.6 1.6-7.4 1.6Zm9.4-7.6h8.8c2 0 3.4-.4 4.4-1.3 1-.9 1.6-2.1 1.6-3.7s-.6-2.8-1.6-3.7c-1-.9-2.5-1.3-4.4-1.3h-8.8Zm0-17.3h7.9c1.8 0 3.2-.4 4.2-1.2 1-.9 1.5-2 1.5-3.6 0-1.5-.5-2.7-1.5-3.5-1-.8-2.4-1.2-4.2-1.2h-8ZM155.3 101.5V59.6h9.5v33H183v9ZM189.8 101.5V59.6h27.5v8h-18v8.7h16.4v8h-16.5v9.2H218v8ZM240.6 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-5.9-5c-1.4-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.6-.4 4.7-1.1A3.7 3.7 0 0 0 247 90c0-1.5-.7-2.7-2-3.6-1.4-1-3.6-1.7-6.6-2.3-4.9-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.5 1.1 4.4 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3h-9.1c0-1.9-.7-3.3-2-4.4-1.1-1.1-2.9-1.6-5-1.6-2 0-3.6.4-4.8 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.3 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.4 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4ZM279 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-6-5c-1.3-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2.1 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.5-.4 4.7-1.1a3.7 3.7 0 0 0 1.7-3.3c0-1.5-.7-2.7-2-3.6-1.5-1-3.6-1.7-6.6-2.3-5-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.4 1.1 4.3 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3H285c0-1.9-.6-3.3-1.8-4.4-1.3-1.1-3-1.6-5.2-1.6-2 0-3.6.4-4.7 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.2 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.5 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4Zm0 0"
+              />
             </g>
           </svg>
         </div>
@@ -440,8 +617,10 @@
              }"
       >
         <!-- Logo -->
-        <div class="flex items-center gap-2 flex-1"
-             x-show="!$store.sidebar.collapsed || window.innerWidth < 1024">
+        <div
+          class="flex items-center gap-2 flex-1"
+          x-show="!$store.sidebar.collapsed || window.innerWidth < 1024"
+        >
           <svg
             class="text-primary fill-current transition-all duration-300"
             :class="{
@@ -466,7 +645,8 @@
             </g>
             <g>
               <path
-                d="M20.2 73.4v-9h6.2c2.6 0 4.3-.6 5.4-1.8 1-1.2 1.5-3 1.5-5.3V31.5h9.6V58c0 4.9-1.4 8.6-4 11.3-2.7 2.7-6.7 4-11.9 4ZM72.7 74.2c-4.4 0-8.2-1-11.6-2.8-3.4-1.8-6-4.4-8-7.7-1.8-3.2-2.8-7-2.8-11.3 0-4.3 1-8 2.9-11.3 1.9-3.3 4.5-5.9 7.9-7.7 3.4-1.9 7.2-2.8 11.6-2.8 4.4 0 8.2 1 11.6 2.8 3.3 1.8 6 4.4 7.9 7.7 2 3.3 2.9 7 2.9 11.3 0 4.3-1 8-3 11.3-1.8 3.3-4.5 5.9-7.8 7.7a23.5 23.5 0 0 1-11.6 2.8ZM60 52.4c0 2.5.5 4.7 1.6 6.7 1 1.9 2.5 3.4 4.4 4.5 2 1 4.1 1.6 6.6 1.6s4.7-.6 6.6-1.6c1.9-1.1 3.4-2.6 4.4-4.5 1-2 1.6-4.2 1.6-6.7s-.5-4.7-1.6-6.6c-1-2-2.5-3.4-4.4-4.5-1.9-1.1-4.1-1.6-6.6-1.6a13 13 0 0 0-6.6 1.6c-1.9 1-3.4 2.6-4.4 4.5-1.1 1.9-1.6 4-1.6 6.6ZM102.7 73.4v-42h18.7c4.3 0 7.7 1 10.2 3.1a10 10 0 0 1 3.8 8.2c0 2-.5 3.7-1.4 5.3a9.6 9.6 0 0 1-3.7 3.8 10.3 10.3 0 0 1 6.3 9.8c0 2.4-.6 4.4-1.8 6.2a12 12 0 0 1-5 4c-2.1 1-4.6 1.6-7.4 1.6Zm9.4-7.6h8.8c2 0 3.4-.4 4.4-1.3 1-.9 1.6-2.1 1.6-3.7s-.6-2.8-1.6-3.7c-1-.9-2.5-1.3-4.4-1.3h-8.8Zm0-17.3h7.9c1.8 0 3.2-.4 4.2-1.2 1-.9 1.5-2 1.5-3.6 0-1.5-.5-2.7-1.5-3.5-1-.8-2.4-1.2-4.2-1.2h-8ZM155.3 101.5V59.6h9.5v33H183v9ZM189.8 101.5V59.6h27.5v8h-18v8.7h16.4v8h-16.5v9.2H218v8ZM240.6 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-5.9-5c-1.4-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.6-.4 4.7-1.1A3.7 3.7 0 0 0 247 90c0-1.5-.7-2.7-2-3.6-1.4-1-3.6-1.7-6.6-2.3-4.9-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.5 1.1 4.4 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3h-9.1c0-1.9-.7-3.3-2-4.4-1.1-1.1-2.9-1.6-5-1.6-2 0-3.6.4-4.8 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.3 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.4 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4ZM279 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-6-5c-1.3-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2.1 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.5-.4 4.7-1.1a3.7 3.7 0 0 0 1.7-3.3c0-1.5-.7-2.7-2-3.6-1.5-1-3.6-1.7-6.6-2.3-5-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.4 1.1 4.3 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3H285c0-1.9-.6-3.3-1.8-4.4-1.3-1.1-3-1.6-5.2-1.6-2 0-3.6.4-4.7 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.2 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.5 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4Zm0 0"/>
+                d="M20.2 73.4v-9h6.2c2.6 0 4.3-.6 5.4-1.8 1-1.2 1.5-3 1.5-5.3V31.5h9.6V58c0 4.9-1.4 8.6-4 11.3-2.7 2.7-6.7 4-11.9 4ZM72.7 74.2c-4.4 0-8.2-1-11.6-2.8-3.4-1.8-6-4.4-8-7.7-1.8-3.2-2.8-7-2.8-11.3 0-4.3 1-8 2.9-11.3 1.9-3.3 4.5-5.9 7.9-7.7 3.4-1.9 7.2-2.8 11.6-2.8 4.4 0 8.2 1 11.6 2.8 3.3 1.8 6 4.4 7.9 7.7 2 3.3 2.9 7 2.9 11.3 0 4.3-1 8-3 11.3-1.8 3.3-4.5 5.9-7.8 7.7a23.5 23.5 0 0 1-11.6 2.8ZM60 52.4c0 2.5.5 4.7 1.6 6.7 1 1.9 2.5 3.4 4.4 4.5 2 1 4.1 1.6 6.6 1.6s4.7-.6 6.6-1.6c1.9-1.1 3.4-2.6 4.4-4.5 1-2 1.6-4.2 1.6-6.7s-.5-4.7-1.6-6.6c-1-2-2.5-3.4-4.4-4.5-1.9-1.1-4.1-1.6-6.6-1.6a13 13 0 0 0-6.6 1.6c-1.9 1-3.4 2.6-4.4 4.5-1.1 1.9-1.6 4-1.6 6.6ZM102.7 73.4v-42h18.7c4.3 0 7.7 1 10.2 3.1a10 10 0 0 1 3.8 8.2c0 2-.5 3.7-1.4 5.3a9.6 9.6 0 0 1-3.7 3.8 10.3 10.3 0 0 1 6.3 9.8c0 2.4-.6 4.4-1.8 6.2a12 12 0 0 1-5 4c-2.1 1-4.6 1.6-7.4 1.6Zm9.4-7.6h8.8c2 0 3.4-.4 4.4-1.3 1-.9 1.6-2.1 1.6-3.7s-.6-2.8-1.6-3.7c-1-.9-2.5-1.3-4.4-1.3h-8.8Zm0-17.3h7.9c1.8 0 3.2-.4 4.2-1.2 1-.9 1.5-2 1.5-3.6 0-1.5-.5-2.7-1.5-3.5-1-.8-2.4-1.2-4.2-1.2h-8ZM155.3 101.5V59.6h9.5v33H183v9ZM189.8 101.5V59.6h27.5v8h-18v8.7h16.4v8h-16.5v9.2H218v8ZM240.6 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-5.9-5c-1.4-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.6-.4 4.7-1.1A3.7 3.7 0 0 0 247 90c0-1.5-.7-2.7-2-3.6-1.4-1-3.6-1.7-6.6-2.3-4.9-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.5 1.1 4.4 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3h-9.1c0-1.9-.7-3.3-2-4.4-1.1-1.1-2.9-1.6-5-1.6-2 0-3.6.4-4.8 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.3 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.4 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4ZM279 102.4c-3.5 0-6.5-.6-9-1.8a13.4 13.4 0 0 1-6-5c-1.3-2-2-4.6-2-7.4h9.3c0 2 .7 3.5 2.1 4.7a8.6 8.6 0 0 0 5.6 1.6c2 0 3.5-.4 4.7-1.1a3.7 3.7 0 0 0 1.7-3.3c0-1.5-.7-2.7-2-3.6-1.5-1-3.6-1.7-6.6-2.3-5-1-8.5-2.6-10.9-4.8a10.6 10.6 0 0 1-3.5-8.2 11 11 0 0 1 4.2-9c2.8-2.3 6.6-3.4 11.4-3.4 3.3 0 6.2.6 8.6 1.7 2.4 1.1 4.3 2.7 5.7 4.8 1.3 2 2 4.5 2 7.3H285c0-1.9-.6-3.3-1.8-4.4-1.3-1.1-3-1.6-5.2-1.6-2 0-3.6.4-4.7 1.1a3.7 3.7 0 0 0-1.7 3.3c0 1.3.6 2.4 1.9 3.2 1.2 1 3.5 1.7 6.7 2.5 5.2 1.2 9 2.9 11.3 5 2.3 2 3.5 4.7 3.5 8 0 4-1.5 7-4.3 9.3a18.6 18.6 0 0 1-11.8 3.4Zm0 0"
+              />
             </g>
           </svg>
         </div>
@@ -493,6 +673,7 @@
         {% for item in navigation_items %}
         <a
           href="{{ item.url }}"
+          @click="if(window.innerWidth < 1024) { $store.sidebar.open = false }"
           class="nav-item btn-animate flex items-center p-2 rounded-lg hover:bg-base-100/80 hover:ring-2 hover:ring-primary/70 hover:ring-offset-2 hover:ring-offset-base-100 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 transform-gpu"
           :class="{ 'justify-center': $store.sidebar.collapsed && window.innerWidth >= 1024 }"
         >
@@ -670,7 +851,10 @@
                         class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-secondary-focus transition-colors duration-200"
                         :class="{ 'bg-base-100/50': $store.theme.current === theme }"
                       >
-                        <span x-text="theme" class="flex-1 text-secondary-content text-left"></span>
+                        <span
+                          x-text="theme"
+                          class="flex-1 text-secondary-content text-left"
+                        ></span>
                         <iconify-icon
                           icon="octicon:check-16"
                           class="transition-all duration-200 opacity-0"
@@ -723,7 +907,7 @@
     <!-- Main content with mobile header spacing -->
     <main
       x-cloak
-      class="min-h-min  content-shift"
+      class="min-h-min content-shift"
       :class="{ 
               'pt-16 lg:pt-0': window.innerWidth < 1024,
               'lg:ml-80': !$store.sidebar.collapsed && window.innerWidth >= 1024,
@@ -744,158 +928,287 @@
     <script>
       // Add Motion helpers at the start of your script
       const sidebarAnimations = {
-          open: {
-              x: ['0%', '0%'],
-              scale: [0.98, 1],
-              opacity: [0.5, 1],
-          },
-          closed: {
-              x: ['0%', '-100%'],
-              scale: [1, 0.98],
-              opacity: [1, 0.5],
-          },
-          spring: {
-              duration: 0.2,
-              ease: [0.22, 1, 0.36, 1]
-          }
+        open: {
+          x: ["0%", "0%"],
+          scale: [0.98, 1],
+          opacity: [0.5, 1],
+        },
+        closed: {
+          x: ["0%", "-100%"],
+          scale: [1, 0.98],
+          opacity: [1, 0.5],
+        },
+        spring: {
+          duration: 0.2,
+          ease: [0.22, 1, 0.36, 1],
+        },
       };
 
-      document.addEventListener('alpine:init', () => {
-          Alpine.store('sidebar', {
-              open: window.innerWidth >= 1024,
-              collapsed: JSON.parse(localStorage.getItem('sidebarCollapsed') || 'false'),
+      document.addEventListener("alpine:init", () => {
+        Alpine.store("sidebar", {
+          open: window.innerWidth >= 1024,
+          collapsed: JSON.parse(
+            localStorage.getItem("sidebarCollapsed") || "false"
+          ),
 
-              toggle() {
-                  this.open = !this.open;
-                  const sidebar = document.querySelector('aside');
-                  const navItems = sidebar.querySelectorAll('.nav-item');
+          toggle() {
+            this.open = !this.open;
+            const sidebar = document.querySelector("aside");
+            const navItems = sidebar.querySelectorAll(".nav-item");
 
-                  if (this.open) {
-                      // Opening animation
-                      animate(sidebar, {
-                          x: ['-100%', '0%'],
-                          scale: [0.98, 1],
-                          opacity: [0.5, 1]
-                      }, {
-                          duration: 0.5,
-                          ease: [0.22, 1, 0.36, 1]
-                      });
+            if (this.open) {
+              // Opening animation
+              animate(
+                sidebar,
+                {
+                  x: ["-100%", "0%"],
+                  scale: [0.98, 1],
+                  opacity: [0.5, 1],
+                },
+                {
+                  duration: 0.5,
+                  ease: [0.22, 1, 0.36, 1],
+                }
+              );
 
-                      // Animate nav items
-                      animate(navItems, {
-                          x: [-20, 0],
-                          opacity: [0, 1]
-                      }, {
-                          delay: stagger(0.05),
-                          duration: 0.3,
-                          ease: [0.22, 1, 0.36, 1]
-                      });
+              // Animate nav items
+              animate(
+                navItems,
+                {
+                  x: [-20, 0],
+                  opacity: [0, 1],
+                },
+                {
+                  delay: stagger(0.05),
+                  duration: 0.3,
+                  ease: [0.22, 1, 0.36, 1],
+                }
+              );
+            } else {
+              // Closing animation
+              animate(
+                sidebar,
+                {
+                  x: ["0%", "-100%"],
+                  scale: [1, 0.98],
+                  opacity: [1, 0.5],
+                },
+                {
+                  duration: 0.1,
+                  ease: [0.22, 1, 0.36, 1],
+                }
+              );
+            }
+          },
+
+          collapse() {
+            this.collapsed = !this.collapsed;
+            localStorage.setItem("sidebarCollapsed", this.collapsed);
+
+            const sidebar = document.querySelector("aside");
+            const navItems = sidebar.querySelectorAll(".nav-item");
+            const labels = sidebar.querySelectorAll(".nav-item span");
+            const icons = sidebar.querySelectorAll(".icon-animate");
+
+            // Collapse animation with spring easing
+            animate(
+              sidebar,
+              {
+                width: this.collapsed ? "5rem" : "20rem",
+              },
+              {
+                duration: 0.15,
+                ease: [0.22, 1, 0.36, 1],
+              }
+            );
+
+            // Animate labels with fade and slide
+            labels.forEach((label) => {
+              label.style.display = "inline-block";
+              label.style.overflow = "hidden";
+
+              animate(
+                label,
+                {
+                  opacity: this.collapsed ? [1, 0] : [0, 1],
+                  transform: this.collapsed
+                    ? [
+                        "translateX(0) scale(1)",
+                        "translateX(-10px) scale(0.95)",
+                      ]
+                    : [
+                        "translateX(-10px) scale(0.95)",
+                        "translateX(0) scale(1)",
+                      ],
+                },
+                {
+                  duration: 0.2,
+                  delay: this.collapsed ? 0 : 0.1,
+                  ease: [0.22, 1, 0.36, 1],
+                }
+              );
+            });
+
+            // Icon animation - only scale, no rotation
+            icons.forEach((icon) => {
+              animate(
+                icon,
+                {
+                  scale: this.collapsed ? [1, 1.2] : [1.2, 1],
+                },
+                {
+                  duration: 0.3,
+                  ease: [0.34, 1.56, 0.64, 1],
+                }
+              );
+            });
+          },
+
+          init() {
+            const handleResize = () => {
+              const isMobile = window.innerWidth < 1024;
+              if (isMobile) {
+                this.open = false;
+                this.collapsed = false;
+              } else {
+                this.open = true;
+                document.body.style.overflow = "";
+              }
+            };
+
+            window.addEventListener("resize", handleResize, { passive: true });
+            handleResize(); // Initial check
+
+            // Handle touch events for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener(
+              "touchstart",
+              (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+              },
+              { passive: true }
+            );
+
+            document.addEventListener(
+              "touchend",
+              (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diffX = touchStartX - touchEndX;
+
+                // Only handle swipe if it's significant (> 50px)
+                if (Math.abs(diffX) > 50 && window.innerWidth < 1024) {
+                  if (diffX > 0) {
+                    // Swipe left - close sidebar
+                    this.open = false;
                   } else {
-                      // Closing animation
-                      animate(sidebar, {
-                          x: ['0%', '-100%'],
-                          scale: [1, 0.98],
-                          opacity: [1, 0.5]
-                      }, {
-                          duration: 0.1,
-                          ease: [0.22, 1, 0.36, 1]
-                      });
+                    // Swipe right - open sidebar
+                    this.open = true;
                   }
+                }
               },
+              { passive: true }
+            );
 
-              collapse() {
-                  this.collapsed = !this.collapsed;
-                  localStorage.setItem('sidebarCollapsed', this.collapsed);
-
-                  const sidebar = document.querySelector('aside');
-                  const navItems = sidebar.querySelectorAll('.nav-item');
-                  const labels = sidebar.querySelectorAll('.nav-item span');
-                  const icons = sidebar.querySelectorAll('.icon-animate');
-
-                  // Collapse animation with spring easing
-                  animate(sidebar, {
-                      width: this.collapsed ? '5rem' : '20rem'
-                  }, {
-                      duration: 0.15,
-                      ease: [0.22, 1, 0.36, 1]
-                  });
-
-                  // Animate labels with fade and slide
-                  labels.forEach(label => {
-                      label.style.display = 'inline-block';
-                      label.style.overflow = 'hidden';
-
-                      animate(label, {
-                          opacity: this.collapsed ? [1, 0] : [0, 1],
-                          transform: this.collapsed ?
-                              ['translateX(0) scale(1)', 'translateX(-10px) scale(0.95)'] :
-                              ['translateX(-10px) scale(0.95)', 'translateX(0) scale(1)']
-                      }, {
-                          duration: 0.2,
-                          delay: this.collapsed ? 0 : 0.1,
-                          ease: [0.22, 1, 0.36, 1]
-                      });
-                  });
-
-                  // Icon animation - only scale, no rotation
-                  icons.forEach(icon => {
-                      animate(icon, {
-                          scale: this.collapsed ? [1, 1.2] : [1.2, 1]
-                      }, {
-                          duration: 0.3,
-                          ease: [0.34, 1.56, 0.64, 1]
-                      });
-                  });
+            // Handle click outside to close sidebar on mobile
+            document.addEventListener(
+              "click",
+              (e) => {
+                if (
+                  window.innerWidth < 1024 &&
+                  this.open &&
+                  !e.target.closest("aside")
+                ) {
+                  this.open = false;
+                }
               },
+              { passive: true }
+            );
 
-              init() {
-                  this.open = window.innerWidth >= 1024;
-                  // Improved resize handling                    const handleResize = () => {                        const isMobile = window.innerWidth < 1024;                        if (isMobile) {                            this.open = false;                            this.collapsed = false;                        } else {                            this.open = true;                            document.body.style.overflow = '';                        }                    };                    window.addEventListener('resize', handleResize, { passive: true });                    handleResize(); // Initial check                    // Improved mobile touch handling                    document.addEventListener('touchstart', (e) => {                        if (window.innerWidth < 1024 && !e.target.closest('aside')) {                            this.open = false;                        }                    }, { passive: true });                }            });            Alpine.store('theme', {                themes: ['Jobless', 'Dark', 'lofi', 'pastel'],                current: localStorage.getItem('theme') || 'Jobless',                init() {                    this.apply();                },                apply() {                    document.documentElement.setAttribute('data-theme', this.current);                },                set(theme) {                    this.current = theme;                    localStorage.setItem('theme', theme);                    this.apply();                }            });            // Define the pageState store            Alpine.store('pageState', {                isLoading: true,
-              init() {
-                  const handleResize = () => {
-                      const isMobile = window.innerWidth < 1024;
-                      if (isMobile) {
-                          this.open = false;
-                          this.collapsed = false;
-                      } else {
-                          this.open = true;
-                          document.body.style.overflow = '';
-                      }
-                  };
+            // Handle escape key to close sidebar
+            document.addEventListener("keydown", (e) => {
+              if (e.key === "Escape" && this.open && window.innerWidth < 1024) {
+                this.open = false;
+              }
+            });
 
-                  window.addEventListener('resize', handleResize, { passive: true });
-                  handleResize(); // Initial check
+            // Update initial state based on viewport
+            this.open = window.innerWidth >= 1024;
+            this.collapsed =
+              window.innerWidth >= 1024
+                ? JSON.parse(
+                    localStorage.getItem("sidebarCollapsed") || "false"
+                  )
+                : false;
+          },
+        });
+        Alpine.store("theme", {
+          themes: ["Jobless", "Dark", "lofi", "pastel"],
+          current: localStorage.getItem("theme") || "Jobless",
+          init() {
+            this.apply();
+          },
+          apply() {
+            document.documentElement.setAttribute("data-theme", this.current);
+          },
+          set(theme) {
+            this.current = theme;
+            localStorage.setItem("theme", theme);
+            this.apply();
+          },
+        });
+        // Define the pageState store
+        Alpine.store("pageState", {
+          isLoading: true,
+          init() {
+            // Initial loading state
+            setTimeout(() => {
+              this.isLoading = false;
+            }, 100);
 
-                  // Handle touch events for mobile
-                  let touchStartX = 0;
-                  let touchEndX = 0;
+            // Initialize after Alpine is ready
+            document.addEventListener("alpine:initialized", () => {
+              this.setupEventListeners();
+            });
+          },
 
-                  document.addEventListener('touchstart', (e) => {
-                      touchStartX = e.changedTouches[0].screenX;
-                  }, { passive: true });
+          setupEventListeners() {
+            // Passive event listeners for better performance
+            const passiveListenerOpts = { passive: true };
 
-                  document.addEventListener('touchend', (e) => {
-                      touchEndX = e.changedTouches[0].screenX;
-                      const diffX = touchStartX - touchEndX;
+            // Touch events for mobile
+            document.addEventListener(
+              "touchstart",
+              () => {},
+              passiveListenerOpts
+            );
+            document.addEventListener(
+              "touchmove",
+              () => {},
+              passiveListenerOpts
+            );
+            document.addEventListener("scroll", () => {}, passiveListenerOpts);
 
-                      // Only handle swipe if it's significant (> 50px)
-                      if (Math.abs(diffX) > 50 && window.innerWidth < 1024) {
-                          if (diffX > 0) {
-                              // Swipe left - close sidebar
-                              this.open = false;
-                          } else {
-                              // Swipe right - open sidebar
-                              this.open = true;
-                          }
-                      }
-                  }, { passive: true });
-              },
-              // ...existing code...
-          });
-          // ...existing code...
+            // Handle page visibility changes
+            document.addEventListener("visibilitychange", () => {
+              if (document.visibilityState === "visible") {
+                this.isLoading = false;
+              }
+            });
+
+            // Handle page transitions
+            window.addEventListener("beforeunload", () => {
+              this.isLoading = true;
+            });
+          },
+        });
+
+        // Initialize page state if store exists
+        if (Alpine.store("pageState")) {
+          Alpine.store("pageState").init();
+        }
       });
-      // ...existing code...
     </script>
-    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
   </body>
 </html>
