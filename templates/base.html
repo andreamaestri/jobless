@@ -483,37 +483,6 @@
       document.addEventListener("touchstart", () => {}, { passive: true });
       document.addEventListener("touchmove", () => {}, { passive: true });
     </script>
-    <script>
-      document.addEventListener("alpine:init", () => {
-        Alpine.store("sidebar", {
-          open: false,
-          collapsed: false,
-
-          toggle() {
-            this.open = !this.open;
-            if (window.innerWidth < 1024) {
-              document.body.style.overflow = this.open ? "hidden" : "";
-            }
-          },
-
-          init() {
-            const handleResize = () => {
-              const isDesktop = window.innerWidth >= 1024;
-              this.open = isDesktop;
-              this.collapsed = isDesktop
-                ? JSON.parse(
-                    localStorage.getItem("sidebarCollapsed") || "false"
-                  )
-                : false;
-              document.body.style.overflow = "";
-            };
-
-            window.addEventListener("resize", handleResize, { passive: true });
-            handleResize();
-          },
-        });
-      });
-    </script>
   </head>
 
   <body x-data class="bg-base-100 min-h-min">
@@ -553,6 +522,10 @@
             </iconify-icon>
           </button>
           <svg
+            x-show="!$store.sidebar.open"
+            x-transition:enter="transition-all ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
             class="h-8 w-auto text-primary fill-current"
             width="422"
             viewBox="0 0 316.5 135.8"
@@ -679,7 +652,7 @@
         {% for item in navigation_items %}
         <a
           href="{{ item.url }}"
-          @click="if(window.innerWidth < 1024) { $store.sidebar.open = false }"
+          @click="if(window.innerWidth < 1024) { $store.sidebar.toggle() }"
           class="nav-item btn-animate flex items-center p-2 rounded-lg hover:bg-base-100/80 hover:ring-2 hover:ring-primary/70 hover:ring-offset-2 hover:ring-offset-base-100 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 transform-gpu"
           :class="{ 'justify-center': $store.sidebar.collapsed && window.innerWidth >= 1024 }"
         >
