@@ -34,9 +34,8 @@ GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 DEBUG = os.path.exists('.env')
 print(f"Debug mode is set to: {DEBUG}")
 
-ALLOWED_HOSTS = ['*', '.herokuapp.com']
-
-CSRF_TRUSTED_ORIGINS = ['https://*.codeinstitute-ide.net', 'https://*.herokuapp.com']
+ALLOWED_HOSTS = ['jobless.andreadev.uk', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk']
 # Application definition
 
 INSTALLED_APPS = [
