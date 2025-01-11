@@ -1,25 +1,65 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load widget_tweaks %}
 {% load static %}
+{% load socialaccount %}
+
+{% block extra_head %}
+{% providers_media_js %}
+{% endblock %}
 
 {% block head_title %}{% trans "Sign Up" %}{% endblock %}
 
 {% block content %}
-<div class="min-h-[65vh] flex items-center rounded-2xl justify-center py-12 px-4 sm:px-6 lg:px-8 bg-base-200">
-    <div class="max-w-md w-full space-y-8 bg-base-100 p-8 rounded-2xl shadow-lg">
+<div class="flex items-center justify-center px-4 py-12 my-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
         <!-- Header -->
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-bold text-base-content">
+        <div class="text-center">
+            <span class="iconify mx-auto h-12 w-12 text-primary" data-icon="mdi:briefcase-variant-off-outline"></span>
+            <h2 class="mt-6 text-3xl font-extrabold text-base-content">
                 {% trans "Create Account" %}
             </h2>
-            <p class="mt-2 text-center text-sm text-base-content/70">
-                {% blocktrans %}
-                Already have an account?
+            <p class="mt-2 text-sm text-base-content/70">
+                {% blocktrans %}Already have an account?
                 <a href="{{ login_url }}" class="font-medium text-primary hover:text-primary-focus">
                     Sign in
-                </a>
-                {% endblocktrans %}
+                </a>{% endblocktrans %}
             </p>
+        </div>
+
+        <!-- Social Providers -->
+        <div class="space-y-4">
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-base-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 py-1 bg-base-100 text-base-content/70">or sign up with</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    {% for provider in socialaccount_providers %}
+                        {% if provider.id == 'github' %}
+                        <a href="{% provider_login_url 'github' process='login' %}"
+                            class="inline-flex items-center justify-center gap-3 px-4 py-2.5 text-sm font-medium text-white bg-[#24292F] hover:bg-[#24292F]/90 focus:outline-none focus:ring-2 focus:ring-[#24292F]/50 rounded-lg">
+                            <span class="iconify w-5 h-5" data-icon="mdi:github"></span>
+                            <span>GitHub</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if provider.id == 'google' %}
+                        <a href="{% provider_login_url 'google' process='login' %}"
+                            class="inline-flex items-center justify-center gap-3 px-4 py-2.5 text-sm font-medium text-[#3c4043] bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#4285f4]/50 border border-slate-200 rounded-lg">
+                            <span class="iconify w-5 h-5" data-icon="mdi:google"></span>
+                            <span>Google</span>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <!-- Form -->
@@ -28,9 +68,12 @@
 
             <!-- Error Messages -->
             {% if form.errors %}
-            <div class="rounded-xl bg-red-50 p-4 mb-4">
+            <div class="p-4 border border-error border-solid rounded-md bg-error/10">
                 <div class="flex">
-                    <div class="text-sm text-red-700">
+                    <div class="flex-shrink-0">
+                        <span class="iconify text-error" data-icon="mdi:alert-circle"></span>
+                    </div>
+                    <div class="ml-3 text-sm text-error">
                         {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                         {% endfor %}
@@ -40,57 +83,52 @@
             {% endif %}
 
             <!-- Sign Up Fields -->
-            <div class="rounded-xl shadow-sm space-y-3">
+            <div class="space-y-4">
+                <!-- Name Field -->
                 <div>
-                    <label for="id_email" class="sr-only">{% trans "Email" %}</label>
-                    <input id="id_email" name="email" type="email" required
-                        class="appearance-none relative block w-full px-4 py-3 border border-base-300 rounded-xl placeholder-base-content/50 text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm bg-base-100"
-                        placeholder="{% trans 'Email address' %}">
-                    {% if form.email.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
+                    {% if form.name.errors %}
+                    <div class="text-error text-xs mb-1">{{ form.name.errors.0 }}</div>
                     {% endif %}
+                    <label for="{{ form.name.id_for_label }}" class="sr-only">{% trans "Full Name" %}</label>
+                    {% render_field form.name placeholder="Full Name" class="relative block w-full px-3 py-2 placeholder-base-content/50 border border-base-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm" %}
                 </div>
 
+                <!-- Username Field -->
                 <div>
-                    <label for="id_username" class="sr-only">{% trans "Username" %}</label>
-                    <input id="id_username" name="username" type="text" required
-                        class="appearance-none relative block w-full px-4 py-3 border border-base-300 rounded-xl placeholder-base-content/50 text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm bg-base-100"
-                        placeholder="{% trans 'Username' %}">
                     {% if form.username.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.username.errors.0 }}</p>
+                    <div class="text-error text-xs mb-1">{{ form.username.errors.0 }}</div>
                     {% endif %}
+                    <label for="{{ form.username.id_for_label }}" class="sr-only">{% trans "Username" %}</label>
+                    {% render_field form.username placeholder="Username" class="relative block w-full px-3 py-2 placeholder-base-content/50 border border-base-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm" %}
                 </div>
 
+                <!-- Email Field -->
                 <div>
-                    <label for="id_password1" class="sr-only">{% trans "Password" %}</label>
-                    <input id="id_password1" name="password1" type="password" required
-                        class="appearance-none relative block w-full px-4 py-3 border border-base-300 rounded-xl placeholder-base-content/50 text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm bg-base-100"
-                        placeholder="{% trans 'Password' %}">
-                    {% if form.password1.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.password1.errors.0 }}</p>
+                    {% if form.email.errors %}
+                    <div class="text-error text-xs mb-1">{{ form.email.errors.0 }}</div>
                     {% endif %}
+                    <label for="{{ form.email.id_for_label }}" class="sr-only">{% trans "Email" %}</label>
+                    {% render_field form.email placeholder="Email address" class="relative block w-full px-3 py-2 placeholder-base-content/50 border border-base-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm" %}
                 </div>
 
-                <div>
-                    <label for="id_password2" class="sr-only">{% trans "Confirm Password" %}</label>
-                    <input id="id_password2" name="password2" type="password" required
-                        class="appearance-none relative block w-full px-4 py-3 border border-base-300 rounded-xl placeholder-base-content/50 text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm bg-base-100"
-                        placeholder="{% trans 'Confirm Password' %}">
-                    {% if form.password2.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</p>
-                    {% endif %}
-                </div>
-            </div>
+                <!-- Password Fields -->
+                <div class="space-y-4">
+                    <div>
+                        {% if form.password1.errors %}
+                        <div class="text-error text-xs mb-1">{{ form.password1.errors.0 }}</div>
+                        {% endif %}
+                        <label for="{{ form.password1.id_for_label }}" class="sr-only">{% trans "Password" %}</label>
+                        {% render_field form.password1 placeholder="Password" class="relative block w-full px-3 py-2 placeholder-base-content/50 border border-base-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm" %}
+                    </div>
 
-            <!-- Terms and Conditions -->
-            <div class="flex items-center">
-                <input id="terms" name="terms" type="checkbox" required
-                    class="h-4 w-4 text-primary focus:ring-primary border-base-300 rounded">
-                <label for="terms" class="ml-2 block text-sm text-base-content/70">
-                    {% blocktrans %}I agree to the 
-                    <a href="#" class="text-primary hover:text-primary-focus">Terms and Conditions</a>
-                    {% endblocktrans %}
-                </label>
+                    <div>
+                        {% if form.password2.errors %}
+                        <div class="text-error text-xs mb-1">{{ form.password2.errors.0 }}</div>
+                        {% endif %}
+                        <label for="{{ form.password2.id_for_label }}" class="sr-only">{% trans "Confirm Password" %}</label>
+                        {% render_field form.password2 placeholder="Confirm Password" class="relative block w-full px-3 py-2 placeholder-base-content/50 border border-base-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm" %}
+                    </div>
+                </div>
             </div>
 
             {% if redirect_field_value %}
@@ -99,18 +137,18 @@
 
             <!-- Submit Button -->
             <div>
-                <button type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-primary-content bg-primary hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                    {% trans "Sign Up" %}
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-150">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span class="iconify" data-icon="mdi:account-plus"></span>
+                    </span>
+                    {% trans "Create Account" %}
                 </button>
             </div>
         </form>
 
         <!-- Privacy Notice -->
-        <p class="mt-2 text-center text-xs text-base-content/70">
-            {% blocktrans %}
-            By creating an account, you agree to our Privacy Policy and Terms of Service.
-            {% endblocktrans %}
+        <p class="text-center text-xs text-base-content/70">
+            {% blocktrans %}By creating an account, you agree to our <a href="https://www.termsfeed.com/live/aa17a9a0-a18d-44b8-9c9a-3c6019d43d94" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary-focus">Privacy Policy</a>.{% endblocktrans %}
         </p>
     </div>
 </div>

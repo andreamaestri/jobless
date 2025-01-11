@@ -30,8 +30,11 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
+# Get environment setting
+DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['jobless.andreadev.uk', 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1', 'jobless-1v-b91dc24e55b1.herokuapp.com']
 CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'https://jobless-1v-b91dc24e55b1.herokuapp.com']
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',   
     'django_browser_reload', 
+    'widget_tweaks',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -64,6 +68,9 @@ INSTALLED_APPS = [
     'events',
     'home',
     'ai_assistant',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.openid_connect',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -165,6 +172,30 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# Add provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': os.getenv('GITHUB_CLIENT_ID'),
+            'secret': os.getenv('GITHUB_SECRET'),
+        }
+    },
+    'google': {
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_SECRET'),
+        },
+        'SCOPE': ['profile', 'email'],
+    },
+    'linkedin_oauth2': {
+        'APP': {
+            'client_id': os.getenv('LINKEDIN_CLIENT_ID'),
+            'secret': os.getenv('LINKEDIN_SECRET'),
+        },
+        'SCOPE': ['r_liteprofile', 'r_emailaddress'],
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -206,8 +237,18 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-# Add these settings
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SSL/HTTPS Settings
+if DEBUG or DEVELOPMENT:
+    # Disable SSL/HTTPS settings for local development
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_PROXY_SSL_HEADER = None
+    # Optionally disable CSRF_TRUSTED_ORIGINS in development
+    CSRF_TRUSTED_ORIGINS = []
+else:
+    # Production SSL/HTTPS settings
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
