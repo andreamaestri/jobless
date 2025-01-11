@@ -111,7 +111,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'jobless.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
