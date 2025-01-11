@@ -14,10 +14,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Stage 2: Production stage
 FROM python:3.12-slim
 
-# Create user and required directories
+# Create user and required directories with proper permissions
 RUN useradd -m -r appuser && \
-    mkdir -p /app/staticfiles && \
-    chown -R appuser:appuser /app
+    mkdir -p /app/staticfiles /app/static && \
+    chown -R appuser:appuser /app && \
+    chmod -R 755 /app
 
 # Install required system packages
 RUN apt-get update && \
@@ -33,6 +34,7 @@ WORKDIR /app
 
 # Copy application code and set permissions
 COPY --chown=appuser:appuser . .
+RUN chmod -R 755 /app/staticfiles
 
 # Switch to non-root user
 USER appuser

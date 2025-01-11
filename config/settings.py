@@ -111,7 +111,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'jobless.wsgi.application'
 
 
 # Database
@@ -188,10 +188,13 @@ AWS_S3_CUSTOM_DOMAIN = f"{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.g
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Static files configuration
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Extra places for collectstatic to find static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 # Default primary key field type
