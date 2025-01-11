@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'django_summernote',
     'crispy_forms',
+    'storages',
     'tagulous',
     'tailwind',
     'theme',
@@ -177,26 +178,22 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Storage configuration for AWS S3-style Object Storage
+AWS_ACCESS_KEY_ID = os.getenv('OCI_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('OCI_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('OCI_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = f"https://{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.getenv('OCI_REGION')}.oraclecloud.com"
+AWS_S3_CUSTOM_DOMAIN = f"{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.getenv('OCI_REGION')}.oraclecloud.com/{os.getenv('OCI_BUCKET_NAME')}"
 
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-            "secret_key": os.getenv('SECRET_KEY'),
-            "access_key": os.getenv('OCI_ACCESS_KEY'),
-            "bucket_name": os.getenv('OCI_BUCKET_NAME'),
-            "region_name": os.getenv('OCI_REGION'),
-            "endpoint_url": f"https://{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.getenv('OCI_REGION')}.oraclecloud.com"
-        },
-    },
-}
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'app_web/static')
+# Tell Django to use S3 for file storage
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
+# Static files configuration
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
