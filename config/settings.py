@@ -31,8 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.path.exists('.env')
-print(f"Debug mode is set to: {DEBUG}")
+DEBUG = False
 
 ALLOWED_HOSTS = ['jobless.andreadev.uk', 'localhost', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk']
