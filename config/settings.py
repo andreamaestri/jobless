@@ -180,6 +180,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "secret_key": os.getenv('SECRET_KEY'),
+            "access_key": os.getenv('OCI_ACCESS_KEY'),
+            "bucket_name": os.getenv('OCI_BUCKET_NAME'),
+            "region_name": os.getenv('OCI_REGION'),
+            "endpoint_url": f"https://{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.getenv('OCI_REGION')}.oraclecloud.com"
+        },
+    },
+}
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
