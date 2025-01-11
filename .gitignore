@@ -11,3 +11,5 @@ cloudinary_python.txt
 heroku.txt
 /staticfiles
 db.sqlite3
+.ssh/id_rsa
+.ssh/config
