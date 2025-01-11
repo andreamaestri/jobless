@@ -16,3 +16,9 @@ boto3>=1.35.97
 django-crispy-forms>=2.3
 django-browser-reload>=1.17.0
 django-tailwind>=3.8.0
+
+# Additional dependencies
+django-unfold>=0.21.1
+django-allauth>=0.65.3
+django-summernote>=0.8.20.0
+django-tagulous>=2.1.0
