@@ -16,7 +16,3 @@ boto3>=1.35.97
 django-crispy-forms>=2.3
 django-browser-reload>=1.17.0
 django-tailwind>=3.8.0
-
-# Replace pytorch with CPU-only version
-torch>=2.5.1+cpu
-
