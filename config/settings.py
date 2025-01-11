@@ -33,8 +33,8 @@ GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['jobless.andreadev.uk', 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io']
+ALLOWED_HOSTS = ['jobless.andreadev.uk', 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1', 'jobless-1v-b91dc24e55b1.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'https://jobless-1v-b91dc24e55b1.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
