@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - .:/app
     command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn app.wsgi:application --bind 0.0.0.0:8000 --workers 2 --threads=3 --timeout=1000 --max-requests=4000 --max-requests-jitter=100 --access-logfile - --error-logfile - --log-level info"
