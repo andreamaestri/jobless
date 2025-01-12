@@ -1248,32 +1248,108 @@
     </script>
 
     {% if messages %}
-    <div class="toast toast-end z-50">
-      {% for message in messages %}
-      <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% elif message.tags == 'info' %}alert-info{% elif message.tags == 'warning' %}alert-warning{% endif %}">
-        <div class="flex flex-col gap-2 w-full">
-          <div class="flex justify-between items-center">
-            <span>{{ message }}</span>
-            <button class="btn btn-ghost btn-circle btn-sm" onclick="this.parentElement.parentElement.parentElement.remove()">✕</button>
+    <div 
+      x-data="{ 
+        toasts: [], 
+        init() {
+          {% for message in messages %}
+            this.toasts.push({
+              id: Date.now() + {{ forloop.counter }},
+              message: '{{ message }}',
+              type: '{{ message.tags }}',
+              progress: 100
+            });
+          {% endfor %}
+          
+          this.toasts.forEach(toast => {
+            const startTime = Date.now();
+            const duration = 5000;
+            
+            const interval = setInterval(() => {
+              const elapsed = Date.now() - startTime;
+              toast.progress = Math.max(0, 100 - (elapsed / duration * 100));
+              
+              if (elapsed >= duration) {
+                clearInterval(interval);
+                this.removeToast(toast.id);
+              }
+            }, 100);
+          });
+        },
+        removeToast(id) {
+          const index = this.toasts.findIndex(t => t.id === id);
+          if (index > -1) {
+            this.toasts[index].removing = true;
+            setTimeout(() => {
+              this.toasts = this.toasts.filter(t => t.id !== id);
+            }, 300);
+          }
+        }
+      }" 
+      class="toast toast-end z-50"
+    >
+      <template x-for="toast in toasts" :key="toast.id">
+        <div 
+          :class="{
+            'alert': true,
+            'alert-success': toast.type === 'success',
+            'alert-error': toast.type === 'error',
+            'alert-info': toast.type === 'info',
+            'alert-warning': toast.type === 'warning',
+            'animate-leave': toast.removing
+          }"
+          class="relative overflow-hidden"
+        >
+          <div class="flex justify-between items-center gap-4">
+            <span x-text="toast.message"></span>
+            <button 
+              @click="removeToast(toast.id)" 
+              class="btn btn-ghost btn-circle btn-sm hover:bg-base-content/20"
+            >
+              <iconify-icon icon="octicon:x-16"></iconify-icon>
+            </button>
           </div>
-          <progress class="progress w-full animate-[progress_10s_ease-in-out]"></progress>
+          <div 
+            class="absolute bottom-0 left-0 right-0 h-1 bg-base-content/10"
+          >
+            <div 
+              class="h-full bg-current transition-all duration-100 ease-linear"
+              :style="{ width: toast.progress + '%' }"
+            ></div>
+          </div>
         </div>
-      </div>
-      {% endfor %}
+      </template>
     </div>
 
     <style>
-      @keyframes progress {
-        0% { value: 100; }
-        100% { value: 0; }
-      }
       .toast > * {
-        animation: fade-out 10s ease-in-out;
+        animation: toast-enter 0.3s ease-out;
       }
-      @keyframes fade-out {
-        0% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { opacity: 0; }
+      
+      @keyframes toast-enter {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      .animate-leave {
+        animation: toast-leave 0.3s ease-in forwards;
+      }
+      
+      @keyframes toast-leave {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
       }
     </style>
     {% endif %}
