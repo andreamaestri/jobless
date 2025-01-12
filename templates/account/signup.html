@@ -35,21 +35,21 @@
                 <div class="space-y-4">
                     <h2 class="text-sm font-medium text-base-content/70 uppercase tracking-wider">Quick Sign Up</h2>
                     <div class="flex flex-col gap-3">
-                        <a href="{% provider_login_url 'github' process='login' %}"
+                        <a href="{% provider_login_url 'github' process='signup' %}"
                             class="group flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-[#24292F] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
                             <iconify-icon class="w-5 h-5 flex-shrink-0" icon="mdi:github"></iconify-icon>
                             <span class="flex-1 text-left">Sign up with GitHub</span>
                             <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all" icon="mdi:arrow-right"></iconify-icon>
                         </a>
                         
-                        <a href="{% provider_login_url 'openid_connect' associate_provider_id='linkedin' process='login' %}"
+                        <a href="{% provider_login_url 'openid_connect' associate_provider_id='linkedin' process='signup' %}"
                             class="group flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-[#0A66C2] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
                             <iconify-icon class="w-5 h-5 flex-shrink-0" icon="mdi:linkedin"></iconify-icon>
                             <span class="flex-1 text-left">Sign up with LinkedIn</span>
                             <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all" icon="mdi:arrow-right"></iconify-icon>
                         </a>
                         
-                        <a href="{% provider_login_url 'google' process='login' %}"
+                        <a href="{% provider_login_url 'google' process='signup' %}"
                             class="group flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-white border border-slate-200 transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
                             <iconify-icon class="w-5 h-5 flex-shrink-0" icon="logos:google-icon"></iconify-icon>
                             <span class="flex-1 text-left">Sign up with Google</span>
