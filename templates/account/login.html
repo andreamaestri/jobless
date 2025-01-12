@@ -37,24 +37,30 @@
                     <h2 class="text-sm font-medium text-base-content/70 uppercase tracking-wider">Sign In Quickly With</h2>
                     <div class="flex flex-col gap-3">
                         <a href="{% provider_login_url 'github' process='login' %}"
-                            class="group flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-[#24292F] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
+                            class="group social-auth-btn flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-[#24292F] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                            onclick="handleSocialClick(this)">
                             <iconify-icon class="w-5 h-5 flex-shrink-0" icon="mdi:github"></iconify-icon>
                             <span class="flex-1 text-left">Continue with GitHub</span>
-                            <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all" icon="mdi:arrow-right"></iconify-icon>
+                            <span class="loading loading-spinner loading-sm hidden"></span>
+                            <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all arrow-icon" icon="mdi:arrow-right"></iconify-icon>
                         </a>
                         
                         <a href="{% provider_login_url 'openid_connect' associate_provider_id='linkedin' process='login' %}"
-                            class="group flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-[#0A66C2] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
+                            class="group social-auth-btn flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-[#0A66C2] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                            onclick="handleSocialClick(this)">
                             <iconify-icon class="w-5 h-5 flex-shrink-0" icon="mdi:linkedin"></iconify-icon>
                             <span class="flex-1 text-left">Continue with LinkedIn</span>
-                            <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all" icon="mdi:arrow-right"></iconify-icon>
+                            <span class="loading loading-spinner loading-sm hidden"></span>
+                            <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all arrow-icon" icon="mdi:arrow-right"></iconify-icon>
                         </a>
                         
                         <a href="{% provider_login_url 'google' process='login' %}"
-                            class="group flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-white border border-slate-200 transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
+                            class="group social-auth-btn flex items-center justify-start gap-3 px-5 py-3 rounded-xl bg-white border border-slate-200 transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                            onclick="handleSocialClick(this)">
                             <iconify-icon class="w-5 h-5 flex-shrink-0" icon="logos:google-icon"></iconify-icon>
                             <span class="flex-1 text-left">Continue with Google</span>
-                            <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all" icon="mdi:arrow-right"></iconify-icon>
+                            <span class="loading loading-spinner loading-sm text-slate-600 hidden"></span>
+                            <iconify-icon class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all arrow-icon" icon="mdi:arrow-right"></iconify-icon>
                         </a>
                     </div>
                 </div>
@@ -101,9 +107,14 @@
                         <!-- Remember Me & Submit -->
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
-                                <label class="inline-flex items-center gap-2 cursor-pointer group">
-                                    {% render_field form.remember class="w-4 h-4 rounded border-2 border-base-300 text-primary focus:ring-primary/20 transition-shadow group-hover:border-primary/60" %}
-                                    <span class="text-sm text-base-content/70 group-hover:text-base-content/90 transition-colors">Keep me signed in</span>
+                                <label class="inline-flex items-center gap-2 cursor-pointer group select-none">
+                                    <input type="checkbox" 
+                                        name="remember" 
+                                        id="id_remember"
+                                        class="w-4 h-4 rounded border-2 border-base-300 text-primary focus:ring-primary/20 transition-shadow cursor-pointer group-hover:border-primary/60">
+                                    <span class="text-sm text-base-content/70 group-hover:text-base-content/90 transition-colors">
+                                        {% translate "Keep me signed in" %}
+                                    </span>
                                 </label>
                                 
                                 <a href="{% url 'account_reset_password' %}" 
@@ -127,6 +138,28 @@
 </div>
 
 <script>
+function handleSocialClick(button) {
+    // Get all social buttons
+    const allButtons = document.querySelectorAll('.social-auth-btn');
+    
+    // Disable all buttons
+    allButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+    });
+    
+    // Update clicked button state
+    const arrow = button.querySelector('.arrow-icon');
+    const spinner = button.querySelector('.loading-spinner');
+    
+    // Hide arrow and show spinner
+    if (arrow) arrow.classList.add('hidden');
+    if (spinner) spinner.classList.remove('hidden');
+    
+    // Navigate to the auth URL
+    window.location.href = button.href;
+}
+
 function togglePasswordVisibility(button) {
     const input = button.parentElement.querySelector('input');
     const icon = button.querySelector('iconify-icon');

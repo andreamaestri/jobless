@@ -1,31 +1,58 @@
-{% extends "socialaccount/base_entrance.html" %}
+{% extends "base.html" %}
 {% load i18n %}
-{% load allauth %}
-{% block head_title %}
-    {% trans "Sign In" %}
-{% endblock head_title %}
+
+{% block head_title %}{% translate "Social Login" %}{% endblock %}
+
 {% block content %}
-    {% if process == "connect" %}
-        {% element h1 %}
-            {% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}
-        {% endelement %}
-        {% element p %}
-            {% blocktrans with provider.name as provider %}You are about to connect a new third-party account from {{ provider }}.{% endblocktrans %}
-        {% endelement %}
-    {% else %}
-        {% element h1 %}
-            {% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}
-        {% endelement %}
-        {% element p %}
-            {% blocktrans with provider.name as provider %}You are about to sign in using a third-party account from {{ provider }}.{% endblocktrans %}
-        {% endelement %}
-    {% endif %}
-    {% element form method="post" no_visible_fields=True %}
-        {% slot actions %}
-            {% csrf_token %}
-            {% element button type="submit" %}
-                {% trans "Continue" %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
-{% endblock content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12 sm:py-16">
+    <div class="w-full max-w-lg mx-auto">
+        <!-- Header -->
+        <div class="text-center space-y-6 mb-8">
+            <div class="flex items-center justify-center gap-4 sm:gap-6">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-primary rounded-3xl shadow-lg flex items-center justify-center transition-transform hover:scale-105" style="font-size: min(40px, 8vw);">
+                    <iconify-icon class="text-primary-content" icon="mdi:briefcase-variant-off-outline"></iconify-icon>
+                </div>
+                <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center">
+                    <iconify-icon class="text-primary" icon="material-symbols:add" width="32" height="32"></iconify-icon>
+                </div>
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-3xl shadow-lg flex items-center justify-center transition-transform hover:scale-105" style="font-size: min(40px, 8vw);">
+                    <iconify-icon icon="{% if provider.name|lower == 'google' %}logos:google-icon{% else %}mdi:{{ provider.name|lower }}{% endif %}" width="40" height="40"></iconify-icon>
+                </div>
+            </div>
+            <div class="space-y-2.5 px-4">
+                <h1 class="text-2xl sm:text-3xl font-bold text-base-content">
+                    {% if process == "connect" %}
+                        {% blocktranslate with provider.name as provider %}Connect {{ provider }}{% endblocktranslate %}
+                    {% else %}
+                        {% blocktranslate with provider.name as provider %}Sign In via {{ provider }}{% endblocktranslate %}
+                    {% endif %}
+                </h1>
+                <p class="mt-3 text-base text-base-content/70">
+                    {% if process == "connect" %}
+                        {% blocktranslate with provider.name as provider %}
+                        You are about to connect your account to {{ provider }}. Click continue to proceed.
+                        {% endblocktranslate %}
+                    {% else %}
+                        {% blocktranslate with provider.name as provider %}
+                        You are about to sign in using your {{ provider }} account. Click continue to proceed.
+                        {% endblocktranslate %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="bg-base-100 rounded-2xl">
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <!-- Submit Button -->
+                <button type="submit" 
+                    class="group flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-white transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0">
+                    <iconify-icon class="w-5 h-5" icon="mdi:login"></iconify-icon>
+                    <span class="font-medium">{% translate "Continue" %}</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
