@@ -1,5 +1,5 @@
 <!DOCTYPE html>{% load static tailwind_tags %} {% load account %} {% load static %}
-<html lang="en" class="h-dvh" x-data :data-theme="$store.theme.current">
+<html lang="en" class="h-screen w-screen" x-data :data-theme="$store.theme.current">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -535,7 +535,7 @@
     </script>
   </head>
 
-  <body x-data class="bg-base-100 min-h-min">
+  <body x-data class="bg-base-100 h-screen w-screen overflow-hidden">
     <!-- Page Loading Overlay -->
     <div
       x-data
@@ -936,7 +936,7 @@
     <!-- Main content with mobile header spacing -->
     <main
       x-cloak
-      class="min-h-min content-shift"
+      class="h-full content-shift"
       :class="{ 
               'pt-16 lg:pt-0': window.innerWidth < 1024,
               'lg:ml-80': !$store.sidebar.collapsed && window.innerWidth >= 1024,
