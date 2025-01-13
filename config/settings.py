@@ -166,8 +166,6 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'   # Options: 'username', 'email' or 'use
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300  # 5 minutes in seconds
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 
@@ -224,6 +222,12 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+# Rate limiting settings for allauth
+ACCOUNT_RATE_LIMITS = {
+    # 5 failed attempts within 5 minutes will trigger a 15 minute lockout
+    'login_failed': '5/5m/15m',
+}
 
 # Login/logout settings
 LOGIN_URL = 'account_login'

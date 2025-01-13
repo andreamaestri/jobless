@@ -1,220 +1,355 @@
 {% extends "base.html" %}
 {% load static %}
+{% load home_extras %}
+{% load widget_tweaks %}
 
 {% block content %}
+<div class="min-h-screen bg-base-200/50">
+    <!-- Header -->
+    <div class="navbar bg-base-100 shadow-sm sticky top-0 z-50 px-4">
+        <div class="flex-1">
+            <h1 class="text-lg font-semibold">
+                Hello, <span class="text-primary">{{ user.username }}</span>! Great to see you again.
+            </h1>
+        </div>
+        <div class="flex-none gap-2">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('searchFilters').showModal()">
+                <iconify-icon class="w-4 h-4" icon="octicon:search-24"></iconify-icon>
+            </button>
+            <div class="divider divider-horizontal"></div>
+            <button class="btn btn-primary btn-sm" onclick="document.getElementById('quickAdd').showModal()">
+                <iconify-icon icon="octicon:plus-24"></iconify-icon>
+                <span class="hidden sm:inline">Quick Entry</span>
+            </button>
+        </div>
+    </div>
 
-<div class="min-h-min py-8 px-4 sm:py-10 sm:px-6 md:py-12 md:px-8 lg:py-6 lg:px-8 rounded-2xl bg-base-200">
-    <div class="mb-8">
-        <form method="GET" class="flex flex-wrap gap-2 items-center sm:flex-row flex-col">
-    <!-- Search Input -->
-            <div class="flex-1 min-w-[280px]">
-                <input 
-                    type="text" 
-                    name="search" 
-                    id="search"
-                    value="{{ search_query }}"
-                    placeholder="Search jobs, events, or contacts..."
-                    class="w-full rounded-xl border-base-300 bg-base-100 px-4 py-3 text-base-content shadow-sm focus:border-primary focus:ring-primary"
-                >
+    <!-- Main Content -->
+    <div class="container mx-auto p-6 space-y-6 max-w-7xl">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="stat bg-base-100 rounded-box shadow">
+                <div class="stat-figure text-primary">
+                    <iconify-icon class="w-8 h-8" icon="octicon:briefcase-24"></iconify-icon>
+                </div>
+                <div class="stat-title">Active Job Apps</div>
+                <div class="stat-value text-primary">{{ active_jobs_count }}</div>
+            </div>
+            <div class="stat bg-base-100 rounded-box shadow">
+                <div class="stat-figure text-secondary">
+                    <iconify-icon class="w-8 h-8" icon="octicon:calendar-24"></iconify-icon>
+                </div>
+                <div class="stat-title">Events Coming Up</div>
+                <div class="stat-value text-secondary">{{ upcoming_events_count }}</div>
+            </div>
+            <div class="stat bg-base-100 rounded-box shadow">
+                <div class="stat-figure text-accent">
+                    <iconify-icon class="w-8 h-8" icon="octicon:people-24"></iconify-icon>
+                </div>
+                <div class="stat-title">Your Network</div>
+                <div class="stat-value text-accent">{{ total_contacts }}</div>
+            </div>
+            <div class="stat bg-base-100 rounded-box shadow">
+                <div class="stat-figure text-success">
+                    <iconify-icon class="w-8 h-8" icon="octicon:graph-24"></iconify-icon>
+                </div>
+                <div class="stat-title">Overall Success</div>
+                <div class="stat-value text-success">{{ success_rate }}%</div>
+            </div>
+        </div>
+
+        <!-- Progress Card -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="card-title text-xl">Your Application Progress</h2>
+                    <div class="badge badge-neutral badge-lg">{{ success_rate }}% Success</div>
+                </div>
+                
+                <!-- Progress Bars -->
+                <div class="space-y-4">
+                    {% for status, count in status_counts.items %}
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-medium w-28">{{ status|title }}</span>
+                        <div class="flex-1">
+                            <progress 
+                                class="progress {% if status == 'interested' %}progress-info
+                                {% elif status == 'applied' %}progress-warning
+                                {% elif status == 'interviewing' %}progress-success
+                                {% elif status == 'rejected' %}progress-error
+                                {% else %}progress-primary{% endif %} w-full" 
+                                value="{{ count }}" 
+                                max="{{ total_jobs }}">
+                            </progress>
+                        </div>
+                        <span class="text-sm font-medium w-16 text-right">{{ count|percentage_of:total_jobs }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Cards -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {% for card in cards %}
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body p-0">
+                    <!-- Card Header -->
+                    <div class="p-6 border-b border-base-200 flex justify-between items-center">
+                        <div>
+                            <h3 class="card-title text-lg">{{ card.title }}</h3>
+                            <p class="text-sm text-base-content/70 mt-1">{{ card.subtitle }}</p>
+                        </div>
+                        <a href="{{ card.add_url }}" class="btn btn-circle btn-ghost">
+                            <iconify-icon icon="octicon:plus-16"></iconify-icon>
+                        </a>
+                    </div>
+
+                    <!-- Card Content -->
+                    <div class="relative h-[calc(100vh-20rem)] md:h-[28rem] overflow-hidden">
+                        <div class="absolute inset-0 overflow-y-auto overflow-x-hidden touch-pan-y custom-scrollbar">
+                            {% if card.items %}
+                            <table class="table table-zebra w-full">
+                                <thead class="sticky top-0 z-20">
+                                    <tr class="bg-base-100 shadow-sm">
+                                        {% for header in card.headers %}
+                                        <th class="text-sm font-medium bg-base-100">{{ header }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in card.items %}
+                                    <tr class="hover">
+                                        {% for field in item.fields %}
+                                        <td class="text-sm whitespace-normal">{{ field }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="p-12 text-center">
+                                <iconify-icon class="w-16 h-16 mx-auto text-base-content/20" icon="{{ card.empty_icon }}"></iconify-icon>
+                                <p class="mt-4 text-base text-base-content/60">{{ card.empty_message }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="p-6 border-t border-base-200">
+                        <a href="{{ card.view_all_url }}" class="btn btn-block">
+                            Explore all {{ card.title|lower }}
+                            <iconify-icon icon="octicon:arrow-right-16"></iconify-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modals with updated styling -->
+<dialog id="quickAdd" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg mb-4">Quick Add Panel</h3>
+        <div class="menu bg-base-200 rounded-box">
+            <a href="{% url 'jobs:add' %}" class="menu-item">
+                <iconify-icon icon="octicon:briefcase-24"></iconify-icon>
+                Add a Job Application
+            </a>
+            <a href="{% url 'events:add' %}" class="menu-item">
+                <iconify-icon icon="octicon:calendar-24"></iconify-icon>
+                Add an Event
+            </a>
+            <a href="{% url 'contacts:add' %}" class="menu-item">
+                <iconify-icon icon="octicon:people-24"></iconify-icon>
+                Add a Contact
+            </a>
+        </div>
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog>
+
+<!-- Search Modal -->
+<dialog id="searchFilters" class="modal">
+    <div class="modal-box max-w-2xl relative">
+        <!-- Close Button at Top-Right -->
+        <button type="button" class="btn btn-sm btn-ghost absolute top-2 right-2"
+                onclick="document.getElementById('searchFilters').close()">
+            <iconify-icon icon="octicon:x-16"></iconify-icon>
+        </button>
+
+        <h3 class="font-bold text-lg mb-4">Find What You Need</h3>
+        <form method="GET" class="space-y-4" id="searchForm">
+            <!-- Search Input with Widget Tweaks -->
+            <div class="form-control">
+                <div class="relative">
+                    <label class="input input-bordered flex items-center gap-2 pr-2">
+                        {% render_field search_form.search %}
+                        <span id="searchLoading" class="loading loading-spinner loading-sm hidden"></span>
+                        <iconify-icon class="h-4 w-4 opacity-70" icon="octicon:search-16"></iconify-icon>
+                    </label>
+                    <!-- Live Search Results -->
+                    <div id="searchResults" 
+                         class="hidden absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-box shadow-lg border border-base-300 max-h-64 overflow-y-auto z-50"
+                         role="listbox"
+                         aria-label="Search Suggestions">
+                    </div>
+                </div>
             </div>
 
-            <!-- Status Filter -->
-            <div class="w-48">
-                <select 
-                    name="status" 
-                    id="status"
-                    class="w-full rounded-xl border-base-300 bg-base-100 px-4 py-3 text-base-content shadow-sm focus:border-primary focus:ring-primary"
-                >
-                    <option value="">Job Status</option>
-                    {% for status_value, status_label in status_choices %}
-                        <option value="{{ status_value }}" {% if status_value == status_filter %}selected{% endif %}>
-                            {{ status_label }}
-                        </option>
-                    {% endfor %}
-                </select>
+            <!-- Filter Section with Widget Tweaks -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Status</span>
+                    </label>
+                    {% render_field search_form.status class="select select-bordered w-full" %}
+                </div>
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Type</span>
+                    </label>
+                    {% render_field search_form.type class="select select-bordered w-full" %}
+                </div>
             </div>
             
-            <!-- Button Container -->
-            <div class="flex gap-2">
-                <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    class="rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-content hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                >
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-2">
+                <button type="submit" class="btn btn-primary flex-1">
+                    <iconify-icon icon="octicon:filter-16" class="mr-2"></iconify-icon>
                     Apply Filters
                 </button>
-                
-                <!-- Clear Filters -->
                 {% if search_query or status_filter %}
-                    <a 
-                        href="{% url 'home:home' %}" 
-                        class="rounded-xl bg-base-200 px-4 py-3 text-sm font-medium text-base-content hover:bg-base-300 focus:outline-none focus:ring-2 focus:ring-base-200 focus:ring-offset-2"
-                    >
-                        Clear Filters
+                    <a href="{% url 'home:home' %}" class="btn btn-ghost">
+                        <iconify-icon icon="octicon:x-16" class="mr-2"></iconify-icon>
+                        Clear All
                     </a>
                 {% endif %}
             </div>
         </form>
-
     </div>
-        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Welcome Section -->
-            <div class="mb-8">
-            <h1 class="text-3xl font-bold">Welcome, {{ user.username }}</h1>
-            <p class="text-base-content/70 mt-2">Here's an overview of your job search journey</p>
-        </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
 
-        <!-- Grid Layout -->
-        <div class="grid grid-cols-1 gap-6">
+{% endblock %}
+
+{% block extra_js %}
+
+<!-- Add this new JavaScript for search functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+        // Show spinner if query is non-empty
+        document.getElementById('searchLoading').classList.toggle('hidden', query.length < 2);
+
+        if (query.length < 2) {
+            searchResults.classList.add('hidden');
+            return;
+        }
+
+        searchTimeout = setTimeout(() => {
+            // Simulated search results - Replace with actual API call
+            fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+                    document.getElementById('searchLoading').classList.add('hidden');
+                    searchResults.classList.remove('hidden');
+
+                    if (data.length === 0) {
+                        searchResults.innerHTML = `
+                            <div class="p-4 text-center text-base-content/60">
+                                No results found for "${query}"
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'p-3 hover:bg-base-200 cursor-pointer flex items-center gap-3';
+                        div.setAttribute('role', 'option');
+                        div.innerHTML = `
+                            <iconify-icon class="text-base-content/60" icon="${item.icon}"></iconify-icon>
+                            <div>
+                                <div class="font-medium">${item.title}</div>
+                                <div class="text-xs text-base-content/60">${item.subtitle}</div>
+                            </div>
+                        `;
+                        div.addEventListener('click', () => {
+                            window.location.href = item.url;
+                        });
+                        searchResults.appendChild(div);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('searchLoading').classList.add('hidden');
+                    searchResults.innerHTML = `
+                        <div class="p-4 text-center text-base-content/60">
+                            Unable to fetch results at the moment
+                        </div>
+                    `;
+                    searchResults.classList.remove('hidden');
+                });
+        }, 300);
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+
+    // Handle keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+        if (!searchResults.classList.contains('hidden')) {
+            const items = searchResults.querySelectorAll('div[role="option"]');
+            let currentIndex = Array.from(items).findIndex(item => item.classList.contains('bg-base-200'));
             
-            <!-- Recent Jobs Card -->
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <div class="flex justify-between items-center">
-                        <h2 class="card-title">Recent Jobs</h2>
-                        <a href="{% url 'jobs:add' %}" class="btn btn-ghost btn-square btn-sm">
-                            <span class="sr-only">Add Job</span>
-                            <span class="iconify" data-icon="octicon:plus-16"></span>
-                        </a>
-                    </div>
-                    {% if recent_jobs %}
-                        <div class="overflow-x-auto">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Company</th>
-                                        <th>Location</th>
-                                        <th>Status</th>
-                                        <th>Updated</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for job in recent_jobs %}
-                                        <tr class="hover">
-                                            <td>{{ job.title }}</td>
-                                            <td>{{ job.company }}</td>
-                                            <td>{{ job.location }}</td>
-                                            <td>
-                                                <span class="badge
-                                                    {% if job.status == 'interested' %}badge-accent
-                                                    {% elif job.status == 'applied' %}badge-secondary
-                                                    {% elif job.status == 'interviewing' %}badge-primary
-                                                    {% elif job.status == 'rejected' %}badge-error
-                                                    {% else %}badge-success{% endif %}">
-                                                    {{ job.status|title }}
-                                                </span>
-                                            </td>
-                                            <td>{{ job.updated_at|date:"M d, Y" }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <p class="text-center py-4 text-base-content/70">No jobs added yet</p>
-                    {% endif %}
-                    <div class="card-actions justify-end mt-4">
-                        <a href="{% url 'jobs:list' %}" class="btn btn-primary btn-sm gap-2">
-                            View all jobs
-                            <span class="iconify" data-icon="octicon:arrow-right-16"></span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (currentIndex < items.length - 1) currentIndex++;
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (currentIndex > 0) currentIndex--;
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (currentIndex >= 0) items[currentIndex].click();
+                    break;
+                case 'Escape':
+                    searchResults.classList.add('hidden');
+                    break;
+            }
 
-            <!-- Upcoming Events Card -->
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <div class="flex justify-between items-center">
-                        <h2 class="card-title">Upcoming Events</h2>
-                        <a href="{% url 'events:add' %}" class="btn btn-ghost btn-square btn-sm">
-                            <span class="sr-only">Add Event</span>
-                            <span class="iconify" data-icon="octicon:plus-16"></span>
-                        </a>
-                    </div>
-                    {% if upcoming_events %}
-                        <div class="overflow-x-auto">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Type</th>
-                                        <th>Date & Time</th>
-                                        <th>Location</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for event in upcoming_events %}
-                                        <tr class="hover">
-                                            <td>{{ event.title }}</td>
-                                            <td><span class="badge badge-accent">{{ event.event_type|title }}</span></td>
-                                            <td>{{ event.date|date:"M d, Y - g:i A" }}</td>
-                                            <td>{{ event.location }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <p class="text-center py-4 text-base-content/70">No upcoming events</p>
-                    {% endif %}
-                    <div class="card-actions justify-end mt-4">
-                        <a href="{% url 'events:list' %}" class="btn btn-primary btn-sm gap-2">
-                            View all events
-                            <span class="iconify" data-icon="octicon:arrow-right-16"></span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Contacts Card -->
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <div class="flex justify-between items-center">
-                        <h2 class="card-title">Recent Contacts</h2>
-                        <a href="{% url 'contacts:add' %}" class="btn btn-ghost btn-square btn-sm">
-                            <span class="sr-only">Add Contact</span>
-                            <span class="iconify" data-icon="octicon:plus-16"></span>
-                        </a>
-                    </div>
-                    {% if recent_contacts %}
-                        <div class="overflow-x-auto">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Company</th>
-                                        <th>Position</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for contact in recent_contacts %}
-                                        <tr class="hover">
-                                            <td>{{ contact.name }}</td>
-                                            <td>{{ contact.company }}</td>
-                                            <td>{{ contact.position }}</td>
-                                            <td>{{ contact.email }}</td>
-                                            <td>{{ contact.phone }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <p class="text-center py-4 text-base-content/70">No contacts added yet</p>
-                    {% endif %}
-                    <div class="card-actions justify-end mt-4">
-                        <a href="{% url 'contacts:list' %}" class="btn btn-primary btn-sm gap-2">
-                            View all contacts
-                            <span class="iconify" data-icon="octicon:arrow-right-16"></span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+            items.forEach((item, index) => {
+                if (index === currentIndex) {
+                    item.classList.add('bg-base-200');
+                } else {
+                    item.classList.remove('bg-base-200');
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

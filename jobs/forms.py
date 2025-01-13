@@ -1,9 +1,27 @@
 from django import forms
+from django.urls import reverse_lazy
 from django_summernote.widgets import SummernoteWidget
 from crispy_forms.helper import FormHelper
 from .models import JobPosting, SkillsTagModel
 import tagulous.models
 import tagulous.forms
+
+class CustomTagWidget(tagulous.forms.TagWidget):
+    template_name = 'jobs/widgets/tag_widget.html'
+    
+    class Media:
+        js = [
+            'js/skill-icons.js',  # You'll need to create this file with the SKILL_ICONS data
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tag_options = tagulous.models.TagOptions(
+            autocomplete_view='jobs:skills_autocomplete',
+            force_lowercase=True,
+            space_delimiter=False,
+            max_count=10
+        )
 
 class JobPostingForm(forms.ModelForm):
     BASE_CLASS = (
@@ -64,6 +82,15 @@ class JobPostingForm(forms.ModelForm):
         })
     )
 
+    # Use the model's TagField directly
+    skills = JobPosting._meta.get_field('skills').formfield(
+        widget=forms.SelectMultiple(attrs={
+            'class': BASE_CLASS,
+            'placeholder': 'Select skills...',
+            'multiple': 'multiple'
+        })
+    )
+
     class Meta:
         model = JobPosting
         fields = [
@@ -80,15 +107,3 @@ class JobPostingForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field_name != 'skills':
                 field.widget.attrs['class'] = self.BASE_CLASS
-                
-        # Configure the skills field
-        self.fields['skills'].widget.attrs.update({
-            'class': self.BASE_CLASS,
-            'placeholder': 'Start typing to select skills...',
-        })
-
-        # Optional: enhance the skills widget with better UX
-        self.fields['skills'].widget.tag_options.autocomplete_settings = {
-            'width': '100%',
-            'placeholder': 'Start typing to select skills...',
-        }
