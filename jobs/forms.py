@@ -24,86 +24,36 @@ class CustomTagWidget(tagulous.forms.TagWidget):
         )
 
 class JobPostingForm(forms.ModelForm):
-    BASE_CLASS = (
-        "w-full rounded-xl border-base-300 bg-base-100 px-4 py-3 "
-        "text-base-content shadow-sm focus:border-primary focus:ring-primary "
-        "placeholder-base-content/50 text-sm"
-    )
-
-    title = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': BASE_CLASS,
-            'placeholder': 'Enter job title'
-        })
-    )
-
-    company = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': BASE_CLASS,
-            'placeholder': 'Enter company name'
-        })
-    )
-
-    location = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': BASE_CLASS,
-            'placeholder': 'Enter job location'
-        })
-    )
-
-    salary_range = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': BASE_CLASS,
-            'placeholder': 'e.g., £30,000 - £40,000'
-        })
-    )
-
-    url = forms.URLField(
-        required=False,
-        widget=forms.URLInput(attrs={
-            'class': BASE_CLASS,
-            'placeholder': 'Enter job posting URL'
-        })
-    )
-
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'class': BASE_CLASS,
-            'rows': 5,
-            'placeholder': 'Enter job description'
-        })
-    )
-
-    status = forms.ChoiceField(
-        choices=JobPosting.STATUS_CHOICES,
-        widget=forms.Select(attrs={
-            'class': BASE_CLASS,
-        })
-    )
-
-    # Use the model's TagField directly
-    skills = JobPosting._meta.get_field('skills').formfield(
-        widget=forms.SelectMultiple(attrs={
-            'class': BASE_CLASS,
-            'placeholder': 'Select skills...',
-            'multiple': 'multiple'
-        })
-    )
-
     class Meta:
         model = JobPosting
-        fields = [
-            'title', 'company', 'location', 'salary_range',
-            'url', 'description', 'skills', 'status'
-        ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'space-y-4'
-
-        # Apply base class to all fields except skills
-        for field_name, field in self.fields.items():
-            if field_name != 'skills':
-                field.widget.attrs['class'] = self.BASE_CLASS
+        fields = ['title', 'company', 'location', 'url', 'salary_range', 'description', 'status']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'placeholder': 'e.g. Senior Software Engineer',
+                'class': 'input input-bordered w-full'
+            }),
+            'company': forms.TextInput(attrs={
+                'placeholder': 'e.g. Acme Corp',
+                'class': 'input input-bordered w-full'
+            }),
+            'location': forms.TextInput(attrs={
+                'placeholder': 'e.g. San Francisco, CA or Remote',
+                'class': 'input input-bordered w-full'
+            }),
+            'url': forms.URLInput(attrs={
+                'placeholder': 'https://',
+                'class': 'input input-bordered w-full'
+            }),
+            'salary_range': forms.TextInput(attrs={
+                'placeholder': 'e.g. $100,000 - $150,000',
+                'class': 'input input-bordered w-full'
+            }),
+            'description': forms.Textarea(attrs={
+                'placeholder': 'Enter the job description...',
+                'rows': 10,
+                'class': 'textarea textarea-bordered w-full font-mono'
+            }),
+            'status': forms.Select(attrs={
+                'class': 'select select-bordered w-full'
+            })
+        }

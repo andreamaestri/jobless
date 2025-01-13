@@ -30,6 +30,16 @@
         background-color: hsl(var(--p)/0.3);
         border-radius: 20px;
     }
+
+    /* Ensure proper scrolling behavior */
+    html, body {
+        @apply h-full overflow-hidden;
+    }
+
+    /* Main content area scrolling */
+    main {
+        @apply h-full overflow-y-auto;
+    }
 }
 
 @tailwind components;
@@ -100,7 +110,51 @@
     }
 
     .ts-dropdown {
-        @apply bg-base-100 border border-base-300 rounded-xl shadow-lg mt-1 max-h-[280px] overflow-y-auto;
+        @apply fixed bg-base-100 border border-base-300 rounded-xl shadow-lg mt-1;
+        max-height: min(400px, 40vh) !important;
+        z-index: 100;
+    }
+
+    .ts-dropdown-content {
+        @apply overflow-y-auto;
+        max-height: min(400px, 40vh) !important;
+    }
+
+    /* Sticky form actions */
+    .form-actions-sticky {
+        @apply fixed bottom-0 left-0 right-0 z-10 bg-base-200 border-t border-base-300;
+        @apply lg:left-[20rem];  /* Adjust for sidebar width */
+        
+        /* Handle collapsed sidebar */
+        .sidebar-collapsed & {
+            @apply lg:left-[5rem];
+        }
+    }
+
+    /* Page Transitions */
+    .page-transition-wrapper {
+        @apply relative min-h-full;
+    }
+
+    .page-enter {
+        @apply transition-all duration-300 ease-out;
+        animation: page-enter 0.3s ease-out;
+    }
+
+    .page-leave {
+        @apply transition-all duration-200 ease-in;
+        animation: page-leave 0.2s ease-in;
+    }
+
+    /* Form Transitions */
+    .form-section {
+        @apply transition-all duration-300 ease-out;
+        animation: section-enter 0.4s ease-out;
+    }
+
+    .form-actions {
+        @apply transition-all duration-300;
+        animation: slide-up 0.3s ease-out;
     }
 }
 
@@ -131,6 +185,19 @@
         backface-visibility: hidden;
         transform-style: preserve-3d;
     }
+
+    /* View Transition Utilities */
+    .fade-enter {
+        @apply transition-opacity duration-300 ease-out;
+    }
+
+    .slide-enter {
+        @apply transition-all duration-300 ease-out transform;
+    }
+
+    .zoom-enter {
+        @apply transition-all duration-300 ease-out transform;
+    }
 }
 
 /* Animations */
@@ -158,4 +225,48 @@
 @keyframes loading {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+}
+
+@keyframes page-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes page-leave {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.98);
+    }
+}
+
+@keyframes section-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
