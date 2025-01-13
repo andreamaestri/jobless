@@ -26,21 +26,38 @@ class ViewTransitionHelper {
 
     async handleNavigation(pathname, href) {
         try {
-            var response = await fetch(pathname);
-            var html = await response.text();
+            const response = await fetch(pathname);
+            const html = await response.text();
             
-            var parser = new DOMParser();
-            var doc = parser.parseFromString(html, 'text/html');
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
             
-            // Preserve the main element's attributes
-            var currentMain = document.querySelector('main');
-            var newMain = doc.querySelector('main');
+            const currentMain = document.querySelector('main');
+            const newMain = doc.querySelector('main');
             
             if (currentMain && newMain) {
+                // Prepare the new content but keep it hidden
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = newMain.innerHTML;
+                wrapper.className = 'page-transition-wrapper';
+                
                 this.startViewTransition(() => {
-                    // Keep Alpine.js bindings and classes
-                    currentMain.innerHTML = newMain.innerHTML;
-                    document.title = doc.title;
+                    // Animate out current content
+                    currentMain.style.animation = 'page-leave 0.3s ease-out forwards';
+                    
+                    // After current content fades out, update content and animate in
+                    setTimeout(() => {
+                        currentMain.innerHTML = wrapper.innerHTML;
+                        currentMain.style.animation = 'page-enter 0.3s ease-out forwards';
+                        document.title = doc.title;
+                        
+                        // Re-initialize Alpine components
+                        if (window.Alpine) {
+                            document.querySelectorAll('[x-data]').forEach(el => {
+                                window.Alpine.initTree(el);
+                            });
+                        }
+                    }, 300);
                 });
                 
                 window.history.pushState({}, '', href);
@@ -54,6 +71,9 @@ class ViewTransitionHelper {
 
     startViewTransition(callback) {
         if (!document.startViewTransition) {
+            const transitions = document.querySelectorAll('.page-transition-wrapper');
+            transitions.forEach(t => t.style.animation = 'none');
+            
             callback();
             return;
         }
@@ -62,20 +82,6 @@ class ViewTransitionHelper {
         
         const transition = document.startViewTransition(() => {
             callback();
-            
-            // Re-initialize Alpine components
-            if (window.Alpine) {
-                document.querySelectorAll('[x-data]').forEach(el => {
-                    window.Alpine.initTree(el);
-                });
-            }
-
-            // Preserve sidebar state
-            const sidebar = document.querySelector('aside');
-            if (sidebar) {
-                sidebar.style.visibility = 'visible';
-                sidebar.style.opacity = '1';
-            }
         });
 
         transition.finished.finally(() => {
