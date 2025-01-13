@@ -249,8 +249,10 @@ class SkillsTagModel(tagulous.models.TagModel):
     class TagMeta:
         initial = SKILL_ICONS
         force_lowercase = True
-        autocomplete_view = 'jobs:skills_autocomplete'  
+        autocomplete_view = 'jobs:skills_autocomplete'
         space_delimiter = False
+        max_count = 10
+        case_sensitive = False
 
 class JobPosting(models.Model):
     STATUS_CHOICES = [
@@ -271,7 +273,8 @@ class JobPosting(models.Model):
     skills = tagulous.models.TagField(
         to=SkillsTagModel,
         help_text="Select skills from the predefined list",
-        blank=True
+        blank=True,
+        related_name="job_skills"
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)

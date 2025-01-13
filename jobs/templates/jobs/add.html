@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
     <div class="max-w-3xl mx-auto">
@@ -13,7 +17,6 @@
         </div>
 
         <div class="bg-base-100 shadow-lg rounded-2xl p-8">
-            <!-- Form -->
             <form method="post" class="space-y-6">
                 {% csrf_token %}
 
@@ -91,16 +94,19 @@
                     </div>
 
                     <!-- Skills -->
-                    <div>
-                        <label for="{{ form.skills.id_for_label }}"
-                            class="block text-sm font-medium text-base-content mb-2">
-                            Skills
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Required Skills</span>
                         </label>
-                        {{ form.skills }}
-                        {% if form.skills.errors %}
-                        <p class="text-red-500 text-xs mt-1">{{ form.skills.errors.0 }}</p>
-                        {% endif %}
-                        <p class="text-base-content/70 text-xs mt-1">Enter skills separated by commas</p>
+                        <select id="skills-select" name="required_skills" multiple placeholder="Search or select skills..." autocomplete="off">
+                            <option value="">Select skills...</option>
+                            {% for skill in skill_icons %}
+                                <option value="{{ skill.name }}" 
+                                        data-skill='{"name": "{{ skill.name }}", "icon": "{{ skill.icon }}", "icon_dark": "{{ skill.icon_dark|default:skill.icon }}"}'>
+                                    {{ skill.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <!-- Status -->
@@ -143,4 +149,99 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<script src="{% static 'js/skill-icons.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Add this helper function
+    function updateDropdownIcons() {
+        requestAnimationFrame(() => {
+            const dropdown = document.querySelector('.ts-dropdown');
+            if (dropdown) {
+                const icons = dropdown.querySelectorAll('iconify-icon');
+                icons.forEach(icon => {
+                    const iconName = icon.getAttribute('icon');
+                    if (iconName) {
+                        window.Iconify.loadIcon(iconName).then(() => {
+                            icon.replaceWith(Object.assign(document.createElement('iconify-icon'), {
+                                icon: iconName
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+    }
+    
+    const select = new TomSelect('#skills-select', {
+        plugins: {
+            'remove_button': {
+                title: 'Remove skill',
+            },
+            'clear_button': {
+                title: 'Clear all skills',
+            }
+        },
+        maxItems: null,
+        maxOptions: null,  // Allow unlimited options in dropdown
+        valueField: 'name',
+        labelField: 'name',
+        searchField: ['name'],
+        create: false,
+        closeAfterSelect: true,
+        hideSelected: true,
+        sortField: { field: 'name', direction: 'asc' },  // Sort items alphabetically
+        onItemAdd: function(value, item) {
+            this.setTextboxValue('');
+            this.refreshOptions(false);
+        },
+        onItemRemove: function(value) {
+            this.refreshOptions(false);
+        },
+        options: Array.from(document.querySelectorAll('#skills-select option')).map(option => {
+            const skillData = JSON.parse(option.dataset.skill || '{}');
+            return {
+                name: skillData.name,
+                icon: skillData.icon,
+                icon_dark: skillData.icon_dark
+            };
+        }),
+        render: {
+            option: function(item, escape) {
+                const icon = isDarkMode ? (item.icon_dark || item.icon) : item.icon;
+                return `<div class="flex items-center gap-2 p-2">
+                    <iconify-icon icon="${escape(icon || 'octicon:code-16')}"></iconify-icon>
+                    <span>${escape(item.name)}</span>
+                </div>`;
+            },
+            item: function(item, escape) {
+                const icon = isDarkMode ? (item.icon_dark || item.icon) : item.icon;
+                return `<div class="flex items-center gap-1">
+                    <iconify-icon icon="${escape(icon || 'octicon:code-16')}"></iconify-icon>
+                    <span>${escape(item.name)}</span>
+                </div>`;
+            }
+        },
+        onDropdownOpen: function() {
+            updateDropdownIcons();
+        }
+    });
+
+    // Handle dark mode changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const isDark = e.matches;
+        const items = select.items;
+        select.clear();
+        select.clearOptions();
+        select.sync();
+        items.forEach(value => select.addItem(value));
+    });
+});
+</script>
 {% endblock %}
