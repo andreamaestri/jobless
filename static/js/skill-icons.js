@@ -394,21 +394,14 @@ class SkillSelectManager {
 
 class LetterMagnifier {
     constructor() {
-        this.createMagnifier();
-        this.setupLetterPreview();
+        // Find magnifier elements inside modal instead of creating new ones
+        this.magnifier = document.querySelector('.modal .letter-magnifier');
+        this.preview = document.querySelector('.modal .letter-preview');
     }
 
-    createMagnifier() {
-        this.magnifier = document.createElement('div');
-        this.magnifier.className = 'letter-magnifier';
-        document.body.appendChild(this.magnifier);
-    }
-
-    setupLetterPreview() {
-        this.preview = document.createElement('div');
-        this.preview.className = 'letter-preview';
-        document.body.appendChild(this.preview);
-    }
+    // Remove create methods since elements exist in DOM
+    createMagnifier() {}
+    setupLetterPreview() {}
 
     showMagnifier(letter, position) {
         this.magnifier.textContent = letter;
@@ -439,6 +432,15 @@ class LetterMagnifier {
 
 class SkillsModalManager {
     constructor() {
+        // Add isDarkMode to the instance
+        this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Watch for theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            this.isDarkMode = e.matches;
+            this.renderSelectedSkills(); // Re-render when theme changes
+        });
+
         // Initialize properties
         this.selectedSkills = new Set();
         this.skillsContainer = document.getElementById('selected-skills');
@@ -450,6 +452,9 @@ class SkillsModalManager {
         this.quickJump = document.querySelector('.quick-jump-container');
         this.magnifier = new LetterMagnifier();
         this.placeholder = document.getElementById('skills-placeholder'); // Add this line
+        
+        // Add container reference for mobile CTA
+        this.formSection = document.querySelector('.form-section');
         
         // Bind methods to preserve 'this' context
         this.handleSearch = this.handleSearch.bind(this);
@@ -618,13 +623,15 @@ class SkillsModalManager {
             }
         }
 
-        // Render selected skills badges
+        const badgeTypes = ['badge-primary', 'badge-accent', 'badge-neutral'];
+        const skillBadgeTypes = JSON.parse(localStorage.getItem('skillBadgeTypes') || '{}');
+
         this.selectedSkills.forEach(skillName => {
             const checkbox = document.querySelector(`input[value="${skillName}"]`);
             if (!checkbox) return;
 
             const skillData = JSON.parse(checkbox.dataset.skill);
-            const icon = isDarkMode && skillData.icon_dark ? skillData.icon_dark : skillData.icon;
+            const icon = this.isDarkMode && skillData.icon_dark ? skillData.icon_dark : skillData.icon;
             
             // Use stored badge type or create new one
             if (!skillBadgeTypes[skillName]) {
@@ -657,6 +664,11 @@ class SkillsModalManager {
             
             this.skillsContainer.appendChild(badge);
         });
+
+        // Toggle mobile CTA visibility based on skills
+        if (this.formSection) {
+            this.formSection.classList.toggle('has-skills', this.selectedSkills.size > 0);
+        }
     }
 
     jumpToLetter(letter, smooth = true) {
@@ -712,12 +724,13 @@ class SkillsModalManager {
                 this.jumpToLetter(letter, false); // Instant jump on hover
             });
 
-            // Handle touch
+            // Handle touch with passive option
             btn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
                 const letter = btn.dataset.letter;
-                this.jumpToLetter(letter, true); // Smooth scroll on touch
-            });
+                // Store touch position for potential scroll prevention
+                this._touchStartY = e.touches[0].clientY;
+                this.jumpToLetter(letter, true);
+            }, { passive: true });
 
             // Handle click
             btn.addEventListener('click', (e) => {
@@ -845,22 +858,29 @@ class SkillsModalManager {
                     currentLetter = visibleGroup.dataset.letter;
                     this.updateLetterStates(currentLetter);
                 }
-            });
+            }, { passive: true });
         }
 
-        // Touch handling for better mobile experience
-        let touchStartY;
+        // Touch handling with passive events
         container.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-            this.handleLetterTouchStart(e);
-        }, { passive: false });
+            this._touchStartY = e.touches[0].clientY;
+        }, { passive: true });
 
         container.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const letter = this.findLetterAtPosition(touch.clientY);
+            if (this._touchStartY) {
+                const deltaY = e.touches[0].clientY - this._touchStartY;
+                // Only prevent default if significant vertical movement
+                if (Math.abs(deltaY) > 5) {
+                    e.preventDefault();
+                }
+            }
+            const letter = this.findLetterAtPosition(e.touches[0].clientY);
             if (letter) this.jumpToLetter(letter, false);
-        });
+        }, { passive: false });
+
+        container.addEventListener('touchend', () => {
+            this._touchStartY = null;
+        }, { passive: true });
     }
 
     findLetterAtPosition(y) {
