@@ -1,7 +1,7 @@
 @tailwind base;
 
 @layer base {
-    /* work-sans-latin-wght-normal */
+    /* Work Sans font loading */
     @font-face {
         font-family: 'Work Sans Variable';
         font-style: normal;
@@ -11,41 +11,44 @@
         unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
     }
 
-    /* Scrollbar styles */
+    /* Enhanced scrollbar styles */
     * {
         scrollbar-width: thin;
-        scrollbar-color: hsl(var(--p)) transparent;
+        scrollbar-color: hsl(var(--p)/0.3) transparent;
     }
 
     *::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
+        @apply w-1.5 h-1.5;
     }
 
     *::-webkit-scrollbar-track {
-        background: transparent;
+        @apply bg-transparent;
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: hsl(var(--p)/0.3);
-        border-radius: 20px;
+        @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
     }
 
-    /* Ensure proper scrolling behavior */
+    /* Base layout */
     html, body {
-        @apply h-full overflow-hidden;
+        @apply h-full;
+        /* Remove overflow-hidden to allow scrolling */
     }
 
-    /* Main content area scrolling */
     main {
         @apply h-full overflow-y-auto;
+    }
+
+    /* Ensure clickable elements work */
+    button, a, input, select, textarea {
+        @apply relative z-10;
     }
 }
 
 @tailwind components;
 
 @layer components {
-    /* Calendar Component */
+    /* Enhanced Calendar Component */
     .fc {
         --fc-border-color: hsl(var(--b3));
         --fc-button-text-color: hsl(var(--pc));
@@ -57,13 +60,13 @@
         --fc-button-active-border-color: hsl(var(--pf));
     }
 
-    /* Navigation */
+    /* Enhanced Navigation */
     .nav-item {
-        @apply relative overflow-visible ring-0 transform-gpu transition-all duration-300;
+        @apply relative overflow-visible transform-gpu transition-all duration-300;
+        @apply hover:ring-2 hover:ring-primary/50 hover:ring-offset-1 hover:ring-offset-base-100 hover:scale-105;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary;
         transform-style: preserve-3d;
         backface-visibility: hidden;
-        transform-origin: left center;
-        will-change: transform, opacity;
     }
 
     .nav-item::after {
@@ -93,26 +96,69 @@
 
     /* Table Styles */
     .table-container {
-        @apply relative max-h-[400px] min-h-[200px] overflow-y-auto touch-pan-y;
+        @apply relative overflow-y-auto touch-pan-y;
+        /* Remove max-height restriction if it causes issues */
+        max-height: none;
     }
 
     .table-pin-rows thead tr {
         @apply sticky top-0 z-10 backdrop-blur-lg bg-base-100/95;
     }
 
-    /* Tom Select Styles */
+    /* Refined Tom Select Styles */
     .ts-wrapper {
-        @apply relative w-full font-normal;
+        @apply relative w-full;
     }
 
     .ts-control {
-        @apply px-3 py-2 bg-base-100 border border-base-300 rounded-xl shadow-sm;
+        @apply min-h-[3rem] px-3 py-2 bg-base-100 border border-base-300 rounded-xl;
+        @apply hover:border-primary/50 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50;
+        @apply transition duration-200;
     }
 
     .ts-dropdown {
-        @apply fixed bg-base-100 border border-base-300 rounded-xl shadow-lg mt-1;
+        @apply fixed mt-2 p-2 rounded-xl border border-base-300;
+        @apply bg-base-100/95 backdrop-blur-sm shadow-lg;
+        @apply max-h-[min(400px,40vh)] overflow-y-auto;
+        @apply invisible opacity-0 scale-95 transition-all duration-200;
+        @apply z-50;
+        position: absolute !important;
+        /* Adjust z-index to ensure dropdowns appear above other elements */
+        z-index: 1000 !important;
+    }
+
+    .ts-dropdown.active {
+        @apply visible opacity-100 scale-100;
+    }
+
+    .ts-wrapper.multi .ts-control {
+        @apply min-h-[42px] p-2 rounded-xl bg-base-100 border-base-300 opacity-70 transition-opacity duration-200;
+    }
+
+    .ts-wrapper.focus .ts-control {
+        @apply border-primary ring-1 ring-primary opacity-100;
+    }
+
+    .ts-dropdown {
+        @apply rounded-xl p-2 border border-base-300 bg-base-100;
+        @apply shadow-lg;
         max-height: min(400px, 40vh) !important;
-        z-index: 100;
+    }
+
+    .ts-dropdown .option {
+        @apply rounded-lg px-3 py-2;
+    }
+
+    .ts-dropdown .active {
+        @apply bg-primary text-primary-content;
+    }
+
+    .ts-wrapper.multi .ts-control > div {
+        @apply bg-primary text-primary-content rounded-lg px-2 py-0.5 m-0.5;
+    }
+
+    .ts-wrapper.plugin-remove_button .item .remove {
+        @apply rounded-r-lg px-1.5;
     }
 
     .ts-dropdown-content {
@@ -120,15 +166,129 @@
         max-height: min(400px, 40vh) !important;
     }
 
-    /* Sticky form actions */
-    .form-actions-sticky {
-        @apply fixed bottom-0 left-0 right-0 z-10 bg-base-200 border-t border-base-300;
-        @apply lg:left-[20rem];  /* Adjust for sidebar width */
-        
-        /* Handle collapsed sidebar */
-        .sidebar-collapsed & {
-            @apply lg:left-[5rem];
+    .ts-dropdown {
+        @apply bg-base-100 border border-base-300 rounded-md shadow-lg max-h-60 overflow-y-auto;
+    }
+
+    .ts-dropdown .option {
+        @apply flex items-center gap-2 py-2 px-3 cursor-pointer;
+    }
+
+    .ts-dropdown .option.active {
+        @apply bg-primary text-white;
+    }
+
+    .ts-dropdown .option:hover {
+        @apply bg-primary/20;
+    }
+
+    .ts-control {
+        @apply border border-base-300 rounded-xl;
+    }
+
+    .ts-wrapper.multi .ts-control {
+        @apply flex flex-wrap;
+    }
+
+    .ts-wrapper.focus .ts-control {
+        @apply ring-2 ring-primary/50 ring-offset-1;
+    }
+
+    .ts-wrapper.plugin-remove_button .item .remove {
+        @apply text-red-500 hover:text-red-700;
+    }
+
+    /* Tom Select Enhanced Styles */
+    .ts-wrapper.multi .ts-control > div {
+        @apply bg-base 100 text-base-content border border-base-300 rounded-lg px-3 py-1.5 m-0.5;
+        @apply flex items-center gap-2 hover:border-primary transition-colors duration-200;
+    }
+
+    .ts-wrapper.multi .ts-control > div.active {
+        @apply bg-primary/10 border-primary;
+    }
+
+    .ts-wrapper.multi .ts-control > div iconify-icon {
+        @apply text-lg opacity-70;
+    }
+
+    .ts-wrapper.plugin-remove_button .item .remove {
+        @apply border-l border-base-300 ml-2 pl-2;
+        @apply hover:text-error transition-colors duration-200;
+    }
+
+    .ts-wrapper .ts-control {
+        @apply !min-h-[3rem] p-1;
+    }
+
+    .ts-dropdown .option {
+        @apply rounded-lg px-4 py-2.5 hover:bg-base-200 transition-colors duration-200;
+    }
+
+    .ts-dropdown .active {
+        @apply bg-primary/10 text-primary;
+    }
+
+    .ts-dropdown .option:hover iconify-icon {
+        @apply scale-110 transition-transform duration-200;
+    }
+
+    /* Enhanced Tom Select Styles */
+    .ts-wrapper.multi .ts-control > div {
+        @apply bg-base-100 text-base-content border border-base-300 rounded-full px-3 py-1.5 m-0.5;
+        @apply flex items-center gap-2 hover:border-primary hover:bg-primary/5 transition-all duration-200;
+        @apply shadow-sm;
+    }
+
+    .ts-wrapper.multi .ts-control > div.active {
+        @apply bg-primary/10 border-primary shadow-md;
+    }
+
+    .ts-wrapper.multi .ts-control > div iconify-icon {
+        @apply text-lg opacity-80 transition-transform duration-200;
+    }
+
+    .ts-wrapper.plugin-remove_button .item .remove {
+        @apply border-l border-base-300/50 ml-2 pl-2;
+        @apply hover:text-error transition-colors duration-200;
+        @apply opacity-60 hover:opacity-100;
+    }
+
+    /* Dropdown categories styling */
+    .ts-dropdown .optgroup-header {
+        @apply text-xs font-semibold uppercase tracking-wider text-base-content/70 px-4 py-2;
+        @apply border-b border-base-200/50;
+    }
+
+    .ts-dropdown .optgroup .option {
+        @apply pl-6;
+    }
+
+    .ts-dropdown .no-results {
+        @apply p-4 text-sm text-base-content/70 text-center;
+        @apply border-t border-base-200/50;
+    }
+
+    /* Tag animation */
+    .ts-wrapper.multi .ts-control > div {
+        animation: tag-enter 0.2s ease-out;
+    }
+
+    @keyframes tag-enter {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateX(-10px);
         }
+        to {
+            opacity: 1;
+            transform: scale(1) translateX(0);
+        }
+    }
+
+    /* Enhanced Form Actions */
+    .form-actions-sticky {
+        @apply sticky bottom-0 z-50;
+        /* Remove fixed positioning that might block interaction */
     }
 
     /* Page Transitions */
@@ -156,11 +316,474 @@
         @apply transition-all duration-300;
         animation: slide-up 0.3s ease-out;
     }
+
+    /* Tom Select Clean Interface */
+    .ts-wrapper {
+        @apply relative;
+    }
+    
+    .ts-control {
+        @apply min-h-[42px] px-3 py-2 bg-base-100 border border-base-300 rounded-xl;
+        @apply flex flex-wrap items-center gap-2;
+        @apply cursor-pointer hover:border-primary/50 transition-colors duration-200;
+    }
+
+    /* Hide original select */
+    .ts-wrapper select {
+        @apply hidden;
+    }
+
+    /* Empty state with placeholder */
+    .ts-control:empty::before {
+        content: attr(data-placeholder);
+        @apply text-base-content/50 block pointer-events-none;
+    }
+
+    /* Dropdown styling */
+    .ts-dropdown {
+        @apply fixed mt-1 py-2 rounded-xl border border-base-300;
+        @apply bg-base-100/95 backdrop-blur-sm shadow-lg;
+        @apply max-h-[300px] overflow-y-auto;
+        @apply invisible opacity-0 transition-all duration-200;
+        @apply z-50;
+    }
+
+    .ts-dropdown.active {
+        @apply visible opacity-100;
+        animation: dropdown-enter 0.2s ease-out;
+    }
+
+    /* Hide the input box */
+    .ts-wrapper.multi .ts-control input {
+        @apply opacity-0 absolute -left-[10000px];
+        width: 4px !important;
+    }
+
+    /* Clean empty state */
+    .ts-wrapper.multi .ts-control:empty::before {
+        content: attr(data-placeholder);
+        @apply text-base-content/50 block;
+    }
+
+    /* Dropdown styling */
+    .ts-dropdown {
+        @apply mt-2 p-2 rounded-xl border border-base-300 bg-base-100/95;
+        @apply backdrop-blur-sm shadow-lg;
+        @apply max-h-[300px] overflow-y-auto;
+        @apply invisible opacity-0 transition-all duration-200;
+    }
+
+    .ts-dropdown.active {
+        @apply visible opacity-100;
+        animation: dropdown-enter 0.2s ease-out;
+    }
+
+    /* Category headers */
+    .ts-dropdown .optgroup-header {
+        @apply text-xs font-semibold uppercase tracking-wider;
+        @apply text-base-content/70 px-3 py-2 sticky top-0;
+        @apply bg-base-100/95 backdrop-blur-sm border-b border-base-200/50;
+    }
+
+    /* Options */
+    .ts-dropdown .option {
+        @apply px-3 py-2 rounded-lg my-0.5 cursor-pointer;
+        @apply hover:bg-primary/10 transition-colors duration-150;
+        @apply flex items-center gap-3;
+    }
+
+    .ts-dropdown .active {
+        @apply bg-primary/20 text-primary-content;
+    }
+
+    /* Selected tags */
+    .ts-wrapper.multi .ts-control > div {
+        @apply bg-base-100 text-base-content rounded-full px-3 py-1;
+        @apply border border-base-300 flex items-center gap-2;
+        @apply hover:border-primary/50 transition-all duration-200;
+        animation: tag-enter 0.2s ease-out;
+    }
+
+    .ts-wrapper.multi .item iconify-icon {
+        @apply text-lg opacity-80;
+    }
+
+    /* Remove button */
+    .ts-wrapper.plugin-remove_button .item .remove {
+        @apply border-l border-base-300/50 ml-2 pl-2;
+        @apply text-base-content/50 hover:text-error;
+        @apply transition-colors duration-200;
+    }
+
+    @keyframes dropdown-enter {
+        from {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Modal-style dropdown */
+    .ts-dropdown {
+        @apply fixed top-0 left-0 right-0 bottom-0 sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2;
+        @apply w-full h-full sm:w-[90vw] sm:h-auto sm:max-w-lg sm:max-h-[80vh] overflow-y-auto;
+        @apply bg-base-100 sm:rounded-2xl shadow-2xl border-0 sm:border border-base-300;
+        @apply invisible opacity-0 sm:scale-95 transition-all duration-200;
+        @apply z-[100];
+    }
+
+    /* Backdrop */
+    .ts-dropdown-backdrop {
+        @apply fixed inset-0 bg-base-300/50 backdrop-blur-sm;
+        @apply invisible opacity-0 transition-opacity duration-200;
+        @apply z-[99];
+    }
+
+    .ts-dropdown-backdrop.active {
+        @apply visible opacity-100;
+    }
+
+    /* Dropdown header */
+    .ts-dropdown-header {
+        @apply sticky top-0 p-4 border-b border-base-200 bg-base-100/95 backdrop-blur-sm;
+        @apply flex items-center justify-between;
+    }
+
+    /* Search input */
+    .ts-dropdown-header input {
+        @apply w-full px-4 py-2 bg-base-200/50 rounded-xl;
+        @apply border border-base-300 focus:border-primary;
+        @apply placeholder:text-base-content/50;
+    }
+
+    /* Close button */
+    .ts-dropdown-close {
+        @apply absolute top-3 right-3 p-2 text-base-content/50;
+        @apply hover:text-base-content transition-colors duration-200;
+    }
+
+    /* Content sections */
+    .ts-dropdown-content {
+        @apply p-4 divide-y divide-base-200;
+    }
+
+    /* Category headers */
+    .optgroup-header {
+        @apply text-sm font-semibold text-base-content/70;
+        @apply py-3 px-2;
+    }
+
+    /* Options */
+    .option {
+        @apply px-3 py-2 rounded-xl my-1 cursor-pointer;
+        @apply hover:bg-primary/10 transition-colors duration-150;
+    }
+
+    .option.active {
+        @apply bg-primary/20 text-primary;
+    }
+
+    /* Hide scrollbar when modal is inactive */
+    .ts-dropdown:not(.active) {
+        @apply overflow-hidden;
+    }
+
+    /* Skill Modal Styles */
+    .skill-group {
+        scroll-margin-top: 0;
+    }
+
+    .skill-group .checkbox:checked ~ div {
+        @apply bg-primary/5 ring-1 ring-primary/20;
+    }
+
+    .skill-group .checkbox:checked ~ div .w-14 {
+        @apply bg-primary/10;
+    }
+
+    .skill-group label.group {
+        @apply hover:-translate-y-0.5 hover:shadow-lg;
+    }
+
+    .skill-group label.group:active {
+        @apply translate-y-0 shadow-md;
+    }
+
+    /* Letter navigation */
+    .modal-box .btn-sm {
+        @apply transition-all duration-200;
+    }
+
+    .modal-box .btn-sm.btn-primary {
+        @apply bg-primary/20 border-primary/20 text-primary;
+        @apply hover:bg-primary hover:text-primary-content hover:border-primary;
+        @apply scale-110 shadow-md;
+    }
+
+    /* Modal scroll behavior */
+    .modal-box .overflow-y-auto {
+        scrollbar-gutter: stable;
+    }
+
+    .modal-box .sticky {
+        @apply transition-shadow duration-200;
+    }
+
+    /* Disable modal animations when scrolling */
+    .modal-box .overflow-y-auto:active .skill-group label.group {
+        @apply transition-none transform-none hover:transform-none;
+    }
+
+    /* Skill Group Styles */
+    .skill-group {
+        scroll-margin-top: 0;
+        @apply touch-pan-y;
+    }
+
+    .skill-group .sticky {
+        @apply bg-base-100 border-b border-base-200/10;
+        transform-style: preserve-3d;
+        
+        &::after {
+            content: '';
+            @apply absolute left-0 right-0 -bottom-6 h-6;
+            background: linear-gradient(to bottom, var(--b1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+    }
+
+    /* Quick jump buttons */
+    .modal-box .btn-sm {
+        @apply min-w-[2.5rem] font-medium transition-all duration-200;
+        @apply hover:scale-110 focus:scale-110;
+        @apply focus:ring-2 focus:ring-primary/50 focus:outline-none;
+    }
+
+    .modal-box .btn-sm.btn-primary {
+        @apply bg-primary/10 border-primary/20 text-primary;
+        @apply hover:bg-primary/20 hover:border-primary/30;
+        @apply shadow-sm;
+    }
+
+    /* Hover effects */
+    .skill-group label.group {
+        @apply hover:-translate-y-0.5 hover:shadow-lg;
+    }
+
+    .skill-group label.group:active {
+        @apply translate-y-0 shadow-md;
+    }
+
+    /* Checked state */
+    .skill-group .checkbox:checked ~ div {
+        @apply bg-primary/5 ring-1 ring-primary/20;
+    }
+
+    .skill-group .checkbox:checked ~ div .w-14 {
+        @apply bg-primary/10;
+    }
+
+    /* Touch-friendly hover states */
+    @media (hover: none) {
+        .skill-group label.group {
+            @apply active:bg-base-200 active:shadow-md hover:transform-none;
+        }
+        
+        .skill-group label.group:active {
+            @apply scale-[0.98];
+        }
+    }
+
+    /* Improved modal scrolling */
+    .modal-box .overflow-y-auto {
+        @apply overscroll-contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Quick jump buttons */
+    .quick-jump-btn {
+        @apply relative font-medium;
+        @apply hover:scale-110 hover:shadow-lg focus:scale-110 focus:shadow-lg;
+        @apply active:scale-95 active:shadow-md;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary/50;
+        @apply transition-all duration-200;
+    }
+
+    .quick-jump-btn.btn-primary {
+        @apply bg-primary/20 border-primary/20 text-primary;
+        @apply hover:bg-primary/30 hover:border-primary/30;
+        @apply shadow-lg;
+    }
+
+    @media (hover: none) {
+        .quick-jump-btn {
+            @apply active:bg-primary/20 active:text-primary;
+            @apply touch-pan-x touch-pan-y;
+        }
+    }
+
+    /* Improved modal scrolling with letter navigation */
+    .modal-box .overflow-y-auto {
+        @apply overscroll-contain;
+        -webkit-overflow-scrolling: touch;
+        scroll-padding-bottom: 6rem;
+    }
+
+    @media (min-width: 640px) {
+        .modal-box .overflow-y-auto {
+            scroll-padding-bottom: 2rem;
+        }
+    }
+
+    /* Quick jump navigation improvements */
+    .quick-jump-btn {
+        @apply relative font-medium;
+        @apply hover:bg-primary/10 hover:text-primary;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary/50;
+        @apply transition-all duration-200 ease-out;
+    }
+
+    .quick-jump-btn.btn-primary {
+        @apply bg-primary text-primary-content;
+        @apply hover:bg-primary hover:text-primary-content;
+        @apply scale-110 shadow-lg ring-2 ring-primary/50;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .hide-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Container animations */
+    @media (min-width: 1024px) {
+        .quick-jump-btn {
+            @apply opacity-70 hover:opacity-100;
+            @apply hover:-translate-y-0.5 hover:shadow-md;
+            @apply active:translate-y-0 active:scale-95;
+        }
+
+        .quick-jump-btn.btn-primary {
+            @apply opacity-100 translate-y-0;
+        }
+    }
+
+    /* Mobile touch optimization */
+    @media (max-width: 1023px) {
+        .quick-jump-btn {
+            @apply active:scale-95;
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+        }
+
+        nav:has(.quick-jump-btn) {
+            scroll-snap-type: x mandatory;
+            scroll-padding: 0.5rem;
+        }
+    }
+
+    /* Quick jump navigation improvements */
+    .quick-jump-btn {
+        @apply relative font-medium;
+        @apply hover:bg-primary/10 hover:text-primary active:scale-95;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary/50;
+        @apply transition-all duration-200;
+    }
+
+    .quick-jump-btn.btn-primary {
+        @apply bg-primary text-primary-content border-primary;
+        @apply hover:bg-primary hover:text-primary-content;
+        @apply scale-110 shadow-lg;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .hide-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-snap-type: x mandatory;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Container animations */
+    @media (min-width: 1024px) {
+        .quick-jump-btn {
+            @apply opacity-60 hover:opacity-100;
+        }
+
+        .quick-jump-btn.btn-primary {
+            @apply opacity-100;
+        }
+    }
+
+    /* Mobile touch optimization */
+    @media (max-width: 1023px) {
+        .quick-jump-btn {
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+        }
+    }
+
+    /* Mobile optimization */
+    @media (max-width: 1023px) {
+        .quick-jump-btn {
+            @apply text-sm;
+            scroll-snap-align: center;
+        }
+
+        /* Horizontal scroll snap */
+        .quick-jump-btn:first-child {
+            scroll-margin-left: 0.5rem;
+        }
+        
+        .quick-jump-btn:last-child {
+            scroll-margin-right: 0.5rem;
+        }
+
+        /* Container for mobile letters */
+        div::-webkit-scrollbar {
+            @apply h-0 w-0;
+        }
+
+        div::-webkit-scrollbar-track {
+            @apply bg-transparent;
+        }
+    }
 }
 
 @tailwind utilities;
 
 @layer utilities {
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .animate-scale-in {
+        animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .transition-gpu {
+        @apply transform-gpu transition-all duration-200;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+        will-change: transform, opacity;
+    }
+
     /* Animation Utilities */
     .icon-hover {
         @apply transform-gpu transition-all duration-200;
@@ -201,6 +824,33 @@
 }
 
 /* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }

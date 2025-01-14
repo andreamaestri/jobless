@@ -225,8 +225,12 @@ AUTHENTICATION_BACKENDS = [
 
 # Rate limiting settings for allauth
 ACCOUNT_RATE_LIMITS = {
-    # 5 failed attempts within 5 minutes will trigger a 15 minute lockout
-    'login_failed': '5/5m/15m',
+    # 5 login attempts per minute
+    "login": "5/m",
+    # 3 failed login attempts per minute from same IP
+    "login_failed": "3/m",
+    # 5 email sends per day
+    "email": "5/d",
 }
 
 # Login/logout settings
