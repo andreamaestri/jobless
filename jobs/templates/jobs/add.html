@@ -109,23 +109,23 @@
                         <!-- Skills -->
                         <div class="p-8 form-section" style="--delay: 2">
                             <h2 class="text-lg font-semibold text-base-content mb-6">Required Skills</h2>
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Required Skills</span>
-                                </label>
-                                <div class="flex flex-wrap gap-2 p-2 border border-base-300 rounded-xl min-h-[42px]" id="selected-skills">
+                            
+                            <!-- Moved outside form-control and simplified structure -->
+                            <div class="relative border border-base-300 rounded-xl min-h-[5rem] cursor-pointer group"
+                                 onclick="if (!event.target.closest('.badge')) document.getElementById('skills-modal').showModal()">
+                                <div id="selected-skills" class="p-4 flex flex-wrap gap-2">
                                     <!-- Selected skills will be rendered here -->
                                 </div>
-                                <button type="button" 
-                                        class="btn btn-outline mt-2" 
-                                        onclick="document.getElementById('skills-modal').showModal()">
-                                    Add Skills
-                                </button>
-                                <input type="hidden" name="required_skills" id="skills-input">
-                                <p class="text-xs text-base-content/60 mt-2">
-                                    Select or search for the required skills for this position
-                                </p>
+                                <div id="skills-placeholder" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div class="flex items-center gap-3 text-base-content/50 group-hover:text-primary/70">
+                                        <iconify-icon icon="heroicons:plus-circle" 
+                                                     class="text-2xl transition-transform group-hover:scale-110"
+                                                     width="24"></iconify-icon>
+                                        <span class="text-sm font-medium">Add technical skills required for this position</span>
+                                    </div>
+                                </div>
                             </div>
+                            <input type="hidden" name="required_skills" id="skills-input">
                         </div>
 
                         <!-- Skills Modal -->
@@ -152,8 +152,8 @@
                                     </div>
 
                                     <!-- Main content area -->
-                                    <div class="flex-1 overflow-y-auto relative">
-                                        <div class="relative min-h-full">
+                                    <div class="flex-1 overflow-y-auto relative pb-20">
+                                        <div class="relative min-h-full overflow-x-hidden"> <!-- Added overflow-x-hidden -->
                                             <!-- Quick letters -->
                                             <div class="quick-letters-list">
                                                 {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
@@ -218,7 +218,7 @@
                             
                             <!-- Modal backdrop -->
                             <form method="dialog" class="modal-backdrop">
-                                <button onclick="window.skillsManager.resetModalState()">close</button>
+                                <button aria-label="Close modal" class="sr-only" onclick="window.skillsManager.resetModalState()">close</button>
                             </form>
                         </dialog>
 

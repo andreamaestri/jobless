@@ -999,7 +999,7 @@ select {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
-/* Root Custom Properties for Responsive Values */
+/* Root Custom Properties */
 
 :root {
   --quick-letter-scale: 1.2;
@@ -1031,7 +1031,7 @@ select {
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
-/* Scrollbar Base Styles */
+/* Scrollbar Styles */
 
 * {
   scrollbar-width: thin;
@@ -4476,7 +4476,7 @@ details.collapse summary::-webkit-details-marker {
   --fc-button-active-border-color: hsl(var(--pf));
 }
 
-/* Navigation Styles */
+/* Navigation and Interactive Elements */
 
 .nav-item {
   position: relative;
@@ -4514,29 +4514,42 @@ details.collapse summary::-webkit-details-marker {
   backface-visibility: hidden;
 }
 
-/* Theme Preview */
-
-/* User Avatar */
+/* Theme and User Elements */
 
 /* Table Styles */
 
-/* Tom Select Base Styles */
+/* Tom Select Styles */
 
-/* Quick Letters List */
+/* Quick Letters Component */
 
 .quick-letters-list {
   position: fixed;
-  right: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: calc(100vh - 16rem);
-  /* Adjust for header and footer */
-  width: 1rem;
-  font-size: 0.7rem;
+  height: calc(100vh - 24rem);
+  max-height: 32rem;
+  width: 3rem;
+  font-size: 0.75rem;
   line-height: 1;
   z-index: 30;
+  padding: 0.5rem 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  right: 0.25rem;
 }
+
+/* Closer to edge on mobile */
+
+@media (min-width: 640px) {
+
+.quick-letters-list {
+    right: 1.5rem;
+
+    /* Original spacing for larger screens */
+}
+  }
 
 .quick-letter {
   display: flex;
@@ -4544,24 +4557,30 @@ details.collapse summary::-webkit-details-marker {
   justify-content: center;
   color: var(--fallback-bc,oklch(var(--bc)/0.5));
   height: calc(100% / 26);
-  /* Evenly space letters */
+  min-height: 1rem;
   width: 100%;
   padding: 0;
   font-weight: 500;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-  cursor: pointer;
   transform-origin: center right;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                    color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, color;
+  position: relative;
+  pointer-events: auto;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, color, opacity;
+}
+
+.quick-letter::before {
+  content: '';
+  position: absolute;
+  width: 300%;
+  height: 100%;
+  left: -200%;
+  top: 0;
 }
 
 .quick-letter:hover:not(.active) {
   --tw-text-opacity: 1;
   color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
-  transform: scale(1.4);
+  transform: scale(1.2);
   transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
   transition-duration: 0.2s;
 }
@@ -4570,35 +4589,26 @@ details.collapse summary::-webkit-details-marker {
   font-weight: 700;
   --tw-text-opacity: 1;
   color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
-  transform: scale(1.85);
+  transform: scale(1.4);
 }
 
 .quick-letter.active + .quick-letter,
     .quick-letter:has(+ .quick-letter.active) {
-  transform: scale(1.4);
+  transform: scale(1.1);
   color: var(--fallback-p,oklch(var(--p)/0.7));
   transition-duration: 0.1s;
 }
 
-.quick-letter-magnifier.visible {
-  opacity: 1;
-  transform: scale(1) translateX(0);
+.quick-letter.adjacent {
+  color: var(--fallback-p,oklch(var(--p)/0.7));
+  transform: scale(1.1);
 }
 
-.quick-letter-preview.visible {
-  --tw-scale-x: 1;
-  --tw-scale-y: 1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  opacity: 1;
-}
-
-/* Magnifier Preview */
-
-/* Letter Preview & Magnifier */
+/* Letter Preview and Magnifier */
 
 .letter-preview.visible {
-  transform: translate(-50%, -50%) scale(1);
   opacity: 0.15;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /* Skill Group */
@@ -4608,9 +4618,11 @@ details.collapse summary::-webkit-details-marker {
   touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
   overscroll-behavior: contain;
   scroll-margin-top: 0;
+  padding-right: 4rem;
+  margin-bottom: 1rem;
 }
 
-/* Modal */
+/* Modal Styles */
 
 .modal-box {
   position: relative;
@@ -4631,8 +4643,6 @@ details.collapse summary::-webkit-details-marker {
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
-
-/* Modal Button Styles */
 
 .modal .btn {
   position: relative;
@@ -4682,8 +4692,6 @@ details.collapse summary::-webkit-details-marker {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-/* Modal Footer */
-
 .modal-box .flex-none {
   background-color: var(--fallback-b1,oklch(var(--b1)/0.9));
   --tw-backdrop-blur: blur(24px);
@@ -4691,11 +4699,77 @@ details.collapse summary::-webkit-details-marker {
   backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
-/* Letter group highlight effect */
+/* Add these backdrop button styles */
 
-.letter-group-highlight.visible {
-  opacity: 1;
-  transform: scaleX(1);
+.modal-backdrop button {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Keep the backdrop itself clickable */
+
+.modal-backdrop {
+  cursor: pointer;
+}
+
+/* Skills Container and Placeholder */
+
+.form-control .skill-container {
+  position: relative;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-border-opacity, 1)));
+  min-height: 5rem;
+}
+
+.form-control #selected-skills {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-height: 1.5rem;
+}
+
+.form-control #skills-placeholder {
+  position: absolute;
+  inset: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1 !important;
+  color: hsl(var(--bc) / 0.5) !important;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.form-control .skill-container:hover #skills-placeholder {
+  color: hsl(var(--p) / 0.7) !important;
+}
+
+/* Only hide placeholder when skills are selected */
+
+.form-control #selected-skills:not(:empty) + #skills-placeholder {
+  opacity: 0 !important;
+}
+
+/* Badge Styles */
+
+.badge {
+  gap: 0.25rem;
+}
+
+.badge .btn-square {
+  min-height: 1.5rem;
+  height: 100%;
+  width: 1.5rem;
+  margin: -0.125rem -0.125rem -0.125rem 0;
+}
+
+.badge .btn-square:hover {
+  background-color: currentColor;
 }
 
 .sr-only {
@@ -4708,6 +4782,10 @@ details.collapse summary::-webkit-details-marker {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+.pointer-events-none {
+  pointer-events: none;
 }
 
 .visible {
@@ -5016,12 +5094,12 @@ details.collapse summary::-webkit-details-marker {
   max-height: 60vh;
 }
 
-.min-h-\[42px\] {
-  min-height: 42px;
-}
-
 .min-h-\[4rem\] {
   min-height: 4rem;
+}
+
+.min-h-\[5rem\] {
+  min-height: 5rem;
 }
 
 .min-h-\[65vh\] {
@@ -6167,6 +6245,8 @@ details.collapse summary::-webkit-details-marker {
 
 /* Transform Utilities */
 
+/* Smooth scroll utility */
+
 /* Keyframes */
 
 @keyframes fadeIn {
@@ -6519,6 +6599,10 @@ details.collapse summary::-webkit-details-marker {
 
 .group:hover .group-hover\:text-base-content\/90 {
   color: var(--fallback-bc,oklch(var(--bc)/0.9));
+}
+
+.group:hover .group-hover\:text-primary\/70 {
+  color: var(--fallback-p,oklch(var(--p)/0.7));
 }
 
 .group:hover .group-hover\:opacity-100 {

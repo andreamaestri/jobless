@@ -449,6 +449,7 @@ class SkillsModalManager {
         this.letterGroups = document.querySelectorAll('.skill-group[data-letter]');
         this.quickJump = document.querySelector('.quick-jump-container');
         this.magnifier = new LetterMagnifier();
+        this.placeholder = document.getElementById('skills-placeholder'); // Add this line
         
         // Bind methods to preserve 'this' context
         this.handleSearch = this.handleSearch.bind(this);
@@ -607,14 +608,17 @@ class SkillsModalManager {
         
         this.skillsContainer.innerHTML = '';
         this.skillsInput.value = JSON.stringify([...this.selectedSkills]);
-        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        // Array of possible badge types without secondary
-        const badgeTypes = ['badge-primary', 'badge-accent', 'badge-neutral'];
+        // Show/hide placeholder based on selected skills
+        if (this.placeholder) {
+            if (this.selectedSkills.size === 0) {
+                this.placeholder.style.display = 'flex';
+            } else {
+                this.placeholder.style.display = 'none';
+            }
+        }
 
-        // Get stored badge types or create new ones
-        let skillBadgeTypes = JSON.parse(localStorage.getItem('skillBadgeTypes') || '{}');
-
+        // Render selected skills badges
         this.selectedSkills.forEach(skillName => {
             const checkbox = document.querySelector(`input[value="${skillName}"]`);
             if (!checkbox) return;
@@ -631,7 +635,7 @@ class SkillsModalManager {
             const badgeType = skillBadgeTypes[skillName];
             
             const badge = document.createElement('div');
-            badge.className = `badge ${badgeType} badge-lg gap-2 pr-1`; 
+            badge.className = `badge ${badgeType} badge-lg gap-1 pr-0`; 
             badge.innerHTML = `
                 <iconify-icon icon="${icon}" 
                              data-icon="${skillData.icon}"
@@ -640,12 +644,13 @@ class SkillsModalManager {
                              width="16"></iconify-icon>
                 <span class="font-medium text-${badgeType.split('-')[1]}-content">${skillData.name}</span>
                 <button type="button" 
-                        class="btn btn-ghost btn-xs btn-circle hover:bg-${badgeType.split('-')[1]}-focus">
-                    <iconify-icon icon="octicon:x-16" 
-                                class="text-xs text-${badgeType.split('-')[1]}-content"></iconify-icon>
+                        class="btn btn-ghost btn-xs btn-square h-full rounded-l-none hover:bg-opacity-20">
+                    <iconify-icon icon="heroicons:x-mark-20-solid" 
+                                class="text-xs text-${badgeType.split('-')[1]}-content">
+                    </iconify-icon>
                 </button>
             `;
-
+            
             // Add click handler
             const removeBtn = badge.querySelector('button');
             removeBtn.addEventListener('click', () => this.removeSkill(skillName));
@@ -662,25 +667,40 @@ class SkillsModalManager {
         const header = document.querySelector('.modal-box .flex-none');
         const offset = header ? header.offsetHeight : 0;
 
-        // Get container height for bottom padding calculation
-        const containerHeight = container.clientHeight;
-        const groupHeight = group.offsetHeight;
-        const scrollMax = container.scrollHeight - containerHeight;
-
+        container.classList.toggle('smooth-scroll', smooth);
+        
         requestAnimationFrame(() => {
-            let targetScroll = group.offsetTop - offset - 8;
-            
-            // If the group is near the bottom, scroll to bottom
-            if (group.offsetTop + groupHeight > scrollMax - 100) {
-                targetScroll = scrollMax;
-            }
-
+            const targetScroll = group.offsetTop - offset - 8;
             container.scrollTo({
                 top: targetScroll,
                 behavior: smooth ? 'smooth' : 'instant'
             });
             
-            this.updateActiveState(letter);
+            // Update letter states with smoother transitions
+            this.updateLetterStates(letter);
+        });
+
+        // Remove smooth scroll class after animation
+        if (smooth) {
+            setTimeout(() => {
+                container.classList.remove('smooth-scroll');
+            }, 300);
+        }
+    }
+
+    updateLetterStates(activeLetter) {
+        document.querySelectorAll('.quick-letter').forEach(btn => {
+            const letter = btn.dataset.letter;
+            btn.classList.remove('active', 'adjacent');
+            
+            if (letter === activeLetter) {
+                btn.classList.add('active');
+            } else if (
+                letter === String.fromCharCode(activeLetter.charCodeAt(0) - 1) ||
+                letter === String.fromCharCode(activeLetter.charCodeAt(0) + 1)
+            ) {
+                btn.classList.add('adjacent');
+            }
         });
     }
 
