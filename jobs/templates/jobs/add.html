@@ -198,18 +198,27 @@
 
                                     <!-- Footer -->
                                     <div class="flex-none border-t border-base-200 bg-base-100">
-                                        <div class="p-3 sm:p-4 flex gap-2">
-                                            <form method="dialog" class="flex gap-2 w-full">
-                                                <button class="btn btn-ghost flex-1">Cancel</button>
-                                                <button class="btn btn-primary flex-1" onclick="applySelectedSkills()">Apply Selected</button>
-                                            </form>
+                                        <div class="p-3 flex justify-end gap-3">
+                                            <button type="button" 
+                                                    class="btn btn-sm sm:btn-md btn-ghost" 
+                                                    onclick="document.getElementById('skills-modal').close(); window.skillsManager.resetModalState()">
+                                                <iconify-icon icon="heroicons:x-mark-20-solid" class="text-lg"></iconify-icon>
+                                                <span>Cancel</span>
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-sm sm:btn-md btn-primary"
+                                                    onclick="window.skillsManager.applySelectedSkills(); document.getElementById('skills-modal').close()">
+                                                <iconify-icon icon="heroicons:check-20-solid" class="text-lg"></iconify-icon>
+                                                <span>Apply</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <form method="dialog" class="modal-backdrop bg-base-200/80 backdrop-blur-sm" onsubmit="window.skillsManager.resetModalState()">
-                                <button>close</button>
+                            <!-- Modal backdrop -->
+                            <form method="dialog" class="modal-backdrop">
+                                <button onclick="window.skillsManager.resetModalState()">close</button>
                             </form>
                         </dialog>
 
@@ -252,11 +261,12 @@
                             </div>
                             <div class="flex space-x-4">
                                 <a href="{% url 'jobs:list' %}"
-                                    class="btn btn-ghost">
+                                   class="btn btn-ghost"
+                                   onclick="return handleCancel(event)">
                                     Cancel
                                 </a>
                                 <button type="submit"
-                                    class="btn btn-primary">
+                                        class="btn btn-primary">
                                     Save Job
                                 </button>
                             </div>
