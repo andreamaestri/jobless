@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load job_tags %}
 
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
@@ -157,18 +158,17 @@
                                     <div class="flex-1 h-full overflow-y-auto">
                                         <!-- Skills list with letters -->
                                         <div class="relative">
-                                            {% regroup skill_icons|dictsort:"name" by name|first|upper as alpha_groups %}
-                                            {% for letter in alpha_groups %}
-                                                <div class="skill-group" data-letter="{{ letter.grouper }}">
+                                            {% for group in skill_icons %}
+                                                <div class="skill-group" data-letter="{{ group.letter }}">
                                                     <div class="sticky top-0 z-20 bg-base-100 shadow-sm">
                                                         <div class="flex items-center gap-3 p-3 sm:p-4">
                                                             <span class="text-2xl sm:text-3xl font-bold text-primary w-10 h-10 flex items-center justify-center">
-                                                                {{ letter.grouper }}
+                                                                {{ group.letter }}
                                                             </span>
                                                         </div>
                                                     </div>
                                                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 p-2 sm:p-4">
-                                                        {% for skill in letter.list %}
+                                                        {% for skill in group.skills %}
                                                             <label class="group flex items-center gap-2 p-2 sm:p-3 rounded-xl hover:bg-base-200 cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98]">
                                                                 <input type="checkbox" 
                                                                        class="checkbox checkbox-sm sm:checkbox-md checkbox-primary" 
@@ -202,22 +202,18 @@
                                     </div>
 
                                     <!-- Floating quick jump letters -->
-                                    <div class="fixed right-4 top-1/2 -translate-y-1/2 z-40">
+                                    <div class="quick-jump-container">
                                         <div class="relative">
                                             <!-- Letter preview bubble -->
-                                            <div id="letter-preview" class="hidden absolute -left-16 top-1/2 -translate-y-1/2 w-14 h-14 bg-base-100/90 backdrop-blur-md rounded-2xl shadow-lg border border-base-300 text-3xl font-bold flex items-center justify-center text-base-content/80 transition-all duration-150 transform scale-0">
+                                            <div id="letter-preview" class="hidden absolute top-1/2 -translate-y-1/2 w-12 h-12 backdrop-blur-md rounded-xl text-2xl font-bold flex items-center justify-center text-base-content/90 transition-all duration-150 transform scale-0">
                                                 A
                                             </div>
-                                            <!-- Letters list -->
-                                            <div class="flex flex-col gap-0.5 max-h-[70vh] py-2">
-                                                {% for letter in alpha_groups %}
-                                                <button class="quick-jump-btn btn btn-ghost btn-xs w-6 h-6 min-h-0 rounded-md text-xs font-medium hover:bg-base-300" 
-                                                        data-letter="{{ letter.grouper }}"
-                                                        onmouseenter="showLetterPreview('{{ letter.grouper }}')"
-                                                        onmouseleave="hideLetterPreview()"
-                                                        onclick="jumpToLetter('{{ letter.grouper }}')">
-                                                    {{ letter.grouper }}
-                                                </button>
+                                            <!-- Letters list with uniqueness check -->
+                                            <div class="quick-letters-list">
+                                                {% for group in skill_icons %}
+                                                    <button class="quick-letter" data-letter="{{ group.letter }}">
+                                                        {{ group.letter }}
+                                                    </button>
                                                 {% endfor %}
                                             </div>
                                         </div>
@@ -225,7 +221,7 @@
                                 </div>
                             </div>
                             
-                            <form method="dialog" class="modal-backdrop bg-base-200/80 backdrop-blur-sm">
+                            <form method="dialog" class="modal-backdrop bg-base-200/80 backdrop-blur-sm" onsubmit="window.skillsManager.resetModalState()">
                                 <button>close</button>
                             </form>
                         </dialog>

@@ -760,6 +760,251 @@
             @apply bg-transparent;
         }
     }
+
+    /* Skill Modal Search Transitions */
+    .skill-group .sticky {
+        @apply transition-[height,opacity,margin] duration-200 ease-out;
+    }
+
+    .quick-jump-container {
+        @apply transition-opacity duration-200 ease-out;
+    }
+
+    /* Modal transitions */
+    .modal-box .overflow-y-auto {
+        @apply transition-all duration-300 ease-out;
+    }
+
+    /* Improved Quick Jump Navigation */
+    .quick-jump-container {
+        @apply bg-base-100/50 backdrop-blur-sm rounded-2xl shadow-lg border border-base-300;
+        @apply p-1;
+        max-height: min(600px, 80vh);
+    }
+
+    .quick-jump-wave {
+        @apply gap-0.5;
+        max-height: min(600px, 70vh);
+    }
+
+    .quick-jump-btn {
+        @apply transition-all duration-200 ease-out;
+        @apply hover:bg-primary/10 hover:text-primary;
+        @apply flex items-center justify-center;
+        transform-origin: center;
+    }
+
+    /* Wave effect for quick jump buttons */
+    .quick-jump-wave:hover .quick-jump-btn {
+        opacity: 0.5;
+    }
+
+    .quick-jump-wave .quick-jump-btn:hover {
+        @apply opacity-100 bg-primary/20;
+        transform: scale(1.2);
+    }
+
+    .quick-jump-wave .quick-jump-btn:hover ~ .quick-jump-btn {
+        transform: translateX(5px);
+    }
+
+    /* Neighbor buttons wave effect */
+    .quick-jump-wave .quick-jump-btn:hover + .quick-jump-btn {
+        transform: scale(1.1);
+    }
+
+    .quick-jump-wave .quick-jump-btn:hover + .quick-jump-btn + .quick-jump-btn {
+        transform: scale(1.05);
+    }
+
+    /* Active state */
+    .quick-jump-btn.active {
+        @apply bg-primary text-primary-content;
+        transform: scale(1.2);
+    }
+
+    /* Adjust modal content to account for quick jump */
+    .modal-box .overflow-y-auto {
+        @apply pr-16;  /* Make space for quick jump */
+    }
+
+    /* Hide scrollbar for quick jump container */
+    .quick-jump-wave {
+        @apply overflow-hidden hover:overflow-y-auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .quick-jump-wave::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-height: 600px) {
+        .quick-jump-container {
+            @apply bg-transparent border-none shadow-none;
+            max-height: 70vh;
+        }
+        
+        .quick-jump-btn {
+            @apply w-6 h-6 text-xs;
+        }
+    }
+
+    /* Quick Jump iOS Style */
+    .quick-letters-list {
+        @apply flex flex-col items-center;
+        @apply py-6 px-1;
+        @apply relative;
+        height: calc(100vh - 200px);
+    }
+
+    .quick-letter {
+        @apply w-6 h-6 flex items-center justify-center;
+        @apply text-[11px] font-semibold text-base-content/40;
+        @apply transition-all duration-150;
+        @apply select-none cursor-default;
+        transform-origin: right center;
+        letter-spacing: 0.02em;
+        
+        /* Create larger hit area while keeping visual size small */
+        padding: 12px;
+        margin: -8px 0;
+    }
+
+    /* Wave effect with smooth transitions */
+    .quick-letters-list:hover .quick-letter {
+        opacity: 0.4;
+        transform: scale(0.9);
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .quick-letter:hover {
+        @apply text-primary font-bold;
+        opacity: 1 !important;
+        transform: scale(1.4) !important;
+        transition-duration: 0.15s;
+    }
+
+    /* Dynamic neighbor scaling */
+    .quick-letter:hover ~ .quick-letter {
+        transform: translateX(1px);
+    }
+
+    .quick-letter:hover + .quick-letter {
+        transform: scale(1.2) !important;
+        opacity: 0.8 !important;
+    }
+
+    .quick-letter:hover + .quick-letter + .quick-letter {
+        transform: scale(1.1) !important;
+        opacity: 0.6 !important;
+    }
+
+    .quick-letter:has(+ .quick-letter:hover) {
+        transform: scale(1.2) !important;
+        opacity: 0.8 !important;
+    }
+
+    .quick-letter:has(+ .quick-letter + .quick-letter:hover) {
+        transform: scale(1.1) !important;
+        opacity: 0.6 !important;
+    }
+
+    /* Active state with glow effect */
+    .quick-letter.active {
+        @apply text-primary font-bold;
+        transform: scale(1.4);
+        opacity: 1;
+        text-shadow: 0 0 10px hsl(var(--p) / 0.2);
+    }
+
+    /* Preview bubble refinements */
+    #letter-preview {
+        @apply -left-16 bg-base-100/95 backdrop-blur-lg;
+        box-shadow: 
+            0 4px 6px -1px rgb(0 0 0 / 0.1),
+            0 2px 4px -2px rgb(0 0 0 / 0.1),
+            0 0 0 1px hsl(var(--p) / 0.1);
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+        .quick-letter {
+            @apply py-2 px-3;  /* Larger touch targets */
+            margin: -4px 0;
+        }
+        
+        .quick-letters-list {
+            @apply py-4;
+        }
+    }
+
+    /* Quick Jump iOS Style */
+    .quick-jump-container {
+        @apply fixed right-0 top-0 bottom-0 z-40 flex items-center;
+        @apply pr-2;
+        /* Ensure it stretches vertically */
+        height: 100%;
+    }
+
+    .quick-letters-list {
+        @apply flex flex-col items-center;
+        @apply py-4;
+    }
+
+    .quick-letter {
+        @apply w-8 h-8 flex items-center justify-center;
+        @apply text-sm font-medium text-base-content/60;
+        @apply transition-transform duration-300 ease-out;
+        @apply cursor-pointer select-none;
+        transform-origin: center;
+        /* Remove background and border */
+        background: none;
+        border: none;
+        /* Add margin for spacing */
+        margin: 4px 0;
+    }
+
+    /* MacOS Dock Effect */
+    .quick-letter:hover {
+        @apply text-primary font-bold;
+        transform: scale(1.5);
+        z-index: 10;
+    }
+
+    .quick-letters-list:hover .quick-letter:not(:hover) {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    /* Optional: Smooth transition when moving between letters */
+    .quick-letter {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* Active state */
+    .quick-letter.active {
+        @apply text-primary font-bold;
+        transform: scale(1.5);
+    }
+
+    /* Preview bubble refinements */
+    #letter-preview {
+        @apply -left-16 bg-base-100/95 shadow-lg;
+        filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.1));
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+        .quick-letter {
+            @apply h-8 text-sm;
+        }
+        
+        .quick-letters-list {
+            @apply py-2 px-1;
+        }
+    }
 }
 
 @tailwind utilities;
