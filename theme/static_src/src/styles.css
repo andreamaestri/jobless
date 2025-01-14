@@ -1283,6 +1283,273 @@
             @apply py-4;
         }
     }
+
+    /* Enhanced QuickLetters with Polished Magnify Effect */
+    .quick-letter {
+        @apply w-8 h-8 flex items-center justify-center;
+        @apply text-sm font-medium text-base-content/70;
+        @apply select-none cursor-pointer;
+        transform-origin: center;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        will-change: transform, opacity, color;
+    }
+
+    /* Refined hover effect */
+    .quick-letter:hover {
+        @apply text-primary font-bold;
+        transform: scale(2.2);
+        opacity: 1;
+        z-index: 10;
+        text-shadow: 0 0 20px hsl(var(--p) / 0.2);
+    }
+
+    /* Improved neighbor transitions */
+    .quick-letter:has(+ .quick-letter:hover),
+    .quick-letter:hover + .quick-letter {
+        transform: scale(1.8);
+        opacity: 0.9;
+        z-index: 9;
+    }
+
+    .quick-letter:has(+ .quick-letter + .quick-letter:hover),
+    .quick-letter:hover + .quick-letter + .quick-letter {
+        transform: scale(1.5);
+        opacity: 0.7;
+        z-index: 8;
+    }
+
+    .quick-letter:has(+ .quick-letter + .quick-letter + .quick-letter:hover),
+    .quick-letter:hover + .quick-letter + .quick-letter + .quick-letter {
+        transform: scale(1.3);
+        opacity: 0.5;
+        z-index: 7;
+    }
+
+    /* Refined active state */
+    .quick-letter.active {
+        @apply text-primary font-bold;
+        transform: scale(2);
+        opacity: 1;
+        z-index: 5;
+        text-shadow: 0 0 15px hsl(var(--p) / 0.15);
+    }
+
+    /* Container hover enhancements */
+    .quick-letters-list {
+        @apply py-6;
+        transition: padding 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .quick-letters-list:hover .quick-letter {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+
+    .quick-letters-list:hover .quick-letter:hover {
+        opacity: 1;
+        transform: scale(2.2);
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+        .quick-letter {
+            @apply py-3;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .quick-letter:active {
+            transform: scale(1.8);
+            @apply text-primary font-bold;
+        }
+        
+        .quick-letters-list:hover .quick-letter {
+            transform: scale(1);
+            opacity: 0.7;
+        }
+    }
+
+    /* Enhanced QuickLetters with Smooth Transitions */
+    .quick-letters-list {
+        @apply flex flex-col items-center gap-1 py-6;
+        @apply relative;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+    }
+
+    .quick-letter {
+        @apply w-8 h-8 flex items-center justify-center;
+        @apply text-sm font-medium text-base-content/70;
+        @apply select-none cursor-pointer;
+        transform-style: preserve-3d;
+        transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+        will-change: transform, opacity;
+    }
+
+    /* Improved hover states with smoother transitions */
+    .quick-letter:hover {
+        @apply text-primary font-bold;
+        transform: scale(2.2) translateZ(5px);
+        opacity: 1;
+        z-index: 10;
+        transition-duration: 0.2s;
+    }
+
+    /* Smoother neighbor transitions */
+    .quick-letters-list:hover .quick-letter:not(:hover) {
+        opacity: 0.5;
+        transform: scale(0.95) translateZ(0);
+    }
+
+    /* Previous and next items */
+    .quick-letter:hover + .quick-letter {
+        transform: scale(1.5) translateZ(2px);
+        opacity: 0.8;
+        z-index: 9;
+        transition-duration: 0.15s;
+    }
+
+    .quick-letter:has(+ .quick-letter:hover) {
+        transform: scale(1.5) translateZ(2px);
+        opacity: 0.8;
+        z-index: 9;
+        transition-duration: 0.15s;
+    }
+
+    /* Second level neighbors */
+    .quick-letter:hover + .quick-letter + .quick-letter,
+    .quick-letter:has(+ .quick-letter + .quick-letter:hover) {
+        transform: scale(1.2) translateZ(1px);
+        opacity: 0.6;
+        z-index: 8;
+        transition-duration: 0.1s;
+    }
+
+    /* Active state refinements */
+    .quick-letter.active {
+        @apply text-primary font-bold;
+        transform: scale(2) translateZ(3px);
+        opacity: 1;
+        z-index: 5;
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+        .quick-letter {
+            transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .quick-letter:active {
+            transform: scale(1.8) translateZ(2px);
+            transition-duration: 0.15s;
+        }
+        
+        .quick-letters-list:hover .quick-letter {
+            transform: scale(1) translateZ(0);
+            opacity: 0.7;
+        }
+    }
+
+    /* Enhanced QuickLetters with Ultra-Smooth Transitions */
+    .quick-letters-list {
+        @apply flex flex-col items-center gap-1 py-6;
+        @apply relative;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+    }
+
+    .quick-letter {
+        @apply w-8 h-8 flex items-center justify-center;
+        @apply text-sm font-medium text-base-content/70;
+        @apply select-none cursor-pointer;
+        transform-style: preserve-3d;
+        /* Smoother base transition */
+        transition: all 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+        will-change: transform, opacity;
+        /* Add distance buffer */
+        margin: 0.125rem 0;
+    }
+
+    /* Smooth hover state */
+    .quick-letter:hover {
+        @apply text-primary font-bold;
+        transform: scale(2) translateZ(2px);
+        opacity: 1;
+        z-index: 10;
+        transition-duration: 0.2s;
+        transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    /* Graceful scaling for non-hovered items */
+    .quick-letters-list:hover .quick-letter:not(:hover) {
+        opacity: 0.5;
+        transform: scale(0.95) translateZ(0);
+        transition-duration: 0.25s;
+    }
+
+    /* Improved neighbor transitions with distance-based scaling */
+    .quick-letter:hover ~ .quick-letter,
+    .quick-letter:has(~ .quick-letter:hover) {
+        transition-duration: 0.2s;
+    }
+
+    /* Direct neighbors */
+    .quick-letter:hover + .quick-letter,
+    .quick-letter:has(+ .quick-letter:hover) {
+        transform: scale(1.5) translateZ(1px);
+        opacity: 0.85;
+        z-index: 9;
+        transition-duration: 0.18s;
+    }
+
+    /* Second-level neighbors */
+    .quick-letter:hover + .quick-letter + .quick-letter,
+    .quick-letter:has(+ .quick-letter + .quick-letter:hover) {
+        transform: scale(1.25) translateZ(0.5px);
+        opacity: 0.7;
+        z-index: 8;
+        transition-duration: 0.16s;
+    }
+
+    /* Third-level neighbors */
+    .quick-letter:hover + .quick-letter + .quick-letter + .quick-letter,
+    .quick-letter:has(+ .quick-letter + .quick-letter + .quick-letter:hover) {
+        transform: scale(1.1) translateZ(0.25px);
+        opacity: 0.6;
+        z-index: 7;
+        transition-duration: 0.14s;
+    }
+
+    /* Add hover intent delay */
+    .quick-letters-list {
+        transition: padding 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .quick-letters-list:hover {
+        @apply py-8;
+        transition-delay: 0.05s;
+    }
+
+    /* Active state refinements */
+    .quick-letter.active {
+        @apply text-primary font-bold;
+        transform: scale(1.8) translateZ(1px);
+        opacity: 1;
+        z-index: 5;
+        transition-duration: 0.2s;
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+        .quick-letter {
+            transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            margin: 0.25rem 0;
+        }
+        
+        .quick-letter:active {
+            transform: scale(1.8);
+            transition-duration: 0.15s;
+        }
+    }
 }
 
 @tailwind utilities;
