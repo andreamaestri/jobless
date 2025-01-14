@@ -136,9 +136,6 @@
                                     <div class="flex-none p-3 sm:p-6 border-b border-base-200 bg-base-100">
                                         <div class="flex items-center justify-between gap-4 mb-3 sm:mb-4">
                                             <h3 class="text-lg sm:text-2xl font-bold">Select Skills</h3>
-                                            <form method="dialog">
-                                                <button class="btn btn-sm sm:btn-md btn-circle btn-ghost">✕</button>
-                                            </form>
                                         </div>
                                         <!-- Search input -->
                                         <div class="form-control">
@@ -155,67 +152,61 @@
                                     </div>
 
                                     <!-- Main content area -->
-                                    <div class="flex-1 h-full overflow-y-auto">
-                                        <!-- Skills list with letters -->
-                                        <div class="relative">
-                                            {% for group in skill_icons %}
-                                                <div class="skill-group" data-letter="{{ group.letter }}">
-                                                    <div class="sticky top-0 z-20 bg-base-100 shadow-sm">
-                                                        <div class="flex items-center gap-3 p-3 sm:p-4">
-                                                            <span class="text-2xl sm:text-3xl font-bold text-primary w-10 h-10 flex items-center justify-center">
-                                                                {{ group.letter }}
-                                                            </span>
+                                    <div class="flex-1 overflow-y-auto relative">
+                                        <div class="relative min-h-full">
+                                            <!-- Quick letters -->
+                                            <div class="quick-letters-list">
+                                                <div class="sticky top-0 flex flex-col h-full">
+                                                    {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                                                        <button class="quick-letter" data-letter="{{ letter }}">
+                                                            {{ letter }}
+                                                        </button>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <!-- Skills groups -->
+                                            <div class="pr-16"> <!-- Add padding for quick letters -->
+                                                {% for group in skill_icons %}
+                                                    <div class="skill-group" data-letter="{{ group.letter }}">
+                                                        <div class="sticky top-0 z-20 bg-base-100 shadow-sm">
+                                                            <div class="flex items-center gap-3 p-3 sm:p-4">
+                                                                <span class="text-2xl sm:text-3xl font-bold text-primary w-10 h-10 flex items-center justify-center">
+                                                                    {{ group.letter }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 p-2 sm:p-4">
+                                                            {% for skill in group.skills %}
+                                                                <label class="group flex items-center gap-2 p-2 sm:p-3 rounded-xl hover:bg-base-200 cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98]">
+                                                                    <input type="checkbox" 
+                                                                           class="checkbox checkbox-sm sm:checkbox-md checkbox-primary" 
+                                                                           value="{{ skill.name }}"
+                                                                           data-skill='{"name": "{{ skill.name }}", "icon": "{{ skill.icon }}", "icon_dark": "{{ skill.icon_dark|default:skill.icon }}"}'>
+                                                                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                                                                        <iconify-icon data-icon="{{ skill.icon }}" 
+                                                                                    data-icon-dark="{{ skill.icon_dark|default:skill.icon }}"
+                                                                                    class="w-8 h-8 sm:w-12 sm:h-12 bg-base-200 rounded-lg group-hover:bg-base-300 transition-colors transform transition-transform duration-200 group-hover:scale-110 flex-shrink-0"
+                                                                                    style="display: inline-block; font-size: 32px;"
+                                                                                    height="none"></iconify-icon>
+                                                                        <span class="text-sm sm:text-base font-medium truncate flex-1">{{ skill.name }}</span>
+                                                                    </div>
+                                                                </label>
+                                                            {% endfor %}
                                                         </div>
                                                     </div>
-                                                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 p-2 sm:p-4">
-                                                        {% for skill in group.skills %}
-                                                            <label class="group flex items-center gap-2 p-2 sm:p-3 rounded-xl hover:bg-base-200 cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98]">
-                                                                <input type="checkbox" 
-                                                                       class="checkbox checkbox-sm sm:checkbox-md checkbox-primary" 
-                                                                       value="{{ skill.name }}"
-                                                                       data-skill='{"name": "{{ skill.name }}", "icon": "{{ skill.icon }}", "icon_dark": "{{ skill.icon_dark|default:skill.icon }}"}'>
-                                                                <div class="flex items-center gap-3 min-w-0 flex-1">
-                                                                    <iconify-icon data-icon="{{ skill.icon }}" 
-                                                                                data-icon-dark="{{ skill.icon_dark|default:skill.icon }}"
-                                                                                class="w-8 h-8 sm:w-12 sm:h-12 bg-base-200 rounded-lg group-hover:bg-base-300 transition-colors transform transition-transform duration-200 group-hover:scale-110 flex-shrink-0"
-                                                                                style="display: inline-block; font-size: 32px;"
-                                                                                height="none"></iconify-icon>
-                                                                    <span class="text-sm sm:text-base font-medium truncate flex-1">{{ skill.name }}</span>
-                                                                </div>
-                                                            </label>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                            {% endfor %}
+                                                {% endfor %}
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <!-- Footer with quick jump and actions -->
+                                    <!-- Footer -->
                                     <div class="flex-none border-t border-base-200 bg-base-100">
-                                        <!-- Action buttons -->
                                         <div class="p-3 sm:p-4 flex gap-2">
                                             <form method="dialog" class="flex gap-2 w-full">
                                                 <button class="btn btn-ghost flex-1">Cancel</button>
                                                 <button class="btn btn-primary flex-1" onclick="applySelectedSkills()">Apply Selected</button>
                                             </form>
-                                        </div>
-                                    </div>
-
-                                    <!-- Floating quick jump letters -->
-                                    <div class="quick-jump-container">
-                                        <div class="relative">
-                                            <!-- Letter preview bubble -->
-                                            <div id="letter-preview" class="hidden absolute top-1/2 -translate-y-1/2 w-12 h-12 backdrop-blur-md rounded-xl text-2xl font-bold flex items-center justify-center text-base-content/90 transition-all duration-150 transform scale-0">
-                                                A
-                                            </div>
-                                            <!-- Letters list with uniqueness check -->
-                                            <div class="quick-letters-list">
-                                                {% for group in skill_icons %}
-                                                    <button class="quick-letter" data-letter="{{ group.letter }}">
-                                                        {{ group.letter }}
-                                                    </button>
-                                                {% endfor %}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

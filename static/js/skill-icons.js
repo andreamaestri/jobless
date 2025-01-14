@@ -361,6 +361,64 @@ class SkillSelectManager {
     }
 }
 
+class LetterMagnifier {
+    constructor() {
+        this.createMagnifier();
+        this.setupLetterPreview();
+    }
+
+    createMagnifier() {
+        this.magnifier = document.createElement('div');
+        this.magnifier.className = 'letter-magnifier';
+        document.body.appendChild(this.magnifier);
+    }
+
+    setupLetterPreview() {
+        this.preview = document.createElement('div');
+        this.preview.className = 'letter-preview';
+        document.body.appendChild(this.preview);
+    }
+
+    showMagnifier(letter, position) {
+        this.magnifier.textContent = letter;
+        this.magnifier.style.left = `${position.x}px`;
+        this.magnifier.style.top = `${position.y}px`;
+
+        motionAnimate(this.magnifier, {
+            opacity: 1,
+            scale: 1,
+            x: -60
+        }, {
+            duration: 200,
+            easing: [.23, 1, .32, 1]
+        });
+    }
+
+    hideMagnifier() {
+        motionAnimate(this.magnifier, {
+            opacity: 0,
+            scale: 0.8,
+            x: 0
+        }, {
+            duration: 200,
+            easing: [.23, 1, .32, 1]
+        });
+    }
+
+    showPreview(letter) {
+        this.preview.textContent = letter;
+        this.preview.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            this.preview.classList.add('visible');
+        });
+    }
+
+    hidePreview() {
+        this.preview.classList.remove('visible');
+        setTimeout(() => this.preview.classList.add('hidden'), 150);
+    }
+}
+
 class SkillsModalManager {
     constructor() {
         this.selectedSkills = new Set();
@@ -371,8 +429,10 @@ class SkillsModalManager {
         this.iconHelper = window.skillIconsHelper;
         this.letterGroups = document.querySelectorAll('.skill-group[data-letter]');
         this.quickJump = document.querySelector('.quick-jump-container');
+        this.magnifier = new LetterMagnifier();
         
         this.initializeModal();
+        this.setupLetterMagnification();
     }
 
     initializeModal() {
@@ -586,6 +646,59 @@ class SkillsModalManager {
             letterObserver.observe(group);
         });
     }
+
+    setupLetterMagnification() {
+        const letters = document.querySelectorAll('.quick-letter');
+        const container = document.querySelector('.quick-letters-list');
+        
+        letters.forEach((letter, index) => {
+            setupHover(letter, () => {
+                const rect = letter.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                const position = {
+                    x: containerRect.left - 8, // Position left of the quick letters
+                    y: rect.top + (rect.height / 2)
+                };
+                
+                this.magnifier.showMagnifier(letter.dataset.letter, position);
+                this.magnifyLetterGroup(letters, index);
+                this.magnifier.showPreview(letter.dataset.letter);
+
+                return () => {
+                    this.resetLetterGroup(letters, index);
+                    this.magnifier.hideMagnifier();
+                    this.magnifier.hidePreview();
+                };
+            });
+        });
+    }
+
+    magnifyLetterGroup(letters, index) {
+        motionAnimate(letters[index], { 
+            scale: 1.4,  // Reduced scale for better fit
+            color: 'hsl(var(--p))'
+        });
+        
+        [-1, 1].forEach(offset => {
+            const neighbor = letters[index + offset];
+            if (neighbor) {
+                motionAnimate(neighbor, { 
+                    scale: 1.2,  // Reduced scale for neighbors
+                    color: 'hsl(var(--p)/0.7)'
+                });
+            }
+        });
+    }
+
+    resetLetterGroup(letters, index) {
+        const affectedIndexes = [index - 1, index, index + 1];
+        affectedIndexes.forEach(i => {
+            if (letters[i]) {
+                motionAnimate(letters[i], { scale: 1 });
+            }
+        });
+    }
 }
 
 // Modify the initialization code
@@ -634,22 +747,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function showLetterPreview(letter) {
-    const preview = document.getElementById('letter-preview');
-    if (!preview) return;
-    
-    preview.textContent = letter;
-    preview.classList.remove('hidden');
-    requestAnimationFrame(() => {
-        preview.classList.add('visible');
-    });
+    if (!window.skillsManager?.magnifier) return;
+    window.skillsManager.magnifier.showPreview(letter);
 }
 
 function hideLetterPreview() {
-    const preview = document.getElementById('letter-preview');
-    if (!preview) return;
-    
-    preview.classList.remove('visible');
-    setTimeout(() => preview.classList.add('hidden'), 150);
+    if (!window.skillsManager?.magnifier) return;
+    window.skillsManager.magnifier.hidePreview();
 }
 
 function renderSelectedSkills() {
