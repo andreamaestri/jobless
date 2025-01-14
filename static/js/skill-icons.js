@@ -1,3 +1,34 @@
+function setupHover(element, callback) {
+    let cleanup = null;
+    
+    const start = () => {
+        if (cleanup) cleanup();
+        cleanup = callback();
+    };
+    
+    const end = () => {
+        if (cleanup) {
+            cleanup();
+            cleanup = null;
+        }
+    };
+    
+    element.addEventListener('mouseenter', start);
+    element.addEventListener('mouseleave', end);
+    element.addEventListener('touchstart', start, { passive: true });
+    element.addEventListener('touchend', end);
+    element.addEventListener('touchcancel', end);
+
+    return () => {
+        element.removeEventListener('mouseenter', start);
+        element.removeEventListener('mouseleave', end);
+        element.removeEventListener('touchstart', start);
+        element.removeEventListener('touchend', end);
+        element.removeEventListener('touchcancel', end);
+        if (cleanup) cleanup();
+    };
+}
+
 function isIconifyReady() {
     return typeof iconifyIcon !== 'undefined' && document.createElement('iconify-icon').constructor !== HTMLElement;
 }
@@ -383,26 +414,13 @@ class LetterMagnifier {
         this.magnifier.textContent = letter;
         this.magnifier.style.left = `${position.x}px`;
         this.magnifier.style.top = `${position.y}px`;
-
-        motionAnimate(this.magnifier, {
-            opacity: 1,
-            scale: 1,
-            x: -80  // Move further left
-        }, {
-            duration: 120,  // Faster animation
-            easing: [0.2, 0, 0, 1]  // Snappier easing
-        });
+        this.magnifier.style.transform = 'translateX(-80px) scale(1)';
+        this.magnifier.style.opacity = '1';
     }
 
     hideMagnifier() {
-        motionAnimate(this.magnifier, {
-            opacity: 0,
-            scale: 0.8,
-            x: 0
-        }, {
-            duration: 100,  // Even faster hide
-            easing: [0.2, 0, 0, 1]
-        });
+        this.magnifier.style.transform = 'translateX(0) scale(0.8)';
+        this.magnifier.style.opacity = '0';
     }
 
     showPreview(letter) {
@@ -421,6 +439,7 @@ class LetterMagnifier {
 
 class SkillsModalManager {
     constructor() {
+        // Initialize properties
         this.selectedSkills = new Set();
         this.skillsContainer = document.getElementById('selected-skills');
         this.skillsInput = document.getElementById('skills-input');
@@ -431,10 +450,40 @@ class SkillsModalManager {
         this.quickJump = document.querySelector('.quick-jump-container');
         this.magnifier = new LetterMagnifier();
         
+        // Bind methods to preserve 'this' context
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handleModalShow = this.handleModalShow.bind(this);
+        this.updateActiveState = this.updateActiveState.bind(this);
+        this.jumpToLetter = this.jumpToLetter.bind(this);
+        this.magnifyLetterGroup = this.magnifyLetterGroup.bind(this);
+        this.resetLetterGroup = this.resetLetterGroup.bind(this);
+        this.showLetterPreview = this.showLetterPreview.bind(this);
+        this.hidePreview = this.hidePreview.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
+        
+        // Initialize components
         this.initializeModal();
         this.setupLetterMagnification();
         this.setupLetterNavigation();
         this.setupLetterEffects();
+    }
+
+    updateActiveState(letter) {
+        if (!letter) return;
+        
+        requestAnimationFrame(() => {
+            for (const btn of document.querySelectorAll('.quick-letter')) {
+                btn.classList.toggle('active', btn.dataset.letter === letter);
+            }
+            
+            this.showLetterPreview(letter);
+        });
+    }
+
+    hidePreview() {
+        if (this.magnifier) {
+            this.magnifier.hidePreview();
+        }
     }
 
     initializeModal() {
@@ -489,6 +538,7 @@ class SkillsModalManager {
     }
 
     resetModalState() {
+        // Clear search
         if (this.skillSearch) {
             this.skillSearch.value = '';
             
@@ -501,10 +551,16 @@ class SkillsModalManager {
                     label.style.display = '';
                 });
             });
+
             if (this.quickJump) {
                 this.quickJump.style.display = 'block';
             }
         }
+
+        // Reset checkboxes to match current selection
+        document.querySelectorAll('#skills-modal input[type="checkbox"]').forEach(cb => {
+            cb.checked = this.selectedSkills.has(cb.value);
+        });
     }
 
     async handleModalShow() {
@@ -553,6 +609,12 @@ class SkillsModalManager {
         this.skillsInput.value = JSON.stringify([...this.selectedSkills]);
         const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+        // Array of possible badge types without secondary
+        const badgeTypes = ['badge-primary', 'badge-accent', 'badge-neutral'];
+
+        // Get stored badge types or create new ones
+        let skillBadgeTypes = JSON.parse(localStorage.getItem('skillBadgeTypes') || '{}');
+
         this.selectedSkills.forEach(skillName => {
             const checkbox = document.querySelector(`input[value="${skillName}"]`);
             if (!checkbox) return;
@@ -560,25 +622,35 @@ class SkillsModalManager {
             const skillData = JSON.parse(checkbox.dataset.skill);
             const icon = isDarkMode && skillData.icon_dark ? skillData.icon_dark : skillData.icon;
             
-            const tag = document.createElement('div');
-            tag.className = 'flex items-center gap-2 bg-base-200 px-3 py-1.5 rounded-full';
-            tag.innerHTML = `
+            // Use stored badge type or create new one
+            if (!skillBadgeTypes[skillName]) {
+                skillBadgeTypes[skillName] = badgeTypes[Math.floor(Math.random() * badgeTypes.length)];
+                localStorage.setItem('skillBadgeTypes', JSON.stringify(skillBadgeTypes));
+            }
+            
+            const badgeType = skillBadgeTypes[skillName];
+            
+            const badge = document.createElement('div');
+            badge.className = `badge ${badgeType} badge-lg gap-2 pr-1`; 
+            badge.innerHTML = `
                 <iconify-icon icon="${icon}" 
                              data-icon="${skillData.icon}"
                              data-icon-dark="${skillData.icon_dark || skillData.icon}"
-                             class="text-xl"
-                             width="20"></iconify-icon>
-                <span>${skillData.name}</span>
-                <button type="button" class="btn btn-xs btn-ghost btn-circle">
-                    <iconify-icon icon="heroicons:x-mark-20-solid"></iconify-icon>
+                             class="text-${badgeType.split('-')[1]}-content"
+                             width="16"></iconify-icon>
+                <span class="font-medium text-${badgeType.split('-')[1]}-content">${skillData.name}</span>
+                <button type="button" 
+                        class="btn btn-ghost btn-xs btn-circle hover:bg-${badgeType.split('-')[1]}-focus">
+                    <iconify-icon icon="octicon:x-16" 
+                                class="text-xs text-${badgeType.split('-')[1]}-content"></iconify-icon>
                 </button>
             `;
 
             // Add click handler
-            const removeBtn = tag.querySelector('button');
+            const removeBtn = badge.querySelector('button');
             removeBtn.addEventListener('click', () => this.removeSkill(skillName));
             
-            this.skillsContainer.appendChild(tag);
+            this.skillsContainer.appendChild(badge);
         });
     }
 
@@ -708,27 +780,15 @@ class SkillsModalManager {
     }
 
     magnifyLetterGroup(letters, index) {
-        const scale = 1.5;
-        motionAnimate(letters[index], { 
-            scale,
-            color: 'hsl(var(--p))',
-            x: -2
-        }, {
-            duration: 80,
-            easing: [0.2, 0, 0, 1]
-        });
+        const mainLetter = letters[index];
+        if (mainLetter) {
+            mainLetter.classList.add('letter-magnified', 'letter-primary');
+        }
         
         [-1, 1].forEach(offset => {
             const neighbor = letters[index + offset];
             if (neighbor) {
-                motionAnimate(neighbor, { 
-                    scale: 1.2,
-                    color: 'hsl(var(--p)/0.5)',
-                    x: -1
-                }, {
-                    duration: 100,
-                    easing: [0.2, 0, 0, 1]
-                });
+                neighbor.classList.add('letter-neighbor');
             }
         });
     }
@@ -736,15 +796,9 @@ class SkillsModalManager {
     resetLetterGroup(letters, index) {
         const affectedIndexes = [index - 1, index, index + 1];
         affectedIndexes.forEach(i => {
-            if (letters[i]) {
-                motionAnimate(letters[i], { 
-                    scale: 1,
-                    x: 0,
-                    color: 'hsl(var(--bc)/0.5)'
-                }, {
-                    duration: 100,
-                    easing: [0.2, 0, 0, 1]
-                });
+            const letter = letters[i];
+            if (letter) {
+                letter.classList.remove('letter-magnified', 'letter-primary', 'letter-neighbor');
             }
         });
     }
@@ -841,6 +895,30 @@ class SkillsModalManager {
             highlight.classList.add('visible');
             setTimeout(() => highlight.classList.remove('visible'), 500);
         }
+    }
+
+    handleCancel(e) {
+        e.preventDefault();
+        // Reset form validation states
+        const form = e.target.closest('form');
+        if (form) {
+            form.classList.remove('was-validated');
+            // Remove any validation messages
+            form.querySelectorAll('.text-error').forEach(el => el.textContent = '');
+            form.reset();
+        }
+        
+        // Reset modal state
+        this.resetModalState();
+        
+        // Close modal if open
+        if (this.modal?.open) {
+            this.modal.close();
+        }
+
+        // Navigate back or to list page
+        window.location.href = e.target.href;
+        return false;
     }
 }
 
@@ -964,3 +1042,24 @@ function renderSelectedSkills() {
         });
     });
 }
+
+// Add global cancel handler
+function handleCancel(e) {
+    // Prevent form validation
+    const form = e.target.closest('form');
+    if (form) {
+        form.noValidate = true;
+        setTimeout(() => form.noValidate = false, 100);
+    }
+    
+    // Handle any open modals
+    const modal = document.querySelector('dialog[open]');
+    if (modal) {
+        modal.close();
+    }
+
+    return true; // Allow normal navigation
+}
+
+// Add to global scope
+window.handleCancel = handleCancel;
