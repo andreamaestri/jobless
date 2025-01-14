@@ -688,4 +688,32 @@ function renderSelectedSkills() {
         await window.skillIconsHelper.refreshIconElement(icon, skillData.icon);
         iconPlaceholder.replaceWith(icon);
     });
+
+    const quickLettersContainer = document.querySelector('.quick-letters');
+    const quickLetters = document.querySelectorAll('.quick-letter');
+    const lens = document.querySelector('.lens-overlay');
+    const lensWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--lens-width'));
+
+    lens.addEventListener('animationiteration', () => {
+        // Reset classes if needed at each iteration
+        quickLetters.forEach(letter => letter.classList.remove('in-focus'));
+    });
+
+    lens.addEventListener('animationstart', () => {
+        // Optionally handle animation start
+    });
+
+    lens.addEventListener('animationstart', () => {
+        // Update the focus class during animation
+        const animationDuration = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--animation-speed')) * 1000;
+        quickLetters.forEach((letter, index) => {
+            const delay = (animationDuration / quickLetters.length) * index;
+            setTimeout(() => {
+                letter.classList.add('in-focus');
+                setTimeout(() => {
+                    letter.classList.remove('in-focus');
+                }, animationDuration / quickLetters.length);
+            }, delay);
+        });
+    });
 }
