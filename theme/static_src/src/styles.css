@@ -123,35 +123,69 @@
 
     /* Quick Letters List */
     .quick-letters-list {
-        @apply absolute right-4 flex flex-col items-center;
-        @apply top-0 bottom-0 z-30;
-        width: 1.25rem;
-        pointer-events: auto;  /* Ensure clicks work */
-    }
-
-    .quick-letters-list--mobile {
-        @apply flex-col p-2;
+        @apply fixed right-4 flex flex-col items-center;
+        height: calc(100vh - 16rem);  /* Adjust for header and footer */
+        width: 1rem;
+        font-size: 0.7rem;
+        line-height: 1;
+        z-index: 30;
     }
 
     .quick-letter {
-        @apply flex items-center justify-center;
-        @apply text-base-content/50 text-xs font-medium;
-        @apply select-none cursor-pointer;
-        height: calc(100% / 26);  /* For alphabet letters */
+        @apply flex items-center justify-center text-base-content/50;
+        height: calc(100% / 26);  /* Evenly space letters */
         width: 100%;
-        transition: all 0.15s ease;
-        transform-origin: center center;
+        padding: 0;
+        font-weight: 500;
+        user-select: none;
+        cursor: pointer;
+        transform-origin: center right;
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         will-change: transform, color;
+    }
+
+    .quick-letter:hover:not(.active) {
+        @apply text-primary;
+        transform: scale(1.4);
+        transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition-duration: 0.2s;
     }
 
     .quick-letter.active {
         @apply text-primary font-bold;
-        transform: scale(1.2);
+        transform: scale(1.85);
     }
 
-    .quick-letter:hover {
-        @apply text-primary;
-        transform: scale(1.2);
+    .quick-letter.active + .quick-letter,
+    .quick-letter:has(+ .quick-letter.active) {
+        transform: scale(1.4);
+        @apply text-primary/70;
+        transition-duration: 0.1s;
+    }
+
+    .quick-letter-magnifier {
+        @apply fixed pointer-events-none;
+        @apply bg-base-100/90 backdrop-blur;
+        @apply shadow-lg rounded-lg;
+        @apply flex items-center justify-center;
+        @apply text-lg font-bold text-primary;
+        @apply border border-primary/20;
+        width: 2.5rem;
+        height: 2.5rem;
+        opacity: 0;
+        transform: scale(0.8) translateX(1rem);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+    }
+
+    .quick-letter-magnifier.visible {
+        opacity: 1;
+        transform: scale(1) translateX(0);
+    }
+
+    .quick-letters-list--mobile {
+        @apply flex-col p-2;
     }
 
     .quick-letters-magnify {
@@ -175,22 +209,37 @@
     /* Magnifier Preview */
     .letter-magnifier {
         @apply fixed pointer-events-none z-[100];
-        @apply bg-base-100/80 backdrop-blur-sm;
-        @apply rounded-lg shadow-lg;
+        @apply bg-base-100 backdrop-blur-sm;
+        @apply shadow-lg border border-primary/20;
         @apply flex items-center justify-center;
-        @apply text-xl font-bold text-primary;
-        width: 3rem;
-        height: 3rem;
+        @apply text-2xl font-bold text-primary;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 1rem;
         opacity: 0;
+        transform-origin: center right;
+        transform: scale(0.8) translateX(0);
+        transition: all 0.12s cubic-bezier(0.2, 0, 0, 1);
+        margin-top: -1.75rem; /* Half of height to center */
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
     }
 
     /* Letter Preview & Magnifier */
     .letter-preview {
-        @apply fixed pointer-events-none z-[99];
-        @apply text-8xl font-bold text-primary/10;
-        @apply absolute top-1/2 left-1/2;
+        @apply fixed pointer-events-none;
+        @apply text-[12rem] font-black text-primary/5;
+        @apply select-none;
+        left: 50%;
+        top: 50%;
         transform: translate(-50%, -50%);
         opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 99;
+    }
+
+    .letter-preview.visible {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
     }
 
     .letter-preview.visible {
@@ -228,6 +277,20 @@
         @apply fixed inset-0 m-0 rounded-none;
         @apply h-[100dvh] max-h-none;
         @apply flex flex-col;
+    }
+
+    /* Letter group highlight effect */
+    .letter-group-highlight {
+        @apply absolute inset-0 bg-primary/5;
+        @apply rounded-lg;
+        opacity: 0;
+        transform: scaleX(0.95);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .letter-group-highlight.visible {
+        opacity: 1;
+        transform: scaleX(1);
     }
 }
 

@@ -387,10 +387,10 @@ class LetterMagnifier {
         motionAnimate(this.magnifier, {
             opacity: 1,
             scale: 1,
-            x: -60
+            x: -80  // Move further left
         }, {
-            duration: 200,
-            easing: [.23, 1, .32, 1]
+            duration: 120,  // Faster animation
+            easing: [0.2, 0, 0, 1]  // Snappier easing
         });
     }
 
@@ -400,8 +400,8 @@ class LetterMagnifier {
             scale: 0.8,
             x: 0
         }, {
-            duration: 200,
-            easing: [.23, 1, .32, 1]
+            duration: 100,  // Even faster hide
+            easing: [0.2, 0, 0, 1]
         });
     }
 
@@ -433,6 +433,8 @@ class SkillsModalManager {
         
         this.initializeModal();
         this.setupLetterMagnification();
+        this.setupLetterNavigation();
+        this.setupLetterEffects();
     }
 
     initializeModal() {
@@ -588,19 +590,26 @@ class SkillsModalManager {
         const header = document.querySelector('.modal-box .flex-none');
         const offset = header ? header.offsetHeight : 0;
 
-        // Scroll to target with or without smooth scrolling
-        container.scrollTo({
-            top: group.offsetTop - offset - 8,
-            behavior: smooth ? 'smooth' : 'instant'
-        });
+        // Get container height for bottom padding calculation
+        const containerHeight = container.clientHeight;
+        const groupHeight = group.offsetHeight;
+        const scrollMax = container.scrollHeight - containerHeight;
 
-        // Update active state
-        document.querySelectorAll('.quick-letter').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.letter === letter);
-        });
+        requestAnimationFrame(() => {
+            let targetScroll = group.offsetTop - offset - 8;
+            
+            // If the group is near the bottom, scroll to bottom
+            if (group.offsetTop + groupHeight > scrollMax - 100) {
+                targetScroll = scrollMax;
+            }
 
-        // Show preview
-        showLetterPreview(letter);
+            container.scrollTo({
+                top: targetScroll,
+                behavior: smooth ? 'smooth' : 'instant'
+            });
+            
+            this.updateActiveState(letter);
+        });
     }
 
     setupLetterNavigation() {
@@ -633,12 +642,14 @@ class SkillsModalManager {
                 if (!entry.isIntersecting) return;
                 
                 const letter = entry.target.dataset.letter;
-                document.querySelectorAll('.quick-letter').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.letter === letter);
+                if (!letter) return;
+
+                requestAnimationFrame(() => {
+                    this.updateActiveState(letter);
                 });
             });
         }, { 
-            threshold: 0.3,
+            threshold: 0.5,  // Increased threshold for better accuracy
             rootMargin: '-80px 0px -60% 0px'
         });
 
@@ -650,20 +661,42 @@ class SkillsModalManager {
     setupLetterMagnification() {
         const letters = document.querySelectorAll('.quick-letter');
         const container = document.querySelector('.quick-letters-list');
+        const modalBox = document.querySelector('.modal-box');
         
         letters.forEach((letter, index) => {
             setupHover(letter, () => {
                 const rect = letter.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
+                const modalRect = modalBox.getBoundingClientRect();
+                
+                // Update active state immediately
+                this.updateActiveState(letter.dataset.letter);
+
+                // Calculate if letter is near bottom of modal
+                const isNearBottom = rect.bottom > (modalRect.bottom - 100);
                 
                 const position = {
-                    x: containerRect.left - 8, // Position left of the quick letters
-                    y: rect.top + (rect.height / 2)
+                    x: containerRect.left - 16,
+                    y: Math.min(
+                        rect.top + (rect.height / 2),
+                        modalRect.bottom - 50 // Keep magnifier inside modal
+                    )
                 };
                 
                 this.magnifier.showMagnifier(letter.dataset.letter, position);
                 this.magnifyLetterGroup(letters, index);
                 this.magnifier.showPreview(letter.dataset.letter);
+
+                // Scroll handling for bottom letters
+                if (isNearBottom) {
+                    const scrollContainer = modalBox.querySelector('.overflow-y-auto');
+                    if (scrollContainer) {
+                        scrollContainer.scrollTo({
+                            top: scrollContainer.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
 
                 return () => {
                     this.resetLetterGroup(letters, index);
@@ -675,17 +708,26 @@ class SkillsModalManager {
     }
 
     magnifyLetterGroup(letters, index) {
+        const scale = 1.5;
         motionAnimate(letters[index], { 
-            scale: 1.4,  // Reduced scale for better fit
-            color: 'hsl(var(--p))'
+            scale,
+            color: 'hsl(var(--p))',
+            x: -2
+        }, {
+            duration: 80,
+            easing: [0.2, 0, 0, 1]
         });
         
         [-1, 1].forEach(offset => {
             const neighbor = letters[index + offset];
             if (neighbor) {
                 motionAnimate(neighbor, { 
-                    scale: 1.2,  // Reduced scale for neighbors
-                    color: 'hsl(var(--p)/0.7)'
+                    scale: 1.2,
+                    color: 'hsl(var(--p)/0.5)',
+                    x: -1
+                }, {
+                    duration: 100,
+                    easing: [0.2, 0, 0, 1]
                 });
             }
         });
@@ -695,9 +737,110 @@ class SkillsModalManager {
         const affectedIndexes = [index - 1, index, index + 1];
         affectedIndexes.forEach(i => {
             if (letters[i]) {
-                motionAnimate(letters[i], { scale: 1 });
+                motionAnimate(letters[i], { 
+                    scale: 1,
+                    x: 0,
+                    color: 'hsl(var(--bc)/0.5)'
+                }, {
+                    duration: 100,
+                    easing: [0.2, 0, 0, 1]
+                });
             }
         });
+    }
+
+    setupLetterEffects() {
+        const letters = document.querySelectorAll('.quick-letter');
+        const container = document.querySelector('.quick-letters-list');
+        if (!container || !letters.length) return;
+
+        let currentLetter = null;
+        let lastScrollTime = 0;
+        const scrollDebounce = 100; // ms
+
+        // Handle scroll events
+        const scrollContainer = document.querySelector('.modal-box .overflow-y-auto');
+        if (scrollContainer) {
+            scrollContainer.addEventListener('scroll', () => {
+                const now = Date.now();
+                if (now - lastScrollTime < scrollDebounce) return;
+                lastScrollTime = now;
+
+                const visibleGroup = this.findVisibleLetterGroup();
+                if (visibleGroup && visibleGroup.dataset.letter !== currentLetter) {
+                    currentLetter = visibleGroup.dataset.letter;
+                    this.updateLetterStates(currentLetter);
+                }
+            });
+        }
+
+        // Touch handling for better mobile experience
+        let touchStartY;
+        container.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            this.handleLetterTouchStart(e);
+        }, { passive: false });
+
+        container.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const letter = this.findLetterAtPosition(touch.clientY);
+            if (letter) this.jumpToLetter(letter, false);
+        });
+    }
+
+    findLetterAtPosition(y) {
+        const letters = document.querySelectorAll('.quick-letter');
+        for (const letter of letters) {
+            const rect = letter.getBoundingClientRect();
+            if (y >= rect.top && y <= rect.bottom) {
+                return letter.dataset.letter;
+            }
+        }
+        return null;
+    }
+
+    handleLetterTouchStart(e) {
+        e.preventDefault();
+        const letter = this.findLetterAtPosition(e.touches[0].clientY);
+        if (letter) this.jumpToLetter(letter, true);
+    }
+
+    findVisibleLetterGroup() {
+        const groups = document.querySelectorAll('.skill-group');
+        const containerTop = document.querySelector('.modal-box').getBoundingClientRect().top;
+        
+        for (const group of groups) {
+            const rect = group.getBoundingClientRect();
+            if (rect.top >= containerTop && rect.bottom > containerTop) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    updateLetterStates(activeLetter) {
+        document.querySelectorAll('.quick-letter').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.letter === activeLetter);
+        });
+    }
+
+    showLetterPreview(letter) {
+        if (!this.magnifier) return;
+        this.magnifier.showPreview(letter);
+        
+        // Create or update letter highlight effect
+        const group = document.querySelector(`.skill-group[data-letter="${letter}"]`);
+        if (group) {
+            let highlight = group.querySelector('.letter-group-highlight');
+            if (!highlight) {
+                highlight = document.createElement('div');
+                highlight.className = 'letter-group-highlight';
+                group.insertBefore(highlight, group.firstChild);
+            }
+            highlight.classList.add('visible');
+            setTimeout(() => highlight.classList.remove('visible'), 500);
+        }
     }
 }
 
