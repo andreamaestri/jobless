@@ -369,6 +369,8 @@ class SkillsModalManager {
         this.skillSearch = document.getElementById('skill-search');
         this.modal = document.getElementById('skills-modal');
         this.iconHelper = window.skillIconsHelper;
+        this.letterGroups = document.querySelectorAll('.skill-group[data-letter]');
+        this.quickJump = document.querySelector('.quick-jump-container');
         
         this.initializeModal();
     }
@@ -392,14 +394,55 @@ class SkillsModalManager {
 
         // Setup intersection observer for letter navigation
         this.setupLetterObserver();
+        this.setupLetterNavigation();
     }
 
     handleSearch(e) {
         const query = e.target.value.toLowerCase();
-        document.querySelectorAll('#skills-modal label').forEach(label => {
-            const skillName = label.querySelector('span').textContent.toLowerCase();
-            label.style.display = skillName.includes(query) ? '' : 'none';
+        const hasQuery = query.length > 0;
+
+        // Filter skills and track if any skills are visible in each group
+        this.letterGroups.forEach(group => {
+            const heading = group.querySelector('.sticky');
+            const labels = group.querySelectorAll('label');
+            let hasVisibleSkills = false;
+
+            // Check and hide/show skills
+            labels.forEach(label => {
+                const skillName = label.querySelector('span').textContent.toLowerCase();
+                const matches = skillName.includes(query);
+                label.style.display = matches ? '' : 'none';
+                if (matches) hasVisibleSkills = true;
+            });
+
+            // Hide/show the entire group based on whether it has visible skills
+            group.style.display = hasVisibleSkills ? '' : 'none';
+            if (heading) heading.style.display = hasQuery ? 'none' : 'block';
         });
+
+        // Toggle quick jump visibility
+        if (this.quickJump) {
+            this.quickJump.style.display = hasQuery ? 'none' : 'block';
+        }
+    }
+
+    resetModalState() {
+        if (this.skillSearch) {
+            this.skillSearch.value = '';
+            
+            // Show everything
+            this.letterGroups.forEach(group => {
+                group.style.display = '';
+                const heading = group.querySelector('.sticky');
+                if (heading) heading.style.display = 'block';
+                group.querySelectorAll('label').forEach(label => {
+                    label.style.display = '';
+                });
+            });
+            if (this.quickJump) {
+                this.quickJump.style.display = 'block';
+            }
+        }
     }
 
     async handleModalShow() {
@@ -416,6 +459,7 @@ class SkillsModalManager {
         
         // Refresh icons
         await this.iconHelper.updateIcons();
+        this.resetModalState();
     }
 
     applySelectedSkills() {
@@ -476,7 +520,7 @@ class SkillsModalManager {
         });
     }
 
-    jumpToLetter(letter) {
+    jumpToLetter(letter, smooth = true) {
         const group = document.querySelector(`.skill-group[data-letter="${letter}"]`);
         if (!group) return;
 
@@ -484,36 +528,57 @@ class SkillsModalManager {
         const header = document.querySelector('.modal-box .flex-none');
         const offset = header ? header.offsetHeight : 0;
 
+        // Scroll to target with or without smooth scrolling
         container.scrollTo({
             top: group.offsetTop - offset - 8,
-            behavior: 'smooth'
+            behavior: smooth ? 'smooth' : 'instant'
         });
 
-        // Show visual feedback
+        // Update active state
+        document.querySelectorAll('.quick-letter').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.letter === letter);
+        });
+
+        // Show preview
         showLetterPreview(letter);
-        setTimeout(() => {
-            hideLetterPreview();
-        }, 1000);
+    }
+
+    setupLetterNavigation() {
+        document.querySelectorAll('.quick-letter').forEach(btn => {
+            // Handle hover
+            btn.addEventListener('mouseenter', () => {
+                const letter = btn.dataset.letter;
+                this.jumpToLetter(letter, false); // Instant jump on hover
+            });
+
+            // Handle touch
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const letter = btn.dataset.letter;
+                this.jumpToLetter(letter, true); // Smooth scroll on touch
+            });
+
+            // Handle click
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const letter = btn.dataset.letter;
+                this.jumpToLetter(letter, true); // Smooth scroll on click
+            });
+        });
     }
 
     setupLetterObserver() {
         const letterObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                const letter = entry.target.dataset.letter;
-                const buttons = document.querySelectorAll(`.quick-jump-btn[data-letter="${letter}"]`);
+                if (!entry.isIntersecting) return;
                 
-                buttons.forEach(button => {
-                    if (entry.isIntersecting) {
-                        document.querySelectorAll('.quick-jump-btn').forEach(btn => {
-                            btn.classList.remove('btn-primary', 'scale-110', 'shadow-lg');
-                        });
-                        button.classList.add('btn-primary', 'scale-110', 'shadow-lg');
-                        button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }
+                const letter = entry.target.dataset.letter;
+                document.querySelectorAll('.quick-letter').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.letter === letter);
                 });
             });
         }, { 
-            threshold: 0.2,
+            threshold: 0.3,
             rootMargin: '-80px 0px -60% 0px'
         });
 
@@ -558,7 +623,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.skillsManager = new SkillsModalManager();
 
         // Make functions globally available
-        window.jumpToLetter = (letter) => window.skillsManager.jumpToLetter(letter);
+        window.jumpToLetter = (letter) => window.skillsManager.jumpToLetter(letter, true);
         window.applySelectedSkills = () => window.skillsManager.applySelectedSkills();
         window.showLetterPreview = showLetterPreview;
         window.hideLetterPreview = hideLetterPreview;
@@ -573,16 +638,18 @@ function showLetterPreview(letter) {
     if (!preview) return;
     
     preview.textContent = letter;
-    preview.classList.remove('hidden', 'scale-0');
-    preview.classList.add('scale-100');
+    preview.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        preview.classList.add('visible');
+    });
 }
 
 function hideLetterPreview() {
     const preview = document.getElementById('letter-preview');
     if (!preview) return;
     
-    preview.classList.remove('scale-100');
-    preview.classList.add('scale-0');
+    preview.classList.remove('visible');
+    setTimeout(() => preview.classList.add('hidden'), 150);
 }
 
 function renderSelectedSkills() {

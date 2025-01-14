@@ -7,6 +7,9 @@ from django.http import JsonResponse
 from .models import JobPosting
 from .forms import JobPostingForm
 from .models import SKILL_ICONS
+from django import template
+
+register = template.Library()
 
 DARK_VARIANTS = {
     'skill-icons:ableton': 'skill-icons:ableton-dark',
@@ -256,13 +259,23 @@ class JobPostingCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['skill_icons'] = [
-            {
+        # Create groups by uppercase first letter
+        skill_groups = {}
+        for icon, name in SKILL_ICONS:
+            first_letter = name[0].upper()
+            if first_letter not in skill_groups:
+                skill_groups[first_letter] = []
+                
+            skill_groups[first_letter].append({
                 'name': name,
-                'icon': ICON_NAME_MAPPING.get(name, icon),  # Use mapping if available
+                'icon': ICON_NAME_MAPPING.get(name, icon),
                 'icon_dark': DARK_VARIANTS.get(ICON_NAME_MAPPING.get(name, icon), ICON_NAME_MAPPING.get(name, icon))
-            } 
-            for icon, name in SKILL_ICONS
+            })
+        
+        # Convert to sorted list of tuples (letter, skills)
+        context['skill_icons'] = [
+            {'letter': letter, 'skills': sorted(skills, key=lambda x: x['name'].upper())}
+            for letter, skills in sorted(skill_groups.items())
         ]
         return context
 
@@ -388,3 +401,9 @@ def get_skills_data(request):
         for icon_key, label in SKILL_ICONS
     ]
     return JsonResponse(skills_data, safe=False)
+
+@register.filter
+def upper(value):
+    if isinstance(value, dict):
+        return {k: v.upper() if isinstance(v, str) else v for k, v in value.items()}
+    return value.upper() if isinstance(value, str) else value
