@@ -190,12 +190,12 @@
     /* Letter Preview and Magnifier */
     .letter-magnifier {
         @apply fixed pointer-events-none z-[100];
-        @apply bg-base-100 backdrop-blur-sm;
+        @apply bg-neutral backdrop-blur-lg shadow-lg;
         @apply shadow-lg border border-primary/20;
-        @apply flex items-center justify-center;
-        @apply text-2xl font-bold text-primary;
-        width: 3.5rem;
-        height: 3.5rem;
+        @apply flex items-center justify-center p-4 pl-3; /* Added padding */
+        @apply text-6xl font-bold text-primary;
+        width: 6rem;
+        height: 6rem;
         border-radius: 1rem;
         opacity: 0;
         transform-origin: center right;
@@ -203,18 +203,72 @@
         transition: all 0.12s cubic-bezier(0.2, 0, 0, 1);
         margin-top: -1.75rem;
         box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
+        
+        /* Add these properties to ensure text is perfectly centered */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
     }
 
     .letter-preview {
-        @apply fixed pointer-events-none;
-        @apply text-[12rem] font-black text-primary/5;
-        @apply select-none;
+        @apply fixed pointer-events-none select-none;
+        @apply text-[32vmin] font-black text-transparent;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%) scale(0.9);
         opacity: 0;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 99;
+        
+        /* Dramatic background and text effects */
+        background: linear-gradient(
+            135deg,
+            hsl(var(--p)) 0%,
+            hsl(var(--s)) 100%
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        
+        /* Text shadow for depth */
+        text-shadow: 
+            0 0 80px hsl(var(--p) / 0.2),
+            0 0 32px hsl(var(--p) / 0.4);
+        
+        /* Smooth transition */
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: transform, opacity;
+    }
+
+    .letter-preview::before {
+        content: '';
+        @apply fixed inset-0 opacity-0 transition-all duration-300;
+        background: radial-gradient(
+            circle at center,
+            hsl(var(--b1) / 0.98) 0%,
+            hsl(var(--b1)) 100%
+        );
+        backdrop-filter: blur(24px);
+        z-index: -1;
+    }
+
+    .letter-preview.visible {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .letter-preview.visible::before {
+        opacity: 0.98;
+    }
+
+    .letter-preview.visible ~ .skill-group {
+        filter: blur(2px);
+        opacity: 0.3;
+        transform: scale(0.99);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-box .overflow-y-auto {
+        @apply transition-all duration-300;
     }
 
     .letter-preview.visible {
@@ -245,10 +299,29 @@
 
     /* Modal Styles */
     .modal-box {
-        @apply relative w-full max-w-lg mx-auto;
+        @apply relative w-full h-full mx-auto;
         @apply bg-base-100 rounded-2xl shadow-xl;
         @apply p-6 overflow-hidden;
         @apply transition-all duration-300 ease-out;
+        
+        /* Ensure full screen on mobile */
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        margin: 0;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    /* Restore desktop styles */
+    @screen sm {
+        .modal-box {
+            width: 91.666667%; /* w-11/12 */
+            height: 85vh;
+            max-width: 80rem; /* max-w-7xl */
+            margin: auto;
+            border-radius: 1rem;
+        }
     }
 
     .modal-box--mobile {
@@ -294,7 +367,18 @@
     /* Skills Container and Placeholder */
     .form-control .skill-container {
         @apply relative border border-base-300 rounded-xl;
-        min-height: 5rem;
+        min-height: 8rem; /* Taller on mobile */
+        padding: 4rem;
+        
+        @screen sm {
+            min-height: 5rem; /* Original height on desktop */
+        }
+    }
+
+    .form-control .skill-container .add-skills-button {
+        @apply absolute bottom-3 left-3 right-3;
+        @apply btn btn-outline btn-primary btn-sm w-auto;
+        @apply sm:hidden; /* Only show on mobile */
     }
 
     .form-control #selected-skills {
@@ -333,6 +417,165 @@
 
     .badge .btn-square:hover {
         background-color: currentColor;
+    }
+
+    /* Skills Container and Interactive Elements */
+    .skill-container {
+        @apply relative border border-base-300 rounded-xl p-4;
+        @apply transition-all duration-200;
+        min-height: 5rem;
+    }
+
+    /* Mobile bottom CTA */
+    .mobile-skills-cta {
+        @apply fixed bottom-0 left-0 right-0 p-4 bg-base-100;
+        @apply border-t border-base-200 shadow-lg;
+        @apply flex items-center justify-center;
+        @apply transform transition-all duration-200;
+        @apply z-50;
+        @apply translate-y-full; /* Hidden by default */
+    }
+
+    .mobile-skills-cta .btn {
+        @apply btn-primary w-full max-w-md;
+    }
+
+    /* Show mobile CTA when skills are selected */
+    .has-skills .mobile-skills-cta {
+        @apply translate-y-0;
+    }
+
+    /* Hide mobile CTA on desktop */
+    @screen sm {
+        .mobile-skills-cta {
+            @apply hidden;
+        }
+
+        .skill-container {
+            min-height: 5rem;
+        }
+    }
+
+    /* Mobile-first CTA design */
+    .skill-trigger {
+        @apply absolute inset-0 flex items-center justify-center;
+        @apply bg-primary/5 hover:bg-primary/10 active:bg-primary/15;
+        @apply transition-all duration-200;
+        @apply rounded-xl;
+    }
+
+    .skill-container:has(#selected-skills:not(:empty)) .skill-trigger {
+        @apply bg-transparent hover:bg-base-200/50;
+    }
+
+    .add-skills-cta {
+        @apply flex flex-col items-center justify-center gap-2 p-4;
+        @apply text-primary/70 hover:text-primary;
+        @apply transition-all duration-200;
+    }
+
+    .add-skills-cta iconify-icon {
+        @apply text-4xl sm:text-3xl;
+        @apply transition-transform duration-300;
+    }
+
+    .add-skills-cta span {
+        @apply text-sm font-medium text-center;
+        @apply sm:text-base;
+    }
+
+    /* Empty state highlight */
+    .skill-container:not(:has(#selected-skills *)) .skill-trigger {
+        @apply animate-pulse;
+    }
+
+    /* Active state feedback */
+    .skill-trigger:active .add-skills-cta {
+        @apply scale-95;
+    }
+
+    /* Selected skills styling */
+    #selected-skills {
+        @apply relative z-10 p-4 flex flex-wrap gap-2;
+        min-height: 1.5rem;
+    }
+
+    /* Desktop hover refinements */
+    @screen sm {
+        .skill-trigger {
+            @apply bg-transparent;
+        }
+        
+        .skill-container:hover .skill-trigger {
+            @apply bg-base-200/30;
+        }
+    }
+
+    /* Mobile CTA styling */
+    .mobile-cta {
+        @apply fixed bottom-0 left-0 right-0;
+        @apply p-4 bg-base-100 border-t border-base-200;
+        @apply shadow-lg backdrop-blur-sm;
+        @apply transform transition-all duration-300;
+        @apply z-50;
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+        transform: translateY(100%);
+    }
+
+    /* Show CTA when skills are present */
+    .has-skills .mobile-cta {
+        transform: translateY(0);
+    }
+
+    /* Hide on desktop */
+    @screen sm {
+        .mobile-cta {
+            @apply hidden;
+        }
+    }
+
+    /* Letter magnifier adjustments */
+    .letter-magnifier, .letter-preview {
+        @apply hidden;
+    }
+
+    .modal[open] .letter-magnifier,
+    .modal[open] .letter-preview {
+        @apply block;
+    }
+
+    /* Skills Container */
+    .skill-container {
+        @apply relative border border-base-300 rounded-xl;
+        @apply transition-all duration-200;
+        @apply cursor-pointer min-h-[8rem];
+        @apply hover:border-primary/30 hover:bg-base-200/10;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        @apply transition-all duration-200;
+        @apply pointer-events-none;
+    }
+
+    .skill-container:hover .empty-state {
+        @apply text-primary/70;
+    }
+
+    .skill-container:has(#selected-skills:not(:empty)) .empty-state {
+        @apply hidden;
+    }
+
+    #selected-skills {
+        @apply relative z-10;
+        min-height: 1.5rem;
+    }
+
+    /* Mobile styles */
+    @screen sm {
+        .skill-container {
+            min-height: 5rem;
+        }
     }
 }
 

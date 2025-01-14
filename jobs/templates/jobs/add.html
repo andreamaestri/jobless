@@ -110,26 +110,27 @@
                         <div class="p-8 form-section" style="--delay: 2">
                             <h2 class="text-lg font-semibold text-base-content mb-6">Required Skills</h2>
                             
-                            <!-- Moved outside form-control and simplified structure -->
-                            <div class="relative border border-base-300 rounded-xl min-h-[5rem] cursor-pointer group"
-                                 onclick="if (!event.target.closest('.badge')) document.getElementById('skills-modal').showModal()">
-                                <div id="selected-skills" class="p-4 flex flex-wrap gap-2">
-                                    <!-- Selected skills will be rendered here -->
-                                </div>
-                                <div id="skills-placeholder" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div class="flex items-center gap-3 text-base-content/50 group-hover:text-primary/70">
-                                        <iconify-icon icon="heroicons:plus-circle" 
-                                                     class="text-2xl transition-transform group-hover:scale-110"
-                                                     width="24"></iconify-icon>
-                                        <span class="text-sm font-medium">Add technical skills required for this position</span>
+                            <!-- Simplified skills container -->
+                            <div class="skill-container" onclick="document.getElementById('skills-modal').showModal()">
+                                <div id="selected-skills" class="p-4 flex flex-wrap gap-2"></div>
+                                <!-- Empty state CTA -->
+                                <div class="empty-state flex items-center justify-center absolute inset-0">
+                                    <div class="flex flex-col items-center gap-3 text-base-content/50">
+                                        <iconify-icon icon="heroicons:plus-circle" class="text-4xl"></iconify-icon>
+                                        <span class="text-sm font-medium">Add Skills</span>
                                     </div>
                                 </div>
                             </div>
+
                             <input type="hidden" name="required_skills" id="skills-input">
                         </div>
 
                         <!-- Skills Modal -->
                         <dialog id="skills-modal" class="modal">
+                            <!-- Letter preview elements in modal -->
+                            <div class="letter-magnifier hidden"></div>
+                            <div class="letter-preview hidden"></div>
+                            
                             <div class="modal-box w-screen h-screen sm:w-11/12 sm:h-[85vh] sm:max-w-7xl p-0 m-0 sm:m-auto fixed inset-0 sm:relative sm:inset-auto sm:rounded-2xl">
                                 <div class="flex flex-col h-full">
                                     <!-- Header -->
@@ -141,7 +142,7 @@
                                         <div class="form-control">
                                             <div class="relative">
                                                 <input type="text" 
-                                                       placeholder="Search skills..." 
+                                                       placeholder="Search" 
                                                        class="input input-md sm:input-lg input-bordered w-full pl-12" 
                                                        id="skill-search">
                                                 <iconify-icon icon="heroicons:magnifying-glass" 
