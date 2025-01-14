@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -112,17 +112,123 @@
                                 <label class="label">
                                     <span class="label-text">Required Skills</span>
                                 </label>
-                                <select id="skills-select" name="required_skills" multiple placeholder="Search or select skills..." autocomplete="off">
-                                    <option value="">Select skills...</option>
-                                    {% for skill in skill_icons %}
-                                        <option value="{{ skill.name }}" 
-                                                data-skill='{"name": "{{ skill.name }}", "icon": "{{ skill.icon }}", "icon_dark": "{{ skill.icon_dark|default:skill.icon }}"}'>
-                                            {{ skill.name }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
+                                <div class="flex flex-wrap gap-2 p-2 border border-base-300 rounded-xl min-h-[42px]" id="selected-skills">
+                                    <!-- Selected skills will be rendered here -->
+                                </div>
+                                <button type="button" 
+                                        class="btn btn-outline mt-2" 
+                                        onclick="document.getElementById('skills-modal').showModal()">
+                                    Add Skills
+                                </button>
+                                <input type="hidden" name="required_skills" id="skills-input">
+                                <p class="text-xs text-base-content/60 mt-2">
+                                    Select or search for the required skills for this position
+                                </p>
                             </div>
                         </div>
+
+                        <!-- Skills Modal -->
+                        <dialog id="skills-modal" class="modal">
+                            <div class="modal-box w-screen h-screen sm:w-11/12 sm:h-[85vh] sm:max-w-7xl p-0 m-0 sm:m-auto fixed inset-0 sm:relative sm:inset-auto sm:rounded-2xl">
+                                <div class="flex flex-col h-full">
+                                    <!-- Header -->
+                                    <div class="flex-none p-3 sm:p-6 border-b border-base-200 bg-base-100">
+                                        <div class="flex items-center justify-between gap-4 mb-3 sm:mb-4">
+                                            <h3 class="text-lg sm:text-2xl font-bold">Select Skills</h3>
+                                            <form method="dialog">
+                                                <button class="btn btn-sm sm:btn-md btn-circle btn-ghost">✕</button>
+                                            </form>
+                                        </div>
+                                        <!-- Search input -->
+                                        <div class="form-control">
+                                            <div class="relative">
+                                                <input type="text" 
+                                                       placeholder="Search skills..." 
+                                                       class="input input-md sm:input-lg input-bordered w-full pl-12" 
+                                                       id="skill-search">
+                                                <iconify-icon icon="heroicons:magnifying-glass" 
+                                                             class="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50"
+                                                             width="20"></iconify-icon>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Main content area -->
+                                    <div class="flex-1 h-full overflow-y-auto">
+                                        <!-- Skills list with letters -->
+                                        <div class="relative">
+                                            {% regroup skill_icons|dictsort:"name" by name|first|upper as alpha_groups %}
+                                            {% for letter in alpha_groups %}
+                                                <div class="skill-group" data-letter="{{ letter.grouper }}">
+                                                    <div class="sticky top-0 z-20 bg-base-100 shadow-sm">
+                                                        <div class="flex items-center gap-3 p-3 sm:p-4">
+                                                            <span class="text-2xl sm:text-3xl font-bold text-primary w-10 h-10 flex items-center justify-center">
+                                                                {{ letter.grouper }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 p-2 sm:p-4">
+                                                        {% for skill in letter.list %}
+                                                            <label class="group flex items-center gap-2 p-2 sm:p-3 rounded-xl hover:bg-base-200 cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98]">
+                                                                <input type="checkbox" 
+                                                                       class="checkbox checkbox-sm sm:checkbox-md checkbox-primary" 
+                                                                       value="{{ skill.name }}"
+                                                                       data-skill='{"name": "{{ skill.name }}", "icon": "{{ skill.icon }}", "icon_dark": "{{ skill.icon_dark|default:skill.icon }}"}'>
+                                                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                                                    <iconify-icon data-icon="{{ skill.icon }}" 
+                                                                                data-icon-dark="{{ skill.icon_dark|default:skill.icon }}"
+                                                                                class="w-8 h-8 sm:w-12 sm:h-12 bg-base-200 rounded-lg group-hover:bg-base-300 transition-colors transform transition-transform duration-200 group-hover:scale-110 flex-shrink-0"
+                                                                                style="display: inline-block; font-size: 32px;"
+                                                                                height="none"></iconify-icon>
+                                                                    <span class="text-sm sm:text-base font-medium truncate flex-1">{{ skill.name }}</span>
+                                                                </div>
+                                                            </label>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer with quick jump and actions -->
+                                    <div class="flex-none border-t border-base-200 bg-base-100">
+                                        <!-- Action buttons -->
+                                        <div class="p-3 sm:p-4 flex gap-2">
+                                            <form method="dialog" class="flex gap-2 w-full">
+                                                <button class="btn btn-ghost flex-1">Cancel</button>
+                                                <button class="btn btn-primary flex-1" onclick="applySelectedSkills()">Apply Selected</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Floating quick jump letters -->
+                                    <div class="fixed right-4 top-1/2 -translate-y-1/2 z-40">
+                                        <div class="relative">
+                                            <!-- Letter preview bubble -->
+                                            <div id="letter-preview" class="hidden absolute -left-16 top-1/2 -translate-y-1/2 w-14 h-14 bg-base-100/90 backdrop-blur-md rounded-2xl shadow-lg border border-base-300 text-3xl font-bold flex items-center justify-center text-base-content/80 transition-all duration-150 transform scale-0">
+                                                A
+                                            </div>
+                                            <!-- Letters list -->
+                                            <div class="flex flex-col gap-0.5 max-h-[70vh] py-2">
+                                                {% for letter in alpha_groups %}
+                                                <button class="quick-jump-btn btn btn-ghost btn-xs w-6 h-6 min-h-0 rounded-md text-xs font-medium hover:bg-base-300" 
+                                                        data-letter="{{ letter.grouper }}"
+                                                        onmouseenter="showLetterPreview('{{ letter.grouper }}')"
+                                                        onmouseleave="hideLetterPreview()"
+                                                        onclick="jumpToLetter('{{ letter.grouper }}')">
+                                                    {{ letter.grouper }}
+                                                </button>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form method="dialog" class="modal-backdrop bg-base-200/80 backdrop-blur-sm">
+                                <button>close</button>
+                            </form>
+                        </dialog>
 
                         <!-- Status -->
                         <div class="p-8 form-section" style="--delay: 3">
@@ -181,142 +287,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/js/tom-select.complete.min.js"></script>
 <script src="{% static 'js/skill-icons.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    // Add this helper function
-    function updateDropdownIcons() {
-        requestAnimationFrame(() => {
-            const dropdown = document.querySelector('.ts-dropdown');
-            if (dropdown) {
-                const icons = dropdown.querySelectorAll('iconify-icon');
-                icons.forEach(icon => {
-                    const iconName = icon.getAttribute('icon');
-                    if (iconName) {
-                        window.Iconify.loadIcon(iconName).then(() => {
-                            icon.replaceWith(Object.assign(document.createElement('iconify-icon'), {
-                                icon: iconName
-                            }));
-                        });
-                    }
-                });
-            }
-        });
-    }
-    
-    const select = new TomSelect('#skills-select', {
-        plugins: {
-            'remove_button': {
-                title: 'Remove skill',
-            },
-            'clear_button': {
-                title: 'Clear all skills',
-            }
-        },
-        maxItems: null,
-        maxOptions: null,  // Allow unlimited options in dropdown
-        valueField: 'name',
-        labelField: 'name',
-        searchField: ['name'],
-        create: false,
-        closeAfterSelect: true,
-        hideSelected: true,
-        sortField: { field: 'name', direction: 'asc' },  // Sort items alphabetically
-        onItemAdd: function(value, item) {
-            this.setTextboxValue('');
-            this.refreshOptions(false);
-        },
-        onItemRemove: function(value) {
-            this.refreshOptions(false);
-        },
-        options: Array.from(document.querySelectorAll('#skills-select option')).map(option => {
-            const skillData = JSON.parse(option.dataset.skill || '{}');
-            return {
-                name: skillData.name,
-                icon: skillData.icon,
-                icon_dark: skillData.icon_dark
-            };
-        }),
-        render: {
-            option: function(item, escape) {
-                const icon = isDarkMode ? (item.icon_dark || item.icon) : item.icon;
-                return `<div class="flex items-center gap-2 p-2">
-                    <iconify-icon icon="${escape(icon || 'octicon:code-16')}"></iconify-icon>
-                    <span>${escape(item.name)}</span>
-                </div>`;
-            },
-            item: function(item, escape) {
-                const icon = isDarkMode ? (item.icon_dark || item.icon) : item.icon;
-                return `<div class="flex items-center gap-1">
-                    <iconify-icon icon="${escape(icon || 'octicon:code-16')}"></iconify-icon>
-                    <span>${escape(item.name)}</span>
-                </div>`;
-            }
-        },
-        onDropdownOpen: function() {
-            updateDropdownIcons();
-        }
-    });
-
-    // Handle dark mode changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        const isDark = e.matches;
-        const items = select.items;
-        select.clear();
-        select.clearOptions();
-        select.sync();
-        items.forEach(value => select.addItem(value));
-    });
-
-    // Character counter for description
-    const descriptionField = document.getElementById('{{ form.description.id_for_label }}');
-    const charCounter = document.getElementById('char-counter');
-    
-    function updateCharCount() {
-        const count = descriptionField.value.length;
-        charCounter.textContent = `${count}/4000`;
-        if (count > 3800) {
-            charCounter.classList.add('text-warning');
-        } else {
-            charCounter.classList.remove('text-warning');
-        }
-    }
-
-    descriptionField.addEventListener('input', updateCharCount);
-    updateCharCount(); // Initial count
-
-    // Input styling
-    const inputs = document.querySelectorAll('input[type="text"], input[type="url"], textarea, select');
-    inputs.forEach(input => {
-        input.classList.add(
-            'w-full',
-            'rounded-xl',
-            'border',
-            'border-base-300',
-            'bg-base-100',
-            'px-4',
-            'py-2',
-            'focus:border-primary',
-            'focus:outline-none',
-            'focus:ring-1',
-            'focus:ring-primary',
-            'placeholder:text-base-content/50'
-        );
-    });
-
-    // Status select styling
-    const statusSelect = document.getElementById('{{ form.status.id_for_label }}');
-    statusSelect.classList.add('select', 'select-bordered', 'w-full');
-
-    // Add staggered animations for form sections
-    const sections = document.querySelectorAll('.form-section');
-    sections.forEach((section, index) => {
-        section.style.animationDelay = `${index * 0.1}s`;
-    });
-});
-</script>
 {% endblock %}
