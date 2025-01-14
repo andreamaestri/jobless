@@ -156,17 +156,13 @@
                                         <div class="relative min-h-full">
                                             <!-- Quick letters -->
                                             <div class="quick-letters-list">
-                                                <div class="sticky top-0 flex flex-col h-full">
-                                                    {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-                                                        <button class="quick-letter" data-letter="{{ letter }}">
-                                                            {{ letter }}
-                                                        </button>
-                                                    {% endfor %}
-                                                </div>
+                                                {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                                                <button class="quick-letter" data-letter="{{ letter }}">{{ letter }}</button>
+                                                {% endfor %}
                                             </div>
 
                                             <!-- Skills groups -->
-                                            <div class="pr-16"> <!-- Add padding for quick letters -->
+                                            <div class="pr-8">
                                                 {% for group in skill_icons %}
                                                     <div class="skill-group" data-letter="{{ group.letter }}">
                                                         <div class="sticky top-0 z-20 bg-base-100 shadow-sm">
