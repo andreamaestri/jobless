@@ -314,18 +314,42 @@
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('job-form');
+    
+    // Listen for form submission
+    form.addEventListener('submit', function(e) {
+        // Get all required fields
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        // Check if required fields are filled
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('input-error');
+            } else {
+                field.classList.remove('input-error');
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            showNotification('Error', 'Please fill in all required fields', 'error');
+        }
+    });
+
     // Listen for htmx:afterRequest events
     htmx.on('htmx:afterRequest', function(evt) {
         if (evt.detail.successful) {
             try {
                 const response = JSON.parse(evt.detail.xhr.response);
-                console.log('Response:', response); // Debug log
+                console.log('AI Response:', response); // Debug log
                 
                 if (response.status === 'success' && response.fields) {
                     // Populate form fields
                     Object.entries(response.fields).forEach(([key, value]) => {
                         const input = document.getElementById(`id_${key}`);
-                        if (input) {
+                        if (input && value) {
                             console.log(`Setting ${key} to:`, value); // Debug log
                             input.value = value;
                             
@@ -335,9 +359,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                 input.style.height = `${input.scrollHeight}px`;
                             }
                             
-                            input.dispatchEvent(new Event('change'));
-                        } else {
-                            console.warn(`Field not found: id_${key}`);
+                            // Trigger form validation
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                            
+                            // Remove any error states
+                            input.classList.remove('input-error');
                         }
                     });
                     
@@ -349,9 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error:', e);
                 showNotification('Error', 'Failed to process response', 'error');
             }
-        } else {
-            console.error('Request failed:', evt.detail.xhr.status);
-            showNotification('Error', 'Request failed', 'error');
         }
     });
 
