@@ -239,10 +239,18 @@ class JobCreateView(BaseJobView, CreateView):
     success_url = reverse_lazy('jobs:list')
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        response = super().form_valid(form)
-        messages.success(self.request, 'Job posting created successfully')
-        return response
+        # Log the form data
+        logger.debug(f"Form data on submission: {form.cleaned_data}")
+        
+        try:
+            form.instance.user = self.request.user
+            response = super().form_valid(form)
+            messages.success(self.request, 'Job posting created successfully')
+            return response
+        except Exception as e:
+            logger.error(f"Error saving job posting: {str(e)}")
+            messages.error(self.request, 'Error saving job posting')
+            return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

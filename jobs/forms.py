@@ -180,7 +180,29 @@ Important:
                 if not cleaned_data.get('description'):
                     cleaned_data['description'] = parsed.get('description', '')
 
+        # Log the data being processed
+        logger.debug(f"Form data being processed: {self.data}")
+        logger.debug(f"Cleaned data: {cleaned_data}")
+        
+        # Ensure required fields are present
+        required_fields = ['title', 'company', 'location']
+        for field in required_fields:
+            if not cleaned_data.get(field):
+                self.add_error(field, 'This field is required.')
+        
         return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Log the instance data before saving
+        logger.debug(f"Instance data before save: {instance.__dict__}")
+        
+        if commit:
+            instance.save()
+            logger.debug(f"Instance saved successfully: {instance.id}")
+            
+        return instance
 
     class Meta:
         model = JobPosting
