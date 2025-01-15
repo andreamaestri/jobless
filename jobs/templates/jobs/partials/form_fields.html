@@ -9,7 +9,7 @@
     const fields = {{ parsed|safe }};
     Object.entries(fields).forEach(([field, value]) => {
         const input = document.querySelector(`[name="${field}"]`);
-        if (input && !input.getAttribute('data-user-modified')) {
+        if (input) {
             input.value = value;
             input.setAttribute('data-ai-filled', 'true');
         }

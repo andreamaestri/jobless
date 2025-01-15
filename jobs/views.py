@@ -12,7 +12,7 @@ import json
 import logging
 from .models import JobPosting, SKILL_ICONS
 from .forms import JobPostingForm
-from django import template
+from django import template, forms
 
 logger = logging.getLogger(__name__)
 
@@ -238,26 +238,92 @@ class JobCreateView(BaseJobView, CreateView):
     template_name = 'jobs/add.html'
     success_url = reverse_lazy('jobs:list')
 
-    def form_valid(self, form):
-        # Log the form data
-        logger.debug(f"Form data on submission: {form.cleaned_data}")
+    def get(self, request, *args, **kwargs):
+        """Handle GET request"""
+        logger.debug("GET request received")
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """Handle POST request"""
+        logger.debug(f"POST request received: {request.POST}")
+        if 'parse_description' in request.POST:
+            return self.parse_description(request)
+        return super().post(request, *args, **kwargs)
+
+    def parse_description(self, request):
+        if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            try:
+                description = request.POST.get('paste', '')
+                # Your existing AI parsing logic here to get parsed_data
+                parsed_data = your_ai_parsing_function(description)
+                
+                # Create a form instance with the parsed data
+                form = JobForm(initial=parsed_data)
+                
+                # Render form HTML snippets
+                form_fields = {
+                    'title': render_to_string('jobs/snippets/field.html', {'field': form['title']}),
+                    'company': render_to_string('jobs/snippets/field.html', {'field': form['company']}),
+                    'location': render_to_string('jobs/snippets/field.html', {'field': form['location']}),
+                    'url': render_to_string('jobs/snippets/field.html', {'field': form['url']}),
+                    'salary_range': render_to_string('jobs/snippets/field.html', {'field': form['salary_range']}),
+                    'description': render_to_string('jobs/snippets/field.html', {'field': form['description']}),
+                }
+                
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Successfully parsed job description',
+                    'fields': parsed_data,
+                    'html': form_fields,
+                })
+                
+            except Exception as e:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': str(e)
+                })
         
-        try:
-            form.instance.user = self.request.user
-            response = super().form_valid(form)
-            messages.success(self.request, 'Job posting created successfully')
-            return response
-        except Exception as e:
-            logger.error(f"Error saving job posting: {str(e)}")
-            messages.error(self.request, 'Error saving job posting')
-            return super().form_invalid(form)
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+    def form_invalid(self, form):
+        """Handle invalid form"""
+        logger.debug("Form validation failed")
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def form_valid(self, form):
+        """Handle valid form submission"""
+        form.instance.user = self.request.user
+        response = super().form_valid(form)
+        
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Job saved successfully',
+                'redirect_url': self.success_url
+            })
+            
+        messages.success(self.request, 'Job posting created successfully')
+        return response
+
+    def form_invalid(self, form):
+        """Handle invalid form submission"""
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Please correct the errors below',
+                'errors': form.errors
+            }, status=400)
+            
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
+        """Add additional context if needed"""
         context = super().get_context_data(**kwargs)
         context['skill_icons'] = self._get_grouped_skills()
         return context
 
     def _get_grouped_skills(self):
+        """Helper method to group skills"""
         skill_groups = {}
         for icon, name in SKILL_ICONS:
             first_letter = name[0].upper()
@@ -375,50 +441,80 @@ def upper(value):
 def parse_job_description(request):
     """Handle job description parsing"""
     if not request.user.is_authenticated:
-        return JsonResponse({'status': 'error', 'message': 'Authentication required'}, status=403)
-
+        return JsonResponse({'status': 'error', 'message': 'Authentication required.'}, status=401)
+    
+    paste_text = request.POST.get('paste', '').strip()
+    if not paste_text:
+        return JsonResponse({'status': 'error', 'message': 'No job description provided.'}, status=400)
+    
     try:
-        paste_text = request.POST.get('paste', '').strip()
-        if not paste_text:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Please paste some text first'
-            }, status=400)
-
         form = JobPostingForm()
         parsed = form.parse_job_with_ai(paste_text)
-        
-        if not parsed:
+        if parsed:
+            return JsonResponse({
+                'status': 'success',
+                'fields': parsed,
+                'message': 'Successfully parsed job description.'
+            })
+        else:
             return JsonResponse({
                 'status': 'error',
-                'message': 'Could not extract job details'
+                'message': 'Could not parse job description.'
             }, status=400)
+    except forms.ValidationError as ve:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(ve)
+        }, status=400)
+    except Exception as e:
+        logger.exception("Error parsing job description")
+        return JsonResponse({
+            'status': 'error',
+            'message': 'An unexpected error occurred.'
+        }, status=500)
 
-        # Log the parsed data for debugging
-        logger.debug(f"Parsed data before sending: {parsed}")
-            
-        # Format response data
-        response_data = {
-            'status': 'success',
-            'message': 'Successfully extracted job details',
-            'fields': {
-                'title': parsed.get('title', ''),
-                'company': parsed.get('company', ''),
-                'location': parsed.get('location', ''),
-                'salary_range': parsed.get('salary_range', ''),
-                'description': parsed.get('description', ''),
-                'url': parsed.get('url', '')
-            }
-        }
+@require_http_methods(["POST"])
+def parse_job_description(request):
+    """Handle job description parsing endpoint"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Authentication required.'}, status=401)
+    
+    paste_text = request.POST.get('paste', '')
+    if not paste_text:
+        return JsonResponse({'status': 'error', 'message': 'No text provided'}, status=400)
 
-        # Log the response for debugging
-        logger.debug(f"Sending response: {response_data}")
+    try:
+        form = JobPostingForm()
+        parsed_data = form.parse_job_with_ai(paste_text)
         
-        return JsonResponse(response_data)
-
+        logger.debug(f"Parsed data from AI: {parsed_data}")  # Add debug logging
+        
+        if parsed_data:
+            # Ensure field names match form field IDs
+            response_data = {
+                'status': 'success',
+                'message': 'Successfully parsed job description',
+                'fields': {
+                    'title': parsed_data.get('title', ''),
+                    'company': parsed_data.get('company', ''),
+                    'location': parsed_data.get('location', ''),
+                    'url': parsed_data.get('url', ''),
+                    'salary_range': parsed_data.get('salary_range', ''),
+                    'description': parsed_data.get('description', ''),
+                    'status': 'NEW'  # Default status
+                }
+            }
+            logger.debug(f"Sending response: {response_data}")  # Add debug logging
+            return JsonResponse(response_data)
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Failed to parse description'
+            }, status=400)
+            
     except Exception as e:
         logger.error(f"Error parsing job description: {str(e)}")
         return JsonResponse({
-            'status': 'error',
-            'message': f'Error processing request: {str(e)}'
+            'status': 'error', 
+            'message': str(e)
         }, status=500)
