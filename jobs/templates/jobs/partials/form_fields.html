@@ -1,5 +1,22 @@
 {% autoescape off %}
 {% if parsed %}
+<div class="alert alert-success">
+    <iconify-icon icon="heroicons:check-circle"></iconify-icon>
+    <span>Job details extracted successfully!</span>
+</div>
+<script>
+    // Update form fields with parsed data
+    const fields = {{ parsed|safe }};
+    Object.entries(fields).forEach(([field, value]) => {
+        const input = document.querySelector(`[name="${field}"]`);
+        if (input && !input.getAttribute('data-user-modified')) {
+            input.value = value;
+            input.setAttribute('data-ai-filled', 'true');
+        }
+    });
+</script>
+{% endif %}
+{% if parsed %}
 <div id="parse-results">
     <div class="alert alert-success mb-4">
         <iconify-icon icon="heroicons:check-circle"></iconify-icon>

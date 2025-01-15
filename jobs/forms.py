@@ -187,31 +187,38 @@ Important:
         fields = ['paste', 'title', 'company', 'location', 'url', 'salary_range', 'description', 'status']
         widgets = {
             'title': forms.TextInput(attrs={
+                'id': 'id_title',  # Explicitly set ID
                 'placeholder': 'e.g. Senior Developer, UX Designer',
                 'class': 'input input-bordered w-full'
             }),
             'company': forms.TextInput(attrs={
+                'id': 'id_company',  # Explicitly set ID
                 'placeholder': 'e.g. Toyota, Google, Tata',
                 'class': 'input input-bordered w-full'
             }),
             'location': forms.TextInput(attrs={
+                'id': 'id_location',  # Explicitly set ID
                 'placeholder': 'e.g. Tokyo, Berlin (Remote)',
                 'class': 'input input-bordered w-full'
             }),
             'url': forms.URLInput(attrs={
+                'id': 'id_url',  # Explicitly set ID
                 'placeholder': 'Job posting URL',
                 'class': 'input input-bordered w-full'
             }),
             'salary_range': forms.TextInput(attrs={
+                'id': 'id_salary_range',  # Explicitly set ID
                 'placeholder': 'e.g. €45-65k/yr, $5-7k/mo',
                 'class': 'input input-bordered w-full'
             }),
             'description': forms.Textarea(attrs={
+                'id': 'id_description',  # Explicitly set ID
                 'placeholder': '• Key responsibilities\n• Required skills\n• Benefits\n• How to apply',
                 'rows': 12,
                 'class': 'textarea textarea-bordered w-full font-mono'
             }),
             'status': forms.Select(attrs={
+                'id': 'id_status',  # Explicitly set ID
                 'class': 'select select-bordered w-full'
             })
         }

@@ -32,54 +32,42 @@
                 </div>
 
                 <div class="bg-base-100 shadow-xl rounded-2xl relative">
-                    <!-- Error Messages -->
-                    {% if form.errors %}
-                    <div class="sticky top-0 z-20 p-4 rounded-t-2xl bg-error/10">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div class="text-sm text-error">
-                                {% for error in form.non_field_errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
+                    <!-- AI Paste Section - Move outside main form -->
+                    <div class="p-8 form-section" style="--delay: 0">
+                        <h2 class="text-lg font-semibold text-base-content mb-6">Quick Fill with AI</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="id_paste" class="block text-sm font-medium text-base-content mb-2">
+                                    Paste Job Description
+                                    <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
+                                </label>
+                                <textarea id="id_paste" 
+                                          name="paste"
+                                          class="textarea textarea-bordered w-full min-h-[120px]"
+                                          placeholder="Paste the job description here..."></textarea>
                             </div>
+                            <div class="flex justify-end">
+                                <button type="button" 
+                                        class="btn btn-primary btn-sm gap-2"
+                                        hx-post="{% url 'jobs:parse_description' %}"
+                                        hx-include="#id_paste"
+                                        hx-trigger="click"
+                                        hx-target="#parse-results"
+                                        hx-swap="none"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                    <span class="loading loading-spinner loading-sm htmx-indicator"></span>
+                                    <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+                                    <span>Process with AI</span>
+                                </button>
+                            </div>
+                            <div id="parse-results"></div>
                         </div>
                     </div>
-                    {% endif %}
 
-                    <form method="post" class="divide-y divide-base-200">
+                    <!-- Main Form -->
+                    <form method="post" class="divide-y divide-base-200" id="job-form">
                         {% csrf_token %}
                         
-                        <!-- AI Paste Section -->
-                        <div class="p-8 form-section" style="--delay: 0">
-                            <h2 class="text-lg font-semibold text-base-content mb-6">Quick Fill with AI</h2>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="{{ form.paste.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                        Paste Job Description
-                                        <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
-                                    </label>
-                                    {{ form.paste }}
-                                </div>
-                                <div class="flex justify-end">
-                                    <button type="button" 
-                                            class="btn btn-primary btn-sm gap-2"
-                                            hx-post="{% url 'jobs:parse_description' %}"
-                                            hx-include="[name='paste']"
-                                            hx-target="#parse-results"
-                                            hx-swap="innerHTML"
-                                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                                            hx-indicator="#parsing-spinner">
-                                        <span id="parsing-spinner" class="loading loading-spinner loading-sm htmx-indicator"></span>
-                                        <iconify-icon icon="heroicons:sparkles"></iconify-icon>
-                                        <span>Process with AI</span>
-                                    </button>
-                                </div>
-                                <div id="parse-results"></div>
-                            </div>
-                        </div>
-
                         <!-- Basic Information -->
                         <div class="p-8 form-section" style="--delay: 0">
                             <h2 class="text-lg font-semibold text-base-content mb-6">Basic Information</h2>
@@ -325,12 +313,63 @@
 {{ block.super }}
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <script>
-// Initialize htmx to work with Alpine.js
-htmx.on('htmx:afterSwap', (event) => {
-    // Trigger Alpine to evaluate any new content
-    Alpine.initTree(event.detail.target);
-});
+document.addEventListener('DOMContentLoaded', function() {
+    // Listen for htmx:afterRequest events
+    htmx.on('htmx:afterRequest', function(evt) {
+        if (evt.detail.successful) {
+            try {
+                const response = JSON.parse(evt.detail.xhr.response);
+                console.log('Response:', response); // Debug log
+                
+                if (response.status === 'success' && response.fields) {
+                    // Populate form fields
+                    Object.entries(response.fields).forEach(([key, value]) => {
+                        const input = document.getElementById(`id_${key}`);
+                        if (input) {
+                            console.log(`Setting ${key} to:`, value); // Debug log
+                            input.value = value;
+                            
+                            // Special handling for textareas
+                            if (input.tagName.toLowerCase() === 'textarea') {
+                                input.style.height = 'auto';
+                                input.style.height = `${input.scrollHeight}px`;
+                            }
+                            
+                            input.dispatchEvent(new Event('change'));
+                        } else {
+                            console.warn(`Field not found: id_${key}`);
+                        }
+                    });
+                    
+                    showNotification('Success', 'Job details extracted successfully!', 'success');
+                } else {
+                    showNotification('Error', response.message || 'Failed to parse job description', 'error');
+                }
+            } catch (e) {
+                console.error('Error:', e);
+                showNotification('Error', 'Failed to process response', 'error');
+            }
+        } else {
+            console.error('Request failed:', evt.detail.xhr.status);
+            showNotification('Error', 'Request failed', 'error');
+        }
+    });
 
-// Add any additional JS you need
+    function showNotification(title, message, type = 'info') {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} fixed top-4 right-4 z-50 w-96 shadow-lg`;
+        alert.innerHTML = `
+            <div class="flex items-start">
+                <div class="flex-1">
+                    <h3 class="font-bold">${title}</h3>
+                    <div class="text-sm">${message}</div>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" class="btn btn-ghost btn-sm">×</button>
+            </div>
+        `;
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 5000);
+    }
+});
 </script>
 {% endblock %}
