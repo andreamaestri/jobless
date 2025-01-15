@@ -1,60 +1,78 @@
 document.addEventListener('DOMContentLoaded', function() {
     const parseForm = document.getElementById('parse-form');
     const jobForm = document.getElementById('job-form');
-    const submitBtn = jobForm.querySelector('button[type="submit"]');
-    const loadingSpinner = submitBtn.querySelector('.loading');
     
     // Handle main form submission
-    jobForm.addEventListener('submit', function(evt) {
-        evt.preventDefault();
-        
-        // Show loading state
-        submitBtn.disabled = true;
-        loadingSpinner.classList.remove('hidden');
-        
-        // Collect form data
-        const formData = new FormData(this);
-        
-        // Submit form via fetch
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                // Redirect to jobs list on success
-                window.location.href = '/jobs/';
-                showNotification('Success', 'Job saved successfully', 'success');
-            } else {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Form submission failed');
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error', error.message || 'Failed to save job', 'error');
+    if (jobForm) {
+        jobForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // Reset button state
-            submitBtn.disabled = false;
-            loadingSpinner.classList.add('hidden');
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.loading');
+            const buttonText = submitBtn.querySelector('.button-text');
+            
+            // Update button state
+            spinner.classList.remove('hidden');
+            buttonText.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            // Prepare form data
+            const formData = new FormData(this);
+            
+            // Add skills if present
+            const skillsInput = document.getElementById('skills-input');
+            if (skillsInput && skillsInput.value) {
+                formData.append('required_skills', skillsInput.value);
+            }
+
+            // Submit form via fetch
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showNotification('Success', data.message, 'success');
+                    window.location.href = data.redirect_url;
+                } else {
+                    throw new Error(data.message || 'Form submission failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error', error.message, 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Save Job';
+                submitBtn.disabled = false;
+            });
         });
-    });
-    
-    // AI Parser form handling
+    }
+
+    // Handle AI Parser form
     parseForm.addEventListener('submit', function(evt) {
         evt.preventDefault();
         
         const submitButton = parseForm.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
+        const spinner = submitButton.querySelector('.loading');
+        const buttonText = submitButton.querySelector('span:not(.loading)');
+        
+        // Show loading state
         submitButton.disabled = true;
+        spinner.classList.remove('hidden');
+        buttonText.textContent = 'Processing...';
         
-        const formData = new FormData(parseForm);
+        const formData = new FormData(this);
         
-        fetch(parseForm.getAttribute('hx-post'), {
+        fetch(this.getAttribute('hx-post'), {
             method: 'POST',
             body: formData,
             headers: {
@@ -62,22 +80,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRFToken': formData.get('csrfmiddlewaretoken')
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
                 populateFormFields(data.fields);
                 showNotification('Success', 'Form fields populated successfully', 'success');
             } else {
-                showNotification('Error', data.message || 'Failed to parse description', 'error');
+                throw new Error(data.message || 'Failed to parse description');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification('Error', 'Failed to process response', 'error');
+            showNotification('Error', error.message, 'error');
         })
         .finally(() => {
+            // Reset button state
             submitButton.disabled = false;
-            submitButton.innerHTML = originalText;
+            spinner.classList.add('hidden');
+            buttonText.textContent = 'Process with AI';
         });
     });
 

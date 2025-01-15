@@ -1,5 +1,6 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required  # Add this import
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
@@ -292,28 +293,40 @@ class JobCreateView(BaseJobView, CreateView):
 
     def form_valid(self, form):
         """Handle valid form submission"""
-        form.instance.user = self.request.user
-        response = super().form_valid(form)
-        
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Job saved successfully',
-                'redirect_url': self.success_url
-            })
+        try:
+            # Set the user before saving
+            form.instance.user = self.request.user
+            self.object = form.save()
             
-        messages.success(self.request, 'Job posting created successfully')
-        return response
+            # Handle AJAX requests
+            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Job posting created successfully',
+                    'redirect_url': self.get_success_url()
+                })
+            
+            # Handle regular form submission
+            messages.success(self.request, 'Job posting created successfully')
+            return super().form_valid(form)
+            
+        except Exception as e:
+            logger.error(f"Error creating job posting: {str(e)}")
+            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Error creating job posting'
+                }, status=500)
+            raise
 
     def form_invalid(self, form):
         """Handle invalid form submission"""
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 'status': 'error',
-                'message': 'Please correct the errors below',
+                'message': 'Please correct the form errors',
                 'errors': form.errors
             }, status=400)
-            
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -374,7 +387,7 @@ class JobPostingDetailView(BaseJobView, DetailView):
     context_object_name = 'job'
 
 class JobFavoritesListView(BaseJobView, ListView):
-    """View for displaying user's favorited jobs"""
+    """View for displaying user's favourited jobs"""
     template_name = 'jobs/favourites.html'
     context_object_name = 'favorite_jobs'
 
@@ -387,20 +400,29 @@ class JobFavoritesListView(BaseJobView, ListView):
 #     favorite_jobs = JobPosting.objects.filter(favourites=request.user)
 #     return render(request, "jobs/favourites.html", {"favorite_jobs": favorite_jobs})
 
+@login_required
 def toggle_favourite(request, job_id):
     """Toggle favourite status of a job posting"""
+    if request.method != "POST":
+        return HttpResponseNotAllowed(['POST'])
+        
     job = get_object_or_404(JobPosting, id=job_id)
     
-    if request.method == "POST":
-        if request.user in job.favourites.all():
-            job.favourites.remove(request.user)
-            messages.success(request, "Job removed from favourites!")
-        else:
-            job.favourites.add(request.user)
-            messages.success(request, "Job added to favourites!")
+    if request.user in job.favourites.all():
+        job.favourites.remove(request.user)
+        message = "Job removed from favourites"
+    else:
+        job.favourites.add(request.user)
+        message = "Job added to favourites"
     
+    if request.headers.get('HX-Request'):
+        return HttpResponse(
+            status=200,
+            headers={'HX-Trigger': json.dumps({'showMessage': {'message': message}})}
+        )
+        
+    messages.success(request, message)
     return redirect("jobs:list")
-
 
 def skills_autocomplete(request):
     """Handle skills autocomplete API requests"""
@@ -504,8 +526,16 @@ def parse_job_description(request):
                     'status': 'NEW'  # Default status
                 }
             }
+            
+            # Handle both HTMX and regular AJAX requests
+            if request.headers.get('HX-Request'):
+                context = {'form': form, 'parsed_data': parsed_data}
+                html = render_to_string('jobs/snippets/field.html', context)
+                response_data['html'] = html
+            
             logger.debug(f"Sending response: {response_data}")  # Add debug logging
             return JsonResponse(response_data)
+            
         else:
             return JsonResponse({
                 'status': 'error',
