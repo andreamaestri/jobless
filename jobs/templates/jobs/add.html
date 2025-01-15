@@ -65,12 +65,18 @@
                     </div>
 
                     <!-- Main Form -->
-                    <form method="post" 
+                    <form method="POST" 
                           id="job-form" 
                           class="divide-y divide-base-200"
                           action="{% url 'jobs:add' %}">
                         {% csrf_token %}
                         
+                        {% if form.non_field_errors %}
+                        <div class="p-4 mb-4 text-sm text-error-content bg-error rounded-lg">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
                         <!-- Basic Information -->
                         <div class="p-8 form-section" style="--delay: 0">
                             <h2 class="text-lg font-semibold text-base-content mb-6">Basic Information</h2>
@@ -298,8 +304,7 @@
                                     Cancel
                                 </a>
                                 <button type="submit"
-                                        class="btn btn-primary gap-2"
-                                        form="job-form">
+                                        class="btn btn-primary gap-2">
                                     <span class="loading loading-spinner loading-sm hidden"></span>
                                     <span class="button-text">Save Job</span>
                                 </button>
@@ -315,5 +320,11 @@
 
 {% block extra_js %}
 {{ block.super }}
+<script>
+// Configure CSRF for HTMX
+document.body.addEventListener('htmx:configRequest', function(evt) {
+    evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+});
+</script>
 <script src="{% static 'js/job-form.js' %}"></script>
 {% endblock %}
