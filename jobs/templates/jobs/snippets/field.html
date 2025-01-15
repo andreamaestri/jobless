@@ -1,0 +1,6 @@
+<div class="form-field">
+    {{ field }}
+    {% if field.errors %}
+    <p class="text-error text-xs mt-1">{{ field.errors.0 }}</p>
+    {% endif %}
+</div>

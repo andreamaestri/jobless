@@ -32,40 +32,43 @@
                 </div>
 
                 <div class="bg-base-100 shadow-xl rounded-2xl relative">
-                    <!-- AI Paste Section - Move outside main form -->
+                    <!-- AI Paste Section -->
                     <div class="p-8 form-section" style="--delay: 0">
                         <h2 class="text-lg font-semibold text-base-content mb-6">Quick Fill with AI</h2>
                         <div class="space-y-4">
-                            <div>
-                                <label for="id_paste" class="block text-sm font-medium text-base-content mb-2">
-                                    Paste Job Description
-                                    <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
-                                </label>
-                                <textarea id="id_paste" 
-                                          name="paste"
-                                          class="textarea textarea-bordered w-full min-h-[120px]"
-                                          placeholder="Paste the job description here..."></textarea>
-                            </div>
-                            <div class="flex justify-end">
-                                <button type="button" 
-                                        class="btn btn-primary btn-sm gap-2"
-                                        hx-post="{% url 'jobs:parse_description' %}"
-                                        hx-include="#id_paste"
-                                        hx-trigger="click"
-                                        hx-target="#parse-results"
-                                        hx-swap="none"
-                                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                                    <span class="loading loading-spinner loading-sm htmx-indicator"></span>
-                                    <iconify-icon icon="heroicons:sparkles"></iconify-icon>
-                                    <span>Process with AI</span>
-                                </button>
-                            </div>
-                            <div id="parse-results"></div>
+                            <form id="parse-form" 
+                                  hx-post="{% url 'jobs:parse_description' %}" 
+                                  hx-trigger="submit"
+                                  hx-indicator=".htmx-indicator"
+                                  method="POST">
+                                {% csrf_token %}
+                                <div>
+                                    <label for="id_paste" class="block text-sm font-medium text-base-content mb-2">
+                                        Paste Job Description
+                                        <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
+                                    </label>
+                                    <textarea id="id_paste" 
+                                              name="paste"
+                                              class="textarea textarea-bordered w-full min-h-[120px]"
+                                              placeholder="Paste the job description here..."></textarea>
+                                </div>
+                                <div class="flex justify-end mt-4">
+                                    <button type="submit" 
+                                            class="btn btn-primary btn-sm gap-2">
+                                        <span class="loading loading-spinner loading-sm htmx-indicator"></span>
+                                        <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+                                        <span>Process with AI</span>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 
                     <!-- Main Form -->
-                    <form method="post" class="divide-y divide-base-200" id="job-form">
+                    <form method="post" 
+                          id="job-form" 
+                          class="divide-y divide-base-200"
+                          action="{% url 'jobs:add' %}">
                         {% csrf_token %}
                         
                         <!-- Basic Information -->
@@ -291,13 +294,14 @@
                             </div>
                             <div class="flex space-x-4">
                                 <a href="{% url 'jobs:list' %}"
-                                   class="btn btn-ghost"
-                                   onclick="return handleCancel(event)">
+                                   class="btn btn-ghost">
                                     Cancel
                                 </a>
                                 <button type="submit"
-                                        class="btn btn-primary">
-                                    Save Job
+                                        class="btn btn-primary gap-2"
+                                        form="job-form">
+                                    <span class="loading loading-spinner loading-sm hidden"></span>
+                                    <span class="button-text">Save Job</span>
                                 </button>
                             </div>
                         </div>
@@ -311,89 +315,5 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('job-form');
-    
-    // Listen for form submission
-    form.addEventListener('submit', function(e) {
-        // Get all required fields
-        const requiredFields = form.querySelectorAll('[required]');
-        let isValid = true;
-
-        // Check if required fields are filled
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('input-error');
-            } else {
-                field.classList.remove('input-error');
-            }
-        });
-
-        if (!isValid) {
-            e.preventDefault();
-            showNotification('Error', 'Please fill in all required fields', 'error');
-        }
-    });
-
-    // Listen for htmx:afterRequest events
-    htmx.on('htmx:afterRequest', function(evt) {
-        if (evt.detail.successful) {
-            try {
-                const response = JSON.parse(evt.detail.xhr.response);
-                console.log('AI Response:', response); // Debug log
-                
-                if (response.status === 'success' && response.fields) {
-                    // Populate form fields
-                    Object.entries(response.fields).forEach(([key, value]) => {
-                        const input = document.getElementById(`id_${key}`);
-                        if (input && value) {
-                            console.log(`Setting ${key} to:`, value); // Debug log
-                            input.value = value;
-                            
-                            // Special handling for textareas
-                            if (input.tagName.toLowerCase() === 'textarea') {
-                                input.style.height = 'auto';
-                                input.style.height = `${input.scrollHeight}px`;
-                            }
-                            
-                            // Trigger form validation
-                            input.dispatchEvent(new Event('input', { bubbles: true }));
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
-                            
-                            // Remove any error states
-                            input.classList.remove('input-error');
-                        }
-                    });
-                    
-                    showNotification('Success', 'Job details extracted successfully!', 'success');
-                } else {
-                    showNotification('Error', response.message || 'Failed to parse job description', 'error');
-                }
-            } catch (e) {
-                console.error('Error:', e);
-                showNotification('Error', 'Failed to process response', 'error');
-            }
-        }
-    });
-
-    function showNotification(title, message, type = 'info') {
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type} fixed top-4 right-4 z-50 w-96 shadow-lg`;
-        alert.innerHTML = `
-            <div class="flex items-start">
-                <div class="flex-1">
-                    <h3 class="font-bold">${title}</h3>
-                    <div class="text-sm">${message}</div>
-                </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="btn btn-ghost btn-sm">×</button>
-            </div>
-        `;
-        document.body.appendChild(alert);
-        setTimeout(() => alert.remove(), 5000);
-    }
-});
-</script>
+<script src="{% static 'js/job-form.js' %}"></script>
 {% endblock %}

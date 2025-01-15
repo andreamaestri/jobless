@@ -97,7 +97,8 @@ class ViewTransitionHelper {
                link.origin === location.origin &&
                !link.hasAttribute('download') &&
                !link.target &&
-               !link.href.includes('#');
+               !link.href.includes('#') &&
+               !link.closest('form'); // Exclude links within forms
     }
 }
 
