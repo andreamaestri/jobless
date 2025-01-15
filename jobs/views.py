@@ -3,11 +3,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
-from .models import JobPosting
+from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed
+from django.views.decorators.http import require_http_methods
+from django.template.response import TemplateResponse
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+import json
+import logging
+from .models import JobPosting, SKILL_ICONS
 from .forms import JobPostingForm
-from .models import SKILL_ICONS
 from django import template
+
+logger = logging.getLogger(__name__)
 
 register = template.Library()
 
@@ -252,7 +259,37 @@ class JobPostingCreateView(LoginRequiredMixin, CreateView):
     template_name = 'jobs/add.html'
     success_url = reverse_lazy('jobs:list')
 
+    def form_invalid(self, form):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'error': form.errors,
+                'message': 'Validation failed'
+            }, status=400)
+        return super().form_invalid(form)
+
     def form_valid(self, form):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if self.request.POST.get('process_paste') == 'true':
+                paste_text = self.request.POST.get('paste')
+                if paste_text:
+                    try:
+                        parsed = form.parse_job_with_ai(paste_text)
+                        if parsed:
+                            return JsonResponse({'fields': parsed})
+                        return JsonResponse({
+                            'error': 'Could not parse text',
+                            'message': 'AI processing failed'
+                        }, status=400)
+                    except Exception as e:
+                        return JsonResponse({
+                            'error': str(e),
+                            'message': 'Processing error'
+                        }, status=400)
+                return JsonResponse({
+                    'error': 'No text provided',
+                    'message': 'Please provide text to process'
+                }, status=400)
+        
         form.instance.user = self.request.user
         messages.success(self.request, 'Job posting added successfully.')
         return super().form_valid(form)
@@ -263,7 +300,7 @@ class JobPostingCreateView(LoginRequiredMixin, CreateView):
         skill_groups = {}
         for icon, name in SKILL_ICONS:
             first_letter = name[0].upper()
-            if first_letter not in skill_groups:
+            if (first_letter not in skill_groups):
                 skill_groups[first_letter] = []
                 
             skill_groups[first_letter].append({
@@ -407,3 +444,48 @@ def upper(value):
     if isinstance(value, dict):
         return {k: v.upper() if isinstance(v, str) else v for k, v in value.items()}
     return value.upper() if isinstance(value, str) else value
+
+@ensure_csrf_cookie
+@csrf_protect
+@require_http_methods(["POST"])
+def parse_job_description(request):
+    """Handle HTMX request to parse job description"""
+    paste_text = request.POST.get('paste', '').strip()
+    
+    if not paste_text:
+        return HttpResponse(
+            render_to_string('jobs/partials/alert.html', {
+                'type': 'warning',
+                'message': 'Please paste some text first'
+            }),
+            status=400
+        )
+
+    try:
+        form = JobPostingForm()
+        parsed = form.parse_job_with_ai(paste_text)
+        
+        if not parsed:
+            return HttpResponse(
+                render_to_string('jobs/partials/alert.html', {
+                    'type': 'error',
+                    'message': 'Could not extract job details. Please check the text format.'
+                }),
+                status=400
+            )
+            
+        # Return rendered form fields with parsed data
+        context = {'parsed': parsed}
+        return HttpResponse(
+            render_to_string('jobs/partials/form_fields.html', context)
+        )
+
+    except Exception as e:
+        logger.error(f"Error in parse_job_description: {str(e)}")
+        return HttpResponse(
+            render_to_string('jobs/partials/alert.html', {
+                'type': 'error',
+                'message': f'Error processing job description: {str(e)}'
+            }),
+            status=400
+        )

@@ -20,4 +20,7 @@ urlpatterns = [
     # Skills API endpoints
     path('api/skills/', views.get_skills_data, name='skills_data'),
     path('skills-autocomplete/', views.skills_autocomplete, name='skills_autocomplete'),
+    
+    # Parse job description
+    path('parse-description/', views.parse_job_description, name='parse_description'),
 ]

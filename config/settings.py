@@ -29,6 +29,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR,'templates')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 # Get environment setting
 DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
@@ -36,8 +37,8 @@ DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['jobless.andreadev.uk', 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1', 'jobless-1v-b91dc24e55b1.herokuapp.com']
-CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'https://jobless-1v-b91dc24e55b1.herokuapp.com']
+ALLOWED_HOSTS = ['jobless.andreadev.uk', 'api.groq.com' , 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1', 'jobless-1v-b91dc24e55b1.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'https://api.groq.com' , 'http://localhost/', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'https://jobless-1v-b91dc24e55b1.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
@@ -294,3 +295,24 @@ else:
     SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
