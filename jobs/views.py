@@ -219,179 +219,100 @@ ICON_NAME_MAPPING = {
     'Python': 'skill-icons:python-dark',
 }
 
-class JobPostingListView(LoginRequiredMixin, ListView):
-    """
-    View for displaying a list of job postings for the logged-in user.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        ListView: Handles listing of JobPosting objects
-
-    Attributes:
-        model: JobPosting model
-        template_name: Path to the list template
-        context_object_name: Name used for the job list in template context
-    """
+class BaseJobView(LoginRequiredMixin):
+    """Base view for job-related operations"""
     model = JobPosting
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+
+class JobListView(BaseJobView, ListView):
+    """View for listing job postings"""
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
+    ordering = ['-created_at']
 
-    def get_queryset(self):
-        return JobPosting.objects.filter(user=self.request.user)
-
-
-class JobPostingCreateView(LoginRequiredMixin, CreateView):
-    """
-    View for creating new job posting entries.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        CreateView: Handles creation of JobPosting objects
-
-    Attributes:
-        model: JobPosting model
-        form_class: Form class for job posting creation
-        template_name: Path to the creation template
-        success_url: URL to redirect to after successful creation
-    """
-    model = JobPosting
+class JobCreateView(BaseJobView, CreateView):
+    """View for creating new job postings"""
     form_class = JobPostingForm
     template_name = 'jobs/add.html'
     success_url = reverse_lazy('jobs:list')
 
-    def form_invalid(self, form):
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'error': form.errors,
-                'message': 'Validation failed'
-            }, status=400)
-        return super().form_invalid(form)
-
     def form_valid(self, form):
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            if self.request.POST.get('process_paste') == 'true':
-                paste_text = self.request.POST.get('paste')
-                if paste_text:
-                    try:
-                        parsed = form.parse_job_with_ai(paste_text)
-                        if parsed:
-                            return JsonResponse({'fields': parsed})
-                        return JsonResponse({
-                            'error': 'Could not parse text',
-                            'message': 'AI processing failed'
-                        }, status=400)
-                    except Exception as e:
-                        return JsonResponse({
-                            'error': str(e),
-                            'message': 'Processing error'
-                        }, status=400)
-                return JsonResponse({
-                    'error': 'No text provided',
-                    'message': 'Please provide text to process'
-                }, status=400)
-        
         form.instance.user = self.request.user
-        messages.success(self.request, 'Job posting added successfully.')
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, 'Job posting created successfully')
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Create groups by uppercase first letter
+        context['skill_icons'] = self._get_grouped_skills()
+        return context
+
+    def _get_grouped_skills(self):
         skill_groups = {}
         for icon, name in SKILL_ICONS:
             first_letter = name[0].upper()
-            if (first_letter not in skill_groups):
+            if first_letter not in skill_groups:
                 skill_groups[first_letter] = []
-                
+            
             skill_groups[first_letter].append({
                 'name': name,
                 'icon': ICON_NAME_MAPPING.get(name, icon),
-                'icon_dark': DARK_VARIANTS.get(ICON_NAME_MAPPING.get(name, icon), ICON_NAME_MAPPING.get(name, icon))
+                'icon_dark': DARK_VARIANTS.get(
+                    ICON_NAME_MAPPING.get(name, icon),
+                    ICON_NAME_MAPPING.get(name, icon)
+                )
             })
         
-        # Convert to sorted list of tuples (letter, skills)
-        context['skill_icons'] = [
-            {'letter': letter, 'skills': sorted(skills, key=lambda x: x['name'].upper())}
+        return [
+            {
+                'letter': letter,
+                'skills': sorted(skills, key=lambda x: x['name'].upper())
+            }
             for letter, skills in sorted(skill_groups.items())
         ]
-        return context
 
-
-class JobPostingUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    View for updating existing job posting entries.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        UpdateView: Handles updating of JobPosting objects
-
-    Attributes:
-        model: JobPosting model
-        form_class: Form class for job posting updating
-        template_name: Path to the edit template
-        success_url: URL to redirect to after successful update
-    """
-    model = JobPosting
+class JobPostingUpdateView(BaseJobView, UpdateView):
+    """View for updating existing job postings"""
     form_class = JobPostingForm
     template_name = 'jobs/edit.html'
     success_url = reverse_lazy('jobs:list')
 
-    def get_queryset(self):
-        # Ensure users can only edit their own job postings
-        return JobPosting.objects.filter(user=self.request.user)
-
     def form_valid(self, form):
+        response = super().form_valid(form)
         messages.success(self.request, 'Job posting updated successfully.')
-        return super().form_valid(form)
+        return response
 
-
-class JobPostingDeleteView(LoginRequiredMixin, DeleteView):
-    """
-    View for deleting job posting entries.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        DeleteView: Handles deletion of JobPosting objects
-
-    Attributes:
-        model: JobPosting model
-        template_name: Path to the deletion confirmation template
-        success_url: URL to redirect to after successful deletion
-    """
-    model = JobPosting
+class JobPostingDeleteView(BaseJobView, DeleteView):
+    """View for deleting job postings"""
     template_name = 'jobs/delete.html'
     success_url = reverse_lazy('jobs:list')
 
-    def get_queryset(self):
-        # Ensure users can only delete their own job postings
-        return JobPosting.objects.filter(user=self.request.user)
-
     def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
         messages.success(self.request, 'Job posting deleted successfully.')
-        return super().delete(request, *args, **kwargs)
+        return response
 
-
-class JobPostingDetailView(LoginRequiredMixin, DetailView):
-    """
-    View for displaying detailed information about a job posting.
-
-    Inherits from:
-        LoginRequiredMixin: Ensures user authentication
-        DetailView: Handles displaying detailed view of JobPosting objects
-
-    Attributes:
-        model: JobPosting model
-        template_name: Path to the detail template
-        context_object_name: Name used for the job posting in template context
-    """
-    model = JobPosting
+class JobPostingDetailView(BaseJobView, DetailView):
+    """View for displaying job details"""
     template_name = 'jobs/detail.html'
     context_object_name = 'job'
 
+class JobFavoritesListView(BaseJobView, ListView):
+    """View for displaying user's favorited jobs"""
+    template_name = 'jobs/favourites.html'
+    context_object_name = 'favorite_jobs'
+
     def get_queryset(self):
-        # Ensure users can only view their own job postings
-        return JobPosting.objects.filter(user=self.request.user)
-    
+        return JobPosting.objects.filter(favourites=self.request.user)
+
+# Remove or comment out the old function-based view:
+# def favourited_jobs(request):
+#     """Display user's favourited jobs"""
+#     favorite_jobs = JobPosting.objects.filter(favourites=request.user)
+#     return render(request, "jobs/favourites.html", {"favorite_jobs": favorite_jobs})
+
 def toggle_favourite(request, job_id):
     """Toggle favourite status of a job posting"""
     job = get_object_or_404(JobPosting, id=job_id)
@@ -406,11 +327,6 @@ def toggle_favourite(request, job_id):
     
     return redirect("jobs:list")
 
-
-def favourited_jobs(request):
-    """Display user's favourited jobs"""
-    favorite_jobs = JobPosting.objects.filter(favourites=request.user)
-    return render(request, "jobs/favourites.html", {"favorite_jobs": favorite_jobs})
 
 def skills_autocomplete(request):
     """Handle skills autocomplete API requests"""
@@ -449,43 +365,52 @@ def upper(value):
 @csrf_protect
 @require_http_methods(["POST"])
 def parse_job_description(request):
-    """Handle HTMX request to parse job description"""
-    paste_text = request.POST.get('paste', '').strip()
-    
-    if not paste_text:
-        return HttpResponse(
-            render_to_string('jobs/partials/alert.html', {
-                'type': 'warning',
-                'message': 'Please paste some text first'
-            }),
-            status=400
-        )
+    """Handle job description parsing"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'error', 'message': 'Authentication required'}, status=403)
 
     try:
+        paste_text = request.POST.get('paste', '').strip()
+        if not paste_text:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Please paste some text first'
+            }, status=400)
+
         form = JobPostingForm()
         parsed = form.parse_job_with_ai(paste_text)
         
         if not parsed:
-            return HttpResponse(
-                render_to_string('jobs/partials/alert.html', {
-                    'type': 'error',
-                    'message': 'Could not extract job details. Please check the text format.'
-                }),
-                status=400
-            )
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Could not extract job details'
+            }, status=400)
+
+        # Log the parsed data for debugging
+        logger.debug(f"Parsed data before sending: {parsed}")
             
-        # Return rendered form fields with parsed data
-        context = {'parsed': parsed}
-        return HttpResponse(
-            render_to_string('jobs/partials/form_fields.html', context)
-        )
+        # Format response data
+        response_data = {
+            'status': 'success',
+            'message': 'Successfully extracted job details',
+            'fields': {
+                'title': parsed.get('title', ''),
+                'company': parsed.get('company', ''),
+                'location': parsed.get('location', ''),
+                'salary_range': parsed.get('salary_range', ''),
+                'description': parsed.get('description', ''),
+                'url': parsed.get('url', '')
+            }
+        }
+
+        # Log the response for debugging
+        logger.debug(f"Sending response: {response_data}")
+        
+        return JsonResponse(response_data)
 
     except Exception as e:
-        logger.error(f"Error in parse_job_description: {str(e)}")
-        return HttpResponse(
-            render_to_string('jobs/partials/alert.html', {
-                'type': 'error',
-                'message': f'Error processing job description: {str(e)}'
-            }),
-            status=400
-        )
+        logger.error(f"Error parsing job description: {str(e)}")
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Error processing request: {str(e)}'
+        }, status=500)
