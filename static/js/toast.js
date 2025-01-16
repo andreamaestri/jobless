@@ -1,5 +1,5 @@
 document.addEventListener("alpine:init", () => {
-  Alpine.data("toastManager", () => ({
+  Alpine.store("toastManager", {
     toasts: [],
 
     init() {
@@ -47,7 +47,7 @@ document.addEventListener("alpine:init", () => {
         }, 300);
       }
     }
-  }));
+  });
 });
 
 // Add CSS styles for toast animations
