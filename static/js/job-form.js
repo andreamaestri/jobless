@@ -43,11 +43,19 @@ try {
 
             if (missingFields.length > 0) {
                 console.error('Form validation failed');
-                showNotification('Error', `Please fill in required fields: ${missingFields.join(', ')}`, 'error');
-                if (firstInvalidField) {
-                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstInvalidField.focus();
-                }
+                const message = `Please fill in required fields: ${missingFields.join(', ')}`;
+                console.log('Showing notification:', message);
+                
+                // Ensure toastSystem is initialized
+                toastSystem.init();
+                
+                // Show notification directly through toastSystem
+                toastSystem.show(message, 'error').then(() => {
+                    if (firstInvalidField) {
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstInvalidField.focus();
+                    }
+                });
                 return;
             }
 
