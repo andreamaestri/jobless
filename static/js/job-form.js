@@ -322,60 +322,91 @@ try {
         }
     }
 
-    // Show notification using a simpler toast system
-    function showNotification(title, message, type) {
-        // Create toast element
-        const toast = document.createElement('div');
-        toast.className = `alert alert-${type} shadow-lg fixed top-4 right-4 z-50 w-auto max-w-sm animate-enter`;
-        toast.innerHTML = `
-            <div class="flex justify-between items-center w-full">
-                <span>${message}</span>
-                <button class="btn btn-ghost btn-sm btn-circle">
-                    <iconify-icon icon="octicon:x-16"></iconify-icon>
-                </button>
-            </div>
-        `;
+    // Toast notification system
+    const toastSystem = {
+        container: null,
+        queue: [],
+        processing: false,
 
-        // Add styles for animations if they don't exist
-        if (!document.getElementById('toast-styles')) {
-            const style = document.createElement('style');
-            style.id = 'toast-styles';
-            style.textContent = `
-                @keyframes toast-enter {
-                    from { transform: translateY(-100%); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-                @keyframes toast-leave {
-                    from { transform: translateY(0); opacity: 1; }
-                    to { transform: translateY(-100%); opacity: 0; }
-                }
-                .animate-enter {
-                    animation: toast-enter 0.3s ease-out;
-                }
-                .animate-leave {
-                    animation: toast-leave 0.3s ease-in forwards;
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        init() {
+            // Create container if it doesn't exist
+            if (!this.container) {
+                this.container = document.createElement('div');
+                this.container.className = 'fixed top-4 right-4 z-50 flex flex-col gap-2';
+                document.body.appendChild(this.container);
 
-        // Add close button handler
-        const closeBtn = toast.querySelector('button');
-        closeBtn.addEventListener('click', () => {
-            toast.classList.add('animate-leave');
-            setTimeout(() => toast.remove(), 300);
-        });
-
-        // Add to document
-        document.body.appendChild(toast);
-
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (document.body.contains(toast)) {
-                toast.classList.add('animate-leave');
-                setTimeout(() => toast.remove(), 300);
+                // Add styles if they don't exist
+                if (!document.getElementById('toast-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'toast-styles';
+                    style.textContent = `
+                        @keyframes slideIn {
+                            from { transform: translateX(100%); opacity: 0; }
+                            to { transform: translateX(0); opacity: 1; }
+                        }
+                        @keyframes slideOut {
+                            from { transform: translateX(0); opacity: 1; }
+                            to { transform: translateX(100%); opacity: 0; }
+                        }
+                        .toast-enter {
+                            animation: slideIn 0.3s ease-out forwards;
+                        }
+                        .toast-exit {
+                            animation: slideOut 0.3s ease-out forwards;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
             }
-        }, 5000);
+        },
+
+        async show(message, type = 'info') {
+            this.init();
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} shadow-lg w-80 toast-enter`;
+            toast.innerHTML = `
+                <div class="flex justify-between items-center w-full">
+                    <span class="text-sm">${message}</span>
+                    <button class="btn btn-ghost btn-xs btn-circle">
+                        <iconify-icon icon="octicon:x-16"></iconify-icon>
+                    </button>
+                </div>
+            `;
+
+            // Add to container
+            this.container.appendChild(toast);
+
+            // Setup close button
+            const closeBtn = toast.querySelector('button');
+            closeBtn.addEventListener('click', () => this.remove(toast));
+
+            // Auto remove after delay
+            setTimeout(() => this.remove(toast), 5000);
+
+            // Return promise that resolves when toast is removed
+            return new Promise(resolve => {
+                toast.addEventListener('animationend', () => {
+                    if (toast.classList.contains('toast-exit')) {
+                        toast.remove();
+                        resolve();
+                    }
+                });
+            });
+        },
+
+        remove(toast) {
+            if (document.body.contains(toast)) {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+            }
+        }
+    };
+
+    // Show notification using toast system
+    function showNotification(title, message, type) {
+        toastSystem.show(message, type);
     }
     });
 } catch (error) {
