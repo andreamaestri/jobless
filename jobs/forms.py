@@ -44,67 +44,113 @@ class JobPostingForm(forms.ModelForm):
         for field in ['title', 'company', 'location']:
             self.fields[field].required = True
 
-    def extract_field_value(self, text, field_name):
-        """Extract field value from AI response"""
-        pattern = rf"{field_name}:\s*(.+?)(?=\n\w+:|$)"
-        match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
-        return match.group(1).strip() if match else ""
-
     def parse_job_with_ai(self, text):
-        """Extract job details from text and return form-ready values"""
+        """Extract job details using AI and return form-ready data"""
         if not text or not text.strip():
             return {'error': 'Empty job description provided'}
 
+        logger.debug(f"Processing job description:\n{text[:500]}...")
+
         try:
+            # Initialize OpenAI client
             client = openai.OpenAI(
                 base_url="https://api.groq.com/openai/v1",
                 api_key=settings.GROQ_API_KEY
             )
 
-            prompt = """Extract the following job details:
-Title: The exact job title
-Company: The company name
-Location: City/Region and work type (remote/hybrid/onsite)
-Salary: Any salary or compensation details
-Description: A well-formatted job description
+            # Simple, direct prompt
+            prompt = """Extract these job details into a clear format:
+Title: [job title]
+Company: [company name]
+Location: [location]
+Salary: [salary if listed]
+Description: [full job description]"""
 
-Format each field on a new line starting with the field name."""
-
+            # Get AI response
             response = client.chat.completions.create(
                 model="mixtral-8x7b-32768",
                 messages=[
-                    {"role": "system", "content": "You are a job details extractor. Extract and format the key details clearly."},
-                    {"role": "user", "content": text}
+                    {"role": "system", "content": "Extract job posting details in a clear format"},
+                    {"role": "user", "content": f"{prompt}\n\n{text}"}
                 ],
-                temperature=0.1,
-                max_tokens=2000
+                temperature=0
             )
 
-            result = response.choices[0].message.content.strip()
-            
-            # Extract fields using regex
-            data = {
-                'title': self.extract_field_value(result, 'Title'),
-                'company': self.extract_field_value(result, 'Company'),
-                'location': self.extract_field_value(result, 'Location'),
-                'salary_range': self.extract_field_value(result, 'Salary'),
-                'description': self.extract_field_value(result, 'Description')
+            # Get response text
+            extracted = response.choices[0].message.content.strip()
+            logger.debug(f"AI Response:\n{extracted}")
+
+            # Map response to form fields
+            form_data = {
+                'title': '',
+                'company': '',
+                'location': '',
+                'salary_range': '',
+                'description': '',
+                'status': 'NEW'
             }
+
+            # Parse AI response into fields
+            lines = extracted.split('\n')
+            in_description = False
+            description_lines = []
+            
+            for line in lines:
+                line = line.strip()
+                
+                # If we're in description mode, collect all non-empty lines
+                if in_description:
+                    if line and not any(line.startswith(f"{field}:") for field in ['Title', 'Company', 'Location', 'Salary']):
+                        description_lines.append(line)
+                    continue
+                
+                # Check for field headers
+                if line.startswith('Title:'):
+                    form_data['title'] = line.replace('Title:', '').strip()
+                elif line.startswith('Company:'):
+                    form_data['company'] = line.replace('Company:', '').strip()
+                elif line.startswith('Location:'):
+                    form_data['location'] = line.replace('Location:', '').strip()
+                elif line.startswith('Salary:'):
+                    form_data['salary_range'] = line.replace('Salary:', '').strip()
+                elif line.startswith('Description:') or line == 'Job Description:':
+                    in_description = True
+                    # If there's content after the Description: label, add it
+                    content = line.replace('Description:', '').replace('Job Description:', '').strip()
+                    if content:
+                        description_lines.append(content)
+            
+            # Join all description lines
+            if description_lines:
+                form_data['description'] = '\n'.join(description_lines)
+
+            # Format description with bullets if not empty
+            if form_data['description']:
+                form_data['description'] = '• ' + form_data['description'].replace('\n', '\n• ').strip('• ')
 
             # Validate required fields
             required = ['title', 'company', 'location']
-            if not all(data[key] for key in required):
-                missing = [key for key in required if not data[key]]
-                return {'error': f'Missing required fields: {", ".join(missing)}'}
+            missing = [f for f in required if not form_data[f]]
+            if missing:
+                error_msg = f"Missing required fields: {', '.join(missing)}"
+                logger.error(f"Validation failed: {error_msg}\nAI Response:\n{extracted}")
+                return {'error': error_msg}
 
-            return {
-                'status': 'success',
-                'data': data
-            }
+            logger.info("Successfully extracted all required fields")
+            return {'status': 'success', 'data': form_data}
 
         except Exception as e:
-            logger.exception("Error in parse_job_with_ai")
-            return {'error': str(e)}
+            if isinstance(e, openai.APIError):
+                error_msg = "AI service temporarily unavailable. Please try again later."
+            elif isinstance(e, openai.APITimeoutError):
+                error_msg = "Request timed out. Please try again."
+            elif isinstance(e, openai.APIConnectionError):
+                error_msg = "Connection error. Please check your internet connection."
+            else:
+                error_msg = f"Error processing job description: {str(e)}"
+            
+            logger.exception(error_msg)
+            return {'error': error_msg}
 
     def clean(self):
         cleaned_data = super().clean()

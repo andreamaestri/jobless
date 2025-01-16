@@ -222,82 +222,14 @@ def parse_job_description(request):
     if not request.user.is_authenticated:
         return JsonResponse({'status': 'error', 'message': 'Authentication required.'}, status=401)
     
-    paste_text = request.POST.get('paste', '')
-    if not paste_text:
-        return JsonResponse({'status': 'error', 'message': 'No text provided'}, status=400)
-
-    try:
-        form = JobPostingForm()
-        parsed_data = form.parse_job_with_ai(paste_text)
-        
-        if not parsed_data:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Failed to parse job description. Please check the format and try again.'
-            }, status=400)
-        
-        # Ensure field names match form field IDs
-        # Clean and validate the parsed data
-        cleaned_data = {
-            'title': parsed_data.get('title', '').strip(),
-            'company': parsed_data.get('company', '').strip(),
-            'location': parsed_data.get('location', '').strip(),
-            'url': parsed_data.get('url', '').strip(),
-            'salary_range': parsed_data.get('salary_range', '').replace('\\_', '_').strip(),
-            'description': parsed_data.get('description', '').strip(),
-            'status': 'NEW'
-        }
-
-        # Validate required fields
-        required_fields = ['title', 'company', 'location']
-        missing_fields = [field for field in required_fields if not cleaned_data[field]]
-        if missing_fields:
-            return JsonResponse({
-                'status': 'error',
-                'message': f'Missing required fields: {", ".join(missing_fields)}'
-            }, status=400)
-
-        response_data = {
-            'status': 'success',
-            'message': 'Successfully parsed job description',
-            'data': cleaned_data
-        }
-        
-        logger.debug(f"Sending response: {response_data}")
-        
-        # Handle both HTMX and regular AJAX requests
-        if request.headers.get('HX-Request'):
-            context = {'form': form, 'parsed_data': cleaned_data}
-            return HttpResponse(
-                render_to_string('jobs/snippets/field.html', context),
-                content_type='text/html'
-            )
-        else:
-            return JsonResponse(response_data)
-            
-    except Exception as e:
-        logger.error(f"Error parsing job description: {str(e)}")
+    text = request.POST.get('paste', '').strip()
+    if not text:
         return JsonResponse({
-            'status': 'error', 
-            'message': str(e)
-        }, status=500)
+            'status': 'error',
+            'message': 'No job description provided'
+        }, status=400)
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from .forms import JobPostingForm
-
-@require_POST
-def parse_description(request):
-    """Handle job description parsing with better error handling"""
     try:
-        # Get the paste content
-        text = request.POST.get('paste', '').strip()
-        if not text:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'No job description provided'
-            }, status=400)
-
         # Create form instance and parse
         form = JobPostingForm()
         result = form.parse_job_with_ai(text)
@@ -314,6 +246,7 @@ def parse_description(request):
                 'message': 'Invalid response format'
             }, status=400)
 
+        logger.debug(f"Parsed job data: {result['data']}")
         return JsonResponse({
             'status': 'success',
             'data': result['data']
