@@ -1,0 +1,24 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no" />
+
+<!-- Primary Meta Tags -->
+<title>{% block title %}Jobless{% endblock %}</title>
+<meta name="title" content="{% block meta_title %}Jobless - Your Job Search Assistant{% endblock %}" />
+<meta name="description" content="{% block meta_description %}Jobless helps you organize and track your job applications with an intelligent assistant to boost your job search success.{% endblock %}" />
+<meta name="keywords" content="{% block meta_keywords %}job search, job tracking, career assistant, application tracking{% endblock %}" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:title" content="{% block og_title %}{{ block.super }}{% endblock %}" />
+<meta property="og:description" content="{% block og_description %}{{ meta_description }}{% endblock %}" />
+<meta property="og:image" content="{% block og_image %}{% static 'images/jobless-social.png' %}{% endblock %}" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="{{ request.build_absolute_uri }}" />
+<meta property="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}" />
+<meta property="twitter:description" content="{% block twitter_description %}{{ meta_description }}{% endblock %}" />
+<meta property="twitter:image" content="{% block twitter_image %}{% static 'images/jobless-social.png' %}{% endblock %}" />
+
+{% include 'components/scripts.html' %}

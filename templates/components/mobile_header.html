@@ -1,0 +1,11 @@
+<header x-cloak class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-base-100 z-40 border-b border-base-200 px-4">
+  <div class="flex items-center justify-between h-full">
+    <div class="flex items-center gap-3">
+      <button @click="$store.sidebar.toggle()" class="btn btn-animate btn-circle" :class="{ 'active': $store.sidebar.open }">
+        <iconify-icon icon="octicon:three-bars-16" class="icon-animate relative text-xl"
+          :class="{ 'rotate-90': $store.sidebar.open }"></iconify-icon>
+      </button>
+      {% include 'components/logo.html' %}
+    </div>
+  </div>
+</header>
