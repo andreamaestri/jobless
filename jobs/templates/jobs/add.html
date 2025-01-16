@@ -5,17 +5,6 @@
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
 {{ block.super }}
-<style>
-.htmx-indicator {
-    display: none;
-}
-.htmx-request .htmx-indicator {
-    display: inline-block;
-}
-.htmx-request.htmx-indicator {
-    display: inline-block;
-}
-</style>
 {% endblock %}
 
 {% block content %}
@@ -36,11 +25,7 @@
                     <div class="p-8 form-section" style="--delay: 0">
                         <h2 class="text-lg font-semibold text-base-content mb-6">Quick Fill with AI</h2>
                         <div class="space-y-4">
-                            <form id="parse-form" 
-                                  hx-post="/jobs/parse-description/" 
-                                  hx-trigger="submit"
-                                  hx-indicator=".htmx-indicator"
-                                  method="POST">
+                            <form id="parse-form" method="POST">
                                 {% csrf_token %}
                                 <div>
                                     <label for="paste" class="block text-sm font-medium text-base-content mb-2">
@@ -55,7 +40,7 @@
                                 <div class="flex justify-end mt-4">
                                     <button type="submit" 
                                             class="btn btn-primary btn-sm gap-2">
-                                        <span class="loading loading-spinner loading-sm htmx-indicator"></span>
+                                        <span class="loading loading-spinner loading-sm hidden"></span>
                                         <iconify-icon icon="heroicons:sparkles"></iconify-icon>
                                         <span>Process with AI</span>
                                     </button>

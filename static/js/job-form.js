@@ -89,91 +89,17 @@ document.addEventListener('DOMContentLoaded', function() {
         return cookieValue;
     }
 
-    // Handle AI Parser form response
-    document.body.addEventListener('htmx:afterRequest', function(evt) {
-        if (evt.detail.elt.id === 'parse-form') {
-            const response = evt.detail.xhr.response;
-            console.log('HTMX Response:', response);
+    // Handle parse form submission
+    if (parseForm) {
+        parseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            try {
-                let data;
-                const contentType = evt.detail.xhr.getResponseHeader('Content-Type');
-                
-                // Handle different response types
-                if (contentType && contentType.includes('application/json')) {
-                    // Parse JSON response
-                    if (typeof response === 'string') {
-                        data = JSON.parse(response);
-                    } else {
-                        data = response;
-                    }
-                    
-                    if (data.status === 'success') {
-                        // Handle both response formats
-                        const fields = data.fields || data.data;
-                        if (fields) {
-                            populateFormFields(fields);
-                            showNotification('Success', 'Form fields populated successfully', 'success');
-                        } else {
-                            throw new Error('No field data found in response');
-                        }
-                    } else {
-                        throw new Error(data.message || 'Failed to parse description');
-                    }
-                } else if (contentType && contentType.includes('text/html')) {
-                    // Handle HTML response (template rendering)
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(response, 'text/html');
-                    
-                    // Extract field values from the HTML response
-                    const fields = {};
-                    doc.querySelectorAll('input, textarea').forEach(field => {
-                        const name = field.getAttribute('name');
-                        if (name) {
-                            fields[name] = field.value || field.textContent;
-                        }
-                    });
-                    
-                    if (Object.keys(fields).length > 0) {
-                        populateFormFields(fields);
-                        showNotification('Success', 'Form fields populated successfully', 'success');
-                    } else {
-                        throw new Error('No fields found in response');
-                    }
-                } else {
-                    throw new Error('Unexpected response type');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification('Error', error.message, 'error');
-                
-                // Clear the paste textarea on error
-                const pasteArea = document.querySelector('#paste, #id_paste');
-                if (pasteArea) {
-                    pasteArea.value = '';
-                }
-            }
-            
-            // Reset button state
-            const submitButton = evt.detail.elt.querySelector('button[type="submit"]');
-            const spinner = submitButton.querySelector('.loading');
-            const buttonText = submitButton.querySelector('span:not(.loading)');
-            
-            submitButton.disabled = false;
-            spinner.classList.add('hidden');
-            buttonText.textContent = 'Process with AI';
-        }
-    });
-
-    // Log form data being sent
-    document.body.addEventListener('htmx:beforeRequest', function(evt) {
-        if (evt.detail.elt.id === 'parse-form') {
-            const formData = new FormData(evt.detail.elt);
+            // Get form data
+            const formData = new FormData(this);
             
             // Clean and validate paste text
             let pasteText = formData.get('paste');
             if (!pasteText || pasteText.trim() === '') {
-                evt.preventDefault();
                 showNotification('Error', 'Please paste a job description first', 'error');
                 return;
             }
@@ -188,20 +114,58 @@ document.addEventListener('DOMContentLoaded', function() {
                 .replace(/\s+/g, ' ')              // Normalize whitespace
                 .trim();
 
-            // Update the form data with cleaned text
             formData.set('paste', pasteText);
 
-            // Log the cleaned data
-            const formDataObj = {};
-            formData.forEach((value, key) => {
-                formDataObj[key] = value;
-            });
-            console.log('Cleaned form data being sent:', formDataObj);
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const spinner = submitButton.querySelector('.loading');
+            const buttonText = submitButton.querySelector('span:not(.loading)');
+            
+            submitButton.disabled = true;
+            spinner.classList.remove('hidden');
+            buttonText.textContent = 'Processing...';
 
-            // Update the original event's form data
-            evt.detail.requestConfig.body = formData;
-        }
-    });
+            // Submit form via fetch
+            fetch('/jobs/parse-description/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success' && data.data) {
+                    populateFormFields(data.data);
+                    showNotification('Success', 'Form fields populated successfully', 'success');
+                } else {
+                    throw new Error(data.message || 'Failed to parse description');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error', error.message, 'error');
+                
+                // Clear the paste textarea on error
+                const pasteArea = document.querySelector('#paste, #id_paste');
+                if (pasteArea) {
+                    pasteArea.value = '';
+                }
+            })
+            .finally(() => {
+                // Reset button state
+                submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Process with AI';
+            });
+        });
+    }
 
 
     // Helper function to populate form fields
