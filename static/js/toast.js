@@ -1,86 +1,76 @@
-document.addEventListener("alpine:init", () => {
-  Alpine.store("toastManager", {
-    toasts: [],
-
+// Toast notification system
+const ToastSystem = {
+    container: null,
+    
     init() {
-      // Initialize toasts from Django messages if present
-      const messages = this.getInitialMessages();
-      messages.forEach((message, index) => {
-        this.addToast({
-          id: Date.now() + index,
-          message: message.text,
-          type: message.type,
-          progress: 100
-        });
-      });
-    },
+        if (!this.container) {
+            this.container = document.createElement('div');
+            this.container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-2';
+            document.body.appendChild(this.container);
 
-    getInitialMessages() {
-      // This would be populated by Django template context
-      // The structure is handled in the template itself
-      return [];
-    },
-
-    addToast(toast) {
-      this.toasts.push(toast);
-      
-      const startTime = Date.now();
-      const duration = 5000;
-      
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        toast.progress = Math.max(0, 100 - (elapsed / duration * 100));
-        
-        if (elapsed >= duration) {
-          clearInterval(interval);
-          this.removeToast(toast.id);
+            // Add styles if they don't exist
+            if (!document.getElementById('toast-styles')) {
+                const style = document.createElement('style');
+                style.id = 'toast-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                    .toast-enter {
+                        animation: slideIn 0.3s ease-out forwards;
+                    }
+                    .toast-exit {
+                        animation: slideOut 0.3s ease-out forwards;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
         }
-      }, 100);
     },
 
-    removeToast(id) {
-      const index = this.toasts.findIndex(t => t.id === id);
-      if (index > -1) {
-        this.toasts[index].removing = true;
-        setTimeout(() => {
-          this.toasts = this.toasts.filter(t => t.id !== id);
-        }, 300);
-      }
-    }
-  });
-});
+    show(message, type = 'info') {
+        this.init();
+        
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} shadow-lg w-80 toast-enter`;
+        toast.innerHTML = `
+            <div class="flex justify-between items-center w-full">
+                <span class="text-sm">${message}</span>
+                <button class="btn btn-ghost btn-xs btn-circle">
+                    <iconify-icon icon="octicon:x-16"></iconify-icon>
+                </button>
+            </div>
+        `;
 
-// Add CSS styles for toast animations
-const style = document.createElement('style');
-style.textContent = `
-  .toast > * {
-    animation: toast-enter 0.3s ease-out;
-  }
-  
-  @keyframes toast-enter {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
+        this.container.appendChild(toast);
+
+        const closeBtn = toast.querySelector('button');
+        closeBtn.addEventListener('click', () => this.remove(toast));
+
+        setTimeout(() => this.remove(toast), 5000);
+
+        return new Promise(resolve => {
+            toast.addEventListener('animationend', () => {
+                if (toast.classList.contains('toast-exit')) {
+                    toast.remove();
+                    resolve();
+                }
+            });
+        });
+    },
+
+    remove(toast) {
+        if (document.body.contains(toast)) {
+            toast.classList.remove('toast-enter');
+            toast.classList.add('toast-exit');
+        }
     }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  .animate-leave {
-    animation: toast-leave 0.3s ease-in forwards;
-  }
-  
-  @keyframes toast-leave {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-`;
-document.head.appendChild(style);
+};
+
+// Export for global use
+window.ToastSystem = ToastSystem;

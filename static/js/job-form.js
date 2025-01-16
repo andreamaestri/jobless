@@ -335,17 +335,16 @@ try {
         }
     }
 
-    // Show notification using Alpine.js toast system
+    // Show notification using toast system
     function showNotification(title, message, type) {
-        const toastManager = Alpine.store('toastManager');
-        if (toastManager) {
-            toastManager.addToast({
-                id: Date.now(),
-                message: message,
-                type: type,
-                progress: 100
-            });
+        // Initialize if needed
+        if (!window.ToastSystem) {
+            console.error('Toast system not found');
+            return;
         }
+        
+        // Show the toast
+        window.ToastSystem.show(message, type);
     }
     });
 } catch (error) {
