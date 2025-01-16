@@ -53,26 +53,26 @@ module.exports = {
         themes: [
             {
                 'Jobless': {
-                    'primary': '#e67e22',           // Softer orange
-                    'primary-focus': '#d35400',     // Deeper orange
+                    'primary': '#f97316',           // Vibrant orange
+                    'primary-focus': '#ea580c',     // Rich orange focus
                     'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#34495e',         // Slate blue
-                    'secondary-focus': '#2c3e50',   // Deeper slate
+                    'secondary': '#6366f1',         // Modern indigo
+                    'secondary-focus': '#4f46e5',   // Deep indigo focus
                     'secondary-content': '#ffffff',  // White text
 
-                    'accent': '#16a085',           // Soft teal
-                    'accent-focus': '#147a6b',     // Deeper teal
+                    'accent': '#16a085',           // Keeping the teal you like
+                    'accent-focus': '#0d9488',     // Slightly adjusted focus
                     'accent-content': '#ffffff',    // White text
 
-                    'neutral': '#2c3e50',          // Dark slate
-                    'neutral-focus': '#233140',    // Deeper slate
-                    'neutral-content': '#ecf0f1',   // Light gray text
+                    'neutral': '#334155',          // Modern slate
+                    'neutral-focus': '#1e293b',    // Deep slate focus
+                    'neutral-content': '#f8fafc',   // Very light slate
 
-                    'base-100': '#f9fafb',         // Off white
-                    'base-200': '#f1f5f9',         // Light gray
-                    'base-300': '#e2e8f0',         // Medium gray
-                    'base-content': '#2c3e50',     // Dark slate text
+                    'base-100': '#ffffff',         // Pure white
+                    'base-200': '#f1f5f9',         // Cool gray
+                    'base-300': '#e2e8f0',         // Slate gray
+                    'base-content': '#0f172a',     // Deep slate text
 
                     'info': '#3b82f6',    // Bright blue for information
                     'success': '#22c55e',  // Green for success
@@ -91,26 +91,26 @@ module.exports = {
                     '--border-btn': '1px',
                 },
                 'Dark': {
-                    'primary': '#e67e22',           // Warm orange
-                    'primary-focus': '#d35400',     // Deep orange
+                    'primary': '#f97316',           // Vibrant orange
+                    'primary-focus': '#ea580c',     // Rich orange focus
                     'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#34495e',         // Dark slate blue
-                    'secondary-focus': '#2c3e50',   // Deeper slate
+                    'secondary': '#818cf8',         // Lighter indigo for dark theme
+                    'secondary-focus': '#6366f1',   // Indigo focus
                     'secondary-content': '#ffffff',  // White text
 
-                    'accent': '#16a085',           // Dark teal
-                    'accent-focus': '#147a6b',     // Deeper teal
+                    'accent': '#16a085',           // Keeping the teal you like
+                    'accent-focus': '#0d9488',     // Slightly adjusted focus
                     'accent-content': '#ffffff',    // White text
 
-                    'neutral': '#2c3e50',          // Rich slate
-                    'neutral-focus': '#233140',    // Deep slate
-                    'neutral-content': '#ecf0f1',   // Light gray text
+                    'neutral': '#1e293b',          // Deep slate
+                    'neutral-focus': '#0f172a',    // Darker slate focus
+                    'neutral-content': '#f8fafc',   // Very light slate
 
-                    'base-100': '#1a202c',         // Dark background
-                    'base-200': '#2d3748',         // Slightly lighter
-                    'base-300': '#4a5568',         // Medium gray
-                    'base-content': '#f7fafc',     // Light text
+                    'base-100': '#0f172a',         // Rich dark background
+                    'base-200': '#1e293b',         // Slate
+                    'base-300': '#334155',         // Light slate
+                    'base-content': '#f8fafc',     // Very light slate text
 
                     'info': '#60a5fa',     // Lighter blue for dark theme
                     'success': '#4ade80',   // Lighter green for dark theme
