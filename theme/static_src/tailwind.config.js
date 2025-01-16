@@ -53,26 +53,26 @@ module.exports = {
         themes: [
             {
                 'Jobless': {
-                    'primary': '#f97316',           // Vibrant orange
-                    'primary-focus': '#ea580c',     // Deeper orange
+                    'primary': '#e67e22',           // Softer orange
+                    'primary-focus': '#d35400',     // Deeper orange
                     'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#8b5cf6',         // Warm purple
-                    'secondary-focus': '#7c3aed',   // Deeper purple
+                    'secondary': '#34495e',         // Slate blue
+                    'secondary-focus': '#2c3e50',   // Deeper slate
                     'secondary-content': '#ffffff',  // White text
 
-                    'accent': '#14b8a6',           // Teal
-                    'accent-focus': '#0d9488',     // Deeper teal
+                    'accent': '#16a085',           // Soft teal
+                    'accent-focus': '#147a6b',     // Deeper teal
                     'accent-content': '#ffffff',    // White text
 
-                    'neutral': '#1f2937',          // Cool gray
-                    'neutral-focus': '#111827',    // Darker gray
-                    'neutral-content': '#ffffff',   // White text
+                    'neutral': '#2c3e50',          // Dark slate
+                    'neutral-focus': '#233140',    // Deeper slate
+                    'neutral-content': '#ecf0f1',   // Light gray text
 
-                    'base-100': '#ffffff',         // Pure white
-                    'base-200': '#f3f4f6',         // Light gray
-                    'base-300': '#e5e7eb',         // Slightly darker gray
-                    'base-content': '#1f2937',     // Dark text
+                    'base-100': '#f9fafb',         // Off white
+                    'base-200': '#f1f5f9',         // Light gray
+                    'base-300': '#e2e8f0',         // Medium gray
+                    'base-content': '#2c3e50',     // Dark slate text
 
                     'info': '#3b82f6',    // Bright blue for information
                     'success': '#22c55e',  // Green for success
@@ -91,26 +91,26 @@ module.exports = {
                     '--border-btn': '1px',
                 },
                 'Dark': {
-                    'primary': '#f97316',           // Bright orange
-                    'primary-focus': '#ea580c',     // Deeper orange
+                    'primary': '#e67e22',           // Warm orange
+                    'primary-focus': '#d35400',     // Deep orange
                     'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#a78bfa',         // Soft purple
-                    'secondary-focus': '#8b5cf6',   // Deeper purple
+                    'secondary': '#34495e',         // Dark slate blue
+                    'secondary-focus': '#2c3e50',   // Deeper slate
                     'secondary-content': '#ffffff',  // White text
 
-                    'accent': '#2dd4bf',           // Bright teal
-                    'accent-focus': '#14b8a6',     // Deeper teal
+                    'accent': '#16a085',           // Dark teal
+                    'accent-focus': '#147a6b',     // Deeper teal
                     'accent-content': '#ffffff',    // White text
 
-                    'neutral': '#1e293b',          // Slate
-                    'neutral-focus': '#0f172a',    // Deep slate
-                    'neutral-content': '#ffffff',   // White text
+                    'neutral': '#2c3e50',          // Rich slate
+                    'neutral-focus': '#233140',    // Deep slate
+                    'neutral-content': '#ecf0f1',   // Light gray text
 
-                    'base-100': '#0f172a',         // Deep slate
-                    'base-200': '#1e293b',         // Slate
-                    'base-300': '#334155',         // Light slate
-                    'base-content': '#f8fafc',     // Very light slate
+                    'base-100': '#1a202c',         // Dark background
+                    'base-200': '#2d3748',         // Slightly lighter
+                    'base-300': '#4a5568',         // Medium gray
+                    'base-content': '#f7fafc',     // Light text
 
                     'info': '#60a5fa',     // Lighter blue for dark theme
                     'success': '#4ade80',   // Lighter green for dark theme
