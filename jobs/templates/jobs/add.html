@@ -136,7 +136,7 @@
                             <h2 class="text-lg font-semibold text-base-content mb-6">Required Skills</h2>
                             
                             <!-- Simplified skills container -->
-                            <div class="skill-container" onclick="document.getElementById('skills-modal').showModal()">
+                            <div class="skill-container" x-data @click="$dispatch('open-skills-modal')">
                                 <div id="selected-skills" class="p-4 flex flex-wrap gap-2"></div>
                                 <!-- Empty state CTA -->
                                 <div class="empty-state flex items-center justify-center absolute inset-0">
@@ -150,103 +150,9 @@
                             <input type="hidden" name="required_skills" id="skills-input">
                         </div>
 
-                        <!-- Skills Modal -->
-                        <dialog id="skills-modal" class="modal">
-                            <!-- Letter preview elements in modal -->
-                            <div class="letter-magnifier hidden"></div>
-                            <div class="letter-preview hidden"></div>
-                            
-                            <div class="modal-box w-screen h-screen sm:w-11/12 sm:h-[85vh] sm:max-w-7xl p-0 m-0 sm:m-auto fixed inset-0 sm:relative sm:inset-auto sm:rounded-2xl">
-                                <div class="flex flex-col h-full">
-                                    <!-- Header -->
-                                    <div class="flex-none p-3 sm:p-6 border-b border-base-200 bg-base-100">
-                                        <div class="flex items-center justify-between gap-4 mb-3 sm:mb-4">
-                                            <h3 class="text-lg sm:text-2xl font-bold">Select Skills</h3>
-                                        </div>
-                                        <!-- Search input -->
-                                        <div class="form-control">
-                                            <div class="relative">
-                                                <input type="text" 
-                                                       placeholder="Search" 
-                                                       class="input input-md sm:input-lg input-bordered w-full pl-12" 
-                                                       id="skill-search">
-                                                <iconify-icon icon="heroicons:magnifying-glass" 
-                                                             class="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50"
-                                                             width="20"></iconify-icon>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Main content area -->
-                                    <div class="flex-1 overflow-y-auto relative pb-20">
-                                        <div class="relative min-h-full overflow-x-hidden"> <!-- Added overflow-x-hidden -->
-                                            <!-- Quick letters -->
-                                            <div class="quick-letters-list">
-                                                {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
-                                                <button class="quick-letter" data-letter="{{ letter }}">{{ letter }}</button>
-                                                {% endfor %}
-                                            </div>
-
-                                            <!-- Skills groups -->
-                                            <div class="pr-8">
-                                                {% for group in skill_icons %}
-                                                    <div class="skill-group" data-letter="{{ group.letter }}">
-                                                        <div class="sticky top-0 z-20 bg-base-100 shadow-sm">
-                                                            <div class="flex items-center gap-3 p-3 sm:p-4">
-                                                                <span class="text-2xl sm:text-3xl font-bold text-primary w-10 h-10 flex items-center justify-center">
-                                                                    {{ group.letter }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 p-2 sm:p-4">
-                                                            {% for skill in group.skills %}
-                                                                <label class="group flex items-center gap-2 p-2 sm:p-3 rounded-xl hover:bg-base-200 cursor-pointer transition-all duration-200 hover:shadow-md active:scale-[0.98]">
-                                                                    <input type="checkbox" 
-                                                                           class="checkbox checkbox-sm sm:checkbox-md checkbox-primary" 
-                                                                           value="{{ skill.name }}"
-                                                                           data-skill='{"name": "{{ skill.name }}", "icon": "{{ skill.icon }}", "icon_dark": "{{ skill.icon_dark|default:skill.icon }}"}'>
-                                                                    <div class="flex items-center gap-3 min-w-0 flex-1">
-                                                                        <iconify-icon data-icon="{{ skill.icon }}" 
-                                                                                    data-icon-dark="{{ skill.icon_dark|default:skill.icon }}"
-                                                                                    class="w-8 h-8 sm:w-12 sm:h-12 bg-base-200 rounded-lg group-hover:bg-base-300 transition-colors transform transition-transform duration-200 group-hover:scale-110 flex-shrink-0"
-                                                                                    style="display: inline-block; font-size: 32px;"
-                                                                                    height="none"></iconify-icon>
-                                                                        <span class="text-sm sm:text-base font-medium truncate flex-1">{{ skill.name }}</span>
-                                                                    </div>
-                                                                </label>
-                                                            {% endfor %}
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Footer -->
-                                    <div class="flex-none border-t border-base-200 bg-base-100">
-                                        <div class="p-3 flex justify-end gap-3">
-                                            <button type="button" 
-                                                    class="btn btn-sm sm:btn-md btn-ghost" 
-                                                    onclick="document.getElementById('skills-modal').close(); window.skillsManager.resetModalState()">
-                                                <iconify-icon icon="heroicons:x-mark-20-solid" class="text-lg"></iconify-icon>
-                                                <span>Cancel</span>
-                                            </button>
-                                            <button type="button"
-                                                    class="btn btn-sm sm:btn-md btn-primary"
-                                                    onclick="window.skillsManager.applySelectedSkills(); document.getElementById('skills-modal').close()">
-                                                <iconify-icon icon="heroicons:check-20-solid" class="text-lg"></iconify-icon>
-                                                <span>Apply</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div x-data="skillsModal" @open-skills-modal.window="open = true">
+                                {% include "jobs/modals/skills_modal.html" %}
                             </div>
-                            
-                            <!-- Modal backdrop -->
-                            <form method="dialog" class="modal-backdrop">
-                                <button aria-label="Close modal" class="sr-only" onclick="window.skillsManager.resetModalState()">close</button>
-                            </form>
-                        </dialog>
 
                         <!-- Status -->
                         <div class="p-8 form-section" style="--delay: 3">
@@ -280,50 +186,42 @@
                             </div>
                         </div>
 
-                        <!-- Form Actions -->
-                        <div class="fixed bottom-0 left-0 right-0 z-10 flex justify-between items-center p-8 bg-base-200 border-t border-base-300 lg:left-[20rem] form-actions">
-                            <div class="text-sm text-base-content/60">
-                                <span class="text-error">*</span> Required fields
-                            </div>
-                            <div class="flex space-x-4">
-                                <a href="{% url 'jobs:list' %}"
-                                   class="btn btn-ghost">
-                                    Cancel
-                                </a>
-                                <button type="submit"
-                                        class="btn btn-primary gap-2">
-                                    <span class="loading loading-spinner loading-sm hidden"></span>
-                                    <span class="button-text">Save Job</span>
-                                </button>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Form Actions (outside form but controls it) -->
+<div class="fixed bottom-0 left-0 right-0 z-10 flex justify-between items-center p-8 bg-base-200 border-t border-base-300 lg:left-[20rem] form-actions">
+    <div class="text-sm text-base-content/60">
+        <span class="text-error">*</span> Required fields
+    </div>
+    <div class="flex space-x-4">
+        <a href="{% url 'jobs:list' %}"
+           class="btn btn-ghost">
+            Cancel
+        </a>
+        <button type="submit" 
+                class="btn btn-primary gap-2"
+                form="job-form">
+            <span class="loading loading-spinner loading-sm hidden"></span>
+            <span class="button-text">Save Job</span>
+        </button>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<script src="{% static 'js/skills-manager.js' %}"></script>
 <script src="{% static 'js/job-form.js' %}"></script>
 <script>
-    // Add debug logging
-    console.log('Form template loaded');
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM Content loaded');
-        const form = document.getElementById('job-form');
-        console.log('Form element:', form);
-        
-        // Log form submission attempts
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                console.log('Form submission attempted');
-                console.log('Form valid:', form.checkValidity());
-                console.log('Form data:', new FormData(form));
-            });
-        }
+    console.log('Template script starting');
+    window.addEventListener('load', function() {
+        console.log('Window loaded');
     });
 </script>
 {% endblock %}

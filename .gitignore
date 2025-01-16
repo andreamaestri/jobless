@@ -13,3 +13,4 @@ heroku.txt
 db.sqlite3
 .ssh/id_rsa
 .ssh/config
+.aider*

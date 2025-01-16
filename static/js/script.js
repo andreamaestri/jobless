@@ -1,108 +1,89 @@
-// ViewTransition helper for smoother page transitions
-class ViewTransitionHelper {
-    constructor() {
-        this.setupNavigationHandler();
-        this.regexPatterns = {
-            title: /<title>([\s\S]*)<\/title>/i,
-            scripts: /<(script|SCRIPT)[\s\S]*?<\/(script|SCRIPT)>/g,
-            main: /<main[^>]*>([\s\S]*)<\/main>/i
-        };
+// Motion and animation configuration
+const { animate, spring, stagger } = Motion;
+
+const CONSTANTS = {
+  MOBILE_BREAKPOINT: 1024,
+  SWIPE_THRESHOLD: 100,
+  ANIMATION_CONFIG: {
+    DURATION: {
+      SIDEBAR: 0.3,
+      CONTENT: 0.4,
+      STAGGER: 0.03
+    },
+    SPRING: {
+      DEFAULT: [0.34, 1.56, 0.64, 1]
+    },
+    EASE: {
+      SMOOTH: [0.22, 1, 0.36, 1]
     }
-
-    setupNavigationHandler() {
-        var self = this;
-        document.addEventListener('click', function(e) {
-            var link = e.target.closest('a');
-            if (!self.isValidNavigation(link)) return;
-
-            e.preventDefault();
-            self.handleNavigation(link.pathname, link.href);
-        });
-
-        window.addEventListener('popstate', function() {
-            self.handleNavigation(window.location.pathname, window.location.href);
-        });
+  },
+  SIDEBAR: {
+    WIDTH: {
+      EXPANDED: '20rem',
+      COLLAPSED: '5rem'
     }
+  }
+};
 
-    async handleNavigation(pathname, href) {
-        try {
-            const response = await fetch(pathname);
-            const html = await response.text();
-            
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            const currentMain = document.querySelector('main');
-            const newMain = doc.querySelector('main');
-            
-            if (currentMain && newMain) {
-                // Prepare the new content but keep it hidden
-                const wrapper = document.createElement('div');
-                wrapper.innerHTML = newMain.innerHTML;
-                wrapper.className = 'page-transition-wrapper';
-                
-                this.startViewTransition(() => {
-                    // Animate out current content
-                    currentMain.style.animation = 'page-leave 0.3s ease-out forwards';
-                    
-                    // After current content fades out, update content and animate in
-                    setTimeout(() => {
-                        currentMain.innerHTML = wrapper.innerHTML;
-                        currentMain.style.animation = 'page-enter 0.3s ease-out forwards';
-                        document.title = doc.title;
-                        
-                        // Re-initialize Alpine components
-                        if (window.Alpine) {
-                            document.querySelectorAll('[x-data]').forEach(el => {
-                                window.Alpine.initTree(el);
-                            });
-                        }
-                    }, 300);
-                });
-                
-                window.history.pushState({}, '', href);
-                window.scrollTo(0, 0);
-            }
-        } catch (error) {
-            console.error('Navigation failed:', error);
-            window.location.href = href;
-        }
+// Centralized animation sequences
+const createAnimations = {
+  sidebar: {
+    open: {
+      transform: ['translateX(-100%)', 'translateX(0%)'],
+      opacity: [0, 1],
+      scale: [0.98, 1],
+      options: {
+        duration: CONSTANTS.ANIMATION_CONFIG.DURATION.SIDEBAR,
+        ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+      }
+    },
+    close: {
+      transform: ['translateX(0%)', 'translateX(-100%)'],
+      opacity: [1, 0],
+      scale: [1, 0.98],
+      options: {
+        duration: CONSTANTS.ANIMATION_CONFIG.DURATION.SIDEBAR,
+        ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+      }
     }
-
-    startViewTransition(callback) {
-        if (!document.startViewTransition) {
-            const transitions = document.querySelectorAll('.page-transition-wrapper');
-            transitions.forEach(t => t.style.animation = 'none');
-            
-            callback();
-            return;
-        }
-
-        document.documentElement.classList.add('transition-active');
-        
-        const transition = document.startViewTransition(() => {
-            callback();
-        });
-
-        transition.finished.finally(() => {
-            document.documentElement.classList.remove('transition-active');
-        });
-
-        return transition;
+  },
+  content: {
+    expand: {
+      transform: ['translateX(0)', 'translateX(20rem)'],
+      scale: [0.98, 1],
+      options: {
+        duration: CONSTANTS.ANIMATION_CONFIG.DURATION.CONTENT,
+        ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+      }
+    },
+    collapse: {
+      transform: ['translateX(20rem)', 'translateX(5rem)'],
+      scale: [1, 0.98],
+      options: {
+        duration: CONSTANTS.ANIMATION_CONFIG.DURATION.CONTENT,
+        ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+      }
     }
+  }
+};
 
-    isValidNavigation(link) {
-        return link && 
-               link.href &&
-               link.origin === location.origin &&
-               !link.hasAttribute('download') &&
-               !link.target &&
-               !link.href.includes('#') &&
-               !link.closest('form'); // Exclude links within forms
-    }
-}
+// Single Alpine initialization
+document.addEventListener("alpine:init", () => {
+  // Motion helper
+  Alpine.magic("motion", () => ({
+    animate: (el, keyframes, options = {}) =>
+      animate(el, keyframes, options),
+  }));
 
-// Initialize the handler when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    new ViewTransitionHelper();
+  // Initialize page state if store exists
+  if (Alpine.store("pageState")) {
+    Alpine.store("pageState").init();
+  }
 });
+
+// Add passive scroll handler for mobile
+document.addEventListener("scroll", () => {}, { passive: true });
+
+// Add passive touch handlers for mobile gestures
+document.addEventListener("touchstart", () => {}, { passive: true });
+document.addEventListener("touchmove", () => {}, { passive: true });

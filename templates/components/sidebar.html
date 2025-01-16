@@ -1,0 +1,13 @@
+<aside x-cloak class="fixed top-0 left-0 h-full bg-base-200/95 backdrop-blur-sm shadow-lg z-40 transform-gpu"
+  :class="{ 
+    'w-80': !$store.sidebar.collapsed || window.innerWidth < 1024,
+    'w-20': $store.sidebar.collapsed && window.innerWidth >= 1024,
+    'translate-x-0': $store.sidebar.open,
+    '-translate-x-full lg:translate-x-0': !$store.sidebar.open,
+    'top-16 h-[calc(100vh-4rem)]': window.innerWidth < 1024,
+    'top-0 h-full': window.innerWidth >= 1024
+  }">
+  {% include 'components/sidebar_header.html' %}
+  {% include 'components/navigation.html' %}
+  {% include 'components/user_section.html' %}
+</aside>
