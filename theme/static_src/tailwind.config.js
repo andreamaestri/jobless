@@ -53,26 +53,26 @@ module.exports = {
         themes: [
             {
                 'Jobless': {
-                    'primary': '#e5855d',
-                    'primary-focus': '#ca5516',
-                    'primary-content': '#f5f0eb',
+                    'primary': '#f97316',           // Vibrant orange
+                    'primary-focus': '#ea580c',     // Deeper orange
+                    'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#cb581a',
-                    'secondary-focus': '#a04718',
-                    'secondary-content': '#f5f0eb',
+                    'secondary': '#8b5cf6',         // Warm purple
+                    'secondary-focus': '#7c3aed',   // Deeper purple
+                    'secondary-content': '#ffffff',  // White text
 
-                    'accent': '#9c3116',
-                    'accent-focus': '#be3513',
-                    'accent-content': '#f5f0eb',
+                    'accent': '#14b8a6',           // Teal
+                    'accent-focus': '#0d9488',     // Deeper teal
+                    'accent-content': '#ffffff',    // White text
 
-                    'neutral': '#34322f',
-                    'neutral-focus': '#ebddd0',
-                    'neutral-content': '#ebe7e2',
+                    'neutral': '#1f2937',          // Cool gray
+                    'neutral-focus': '#111827',    // Darker gray
+                    'neutral-content': '#ffffff',   // White text
 
-                    'base-100': '#fff4eb',
-                    'base-200': '#ffede2',
-                    'base-300': '#d8bdab',
-                    'base-content': '#34322f',
+                    'base-100': '#ffffff',         // Pure white
+                    'base-200': '#f3f4f6',         // Light gray
+                    'base-300': '#e5e7eb',         // Slightly darker gray
+                    'base-content': '#1f2937',     // Dark text
 
                     'info': '#3b82f6',    // Bright blue for information
                     'success': '#22c55e',  // Green for success
@@ -91,26 +91,26 @@ module.exports = {
                     '--border-btn': '1px',
                 },
                 'Dark': {
-                    'primary': '#ff8e52',
-                    'primary-focus': '#e26c2c',
-                    'primary-content': '#34322f',
+                    'primary': '#f97316',           // Bright orange
+                    'primary-focus': '#ea580c',     // Deeper orange
+                    'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#ce5412',
-                    'secondary-focus': '#8a3d14',
-                    'secondary-content': '#34322f',
+                    'secondary': '#a78bfa',         // Soft purple
+                    'secondary-focus': '#8b5cf6',   // Deeper purple
+                    'secondary-content': '#ffffff',  // White text
 
-                    'accent': '#b71a1a',
-                    'accent-focus': '#cb471a',
-                    'accent-content': '#0d0d0d',
+                    'accent': '#2dd4bf',           // Bright teal
+                    'accent-focus': '#14b8a6',     // Deeper teal
+                    'accent-content': '#ffffff',    // White text
 
-                    'neutral': '#34322f',
-                    'neutral-focus': '#1b1a18',
-                    'neutral-content': '#ebe7e2',
+                    'neutral': '#1e293b',          // Slate
+                    'neutral-focus': '#0f172a',    // Deep slate
+                    'neutral-content': '#ffffff',   // White text
 
-                    'base-100': '#0d0d0c',
-                    'base-200': '#404040',
-                    'base-300': '#5b5e71',
-                    'base-content': '#ebe7e2',
+                    'base-100': '#0f172a',         // Deep slate
+                    'base-200': '#1e293b',         // Slate
+                    'base-300': '#334155',         // Light slate
+                    'base-content': '#f8fafc',     // Very light slate
 
                     'info': '#60a5fa',     // Lighter blue for dark theme
                     'success': '#4ade80',   // Lighter green for dark theme
