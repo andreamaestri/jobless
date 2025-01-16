@@ -2,6 +2,7 @@ from django import forms
 import openai
 import json
 import logging
+import re  # Add this import
 import tagulous.models
 import tagulous.forms
 from django.conf import settings
@@ -43,130 +44,75 @@ class JobPostingForm(forms.ModelForm):
         for field in ['title', 'company', 'location']:
             self.fields[field].required = True
 
+    def extract_field_value(self, text, field_name):
+        """Extract field value from AI response"""
+        pattern = rf"{field_name}:\s*(.+?)(?=\n\w+:|$)"
+        match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+        return match.group(1).strip() if match else ""
+
     def parse_job_with_ai(self, text):
+        """Extract job details from text and return form-ready values"""
+        if not text or not text.strip():
+            return {'error': 'Empty job description provided'}
+
         try:
             client = openai.OpenAI(
                 base_url="https://api.groq.com/openai/v1",
                 api_key=settings.GROQ_API_KEY
             )
 
-            prompt = """Analyze the job posting and extract information into a structured format. Follow these rules strictly:
+            prompt = """Extract the following job details:
+Title: The exact job title
+Company: The company name
+Location: City/Region and work type (remote/hybrid/onsite)
+Salary: Any salary or compensation details
+Description: A well-formatted job description
 
-1. Extract only the main job title (e.g. "Senior Software Engineer", "Product Manager")
-2. Company name should be just the organization name
-3. Location should include city/state/country and work type (remote/hybrid/onsite)
-4. Salary should only include compensation details
-5. Description should be organized into sections, written professionally and extensively, formatted in pretty Markdown
-
-Format the response exactly like this:
-{
-    "title": "ONLY the job position title",
-    "company": "ONLY the company name",
-    "location": "Location and work type",
-    "salary_range": "Compensation details",
-    "description": "- Overview:\\n  - Brief role summary\\n- Responsibilities:\\n  - Key duties\\n- Requirements:\\n  - Required skills\\n  - Experience needed\\n- Benefits:\\n  - Compensation\\n  - Perks"
-}
-
-Important:
-- Title field must contain ONLY the job position/title
-- Do not include company name or location in title
-- Keep each field focused on its specific information
-- Use clear section headers in description"""
+Format each field on a new line starting with the field name."""
 
             response = client.chat.completions.create(
                 model="mixtral-8x7b-32768",
                 messages=[
-                    {"role": "system", "content": "You are a precise job posting parser. Extract information accurately and keep each field focused on its specific purpose."},
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": f"Parse this job posting:\n\n{text}"}
+                    {"role": "system", "content": "You are a job details extractor. Extract and format the key details clearly."},
+                    {"role": "user", "content": text}
                 ],
                 temperature=0.1,
                 max_tokens=2000
             )
-            
+
             result = response.choices[0].message.content.strip()
-            logger.debug(f"Raw AI response: {result}")
             
-            try:
-                parsed = json.loads(result, strict=True)
-                
-                # Additional title cleaning
-                if parsed.get('title'):
-                    # Remove common extras from title
-                    title = parsed['title']
-                    title = title.split(' - ')[0]  # Remove anything after hyphen
-                    title = title.split(' at ')[0]  # Remove "at Company"
-                    title = title.split(' in ')[0]  # Remove location
-                    title = title.strip()
-                    parsed['title'] = title
-                
-                # Validate and clean the parsed data
-                cleaned_parsed = {}
-                default_values = {
-                    'title': 'Position not specified',
-                    'company': 'Company not specified',
-                    'location': 'Location not specified',
-                    'salary_range': 'Salary not disclosed',
-                    'description': 'No detailed description provided'
-                }
-                
-                for key in default_values.keys():
-                    value = parsed.get(key, default_values[key])
-                    if isinstance(value, (dict, list)):
-                        # Handle structured data
-                        if key == 'description':
-                            # Convert structured description to formatted text
-                            if isinstance(value, dict):
-                                sections = []
-                                for section, content in value.items():
-                                    sections.append(f"- {section}:")
-                                    if isinstance(content, list):
-                                        sections.extend(f"  - {item}" for item in content)
-                                    else:
-                                        sections.append(f"  - {content}")
-                                cleaned_value = '\n'.join(sections)
-                            elif isinstance(value, list):
-                                cleaned_value = '\n'.join(f"- {item}" for item in value)
-                        else:
-                            cleaned_value = str(value)
-                    else:
-                        cleaned_value = str(value).strip()
-                    
-                    # Clean string values
-                    cleaned_value = cleaned_value.replace('\\n', '\n').replace('\\', '')
-                    cleaned_value = cleaned_value.replace('"', "'")
-                    
-                    # Ensure proper formatting for description
-                    if key == 'description':
-                        lines = cleaned_value.split('\n')
-                        formatted_lines = []
-                        for line in lines:
-                            line = line.strip()
-                            if line:
-                                if not line.startswith('-'):
-                                    line = f"- {line}"
-                                formatted_lines.append(line)
-                        cleaned_value = '\n'.join(formatted_lines)
-                    
-                    cleaned_parsed[key] = cleaned_value or default_values[key]
-                
-                logger.debug(f"Cleaned parsed data: {cleaned_parsed}")
-                return cleaned_parsed
-                
-            except json.JSONDecodeError as e:
-                logger.error(f"JSON decode error: {e}\nResponse: {result}")
-                return None
-                
+            # Extract fields using regex
+            data = {
+                'title': self.extract_field_value(result, 'Title'),
+                'company': self.extract_field_value(result, 'Company'),
+                'location': self.extract_field_value(result, 'Location'),
+                'salary_range': self.extract_field_value(result, 'Salary'),
+                'description': self.extract_field_value(result, 'Description')
+            }
+
+            # Validate required fields
+            required = ['title', 'company', 'location']
+            if not all(data[key] for key in required):
+                missing = [key for key in required if not data[key]]
+                return {'error': f'Missing required fields: {", ".join(missing)}'}
+
+            return {
+                'status': 'success',
+                'data': data
+            }
+
         except Exception as e:
-            logger.error(f"AI processing error: {str(e)}")
-            raise forms.ValidationError(f"Error processing job description: {str(e)}")
+            logger.exception("Error in parse_job_with_ai")
+            return {'error': str(e)}
 
     def clean(self):
         cleaned_data = super().clean()
         logger.debug(f"Cleaning form data: {cleaned_data}")
         
-        # Ensure proper separation of forms
-        for field in ['title', 'company', 'location']:
+        # Ensure required fields are present
+        required_fields = ['title', 'company', 'location']
+        for field in required_fields:
             if not cleaned_data.get(field):
                 self.add_error(field, 'This field is required.')
         

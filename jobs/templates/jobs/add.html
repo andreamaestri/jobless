@@ -37,17 +37,17 @@
                         <h2 class="text-lg font-semibold text-base-content mb-6">Quick Fill with AI</h2>
                         <div class="space-y-4">
                             <form id="parse-form" 
-                                  hx-post="{% url 'jobs:parse_description' %}" 
+                                  hx-post="/jobs/parse-description/" 
                                   hx-trigger="submit"
                                   hx-indicator=".htmx-indicator"
                                   method="POST">
                                 {% csrf_token %}
                                 <div>
-                                    <label for="id_paste" class="block text-sm font-medium text-base-content mb-2">
+                                    <label for="paste" class="block text-sm font-medium text-base-content mb-2">
                                         Paste Job Description
                                         <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
                                     </label>
-                                    <textarea id="id_paste" 
+                                    <textarea id="paste" 
                                               name="paste"
                                               class="textarea textarea-bordered w-full min-h-[120px]"
                                               placeholder="Paste the job description here..."></textarea>
@@ -320,11 +320,13 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script>
-// Configure CSRF for HTMX
-document.body.addEventListener('htmx:configRequest', function(evt) {
-    evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-});
-</script>
 <script src="{% static 'js/job-form.js' %}"></script>
+<script>
+    console.log('Form template loaded');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content loaded');
+        const form = document.getElementById('job-form');
+        console.log('Form element:', form);
+    });
+</script>
 {% endblock %}
