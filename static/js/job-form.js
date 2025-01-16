@@ -1,31 +1,71 @@
-document.addEventListener('DOMContentLoaded', function() {
+console.log('job-form.js loaded');
+try {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded event fired');
     const parseForm = document.getElementById('parse-form');
     const jobForm = document.getElementById('job-form');
     
     // Handle main form submission
+    console.log('Checking for job form...');
     if (jobForm) {
-        console.log('Job form found, attaching submit handler');
+        console.log('Job form found:', jobForm);
+        console.log('Attaching submit handler...');
+        
+        // Log all buttons in the form for debugging
+        const allButtons = jobForm.querySelectorAll('button');
+        console.log('All buttons in form:', Array.from(allButtons).map(btn => ({
+            type: btn.type,
+            classes: btn.className,
+            text: btn.textContent.trim()
+        })));
         
         jobForm.addEventListener('submit', function(e) {
             e.preventDefault();
             console.log('Form submit event triggered');
             
-            // Validate form
-            if (!this.checkValidity()) {
+            // Get all required fields
+            const requiredFields = this.querySelectorAll('[required]');
+            let firstInvalidField = null;
+            let missingFields = [];
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('input-error');
+                    if (!firstInvalidField) firstInvalidField = field;
+                    const label = document.querySelector(`label[for="${field.id}"]`);
+                    if (label) {
+                        missingFields.push(label.textContent.replace(' *', '').trim());
+                    }
+                } else {
+                    field.classList.remove('input-error');
+                }
+            });
+
+            if (missingFields.length > 0) {
                 console.error('Form validation failed');
-                this.reportValidity();
+                showNotification('Error', `Please fill in required fields: ${missingFields.join(', ')}`, 'error');
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalidField.focus();
+                }
                 return;
             }
 
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const spinner = submitBtn.querySelector('.loading');
-            const buttonText = submitBtn.querySelector('.button-text');
-            
+            // Find the visible action button
+            const actionBtn = document.querySelector('.form-actions button.btn-primary');
+            if (!actionBtn) {
+                console.error('Action button not found');
+                return;
+            }
+
+            // Get spinner and text elements
+            const spinner = actionBtn.querySelector('.loading');
+            const buttonText = actionBtn.querySelector('.button-text');
+
             // Update button state
-            spinner.classList.remove('hidden');
-            buttonText.textContent = 'Saving...';
-            submitBtn.disabled = true;
+            if (spinner) spinner.classList.remove('hidden');
+            if (buttonText) buttonText.textContent = 'Saving...';
+            actionBtn.disabled = true;
 
             // Prepare form data
             const formData = new FormData(this);
@@ -54,31 +94,68 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(async response => {
                 const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json();
+                const data = await response.json();
+                
+                // If response is not ok, but we have JSON data with errors
+                if (!response.ok && data.errors) {
+                    return data;
                 }
-                // If not JSON, get text for debugging
-                const text = await response.text();
-                console.error('Unexpected response:', text);
-                throw new Error('Unexpected response format');
+                
+                // If response is not ok and no error data
+                if (!response.ok) {
+                    throw new Error(data.message || 'Server error occurred');
+                }
+                
+                return data;
             })
             .then(data => {
                 console.log('Server response:', data);
                 if (data.status === 'success') {
                     window.location.href = data.redirect_url;
                 } else {
-                    throw new Error(data.message || 'Form submission failed');
+                    // Handle validation errors
+                    if (data.errors) {
+                        const errorMessages = [];
+                        Object.entries(data.errors).forEach(([field, errors]) => {
+                            // Find the field element
+                            const fieldElement = document.getElementById(`id_${field}`);
+                            if (fieldElement) {
+                                fieldElement.classList.add('input-error');
+                                errorMessages.push(`${field}: ${errors.join(', ')}`);
+                            }
+                        });
+                        
+                        // Show error messages in toast
+                        if (errorMessages.length > 0) {
+                            showNotification('Error', errorMessages.join('\n'), 'error');
+                            
+                            // Scroll to first error field
+                            const firstErrorField = document.querySelector('.input-error');
+                            if (firstErrorField) {
+                                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                firstErrorField.focus();
+                            }
+                        } else {
+                            showNotification('Error', data.message || 'Please correct the errors below', 'error');
+                        }
+                    } else {
+                        throw new Error(data.message || 'Form submission failed');
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error during form submission:', error);
-                showNotification('Error', 'Failed to save job. Please try again.', 'error');
+                if (error.message) {
+                    showNotification('Error', error.message, 'error');
+                } else {
+                    showNotification('Error', 'Failed to save job. Please try again.', 'error');
+                }
             })
             .finally(() => {
                 // Reset button state
-                spinner.classList.add('hidden');
-                buttonText.textContent = 'Save Job';
-                submitBtn.disabled = false;
+                if (spinner) spinner.classList.add('hidden');
+                if (buttonText) buttonText.textContent = 'Save Job';
+                actionBtn.disabled = false;
             });
         });
     } else {
@@ -125,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .replace(/\r/g, '\n')              // Normalize line endings
                 .replace(/[^\x20-\x7E\n]/g, ' ')   // Remove non-printable chars
                 .replace(/\s+/g, ' ')              // Normalize whitespace
+                .replace(/^[•\-]\s*/gm, '')        // Remove bullet points and dashes at start of lines
                 .trim();
 
             formData.set('paste', pasteText);
@@ -147,11 +225,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     'X-CSRFToken': formData.get('csrfmiddlewaretoken')
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            .then(async response => {
+                const data = await response.json();
+                
+                // If response is not ok, but we have JSON data with errors
+                if (!response.ok && data.errors) {
+                    return data;
                 }
-                return response.json();
+                
+                // If response is not ok and no error data
+                if (!response.ok) {
+                    throw new Error(data.message || 'Server error occurred');
+                }
+                
+                return data;
             })
             .then(data => {
                 if (data.status === 'success' && data.data) {
@@ -235,19 +322,114 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Improved notification function
+    // Show notification using Alpine.js toast system
     function showNotification(title, message, type) {
-        if (window.Toastify) {
-            Toastify({
-                text: message,
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                className: type === 'error' ? 'bg-error' : 'bg-success',
-                stopOnFocus: true,
-            }).showToast();
-        } else {
-            console.log(`${title}: ${message} (${type})`);
+        const toast = {
+            id: Date.now(),
+            message: message,
+            type: type,
+            progress: 100
+        };
+
+        // Find or create toast container
+        let toastContainer = document.querySelector('.toast[x-data]')?.__x.$data;
+        
+        if (!toastContainer) {
+            // Create new toast container if it doesn't exist
+            const div = document.createElement('div');
+            div.className = 'toast toast-end z-50';
+            div.innerHTML = `
+                <template x-for="toast in toasts" :key="toast.id">
+                    <div 
+                        :class="{
+                            'alert': true,
+                            'alert-success': toast.type === 'success',
+                            'alert-error': toast.type === 'error',
+                            'alert-info': toast.type === 'info',
+                            'alert-warning': toast.type === 'warning',
+                            'animate-leave': toast.removing
+                        }"
+                        class="relative overflow-hidden"
+                    >
+                        <div class="flex justify-between items-center gap-4">
+                            <span x-text="toast.message"></span>
+                            <button 
+                                @click="removeToast(toast.id)" 
+                                class="btn btn-ghost btn-circle btn-sm hover:bg-base-content/20"
+                            >
+                                <iconify-icon icon="octicon:x-16"></iconify-icon>
+                            </button>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-base-content/10">
+                            <div 
+                                class="h-full bg-current transition-all duration-100 ease-linear"
+                                :style="{ width: toast.progress + '%' }"
+                            ></div>
+                        </div>
+                    </div>
+                </template>
+            `;
+            div.setAttribute('x-data', '{ toasts: [], removeToast(id) { const index = this.toasts.findIndex(t => t.id === id); if (index > -1) { this.toasts[index].removing = true; setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 300); } } }');
+            document.body.appendChild(div);
+
+            // Add styles for animations
+            const style = document.createElement('style');
+            style.textContent = `
+                .toast > * {
+                    animation: toast-enter 0.3s ease-out;
+                }
+                
+                @keyframes toast-enter {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                .animate-leave {
+                    animation: toast-leave 0.3s ease-in forwards;
+                }
+                
+                @keyframes toast-leave {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            toastContainer = div.__x.$data;
         }
+
+        // Add new toast
+        toastContainer.toasts.push(toast);
+
+        // Start progress timer
+        const startTime = Date.now();
+        const duration = 5000;
+        
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const index = toastContainer.toasts.findIndex(t => t.id === toast.id);
+            if (index > -1) {
+                toastContainer.toasts[index].progress = Math.max(0, 100 - (elapsed / duration * 100));
+            }
+            
+            if (elapsed >= duration) {
+                clearInterval(interval);
+                toastContainer.removeToast(toast.id);
+            }
+        }, 100);
     }
-});
+    });
+} catch (error) {
+    console.error('Error in job-form.js:', error);
+}
