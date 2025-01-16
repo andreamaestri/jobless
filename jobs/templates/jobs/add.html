@@ -53,7 +53,9 @@
                     <form method="POST" 
                           id="job-form" 
                           class="divide-y divide-base-200"
-                          action="{% url 'jobs:add' %}">
+                          action="{% url 'jobs:add' %}"
+                          enctype="multipart/form-data"
+                          data-debug="true">
                         {% csrf_token %}
                         
                         {% if form.non_field_errors %}
@@ -307,11 +309,21 @@
 {{ block.super }}
 <script src="{% static 'js/job-form.js' %}"></script>
 <script>
+    // Add debug logging
     console.log('Form template loaded');
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM Content loaded');
         const form = document.getElementById('job-form');
         console.log('Form element:', form);
+        
+        // Log form submission attempts
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                console.log('Form submission attempted');
+                console.log('Form valid:', form.checkValidity());
+                console.log('Form data:', new FormData(form));
+            });
+        }
     });
 </script>
 {% endblock %}

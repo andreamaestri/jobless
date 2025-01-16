@@ -158,9 +158,14 @@ Description: [full job description]"""
         
         # Ensure required fields are present
         required_fields = ['title', 'company', 'location']
+        missing_fields = []
         for field in required_fields:
             if not cleaned_data.get(field):
+                missing_fields.append(field)
                 self.add_error(field, 'This field is required.')
+        
+        if missing_fields:
+            logger.error(f"Missing required fields: {', '.join(missing_fields)}")
         
         return cleaned_data
 
@@ -168,9 +173,13 @@ Description: [full job description]"""
         instance = super().save(commit=False)
         logger.debug(f"Saving form instance: {instance.__dict__}")
         
-        if commit:
-            instance.save()
-            logger.debug(f"Instance saved with ID: {instance.id}")
+        try:
+            if commit:
+                instance.save()
+                logger.info(f"Successfully saved job posting with ID: {instance.id}")
+        except Exception as e:
+            logger.exception("Error saving job posting")
+            raise
             
         return instance
 
