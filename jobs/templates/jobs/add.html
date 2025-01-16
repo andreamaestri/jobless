@@ -22,9 +22,12 @@
 
                 <div class="bg-base-100 shadow-xl rounded-2xl relative">
                     <!-- AI Paste Section -->
-                    <div class="p-8 form-section" style="--delay: 0">
-                        <h2 class="text-lg font-semibold text-base-content mb-6">Quick Fill with AI</h2>
-                        <div class="space-y-4">
+                    <div class="p-8 form-section bg-gradient-to-br from-primary/5 to-transparent" style="--delay: 0">
+                        <div class="flex items-center gap-2 mb-6">
+                            <iconify-icon icon="heroicons:sparkles" class="text-2xl text-primary"></iconify-icon>
+                            <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
+                        </div>
+                        <div class="space-y-4 relative">
                             <form id="parse-form" method="POST">
                                 {% csrf_token %}
                                 <div>
@@ -65,7 +68,7 @@
                         {% endif %}
 
                         <!-- Basic Information -->
-                        <div class="p-8 form-section" style="--delay: 0">
+                        <div class="p-8 form-section bg-base-100/50 transition-colors duration-200 hover:bg-base-100" style="--delay: 0">
                             <h2 class="text-lg font-semibold text-base-content mb-6">Basic Information</h2>
                             <div class="grid grid-cols-1 gap-6">
                                 <!-- Title -->
@@ -135,19 +138,24 @@
                         <div class="p-8 form-section" style="--delay: 2">
                             <h2 class="text-lg font-semibold text-base-content mb-6">Required Skills</h2>
                             
-                            <!-- Simplified skills container -->
-                            <div class="skill-container" x-data @click="$dispatch('open-skills-modal')">
-                                <div id="selected-skills" class="p-4 flex flex-wrap gap-2"></div>
-                                <!-- Empty state CTA -->
-                                <div class="empty-state flex items-center justify-center absolute inset-0">
-                                    <div class="flex flex-col items-center gap-3 text-base-content/50">
-                                        <iconify-icon icon="heroicons:plus-circle" class="text-4xl"></iconify-icon>
-                                        <span class="text-sm font-medium">Add Skills</span>
+                            <div class="relative">
+                                <div class="skill-container min-h-[120px] border border-base-300 rounded-lg transition-all duration-200 hover:border-primary/50 cursor-pointer" 
+                                     x-data 
+                                     @click="$dispatch('open-skills-modal')">
+                                    <div id="selected-skills" class="p-4 flex flex-wrap gap-2">
+                                        <!-- Skills will be inserted here -->
+                                    </div>
+                                    <!-- Empty state CTA -->
+                                    <div class="empty-state flex items-center justify-center absolute inset-0">
+                                        <div class="flex flex-col items-center gap-3 text-base-content/50 group-hover:text-primary/70">
+                                            <iconify-icon icon="heroicons:plus-circle" class="text-4xl transition-colors"></iconify-icon>
+                                            <span class="text-sm font-medium">Click to Add Skills</span>
+                                        </div>
                                     </div>
                                 </div>
+                                <input type="hidden" name="required_skills" id="skills-input">
+                                <p class="text-xs text-base-content/60 mt-2">Click to select required skills for this position</p>
                             </div>
-
-                            <input type="hidden" name="required_skills" id="skills-input">
                         </div>
 
                             <div x-data="skillsModal" @open-skills-modal.window="open = true">
@@ -194,7 +202,7 @@
 </div>
 
 <!-- Form Actions (outside form but controls it) -->
-<div class="fixed bottom-0 left-0 right-0 z-10 flex justify-between items-center p-8 bg-base-200 border-t border-base-300 lg:left-[20rem] form-actions">
+<div class="fixed bottom-0 left-0 right-0 z-10 flex justify-between items-center px-8 py-6 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 lg:left-[20rem] form-actions">
     <div class="text-sm text-base-content/60">
         <span class="text-error">*</span> Required fields
     </div>
@@ -204,10 +212,11 @@
             Cancel
         </a>
         <button type="submit" 
-                class="btn btn-primary gap-2"
+                class="btn btn-primary gap-2 min-w-[120px]"
                 form="job-form">
             <span class="loading loading-spinner loading-sm hidden"></span>
             <span class="button-text">Save Job</span>
+            <iconify-icon icon="heroicons:arrow-right" class="text-lg"></iconify-icon>
         </button>
     </div>
 </div>
