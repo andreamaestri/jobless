@@ -74,10 +74,10 @@ module.exports = {
                     'base-300': '#d8bdab',
                     'base-content': '#34322f',
 
-                    'info': '#ec8751',
-                    'success': '#f2a982',
-                    'warning': '#b88b75',
-                    'error': '#bd6b56',
+                    'info': '#3b82f6',    // Bright blue for information
+                    'success': '#22c55e',  // Green for success
+                    'warning': '#f59e0b',  // Amber for warnings
+                    'error': '#ef4444',    // Red for errors
 
                     '--rounded-box': '1rem',
                     '--rounded-btn': '.5rem',
@@ -112,10 +112,10 @@ module.exports = {
                     'base-300': '#5b5e71',
                     'base-content': '#ebe7e2',
 
-                    'info': '#db7139',
-                    'success': '#ee9768',
-                    'warning': '#9a4619',
-                    'error': '#a51d1d',
+                    'info': '#60a5fa',     // Lighter blue for dark theme
+                    'success': '#4ade80',   // Lighter green for dark theme
+                    'warning': '#fbbf24',   // Lighter amber for dark theme
+                    'error': '#f87171',     // Lighter red for dark theme
 
                     '--rounded-box': '1rem',
                     '--rounded-btn': '.5rem',
