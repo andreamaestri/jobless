@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="bg-base-100 shadow-xl rounded-2xl relative">
+                <div class="bg-base-100 shadow-xl rounded-2xl relative overflow-hidden">
                     <!-- AI Paste Section -->
                     <div class="p-8 form-section bg-gradient-to-br from-primary/5 to-transparent" style="--delay: 0">
                         <div class="flex items-center gap-2 mb-6">
@@ -69,7 +69,10 @@
 
                         <!-- Basic Information -->
                         <div class="p-8 form-section bg-base-100/50 transition-colors duration-200 hover:bg-base-100" style="--delay: 0">
-                            <h2 class="text-lg font-semibold text-base-content mb-6">Basic Information</h2>
+                            <div class="flex items-center gap-2 mb-6">
+                                <iconify-icon icon="heroicons:information-circle" class="text-2xl text-primary"></iconify-icon>
+                                <h2 class="text-lg font-semibold text-base-content">Basic Information</h2>
+                            </div>
                             <div class="grid grid-cols-1 gap-6">
                                 <!-- Title -->
                                 <div>
@@ -110,7 +113,10 @@
 
                         <!-- Additional Details -->
                         <div class="p-8 form-section" style="--delay: 1">
-                            <h2 class="text-lg font-semibold text-base-content mb-6">Additional Details</h2>
+                            <div class="flex items-center gap-2 mb-6">
+                                <iconify-icon icon="heroicons:clipboard-document-list" class="text-2xl text-primary"></iconify-icon>
+                                <h2 class="text-lg font-semibold text-base-content">Additional Details</h2>
+                            </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- URL and Salary -->
                                 <div>
@@ -136,7 +142,10 @@
 
                         <!-- Skills -->
                         <div class="p-8 form-section" style="--delay: 2">
-                            <h2 class="text-lg font-semibold text-base-content mb-6">Required Skills</h2>
+                            <div class="flex items-center gap-2 mb-6">
+                                <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
+                                <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
+                            </div>
                             
                             <div class="relative">
                                 <div class="skill-container min-h-[120px] border border-base-300 rounded-lg transition-all duration-200 hover:border-primary/50 cursor-pointer" 
@@ -164,7 +173,10 @@
 
                         <!-- Status -->
                         <div class="p-8 form-section" style="--delay: 3">
-                            <h2 class="text-lg font-semibold text-base-content mb-6">Application Status</h2>
+                            <div class="flex items-center gap-2 mb-6">
+                                <iconify-icon icon="heroicons:flag" class="text-2xl text-primary"></iconify-icon>
+                                <h2 class="text-lg font-semibold text-base-content">Application Status</h2>
+                            </div>
                             <div>
                                 <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
                                     Application Status
@@ -178,7 +190,10 @@
 
                         <!-- Description -->
                         <div class="p-8 form-section" style="--delay: 4">
-                            <h2 class="text-lg font-semibold text-base-content mb-6">Job Description</h2>
+                            <div class="flex items-center gap-2 mb-6">
+                                <iconify-icon icon="heroicons:document-text" class="text-2xl text-primary"></iconify-icon>
+                                <h2 class="text-lg font-semibold text-base-content">Job Description</h2>
+                            </div>
                             <div>
                                 <div class="flex justify-between items-center mb-2">
                                     <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-base-content">
