@@ -59,8 +59,17 @@ class JobCreateView(BaseJobView, CreateView):
             # Handle skills if present
             skills = self.request.POST.get('required_skills')
             if skills:
-                self.object.required_skills.set(skills.split(','))
-            
+                try:
+                    # Parse the JSON string into a list
+                    skills_data = json.loads(skills)
+                    # Extract just the skill names
+                    skill_names = [skill['name'] for skill in skills_data]
+                    # Set the skills
+                    self.object.required_skills.set(skill_names)
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error parsing skills JSON: {e}")
+                    raise
+
             # Handle AJAX requests
             if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({

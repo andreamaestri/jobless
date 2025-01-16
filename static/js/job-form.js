@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             console.log('Form submit event triggered');
             
+            // Validate form
+            if (!this.checkValidity()) {
+                console.error('Form validation failed');
+                this.reportValidity();
+                return;
+            }
+
             // Show loading state
             const submitBtn = this.querySelector('button[type="submit"]');
             const spinner = submitBtn.querySelector('.loading');
@@ -29,7 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('required_skills', skillsInput.value);
             }
 
-            // Log form data for debugging
+            // Debug log form data
+            console.log('Form data being submitted:');
             for (let pair of formData.entries()) {
                 console.log(pair[0] + ': ' + pair[1]);
             }
@@ -44,13 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 credentials: 'same-origin'
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            .then(async response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
                 }
-                return response.json();
+                // If not JSON, get text for debugging
+                const text = await response.text();
+                console.error('Unexpected response:', text);
+                throw new Error('Unexpected response format');
             })
             .then(data => {
+                console.log('Server response:', data);
                 if (data.status === 'success') {
                     window.location.href = data.redirect_url;
                 } else {
@@ -58,8 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showNotification('Error', error.message, 'error');
+                console.error('Error during form submission:', error);
+                showNotification('Error', 'Failed to save job. Please try again.', 'error');
             })
             .finally(() => {
                 // Reset button state
