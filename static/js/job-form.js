@@ -322,112 +322,60 @@ try {
         }
     }
 
-    // Show notification using Alpine.js toast system
+    // Show notification using a simpler toast system
     function showNotification(title, message, type) {
-        const toast = {
-            id: Date.now(),
-            message: message,
-            type: type,
-            progress: 100
-        };
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} shadow-lg fixed top-4 right-4 z-50 w-auto max-w-sm animate-enter`;
+        toast.innerHTML = `
+            <div class="flex justify-between items-center w-full">
+                <span>${message}</span>
+                <button class="btn btn-ghost btn-sm btn-circle">
+                    <iconify-icon icon="octicon:x-16"></iconify-icon>
+                </button>
+            </div>
+        `;
 
-        // Find or create toast container
-        let toastContainer = document.querySelector('.toast[x-data]')?.__x.$data;
-        
-        if (!toastContainer) {
-            // Create new toast container if it doesn't exist
-            const div = document.createElement('div');
-            div.className = 'toast toast-end z-50';
-            div.innerHTML = `
-                <template x-for="toast in toasts" :key="toast.id">
-                    <div 
-                        :class="{
-                            'alert': true,
-                            'alert-success': toast.type === 'success',
-                            'alert-error': toast.type === 'error',
-                            'alert-info': toast.type === 'info',
-                            'alert-warning': toast.type === 'warning',
-                            'animate-leave': toast.removing
-                        }"
-                        class="relative overflow-hidden"
-                    >
-                        <div class="flex justify-between items-center gap-4">
-                            <span x-text="toast.message"></span>
-                            <button 
-                                @click="removeToast(toast.id)" 
-                                class="btn btn-ghost btn-circle btn-sm hover:bg-base-content/20"
-                            >
-                                <iconify-icon icon="octicon:x-16"></iconify-icon>
-                            </button>
-                        </div>
-                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-base-content/10">
-                            <div 
-                                class="h-full bg-current transition-all duration-100 ease-linear"
-                                :style="{ width: toast.progress + '%' }"
-                            ></div>
-                        </div>
-                    </div>
-                </template>
-            `;
-            div.setAttribute('x-data', '{ toasts: [], removeToast(id) { const index = this.toasts.findIndex(t => t.id === id); if (index > -1) { this.toasts[index].removing = true; setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 300); } } }');
-            document.body.appendChild(div);
-
-            // Add styles for animations
+        // Add styles for animations if they don't exist
+        if (!document.getElementById('toast-styles')) {
             const style = document.createElement('style');
+            style.id = 'toast-styles';
             style.textContent = `
-                .toast > * {
+                @keyframes toast-enter {
+                    from { transform: translateY(-100%); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+                @keyframes toast-leave {
+                    from { transform: translateY(0); opacity: 1; }
+                    to { transform: translateY(-100%); opacity: 0; }
+                }
+                .animate-enter {
                     animation: toast-enter 0.3s ease-out;
                 }
-                
-                @keyframes toast-enter {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                
                 .animate-leave {
                     animation: toast-leave 0.3s ease-in forwards;
                 }
-                
-                @keyframes toast-leave {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                }
             `;
             document.head.appendChild(style);
-            toastContainer = div.__x.$data;
         }
 
-        // Add new toast
-        toastContainer.toasts.push(toast);
+        // Add close button handler
+        const closeBtn = toast.querySelector('button');
+        closeBtn.addEventListener('click', () => {
+            toast.classList.add('animate-leave');
+            setTimeout(() => toast.remove(), 300);
+        });
 
-        // Start progress timer
-        const startTime = Date.now();
-        const duration = 5000;
-        
-        const interval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            const index = toastContainer.toasts.findIndex(t => t.id === toast.id);
-            if (index > -1) {
-                toastContainer.toasts[index].progress = Math.max(0, 100 - (elapsed / duration * 100));
+        // Add to document
+        document.body.appendChild(toast);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (document.body.contains(toast)) {
+                toast.classList.add('animate-leave');
+                setTimeout(() => toast.remove(), 300);
             }
-            
-            if (elapsed >= duration) {
-                clearInterval(interval);
-                toastContainer.removeToast(toast.id);
-            }
-        }, 100);
+        }, 5000);
     }
     });
 } catch (error) {
