@@ -21,42 +21,8 @@
                 </div>
 
                 <div class="bg-base-100 shadow-xl rounded-2xl relative overflow-hidden">
-                    <div class="divide-y divide-base-200">
-                        <!-- AI Paste Section -->
-                        <div class="p-8 form-section bg-gradient-to-br from-primary/5 to-transparent" style="--delay: 0">
-                        <div class="flex items-center gap-2 mb-6">
-                            <iconify-icon icon="heroicons:sparkles" class="text-2xl text-primary"></iconify-icon>
-                            <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
-                        </div>
-                        <div class="space-y-4 relative">
-                            <form id="parse-form" method="POST">
-                                {% csrf_token %}
-                                <div>
-                                    <label for="paste" class="block text-sm font-medium text-base-content mb-2">
-                                        Paste Job Description
-                                        <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
-                                    </label>
-                                    <textarea id="paste" 
-                                              name="paste"
-                                              class="textarea textarea-bordered w-full min-h-[120px]"
-                                              placeholder="Paste the job description here..."></textarea>
-                                </div>
-                                <div class="flex justify-end mt-4">
-                                    <button type="submit" 
-                                            class="btn btn-primary btn-sm gap-2">
-                                        <span class="loading loading-spinner loading-sm hidden"></span>
-                                        <iconify-icon icon="heroicons:sparkles"></iconify-icon>
-                                        <span>Process with AI</span>
-                                    </button>
-                                </div>
-                            </form>
-                            </div>
-                        </div>
-                        </div>
-
-                        <!-- Main Form -->
-                        <form method="POST" 
-                              id="job-form"
+                    <form method="POST" 
+                          id="job-form"
                           action="{% url 'jobs:add' %}"
                           enctype="multipart/form-data"
                           data-debug="true">
@@ -68,148 +34,180 @@
                         </div>
                         {% endif %}
 
-                        <!-- Basic Information -->
-                        <div class="p-8 form-section bg-base-100/50 transition-colors duration-200 hover:bg-base-100" style="--delay: 0">
-                            <div class="flex items-center gap-2 mb-6">
-                                <iconify-icon icon="heroicons:information-circle" class="text-2xl text-primary"></iconify-icon>
-                                <h2 class="text-lg font-semibold text-base-content">Basic Information</h2>
-                            </div>
-                            <div class="grid grid-cols-1 gap-6">
-                                <!-- Title -->
-                                <div>
-                                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                        Job Title <span class="text-error">*</span>
-                                    </label>
-                                    {{ form.title }}
-                                    <p class="text-xs text-base-content/60 mt-1">Enter the official job title as listed in the posting</p>
-                                    {% if form.title.errors %}
-                                    <p class="text-error text-xs mt-1">{{ form.title.errors.0 }}</p>
-                                    {% endif %}
+                        <div class="divide-y divide-base-200">
+                            <!-- AI Paste Section -->
+                            <div class="p-8 form-section bg-gradient-to-br from-primary/5 to-transparent" style="--delay: 0">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:sparkles" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
                                 </div>
+                                <div class="space-y-4 relative">
+                                    <form id="parse-form" method="POST">
+                                        {% csrf_token %}
+                                        <div>
+                                            <label for="paste" class="block text-sm font-medium text-base-content mb-2">
+                                                Paste Job Description
+                                                <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
+                                            </label>
+                                            <textarea id="paste" 
+                                                      name="paste"
+                                                      class="textarea textarea-bordered w-full min-h-[120px]"
+                                                      placeholder="Paste the job description here..."></textarea>
+                                        </div>
+                                        <div class="flex justify-end mt-4">
+                                            <button type="submit" 
+                                                    class="btn btn-primary btn-sm gap-2">
+                                                <span class="loading loading-spinner loading-sm hidden"></span>
+                                                <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+                                                <span>Process with AI</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
 
-                                <!-- Company and Location -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Basic Information -->
+                            <div class="p-8 form-section bg-base-100/50 transition-colors duration-200 hover:bg-base-100" style="--delay: 0">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:information-circle" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Basic Information</h2>
+                                </div>
+                                <div class="grid grid-cols-1 gap-6">
+                                    <!-- Title -->
                                     <div>
-                                        <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                            Company <span class="text-error">*</span>
+                                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                            Job Title <span class="text-error">*</span>
                                         </label>
-                                        {{ form.company }}
-                                        {% if form.company.errors %}
-                                        <p class="text-error text-xs mt-1">{{ form.company.errors.0 }}</p>
+                                        {{ form.title }}
+                                        <p class="text-xs text-base-content/60 mt-1">Enter the official job title as listed in the posting</p>
+                                        {% if form.title.errors %}
+                                        <p class="text-error text-xs mt-1">{{ form.title.errors.0 }}</p>
                                         {% endif %}
                                     </div>
-                                    <div>
-                                        <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                            Location <span class="text-error">*</span>
-                                        </label>
-                                        {{ form.location }}
-                                        <p class="text-xs text-base-content/60 mt-1">City, State or Remote</p>
-                                        {% if form.location.errors %}
-                                        <p class="text-error text-xs mt-1">{{ form.location.errors.0 }}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Additional Details -->
-                        <div class="p-8 form-section" style="--delay: 1">
-                            <div class="flex items-center gap-2 mb-6">
-                                <iconify-icon icon="heroicons:clipboard-document-list" class="text-2xl text-primary"></iconify-icon>
-                                <h2 class="text-lg font-semibold text-base-content">Additional Details</h2>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- URL and Salary -->
-                                <div>
-                                    <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                        Job URL
-                                    </label>
-                                    {{ form.url }}
-                                    {% if form.url.errors %}
-                                    <p class="text-error text-xs mt-1">{{ form.url.errors.0 }}</p>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                        Salary Range
-                                    </label>
-                                    {{ form.salary_range }}
-                                    {% if form.salary_range.errors %}
-                                    <p class="text-error text-xs mt-1">{{ form.salary_range.errors.0 }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Skills -->
-                        <div class="p-8 form-section" style="--delay: 2">
-                            <div class="flex items-center gap-2 mb-6">
-                                <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
-                                <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
-                            </div>
-                            
-                            <div class="relative">
-                                <div class="skill-container min-h-[120px] border border-base-300 rounded-lg transition-all duration-200 hover:border-primary/50 cursor-pointer" 
-                                     x-data 
-                                     @click="$dispatch('open-skills-modal')">
-                                    <div id="selected-skills" class="p-4 flex flex-wrap gap-2">
-                                        <!-- Skills will be inserted here -->
-                                    </div>
-                                    <!-- Empty state CTA -->
-                                    <div class="empty-state flex items-center justify-center absolute inset-0">
-                                        <div class="flex flex-col items-center gap-3 text-base-content/50 group-hover:text-primary/70">
-                                            <iconify-icon icon="heroicons:plus-circle" class="text-4xl transition-colors"></iconify-icon>
-                                            <span class="text-sm font-medium">Click to Add Skills</span>
+                                    <!-- Company and Location -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                                Company <span class="text-error">*</span>
+                                            </label>
+                                            {{ form.company }}
+                                            {% if form.company.errors %}
+                                            <p class="text-error text-xs mt-1">{{ form.company.errors.0 }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                                Location <span class="text-error">*</span>
+                                            </label>
+                                            {{ form.location }}
+                                            <p class="text-xs text-base-content/60 mt-1">City, State or Remote</p>
+                                            {% if form.location.errors %}
+                                            <p class="text-error text-xs mt-1">{{ form.location.errors.0 }}</p>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="required_skills" id="skills-input">
-                                <p class="text-xs text-base-content/60 mt-2">Click to select required skills for this position</p>
                             </div>
-                        </div>
+
+                            <!-- Additional Details -->
+                            <div class="p-8 form-section" style="--delay: 1">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:clipboard-document-list" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Additional Details</h2>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- URL and Salary -->
+                                    <div>
+                                        <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                            Job URL
+                                        </label>
+                                        {{ form.url }}
+                                        {% if form.url.errors %}
+                                        <p class="text-error text-xs mt-1">{{ form.url.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                            Salary Range
+                                        </label>
+                                        {{ form.salary_range }}
+                                        {% if form.salary_range.errors %}
+                                        <p class="text-error text-xs mt-1">{{ form.salary_range.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Skills -->
+                            <div class="p-8 form-section" style="--delay: 2">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
+                                </div>
+                                
+                                <div class="relative">
+                                    <div class="skill-container min-h-[120px] border border-base-300 rounded-lg transition-all duration-200 hover:border-primary/50 cursor-pointer" 
+                                         x-data 
+                                         @click="$dispatch('open-skills-modal')">
+                                        <div id="selected-skills" class="p-4 flex flex-wrap gap-2">
+                                            <!-- Skills will be inserted here -->
+                                        </div>
+                                        <!-- Empty state CTA -->
+                                        <div class="empty-state flex items-center justify-center absolute inset-0">
+                                            <div class="flex flex-col items-center gap-3 text-base-content/50 group-hover:text-primary/70">
+                                                <iconify-icon icon="heroicons:plus-circle" class="text-4xl transition-colors"></iconify-icon>
+                                                <span class="text-sm font-medium">Click to Add Skills</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="required_skills" id="skills-input">
+                                    <p class="text-xs text-base-content/60 mt-2">Click to select required skills for this position</p>
+                                </div>
+                            </div>
 
                             <div x-data="skillsModal" @open-skills-modal.window="open = true">
                                 {% include "jobs/modals/skills_modal.html" %}
                             </div>
 
-                        <!-- Status -->
-                        <div class="p-8 form-section" style="--delay: 3">
-                            <div class="flex items-center gap-2 mb-6">
-                                <iconify-icon icon="heroicons:flag" class="text-2xl text-primary"></iconify-icon>
-                                <h2 class="text-lg font-semibold text-base-content">Application Status</h2>
-                            </div>
-                            <div>
-                                <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
-                                    Application Status
-                                </label>
-                                {{ form.status }}
-                                {% if form.status.errors %}
-                                <p class="text-error text-xs mt-1">{{ form.status.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="p-8 form-section" style="--delay: 4">
-                            <div class="flex items-center gap-2 mb-6">
-                                <iconify-icon icon="heroicons:document-text" class="text-2xl text-primary"></iconify-icon>
-                                <h2 class="text-lg font-semibold text-base-content">Job Description</h2>
-                            </div>
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-base-content">
-                                        Job Description
-                                        <span class="ml-1 text-xs text-base-content/60">(Markdown supported)</span>
-                                    </label>
-                                    <span class="text-xs text-base-content/60" id="char-counter">0/4000</span>
+                            <!-- Status -->
+                            <div class="p-8 form-section" style="--delay: 3">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:flag" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Application Status</h2>
                                 </div>
-                                {{ form.description }}
-                                {% if form.description.errors %}
-                                <p class="text-error text-xs mt-1">{{ form.description.errors.0 }}</p>
-                                {% endif %}
+                                <div>
+                                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                        Application Status
+                                    </label>
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                    <p class="text-error text-xs mt-1">{{ form.status.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="p-8 form-section" style="--delay: 4">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:document-text" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Job Description</h2>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-base-content">
+                                            Job Description
+                                            <span class="ml-1 text-xs text-base-content/60">(Markdown supported)</span>
+                                        </label>
+                                        <span class="text-xs text-base-content/60" id="char-counter">0/4000</span>
+                                    </div>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                    <p class="text-error text-xs mt-1">{{ form.description.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>
