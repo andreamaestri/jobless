@@ -332,7 +332,7 @@ try {
             // Create container if it doesn't exist
             if (!this.container) {
                 this.container = document.createElement('div');
-                this.container.className = 'fixed top-4 right-4 z-50 flex flex-col gap-2';
+                this.container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none';
                 document.body.appendChild(this.container);
 
                 // Add styles if they don't exist
@@ -341,12 +341,24 @@ try {
                     style.id = 'toast-styles';
                     style.textContent = `
                         @keyframes slideIn {
-                            from { transform: translateX(100%); opacity: 0; }
-                            to { transform: translateX(0); opacity: 1; }
+                            from { 
+                                transform: translateX(120%);
+                                opacity: 0;
+                            }
+                            to { 
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
                         }
                         @keyframes slideOut {
-                            from { transform: translateX(0); opacity: 1; }
-                            to { transform: translateX(100%); opacity: 0; }
+                            from { 
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                            to { 
+                                transform: translateX(120%);
+                                opacity: 0;
+                            }
                         }
                         .toast-enter {
                             animation: slideIn 0.3s ease-out forwards;
@@ -365,7 +377,7 @@ try {
             
             // Create toast element
             const toast = document.createElement('div');
-            toast.className = `alert alert-${type} shadow-lg w-80 toast-enter`;
+            toast.className = `alert alert-${type} shadow-lg w-80 toast-enter pointer-events-auto`;
             toast.innerHTML = `
                 <div class="flex justify-between items-center w-full">
                     <span class="text-sm">${message}</span>
