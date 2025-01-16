@@ -1,76 +1,88 @@
-// Toast notification system
-const ToastSystem = {
-    container: null,
-    
-    init() {
-        if (!this.container) {
-            this.container = document.createElement('div');
-            this.container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-2';
-            document.body.appendChild(this.container);
+document.addEventListener('alpine:init', () => {
+    Alpine.store('toastManager', {
+        toasts: [],
+        position: 'top-right',
+        expanded: false,
+        layout: 'default',
 
-            // Add styles if they don't exist
-            if (!document.getElementById('toast-styles')) {
-                const style = document.createElement('style');
-                style.id = 'toast-styles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                    .toast-enter {
-                        animation: slideIn 0.3s ease-out forwards;
-                    }
-                    .toast-exit {
-                        animation: slideOut 0.3s ease-out forwards;
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-        }
-    },
+        init() {
+            this.watchToasts();
+        },
 
-    show(message, type = 'info') {
-        this.init();
-        
-        const toast = document.createElement('div');
-        toast.className = `alert alert-${type} shadow-lg w-80 toast-enter`;
-        toast.innerHTML = `
-            <div class="flex justify-between items-center w-full">
-                <span class="text-sm">${message}</span>
-                <button class="btn btn-ghost btn-xs btn-circle">
-                    <iconify-icon icon="octicon:x-16"></iconify-icon>
-                </button>
-            </div>
-        `;
-
-        this.container.appendChild(toast);
-
-        const closeBtn = toast.querySelector('button');
-        closeBtn.addEventListener('click', () => this.remove(toast));
-
-        setTimeout(() => this.remove(toast), 5000);
-
-        return new Promise(resolve => {
-            toast.addEventListener('animationend', () => {
-                if (toast.classList.contains('toast-exit')) {
-                    toast.remove();
-                    resolve();
-                }
+        watchToasts() {
+            this.$watch('toasts', () => {
+                this.stackToasts();
             });
-        });
-    },
+        },
 
-    remove(toast) {
-        if (document.body.contains(toast)) {
-            toast.classList.remove('toast-enter');
-            toast.classList.add('toast-exit');
+        show(message, options = {}) {
+            const toast = {
+                id: 'toast-' + Math.random().toString(16).slice(2),
+                message,
+                type: options.type || 'default',
+                description: options.description || '',
+                position: options.position || this.position,
+                html: options.html || '',
+                autoClose: options.autoClose !== false,
+                progress: 100
+            };
+
+            this.toasts.unshift(toast);
+
+            if (toast.autoClose) {
+                setTimeout(() => {
+                    this.remove(toast.id);
+                }, 5000);
+            }
+        },
+
+        remove(id) {
+            const index = this.toasts.findIndex(t => t.id === id);
+            if (index > -1) {
+                const toast = document.getElementById(id);
+                if (toast) {
+                    toast.classList.add('opacity-0');
+                    toast.classList.remove('translate-y-0');
+                    toast.classList.add(this.position.includes('bottom') ? 'translate-y-full' : '-translate-y-full');
+                    
+                    setTimeout(() => {
+                        this.toasts = this.toasts.filter(t => t.id !== id);
+                    }, 300);
+                }
+            }
+        },
+
+        stackToasts() {
+            if (!this.toasts.length) return;
+            
+            requestAnimationFrame(() => {
+                this.toasts.forEach((toast, index) => {
+                    const el = document.getElementById(toast.id);
+                    if (!el) return;
+
+                    el.style.zIndex = 100 - index;
+                    
+                    if (this.expanded) {
+                        const offset = index * (el.offsetHeight + 15);
+                        if (this.position.includes('bottom')) {
+                            el.style.bottom = offset + 'px';
+                        } else {
+                            el.style.top = offset + 'px';
+                        }
+                        el.style.transform = 'translateY(0) scale(1)';
+                    } else {
+                        if (index === 0) {
+                            el.style.transform = 'translateY(0) scale(1)';
+                        } else {
+                            const translateY = this.position.includes('bottom') ? 
+                                `-${16 * index}px` : 
+                                `${16 * index}px`;
+                            const scale = 1 - (index * 0.06);
+                            el.style.transform = `translateY(${translateY}) scale(${scale})`;
+                        }
+                    }
+                });
+            });
         }
-    }
-};
-
-// Export for global use
-window.ToastSystem = ToastSystem;
+    });
+});
