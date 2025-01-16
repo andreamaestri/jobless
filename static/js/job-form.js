@@ -46,16 +46,21 @@ try {
                 const message = `Please fill in required fields: ${missingFields.join(', ')}`;
                 console.log('Showing notification:', message);
                 
-                // Ensure toastSystem is initialized
-                toastSystem.init();
-                
-                // Show notification directly through toastSystem
-                toastSystem.show(message, 'error').then(() => {
-                    if (firstInvalidField) {
-                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        firstInvalidField.focus();
-                    }
-                });
+                // Use Alpine.js toast system
+                const toastManager = Alpine.store('toastManager');
+                if (toastManager) {
+                    toastManager.addToast({
+                        id: Date.now(),
+                        message: message,
+                        type: 'error',
+                        progress: 100
+                    });
+                }
+
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalidField.focus();
+                }
                 return;
             }
 
@@ -330,103 +335,17 @@ try {
         }
     }
 
-    // Toast notification system
-    const toastSystem = {
-        container: null,
-        queue: [],
-        processing: false,
-
-        init() {
-            // Create container if it doesn't exist
-            if (!this.container) {
-                this.container = document.createElement('div');
-                this.container.className = 'fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none';
-                document.body.appendChild(this.container);
-
-                // Add styles if they don't exist
-                if (!document.getElementById('toast-styles')) {
-                    const style = document.createElement('style');
-                    style.id = 'toast-styles';
-                    style.textContent = `
-                        @keyframes slideIn {
-                            from { 
-                                transform: translateX(120%);
-                                opacity: 0;
-                            }
-                            to { 
-                                transform: translateX(0);
-                                opacity: 1;
-                            }
-                        }
-                        @keyframes slideOut {
-                            from { 
-                                transform: translateX(0);
-                                opacity: 1;
-                            }
-                            to { 
-                                transform: translateX(120%);
-                                opacity: 0;
-                            }
-                        }
-                        .toast-enter {
-                            animation: slideIn 0.3s ease-out forwards;
-                        }
-                        .toast-exit {
-                            animation: slideOut 0.3s ease-out forwards;
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
-            }
-        },
-
-        async show(message, type = 'info') {
-            this.init();
-            
-            // Create toast element
-            const toast = document.createElement('div');
-            toast.className = `alert alert-${type} shadow-lg w-80 toast-enter pointer-events-auto`;
-            toast.innerHTML = `
-                <div class="flex justify-between items-center w-full">
-                    <span class="text-sm">${message}</span>
-                    <button class="btn btn-ghost btn-xs btn-circle">
-                        <iconify-icon icon="octicon:x-16"></iconify-icon>
-                    </button>
-                </div>
-            `;
-
-            // Add to container
-            this.container.appendChild(toast);
-
-            // Setup close button
-            const closeBtn = toast.querySelector('button');
-            closeBtn.addEventListener('click', () => this.remove(toast));
-
-            // Auto remove after delay
-            setTimeout(() => this.remove(toast), 5000);
-
-            // Return promise that resolves when toast is removed
-            return new Promise(resolve => {
-                toast.addEventListener('animationend', () => {
-                    if (toast.classList.contains('toast-exit')) {
-                        toast.remove();
-                        resolve();
-                    }
-                });
-            });
-        },
-
-        remove(toast) {
-            if (document.body.contains(toast)) {
-                toast.classList.remove('toast-enter');
-                toast.classList.add('toast-exit');
-            }
-        }
-    };
-
-    // Show notification using toast system
+    // Show notification using Alpine.js toast system
     function showNotification(title, message, type) {
-        toastSystem.show(message, type);
+        const toastManager = Alpine.store('toastManager');
+        if (toastManager) {
+            toastManager.addToast({
+                id: Date.now(),
+                message: message,
+                type: type,
+                progress: 100
+            });
+        }
     }
     });
 } catch (error) {
