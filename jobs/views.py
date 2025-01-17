@@ -201,29 +201,23 @@ def toggle_favourite(request, job_id):
 def skills_autocomplete(request):
     """Handle skills autocomplete API requests"""
     query = request.GET.get('q', '').lower()
-    results = [
-        {
-            'icon': icon,
-            'label': name,
-            'value': name.lower()
-        }
-        for icon, name in SKILL_ICONS
-        if query in name.lower()
-    ][:10]  # Limit to 10 results
     
-    return JsonResponse({'results': results})
+    # Get all skills with proper icon mapping
+    skills_data = []
+    for icon, name in SKILL_ICONS:
+        mapped_icon = ICON_NAME_MAPPING.get(name, icon)
+        dark_icon = DARK_VARIANTS.get(mapped_icon, mapped_icon)
+        
+        if not query or query in name.lower():
+            skills_data.append({
+                'name': name,
+                'icon': mapped_icon,
+                'icon_dark': dark_icon
+            })
+    
+    return JsonResponse({'results': skills_data})
 
-def get_skills_data(request):
-    skills_data = [
-        {
-            'value': icon_key,
-            'text': label,
-            'icon': icon_key,
-            'icon_dark': DARK_VARIANTS.get(icon_key, icon_key)  # Use mapping or fallback to original
-        }
-        for icon_key, label in SKILL_ICONS
-    ]
-    return JsonResponse(skills_data, safe=False)
+# Remove get_skills_data as it's no longer needed
 
 @require_http_methods(["POST"])
 def parse_job_description(request):

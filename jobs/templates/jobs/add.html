@@ -280,19 +280,21 @@ document.addEventListener('DOMContentLoaded', function() {
         render: {
             option: function(data, escape) {
                 return `<div class="flex items-center gap-2 p-2">
-                    <iconify-icon icon="${escape(data.icon)}"></iconify-icon>
+                    <iconify-icon icon="${escape(data.icon)}" class="dark:hidden"></iconify-icon>
+                    <iconify-icon icon="${escape(data.icon_dark)}" class="hidden dark:block"></iconify-icon>
                     <span>${escape(data.name)}</span>
                 </div>`;
             },
             item: function(data, escape) {
                 return `<div class="flex items-center gap-1">
-                    <iconify-icon icon="${escape(data.icon)}"></iconify-icon>
+                    <iconify-icon icon="${escape(data.icon)}" class="dark:hidden"></iconify-icon>
+                    <iconify-icon icon="${escape(data.icon_dark)}" class="hidden dark:block"></iconify-icon>
                     <span>${escape(data.name)}</span>
                 </div>`;
             }
         },
         load: function(query, callback) {
-            fetch('/api/skills/search/')
+            fetch(`/api/skills/search/?q=${encodeURIComponent(query || '')}`)
                 .then(response => response.json())
                 .then(json => {
                     callback(json.results);
