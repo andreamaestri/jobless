@@ -18,8 +18,8 @@
         </div>
 
         {% if jobs %}
-        <div class="card bg-base-100 shadow-xl">
-            <div class="overflow-x-auto overflow-y-visible">
+        <div class="card bg-base-100 shadow-xl relative">
+            <div class="overflow-x-auto">
                 <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full text-sm sm:text-base">
                     <!-- head -->
                     <thead>
@@ -90,7 +90,7 @@
                                         <button class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
                                             <iconify-icon icon="octicon:kebab-horizontal-16" class="w-5 h-5"></iconify-icon>
                                         </button>
-                                        <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 fixed">
+                                        <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 absolute">
                                             <li><a class="text-base py-3" href="{% url 'jobs:detail' job.pk %}">View Details</a></li>
                                             <li><a class="text-base py-3 text-warning" href="{% url 'jobs:edit' job.pk %}">Edit</a></li>
                                             <li>
