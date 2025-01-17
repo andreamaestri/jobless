@@ -13,6 +13,5 @@ urlpatterns = [
     path('<int:job_id>/toggle_favorite/', views.toggle_favourite, name='toggle_favorite'),
     path('toggle-favourite/<int:job_id>/', views.toggle_favourite, name='toggle_favourite'),
     path('skills/autocomplete/', views.skills_autocomplete, name='skills_autocomplete'),
-    path('skills/data/', views.get_skills_data, name='get_skills_data'),
     path('parse-description/', views.parse_job_description, name='parse_description'),
 ]
