@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-min p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg md:rounded-2xl bg-base-200">
+<div class="min-h-min p-2 sm:p-4 md:p-6 lg:p-8 rounded-lg md:rounded-2xl bg-base-200">
     <div class="w-full max-w-7xl mx-auto">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -20,16 +20,16 @@
         {% if jobs %}
         <div class="card bg-base-100 shadow-xl">
             <div class="{% if jobs|length > 1 %}overflow-x-auto{% endif %}">
-                <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full">
+                <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full text-sm sm:text-base">
                     <!-- head -->
                     <thead>
                         <tr class="bg-primary text-primary-content">
-                            <th class="min-w-[200px]">Job Title</th>
-                            <th class="min-w-[120px]">Company</th>
-                            <th class="min-w-[120px]">Location</th>
-                            <th class="min-w-[180px]">Skills</th>
-                            <th class="min-w-[100px]">Status</th>
-                            <th class="min-w-[80px]">Actions</th>
+                            <th class="min-w-[160px] sm:min-w-[200px]">Job Title</th>
+                            <th class="min-w-[100px] sm:min-w-[120px]">Company</th>
+                            <th class="min-w-[100px] sm:min-w-[120px]">Location</th>
+                            <th class="min-w-[140px] sm:min-w-[180px]">Skills</th>
+                            <th class="min-w-[90px] sm:min-w-[100px]">Status</th>
+                            <th class="min-w-[70px] sm:min-w-[80px]">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-base-100">
@@ -39,7 +39,7 @@
                             onclick="window.location.href='{% url 'jobs:detail' job.pk %}'">
                             <td>
                                 <div class="flex flex-col gap-1 py-1">
-                                    <div class="font-bold line-clamp-2">{{ job.title }}</div>
+                                    <div class="font-bold line-clamp-2 text-sm sm:text-base">{{ job.title }}</div>
                                     {% if job.url %}
                                     <a href="{{ job.url }}" target="_blank" onclick="event.stopPropagation()"
                                         class="link link-primary link-hover text-xs inline-flex items-center gap-1">
@@ -49,23 +49,23 @@
                                 </div>
                             </td>
                             <td class="whitespace-normal min-w-[120px]">
-                                <div class="line-clamp-2 text-sm">{{ job.company }}</div>
+                                <div class="line-clamp-2 text-xs sm:text-sm">{{ job.company }}</div>
                             </td>
                             <td class="whitespace-normal">
-                                <div class="line-clamp-2 text-sm">{{ job.location }}</div>
+                                <div class="line-clamp-2 text-xs sm:text-sm">{{ job.location }}</div>
                             </td>
                             <td>
                                 <div class="flex flex-wrap gap-1">
                                     {% for skill in job.skills.all|slice:":2" %}
-                                    <span class="badge badge-ghost badge-sm">{{ skill }}</span>
+                                    <span class="badge badge-ghost badge-xs sm:badge-sm">{{ skill }}</span>
                                     {% endfor %}
                                     {% if job.skills.all|length > 2 %}
-                                    <span class="badge badge-ghost badge-sm">+{{ job.skills.all|length|add:"-2" }}</span>
+                                    <span class="badge badge-ghost badge-xs sm:badge-sm">+{{ job.skills.all|length|add:"-2" }}</span>
                                     {% endif %}
                                 </div>
                             </td>
                             <td>
-                                <span class="badge badge-sm
+                                <span class="badge badge-xs sm:badge-sm
                                     {% if job.status == 'interested' %}badge-info
                                     {% elif job.status == 'applied' %}badge-warning
                                     {% elif job.status == 'interviewing' %}badge-secondary
@@ -78,7 +78,7 @@
                                 <div class="flex items-center gap-2">
                                     <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline" onclick="event.stopPropagation()">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-ghost btn-sm btn-square touch-pan-y">
+                                        <button type="submit" class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
                                             {% if request.user in job.favourites.all %}
                                                 <iconify-icon icon="octicon:star-fill-24" class="w-5 h-5 text-warning"></iconify-icon>
                                             {% else %}
@@ -87,7 +87,7 @@
                                         </button>
                                     </form>
                                     <div class="dropdown dropdown-end" onclick="event.stopPropagation()">
-                                        <button class="btn btn-ghost btn-sm btn-square touch-pan-y">
+                                        <button class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
                                             <iconify-icon icon="octicon:kebab-horizontal-16" class="w-5 h-5"></iconify-icon>
                                         </button>
                                         <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
