@@ -74,7 +74,7 @@
                                     {{ job.status|title }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="relative">
                                 <div class="flex items-center gap-2">
                                     <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline" onclick="event.stopPropagation()">
                                         {% csrf_token %}
@@ -90,7 +90,7 @@
                                         <button class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
                                             <iconify-icon icon="octicon:kebab-horizontal-16" class="w-5 h-5"></iconify-icon>
                                         </button>
-                                        <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                        <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 fixed">
                                             <li><a class="text-base py-3" href="{% url 'jobs:detail' job.pk %}">View Details</a></li>
                                             <li><a class="text-base py-3 text-warning" href="{% url 'jobs:edit' job.pk %}">Edit</a></li>
                                             <li>
