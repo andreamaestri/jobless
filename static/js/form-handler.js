@@ -31,7 +31,11 @@ class FormHandler {
             const formData = new FormData(this.jobForm);
             const skillsInput = document.getElementById('skills-input');
             if (skillsInput?.value) {
-                formData.append('required_skills', skillsInput.value);
+                // Parse skills to remove duplicates
+                const skills = JSON.parse(skillsInput.value);
+                const uniqueSkills = Array.from(new Set(skills.map(s => JSON.stringify(s))))
+                    .map(s => JSON.parse(s));
+                formData.set('required_skills', JSON.stringify(uniqueSkills));
             }
 
             const response = await this.submitForm(this.jobForm.action, formData);
