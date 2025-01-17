@@ -212,10 +212,26 @@ def skills_autocomplete(request):
             skills_data.append({
                 'name': name,
                 'icon': mapped_icon,
-                'icon_dark': dark_icon
+                'icon_dark': dark_icon,
+                'value': name  # Add value field for TomSelect
             })
     
-    return JsonResponse({'results': skills_data})
+    # Group by first letter if no query
+    if not query:
+        grouped_data = {}
+        for skill in skills_data:
+            first_letter = skill['name'][0].upper()
+            if first_letter not in grouped_data:
+                grouped_data[first_letter] = []
+            grouped_data[first_letter].append(skill)
+        
+        results = []
+        for letter in sorted(grouped_data.keys()):
+            results.extend(sorted(grouped_data[letter], key=lambda x: x['name']))
+    else:
+        results = sorted(skills_data, key=lambda x: x['name'])
+    
+    return JsonResponse({'results': results})
 
 # Remove get_skills_data as it's no longer needed
 
