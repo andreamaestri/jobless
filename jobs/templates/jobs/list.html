@@ -19,8 +19,9 @@
 
         {% if jobs %}
         <div class="card bg-base-100 shadow-xl relative">
-            <div class="overflow-x-auto">
-                <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full text-sm sm:text-base">
+            <div class="overflow-hidden">
+                <div class="overflow-x-auto rounded-xl">
+                    <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full text-sm sm:text-base">
                     <!-- head -->
                     <thead>
                         <tr class="bg-primary text-primary-content">
@@ -98,7 +99,8 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                    </table>
+                </div>
             </div>
             {% for job in jobs %}
             <div class="dropdown-menu-container" id="job-{{ job.pk }}">
