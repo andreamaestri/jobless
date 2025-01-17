@@ -268,15 +268,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize TomSelect
     const skillSelect = new TomSelect('#skills-select', {
-        valueField: 'name',
+        valueField: 'value',
         labelField: 'name',
-        searchField: 'name',
+        searchField: ['name'],
         plugins: ['remove_button'],
         maxItems: null,
         persist: false,
         create: false,
         closeAfterSelect: true,
         preload: true,
+        loadThrottle: 300,
         render: {
             option: function(data, escape) {
                 return `<div class="flex items-center gap-2 p-2">
@@ -294,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         load: function(query, callback) {
-            fetch(`/api/skills/search/?q=${encodeURIComponent(query || '')}`)
+            fetch(`/jobs/skills/autocomplete/?q=${encodeURIComponent(query || '')}`)
                 .then(response => response.json())
                 .then(json => {
                     callback(json.results);
