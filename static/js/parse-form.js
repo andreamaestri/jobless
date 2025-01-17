@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('paste', document.getElementById('paste').value);
             
             try {
-                const response = await fetch('/jobs/parse/', {
+                const response = await fetch('/jobs/parse-description/', {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -43,17 +43,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.salary_range) document.getElementById('id_salary_range').value = data.salary_range;
                 
                 // Show success message
-                window.$store.toastManager.show({
-                    type: 'success',
-                    message: 'Job details extracted successfully!'
-                });
+                if (window.$store && window.$store.toastManager) {
+                    window.$store.toastManager.show({
+                        type: 'success',
+                        message: 'Job details extracted successfully!'
+                    });
+                }
                 
             } catch (error) {
                 console.error('Error:', error);
-                window.$store.toastManager.show({
-                    type: 'error',
-                    message: error.message || 'Failed to process job description'
-                });
+                if (window.$store && window.$store.toastManager) {
+                    window.$store.toastManager.show({
+                        type: 'error',
+                        message: error.message || 'Failed to process job description'
+                    });
+                }
             } finally {
                 // Hide loading state
                 spinner.classList.add('hidden');
