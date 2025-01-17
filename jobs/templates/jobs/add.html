@@ -42,7 +42,7 @@
                                     <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
                                 </div>
                                 <div class="space-y-4 relative">
-                                    <form id="parse-form" method="POST">
+                                    <form id="parse-form" method="POST" action="{% url 'jobs:parse' %}" class="parse-form">
                                         {% csrf_token %}
                                         <div>
                                             <label for="paste" class="block text-sm font-medium text-base-content mb-2">
