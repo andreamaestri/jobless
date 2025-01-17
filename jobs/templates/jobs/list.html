@@ -57,14 +57,14 @@
                             </td>
                             <td>
                                 <div class="flex flex-wrap gap-1">
-                                    {% with skills=job.skills.all %}
-                                    {% for skill in skills|slice:":2" %}
+                                    {% with skills=job.skills.all|slice:":3" %}
+                                    {% for skill in skills %}
                                     <span class="badge badge-ghost badge-xs sm:badge-sm">{{ skill }}</span>
                                     {% endfor %}
-                                    {% if skills|length > 2 %}
-                                    <span class="badge badge-ghost badge-xs sm:badge-sm">+{{ skills|length|add:"-2" }}</span>
-                                    {% endif %}
                                     {% endwith %}
+                                    {% if job.skills.count > 3 %}
+                                    <span class="badge badge-ghost badge-xs sm:badge-sm">+{{ job.skills.count|add:"-3" }}</span>
+                                    {% endif %}
                                 </div>
                             </td>
                             <td>
