@@ -163,9 +163,17 @@
 
                             <!-- Skills -->
                             <div class="p-8 form-section" style="--delay: 2">
-                                <div class="flex items-center gap-2 mb-6">
-                                    <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
-                                    <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-2">
+                                        <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
+                                        <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
+                                    </div>
+                                    <button type="button" 
+                                            @click="$dispatch('open-skills-modal')"
+                                            class="btn btn-ghost btn-sm gap-2">
+                                        <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
+                                        Manage Skills
+                                    </button>
                                 </div>
                                 
                                 <div class="relative">
@@ -173,7 +181,9 @@
                                         <!-- Options will be populated via JavaScript -->
                                     </select>
                                     <input type="hidden" name="skills" id="skills-input">
-                                    <p class="text-xs text-base-content/60 mt-2">Search and select required skills for this position</p>
+                                    <p class="text-xs text-base-content/60 mt-2">
+                                        Quick search and select skills, or use the Manage Skills button for more options
+                                    </p>
                                 </div>
                             </div>
 
@@ -257,7 +267,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize TomSelect
-    new TomSelect('#skills-select', {
+    const skillSelect = new TomSelect('#skills-select', {
         valueField: 'name',
         labelField: 'name',
         searchField: 'name',
@@ -303,6 +313,21 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             document.getElementById('skills-input').value = JSON.stringify(selectedSkills);
         }
+    });
+
+    // Listen for skill updates from modal
+    document.addEventListener('skills-updated', function(event) {
+        const updatedSkills = event.detail;
+        // Clear and re-add all skills
+        skillSelect.clear();
+        updatedSkills.forEach(skill => {
+            skillSelect.addOption({
+                name: skill.name,
+                icon: skill.icon,
+                icon_dark: skill.icon_dark
+            });
+            skillSelect.addItem(skill.name);
+        });
     });
 });
 </script>
