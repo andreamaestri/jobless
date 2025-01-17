@@ -58,8 +58,8 @@
                             <td>
                                 <div class="flex flex-wrap gap-1">
                                     {% with skills=job.skills.all %}
-                                    {% with skill_count=skills|length %}
-                                    {% for skill in skills|slice:":3" %}
+                                    {% with visible_skills=skills|slice:":3" skill_count=skills|length %}
+                                    {% for skill in visible_skills %}
                                     <span class="badge badge-ghost badge-xs sm:badge-sm">{{ skill }}</span>
                                     {% endfor %}
                                     {% if skill_count > 3 %}
