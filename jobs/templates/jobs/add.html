@@ -42,8 +42,7 @@
                                     <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
                                 </div>
                                 <div class="space-y-4 relative">
-                                    <form id="parse-form" method="POST" action="{% url 'jobs:parse' %}" class="parse-form">
-                                        {% csrf_token %}
+                                    <div id="parse-form" class="parse-form">
                                         <div>
                                             <label for="paste" class="block text-sm font-medium text-base-content mb-2">
                                                 Paste Job Description
@@ -55,14 +54,15 @@
                                                       placeholder="Paste the job description here..."></textarea>
                                         </div>
                                         <div class="flex justify-end mt-4">
-                                            <button type="submit" 
+                                            <button type="button" 
+                                                    id="parse-button"
                                                     class="btn btn-primary btn-sm gap-2">
                                                 <span class="loading loading-spinner loading-sm hidden"></span>
                                                 <iconify-icon icon="heroicons:sparkles"></iconify-icon>
                                                 <span>Process with AI</span>
                                             </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
 
@@ -242,6 +242,7 @@
 <script src="{% static 'js/toast.js' %}"></script>
 <script src="{% static 'js/skills-manager.js' %}"></script>
 <script src="{% static 'js/job-form.js' %}"></script>
+<script src="{% static 'js/parse-form.js' %}"></script>
 
 <!-- Toast Container -->
 <template x-teleport="body">
