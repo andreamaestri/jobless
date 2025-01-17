@@ -35,7 +35,7 @@ class FormHandler {
                 const skills = JSON.parse(skillsInput.value);
                 const uniqueSkills = Array.from(new Set(skills.map(s => JSON.stringify(s))))
                     .map(s => JSON.parse(s));
-                formData.set('required_skills', JSON.stringify(uniqueSkills));
+                formData.set('skills', JSON.stringify(uniqueSkills));
             }
 
             const response = await this.submitForm(this.jobForm.action, formData);
