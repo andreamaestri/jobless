@@ -276,6 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         persist: false,
         create: false,
         closeAfterSelect: true,
+        preload: true,
         render: {
             option: function(data, escape) {
                 return `<div class="flex items-center gap-2 p-2">
@@ -291,9 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         load: function(query, callback) {
-            if (!query.length) return callback();
-            
-            fetch(`/api/skills/search/?q=${encodeURIComponent(query)}`)
+            fetch('/api/skills/search/')
                 .then(response => response.json())
                 .then(json => {
                     callback(json.results);
