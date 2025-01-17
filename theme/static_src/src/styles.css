@@ -109,6 +109,22 @@
         @apply sticky top-0 z-10 backdrop-blur-lg bg-base-100/95;
     }
 
+    /* Dropdown Menu Container */
+    .dropdown-menu-container {
+        @apply fixed z-50;
+    }
+
+    .dropdown-menu-container .dropdown-content {
+        @apply shadow-lg border border-base-300;
+        @apply bg-base-100 backdrop-blur-md;
+        @apply animate-fade-in;
+        transform-origin: top right;
+    }
+
+    .dropdown-menu-container .dropdown-content.hidden {
+        @apply animate-none;
+    }
+
     /* Tom Select Styles */
     .ts-wrapper {
         @apply relative w-full;
