@@ -2,104 +2,105 @@
 {% load static %}
 
 {% block content %}
-<div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
-    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-min p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg md:rounded-2xl bg-base-200">
+    <div class="w-full max-w-7xl mx-auto">
         <!-- Header Section -->
-        <div class="flex justify-between items-center mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-base-content">Jobs</h1>
-                <p class="text-base-content/70 mt-1">Manage your job applications</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-base-content">Jobs</h1>
+                <p class="text-sm sm:text-base text-base-content/70 mt-1">Manage your job applications</p>
             </div>
             <a href="{% url 'jobs:add' %}"
-                class="px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus transition-colors duration-200 flex items-center">
-                <span class="icon mr-2" data-icon="octicon:plus-16"></span>
+                class="btn btn-primary btn-sm sm:btn-md gap-2">
+                <span class="icon" data-icon="octicon:plus-16"></span>
                 Add Job
             </a>
         </div>
 
-
         {% if jobs %}
-        <div class="bg-base-100 shadow-lg rounded-2xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-primary text-primary-content">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Job Title</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Company</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Location</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Skills</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Status</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Actions</th>
+        <div class="card bg-base-100 shadow-xl">
+            <div class="{% if jobs|length > 1 %}overflow-x-auto{% endif %}">
+                <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full">
+                    <!-- head -->
+                    <thead>
+                        <tr class="bg-primary text-primary-content">
+                            <th class="min-w-[200px]">Job Title</th>
+                            <th class="min-w-[120px]">Company</th>
+                            <th class="min-w-[120px]">Location</th>
+                            <th class="min-w-[180px]">Skills</th>
+                            <th class="min-w-[100px]">Status</th>
+                            <th class="min-w-[80px]">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-base-200">
+                    <tbody class="bg-base-100">
                         {% for job in jobs %}
-                        <tr class="hover:bg-white transition-colors duration-150 cursor-pointer" 
+                        <tr class="hover cursor-pointer touch-pan-y" 
                             data-job-url="{% url 'jobs:detail' job.pk %}"
-                            onclick="window.location.href=this.dataset.jobUrl">
-                            <td class="px-6 py-4">
-                                <div>
-                                    <h3 class="text-base-content font-medium">{{ job.title }}</h3>
+                            onclick="window.location.href='{% url 'jobs:detail' job.pk %}'">
+                            <td>
+                                <div class="flex flex-col gap-1 py-1">
+                                    <div class="font-bold line-clamp-2">{{ job.title }}</div>
                                     {% if job.url %}
-                                    <a href="{{ job.url }}" target="_blank"
-                                        class="text-xs text-primary hover:text-primary-focus">View posting →</a>
+                                    <a href="{{ job.url }}" target="_blank" onclick="event.stopPropagation()"
+                                        class="link link-primary link-hover text-xs inline-flex items-center gap-1">
+                                        View posting <iconify-icon icon="octicon:link-external-16"></iconify-icon>
+                                    </a>
                                     {% endif %}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-base-content">{{ job.company }}</td>
-                            <td class="px-6 py-4 text-sm text-base-content">{{ job.location }}</td>
-                            <td class="px-6 py-4">
+                            <td class="whitespace-normal min-w-[120px]">
+                                <div class="line-clamp-2 text-sm">{{ job.company }}</div>
+                            </td>
+                            <td class="whitespace-normal">
+                                <div class="line-clamp-2 text-sm">{{ job.location }}</div>
+                            </td>
+                            <td>
                                 <div class="flex flex-wrap gap-1">
-                                    {% for skill in job.skills.all %}
-                                    <span class="px-2 py-1 text-xs rounded-full bg-base-200 text-base-content">
-                                        {{ skill }}
-                                    </span>
+                                    {% for skill in job.skills.all|slice:":2" %}
+                                    <span class="badge badge-ghost badge-sm">{{ skill }}</span>
                                     {% endfor %}
+                                    {% if job.skills.all|length > 2 %}
+                                    <span class="badge badge-ghost badge-sm">+{{ job.skills.all|length|add:"-2" }}</span>
+                                    {% endif %}
                                 </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full 
-                                    {% if job.status == 'interested' %}bg-info/20 text-info
-                                    {% elif job.status == 'applied' %}bg-warning/20 text-warning
-                                    {% elif job.status == 'interviewing' %}bg-secondary/20 text-secondary
-                                    {% elif job.status == 'rejected' %}bg-error/20 text-error
-                                    {% else %}bg-success/20 text-success{% endif %}">
+                            <td>
+                                <span class="badge badge-sm
+                                    {% if job.status == 'interested' %}badge-info
+                                    {% elif job.status == 'applied' %}badge-warning
+                                    {% elif job.status == 'interviewing' %}badge-secondary
+                                    {% elif job.status == 'rejected' %}badge-error
+                                    {% else %}badge-success{% endif %}">
                                     {{ job.status|title }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center space-x-3">
-                                    <a href="{% url 'jobs:detail' job.pk %}" class="text-base-content p-1 rounded-lg"
-                                        aria-label="View Details">
-                                        <iconify-icon icon="octicon:eye-16" class="w-5 h-5"></iconify-icon>
-                                    </a>
-                                    <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline">
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline" onclick="event.stopPropagation()">
                                         {% csrf_token %}
-                                        <button type="submit" class="transition-colors duration-200 p-1 rounded-lg">
+                                        <button type="submit" class="btn btn-ghost btn-sm btn-square touch-pan-y">
                                             {% if request.user in job.favourites.all %}
-                                                <iconify-icon icon="octicon:star-fill-24" class="w-5 h-5 text-primary"></iconify-icon>
-                                                <span class="sr-only">Remove from Favourites</span>
+                                                <iconify-icon icon="octicon:star-fill-24" class="w-5 h-5 text-warning"></iconify-icon>
                                             {% else %}
                                                 <iconify-icon icon="octicon:star-24" class="w-5 h-5"></iconify-icon>
-                                                <span class="sr-only">Add to Favourites</span>
                                             {% endif %}
                                         </button>
                                     </form>
-                                    <a href="{% url 'jobs:edit' job.pk %}"
-                                        onclick="event.stopPropagation()"
-                                        class="text-warning hover:text-warning-focus transition-colors duration-200 p-1 rounded-lg">
-                                        <span class="sr-only">Edit</span>
-                                        <iconify-icon icon="octicon:pencil-16" class="w-5 h-5"></iconify-icon>
-                                    </a>
-                                    <form method="POST" action="{% url 'jobs:delete' job.pk %}" class="inline">
-                                        {% csrf_token %}
-                                        <button type="submit" 
-                                                onclick="event.stopPropagation()"
-                                                class="text-error hover:text-error-focus transition-colors duration-200 p-1 rounded-lg">
-                                            <span class="sr-only">Delete</span>
-                                            <iconify-icon icon="octicon:trash-16" class="w-5 h-5"></iconify-icon>
+                                    <div class="dropdown dropdown-end" onclick="event.stopPropagation()">
+                                        <button class="btn btn-ghost btn-sm btn-square touch-pan-y">
+                                            <iconify-icon icon="octicon:kebab-horizontal-16" class="w-5 h-5"></iconify-icon>
                                         </button>
-                                    </form>
+                                        <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                            <li><a class="text-base py-3" href="{% url 'jobs:detail' job.pk %}">View Details</a></li>
+                                            <li><a class="text-base py-3 text-warning" href="{% url 'jobs:edit' job.pk %}">Edit</a></li>
+                                            <li>
+                                                <form method="POST" action="{% url 'jobs:delete' job.pk %}" class="w-full">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="text-base py-3 text-error w-full text-left">Delete</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -109,13 +110,15 @@
             </div>
         </div>
         {% else %}
-        <div class="bg-base-100 rounded-2xl shadow-lg p-12 text-center">
-            <p class="text-base-content/70 mb-6">No jobs added yet</p>
-            <a href="{% url 'jobs:add' %}"
-                class="inline-flex items-center px-4 py-2 bg-primary text-primary-content rounded-xl hover:bg-primary-focus transition-colors duration-200">
-                <span class="icon mr-2" data-icon="octicon:plus-16"></span>
-                Add Your First Job
-            </a>
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body items-center text-center py-12">
+                <h3 class="card-title text-base-content/70 mb-6">No jobs added yet</h3>
+                <a href="{% url 'jobs:add' %}"
+                    class="btn btn-primary gap-2">
+                    <span class="icon" data-icon="octicon:plus-16"></span>
+                    Add Your First Job
+                </a>
+            </div>
         </div>
         {% endif %}
     </div>
