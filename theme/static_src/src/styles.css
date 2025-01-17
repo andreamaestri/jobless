@@ -192,7 +192,7 @@
     }
 
     .quick-letter.active + .quick-letter,
-    .quick-letter:has(+ .quick-letter.active) {
+    .quick-letter.adjacent {
         transform: scale(1.1);
         @apply text-primary/70;
         transition-duration: 0.1s;
