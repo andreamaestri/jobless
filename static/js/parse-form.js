@@ -28,19 +28,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error('Network response was not ok');
                 }
                 
-                const result = await response.json();
+                const data = await response.json();
                 
-                if (result.status === 'error') {
-                    throw new Error(result.message);
+                if (data.status === 'error') {
+                    throw new Error(data.message || 'Failed to parse job description');
                 }
                 
                 // Fill the form fields with the parsed data
-                const data = result.data;
-                if (data.title) document.getElementById('id_title').value = data.title;
-                if (data.company) document.getElementById('id_company').value = data.company;
-                if (data.location) document.getElementById('id_location').value = data.location;
-                if (data.description) document.getElementById('id_description').value = data.description;
-                if (data.salary_range) document.getElementById('id_salary_range').value = data.salary_range;
+                const result = data.data;
+                if (result.title) document.getElementById('id_title').value = result.title;
+                if (result.company) document.getElementById('id_company').value = result.company;
+                if (result.location) document.getElementById('id_location').value = result.location;
+                if (result.description) document.getElementById('id_description').value = result.description;
+                if (result.salary_range) document.getElementById('id_salary_range').value = result.salary_range;
                 
                 // Show success message
                 if (window.$store && window.$store.toastManager) {
