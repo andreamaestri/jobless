@@ -97,8 +97,10 @@ class SkillsManager {
     applySelectedSkills() {
         const skillsInput = document.getElementById('skills-input');
         if (skillsInput) {
-            const skillsArray = Array.from(this.selectedSkills).map(s => JSON.parse(s));
-            skillsInput.value = JSON.stringify(skillsArray);
+            // Remove duplicates before saving
+            const uniqueSkills = Array.from(new Set(Array.from(this.selectedSkills)))
+                .map(s => JSON.parse(s));
+            skillsInput.value = JSON.stringify(uniqueSkills);
         }
         this.updateSelectedSkillsDisplay();
     }
