@@ -12,18 +12,48 @@
     }
     .ts-wrapper.focus {
         border-color: hsl(var(--p) / 0.5);
+        box-shadow: 0 0 0 2px hsl(var(--p) / 0.2);
     }
     .ts-control {
         border: none !important;
         padding: 0 !important;
+        gap: 0.5rem;
+        flex-wrap: wrap;
     }
     .ts-dropdown {
         border: 1px solid hsl(var(--bc) / 0.2);
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 15px -3px rgb(0 0 0 / 0.1), 0 2px 8px -4px rgb(0 0 0 / 0.1);
+        padding: 0.5rem 0;
+        margin-top: 0.5rem;
+    }
+    .ts-dropdown .option {
+        padding: 0 !important;
     }
     .ts-dropdown .active {
-        background-color: hsl(var(--p) / 0.1);
-        color: hsl(var(--pc));
+        background-color: transparent;
+    }
+    .ts-dropdown .option:hover,
+    .ts-dropdown .option.active {
+        background-color: hsl(var(--b2));
+    }
+    .ts-wrapper.multi .ts-control > div {
+        background: none;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+    .ts-wrapper.plugin-remove_button .item .remove {
+        border: none;
+        padding: 0 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+    .ts-wrapper.plugin-remove_button .item .remove:hover {
+        background-color: hsl(var(--b3));
     }
 </style>
 {{ block.super }}
@@ -266,9 +296,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize TomSelect
+    // Initialize TomSelect with enhanced UI
     const skillSelect = new TomSelect('#skills-select', {
-        valueField: 'value',
+        valueField: 'name',
         labelField: 'name',
         searchField: ['name'],
         plugins: ['remove_button'],
@@ -280,17 +310,23 @@ document.addEventListener('DOMContentLoaded', function() {
         loadThrottle: 300,
         render: {
             option: function(data, escape) {
-                return `<div class="flex items-center gap-2 p-2">
-                    <iconify-icon icon="${escape(data.icon)}" class="dark:hidden"></iconify-icon>
-                    <iconify-icon icon="${escape(data.icon_dark)}" class="hidden dark:block"></iconify-icon>
-                    <span>${escape(data.name)}</span>
+                return `<div class="py-2 px-3 d-flex items-center gap-3 hover:bg-base-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg">
+                            <iconify-icon icon="${escape(data.icon)}" class="text-xl dark:hidden"></iconify-icon>
+                            <iconify-icon icon="${escape(data.icon_dark)}" class="text-xl hidden dark:block"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="font-medium">${escape(data.name)}</span>
+                        </div>
+                    </div>
                 </div>`;
             },
             item: function(data, escape) {
-                return `<div class="flex items-center gap-1">
-                    <iconify-icon icon="${escape(data.icon)}" class="dark:hidden"></iconify-icon>
-                    <iconify-icon icon="${escape(data.icon_dark)}" class="hidden dark:block"></iconify-icon>
-                    <span>${escape(data.name)}</span>
+                return `<div class="flex items-center gap-2 bg-base-200 rounded-lg px-2 py-1">
+                    <iconify-icon icon="${escape(data.icon)}" class="text-base dark:hidden"></iconify-icon>
+                    <iconify-icon icon="${escape(data.icon_dark)}" class="text-base hidden dark:block"></iconify-icon>
+                    <span class="font-medium">${escape(data.name)}</span>
                 </div>`;
             }
         },
