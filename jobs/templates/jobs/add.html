@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         load: function(query, callback) {
-            fetch(`/jobs/skills/autocomplete/?q=${encodeURIComponent(query || '')}`)
+            fetch(`/jobs/skills/autocomplete/?q=${encodeURIComponent(query || '')}&all=true`)
                 .then(response => response.json())
                 .then(json => {
                     callback(json.results);
@@ -339,6 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     callback();
                 });
         },
+        preload: 'focus',
         onChange: function(values) {
             // Update the hidden input with the selected skills
             const selectedSkills = this.items.map(value => {
