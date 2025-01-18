@@ -201,23 +201,23 @@ def toggle_favourite(request, job_id):
 def skills_autocomplete(request):
     """Handle skills autocomplete API requests"""
     query = request.GET.get('q', '').lower()
+    all_param = request.GET.get('all', 'false').lower() == 'true'
     
     # Get all skills with proper icon mapping
     skills_data = []
     for icon, name in SKILL_ICONS:
-        mapped_icon = ICON_NAME_MAPPING.get(name, icon)
-        dark_icon = DARK_VARIANTS.get(mapped_icon, mapped_icon)
-        
         if not query or query in name.lower():
+            mapped_icon = ICON_NAME_MAPPING.get(name, icon)
+            dark_icon = DARK_VARIANTS.get(mapped_icon, mapped_icon)
             skills_data.append({
                 'name': name,
                 'icon': mapped_icon,
                 'icon_dark': dark_icon,
-                'value': name  # Add value field for TomSelect
+                'value': name
             })
     
-    # Group by first letter if no query
-    if not query:
+    # Always group by first letter when all=true, otherwise only when no query
+    if all_param or not query:
         grouped_data = {}
         for skill in skills_data:
             first_letter = skill['name'][0].upper()
@@ -225,9 +225,18 @@ def skills_autocomplete(request):
                 grouped_data[first_letter] = []
             grouped_data[first_letter].append(skill)
         
+        # Sort groups and skills within groups
         results = []
         for letter in sorted(grouped_data.keys()):
-            results.extend(sorted(grouped_data[letter], key=lambda x: x['name']))
+            letter_group = sorted(grouped_data[letter], key=lambda x: x['name'])
+            if all_param:
+                # Return in the same format as the modal
+                results.append({
+                    'letter': letter,
+                    'skills': letter_group
+                })
+            else:
+                results.extend(letter_group)
     else:
         results = sorted(skills_data, key=lambda x: x['name'])
     
