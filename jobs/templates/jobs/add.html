@@ -22,20 +22,40 @@
     }
     .ts-dropdown {
         border: 1px solid hsl(var(--bc) / 0.2);
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 15px -3px rgb(0 0 0 / 0.1), 0 2px 8px -4px rgb(0 0 0 / 0.1);
-        padding: 0.5rem 0;
-        margin-top: 0.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15), 0 4px 10px -6px rgb(0 0 0 / 0.1);
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+        max-height: 400px;
+    }
+    .ts-dropdown .optgroup {
+        padding: 0;
+        border: none;
+    }
+    .ts-dropdown .optgroup-header {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: hsl(var(--bc));
+        padding: 0.75rem 1rem;
+        margin: 0.5rem 0;
+        border-bottom: 1px solid hsl(var(--bc) / 0.1);
     }
     .ts-dropdown .option {
-        padding: 0 !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0;
+        transition: all 0.2s;
     }
     .ts-dropdown .active {
-        background-color: transparent;
+        background-color: hsl(var(--p) / 0.1);
+        color: hsl(var(--p));
     }
-    .ts-dropdown .option:hover,
-    .ts-dropdown .option.active {
+    .ts-dropdown .option:hover {
         background-color: hsl(var(--b2));
+        transform: translateX(4px);
+    }
+    .ts-dropdown .option.active:hover {
+        background-color: hsl(var(--p) / 0.15);
     }
     .ts-wrapper.multi .ts-control > div {
         background: none;
@@ -310,22 +330,25 @@ document.addEventListener('DOMContentLoaded', function() {
         loadThrottle: 300,
         render: {
             option: function(data, escape) {
-                return `<div class="py-2 px-3 d-flex items-center gap-3 hover:bg-base-200">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg">
-                            <iconify-icon icon="${escape(data.icon)}" class="text-xl dark:hidden"></iconify-icon>
-                            <iconify-icon icon="${escape(data.icon_dark)}" class="text-xl hidden dark:block"></iconify-icon>
-                        </div>
-                        <div>
-                            <span class="font-medium">${escape(data.name)}</span>
-                        </div>
+                return `<div class="flex items-center gap-4">
+                    <div class="w-10 h-10 flex items-center justify-center bg-base-200 rounded-xl shadow-sm transition-transform duration-200 group-hover:scale-110">
+                        <iconify-icon icon="${escape(data.icon)}" 
+                                     class="text-2xl text-base-content/70 dark:hidden"></iconify-icon>
+                        <iconify-icon icon="${escape(data.icon_dark)}" 
+                                     class="text-2xl text-base-content/70 hidden dark:block"></iconify-icon>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-medium text-base">${escape(data.name)}</span>
+                        <span class="text-xs text-base-content/60">Click to select</span>
                     </div>
                 </div>`;
             },
             item: function(data, escape) {
-                return `<div class="flex items-center gap-2 bg-base-200 rounded-lg px-2 py-1">
-                    <iconify-icon icon="${escape(data.icon)}" class="text-base dark:hidden"></iconify-icon>
-                    <iconify-icon icon="${escape(data.icon_dark)}" class="text-base hidden dark:block"></iconify-icon>
+                return `<div class="flex items-center gap-2 bg-primary/10 text-primary rounded-lg px-3 py-1.5 shadow-sm">
+                    <iconify-icon icon="${escape(data.icon)}" 
+                                 class="text-lg dark:hidden"></iconify-icon>
+                    <iconify-icon icon="${escape(data.icon_dark)}" 
+                                 class="text-lg hidden dark:block"></iconify-icon>
                     <span class="font-medium">${escape(data.name)}</span>
                 </div>`;
             }
