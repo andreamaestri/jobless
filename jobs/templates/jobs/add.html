@@ -334,7 +334,11 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`/jobs/skills/autocomplete/?q=${encodeURIComponent(query || '')}&all=true`)
                 .then(response => response.json())
                 .then(json => {
-                    callback(json.results);
+                    // Flatten grouped results into a single array of skills
+                    const flattenedSkills = json.results.reduce((acc, group) => {
+                        return acc.concat(group.skills);
+                    }, []);
+                    callback(flattenedSkills);
                 }).catch(() => {
                     callback();
                 });
