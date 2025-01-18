@@ -238,6 +238,44 @@
 <script src="{% static 'js/skills-manager.js' %}"></script>
 <script src="{% static 'js/form-handler.js' %}"></script>
 
+<style>
+    .ts-dropdown {
+        border: 1px solid hsl(var(--bc) / 0.2);
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15), 0 4px 10px -6px rgb(0 0 0 / 0.1);
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+        max-height: 400px;
+        position: absolute;
+        z-index: 50;
+        background: hsl(var(--b1));
+        width: 100%;
+        overflow-y: auto;
+    }
+    
+    .ts-dropdown .optgroup {
+        padding: 0;
+        border: none;
+    }
+    
+    .ts-dropdown .optgroup-header {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: hsl(var(--p));
+        padding: 1rem 0.75rem 0.5rem;
+        background: hsl(var(--b1));
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .ts-dropdown .option {
+        padding: 0.5rem !important;
+        margin: 0.25rem 0;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+    }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize TomSelect with enhanced UI
@@ -252,6 +290,10 @@ document.addEventListener('DOMContentLoaded', function() {
         closeAfterSelect: true,
         preload: true,
         loadThrottle: 300,
+        optgroupField: 'letter',
+        optgroupLabelField: 'letter',
+        optgroupValueField: 'letter',
+        lockOptgroupOrder: true,
         optgroupField: 'letter',
         optgroupLabelField: 'letter',
         optgroupValueField: 'letter',
