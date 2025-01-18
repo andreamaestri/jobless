@@ -252,6 +252,10 @@ document.addEventListener('DOMContentLoaded', function() {
         closeAfterSelect: true,
         preload: true,
         loadThrottle: 300,
+        optgroupField: 'letter',
+        optgroupLabelField: 'letter',
+        optgroupValueField: 'letter',
+        lockOptgroupOrder: true,
         render: {
             option: function(data, escape) {
                 return `<div class="flex items-center gap-4">
@@ -281,11 +285,21 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`/jobs/skills/autocomplete/?q=${encodeURIComponent(query || '')}&all=true`)
                 .then(response => response.json())
                 .then(json => {
-                    // Flatten grouped results into a single array of skills
-                    const flattenedSkills = json.results.reduce((acc, group) => {
-                        return acc.concat(group.skills);
-                    }, []);
-                    callback(flattenedSkills);
+                    // Process groups and create optgroups
+                    const optgroups = json.results.map(group => ({
+                        letter: group.letter,
+                        $order: group.letter.charCodeAt(0)
+                    }));
+                    
+                    // Process all skills with their group assignments
+                    const options = json.results.flatMap(group => 
+                        group.skills.map(skill => ({
+                            ...skill,
+                            letter: group.letter
+                        }))
+                    );
+                    
+                    callback(options, optgroups);
                 }).catch(() => {
                     callback();
                 });
