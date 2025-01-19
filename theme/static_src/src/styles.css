@@ -253,30 +253,14 @@
     /* Skills Modal Styles */
     .modal-box {
         @apply relative max-h-[90vh] w-11/12 max-w-4xl mx-auto;
-        @apply bg-base-100/95 backdrop-blur-md rounded-2xl;
-        @apply shadow-2xl shadow-base-300/20;
-        @apply flex flex-col;
-        @apply p-4;
-        @apply border border-base-200/50;
     }
 
-    .modal-box .modal-header {
-        @apply flex items-center justify-between;
-        @apply pb-3 mb-3 border-b border-base-200/50;
-        @apply sticky top-0 bg-base-100/95 backdrop-blur-md z-30;
+    .modal-box > div {
+        @apply relative;  /* Create stacking context */
     }
 
-    .modal-box .modal-content {
-        @apply flex-1 overflow-y-auto overscroll-contain;
-        @apply -mx-4 px-4;
-        @apply scroll-smooth;
-    }
-
-    .modal-box .modal-action {
-        @apply sticky bottom-0 bg-base-100/95 backdrop-blur-md;
-        @apply mt-3 pt-3 border-t border-base-200/50;
-        @apply flex items-center justify-between;
-        @apply -mx-4 px-4 pb-0;
+    .modal-box .sticky {
+        @apply z-40;  /* Higher than letter nav but lower than preview */
     }
 
     /* Quick Letters Navigation */
@@ -284,7 +268,9 @@
         @apply w-10 flex flex-col gap-0.5 py-2 pl-0.5 pr-1.5;
         @apply sticky top-0 self-start;
         @apply select-none touch-none;
+        @apply z-30;
         height: calc(100vh - 12rem);
+        position: sticky;
     }
 
     .letter-nav-button {
@@ -306,29 +292,31 @@
 
     /* Letter Preview Bubble */
     .letter-bubble {
-        @apply fixed z-[100] pointer-events-none;
+        @apply fixed pointer-events-none;
         @apply bg-primary text-primary-content;
         @apply w-14 h-14 rounded-xl;
         @apply flex items-center justify-center;
         @apply text-2xl font-black;
         @apply shadow-lg shadow-base-300/20;
         @apply opacity-0 scale-90;
-        @apply transition-all duration-75;
-        transform-origin: center right;
-        right: 3rem;
-        top: 50vh;
-        transform: translateY(-50%) scale(0.9);
+        /* Remove transition from transform to prevent lag */
+        transition: opacity 75ms ease, scale 75ms ease;
+        z-index: 100;
+        position: fixed;
+        top: 0;
+        left: 0;
+        will-change: transform;
     }
 
     .letter-bubble.visible {
         @apply opacity-100 scale-100;
-        animation: bubblePop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: bubblePop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     @keyframes bubblePop {
-        0% { transform: translateY(-50%) scale(0.8); }
-        50% { transform: translateY(-50%) scale(1.1); }
-        100% { transform: translateY(-50%) scale(1); }
+        0% { transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(0.8); }
+        50% { transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(1.1); }
+        100% { transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(1); }
     }
 
     /* Skill Groups */
@@ -338,21 +326,28 @@
     }
 
     .skill-group-header {
-        @apply sticky top-0 py-2 z-20;
-        @apply bg-gradient-to-b from-base-100 via-base-100/95 to-transparent;
+        @apply sticky top-0 py-3 mb-4;
+        @apply bg-base-100/80 backdrop-blur-sm;
     }
 
     .skill-group-header span {
-        @apply text-4xl font-black opacity-10;
-        @apply transition-all duration-300;
-        background: linear-gradient(to bottom, hsl(var(--p)), transparent);
+        @apply block text-4xl font-black;
+        @apply px-2;
+        background: linear-gradient(135deg, hsl(var(--p)) 0%, transparent 400%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
     }
 
     .skill-group.active .skill-group-header span {
-        @apply opacity-20 scale-105;
+        background: linear-gradient(135deg, hsl(var(--p)) 0%, hsl(var(--s)) 200%);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+
+    /* Add a subtle transition effect */
+    .skill-group:not(:first-child) {
+        @apply border-t border-base-200/10 pt-2 mt-2;
     }
 
     /* Skill Grid */
@@ -364,11 +359,15 @@
     /* Skill Cards */
     .skill-card {
         @apply flex items-center gap-2.5 p-2.5 rounded-lg;
-        @apply border border-base-200/80 hover:border-primary/30;
-        @apply bg-base-100/50 hover:bg-base-200/30;
+        @apply border border-base-200/80;
+        @apply bg-base-100/90 backdrop-blur-sm;
         @apply transition-all duration-200;
         @apply relative overflow-hidden;
         @apply active:scale-95;
+    }
+
+    .skill-card:hover {
+        @apply bg-base-100 border-primary/30;
     }
 
     .skill-card .icon-wrapper {
@@ -394,8 +393,10 @@
 
     .skill-card.selected {
         @apply border-primary/50 bg-primary/5;
-        @apply hover:bg-primary/10 hover:border-primary;
+        @apply hover:bg-primary hover:border-primary;
         @apply shadow-sm shadow-primary/10;
+        @apply bg-primary/10 backdrop-blur-sm;
+        @apply hover:bg-primary/20;
     }
 
     .skill-card.selected .skill-name {
