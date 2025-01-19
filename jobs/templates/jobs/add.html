@@ -245,11 +245,11 @@
 <!-- Icon mappings -->
 <script>
     window.ICON_NAME_MAPPING = {{ icon_name_mapping|safe }};
+    window.DARK_VARIANTS = {{ dark_variants|safe }};
 </script>
 
-<!-- Application scripts -->
-<script src="{% static 'js/toast.js' %}"></script>
-<script src="{% static 'js/skills-manager.js' %}"></script>
-<script src="{% static 'js/skills-select.js' %}"></script>
-<script src="{% static 'js/form-handler.js' %}"></script>
+<!-- Add defer attribute to ensure mappings are available -->
+<script src="{% static 'js/skills-manager.js' %}" defer></script>
+<script src="{% static 'js/skills-select.js' %}" defer></script>
+<script src="{% static 'js/form-handler.js' %}" defer></script>
 {% endblock extra_js %}

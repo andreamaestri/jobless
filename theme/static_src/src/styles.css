@@ -271,52 +271,44 @@
         @apply z-30;
         height: calc(100vh - 12rem);
         position: sticky;
+        display: grid;
+        grid-auto-rows: 1fr;  /* Make all letters equal height */
+        transition: opacity 200ms ease-in-out;
+        @apply opacity-50 hover:opacity-100;
     }
 
     .letter-nav-button {
-        @apply w-7 h-5 rounded;
+        @apply w-7 h-full rounded;  /* Changed from h-5 to h-full */
         @apply flex items-center justify-center;
         @apply text-[10px] font-medium;
-        @apply text-base-content/50 hover:text-primary;
+        @apply text-base-content/50;
         @apply transition-all duration-75;
         transform-origin: center right;
-    }
-
-    .letter-nav-button:active {
-        @apply scale-125 text-primary;
-    }
-
-    .letter-nav-button.active {
-        @apply text-primary font-bold scale-110;
     }
 
     /* Letter Preview Bubble */
     .letter-bubble {
         @apply fixed pointer-events-none;
         @apply bg-primary text-primary-content;
-        @apply w-14 h-14 rounded-xl;
+        @apply w-12 h-12 rounded-lg;
         @apply flex items-center justify-center;
-        @apply text-2xl font-black;
+        @apply text-xl font-black;
         @apply shadow-lg shadow-base-300/20;
-        @apply opacity-0 scale-90;
-        /* Remove transition from transform to prevent lag */
-        transition: opacity 75ms ease, scale 75ms ease;
+        @apply opacity-0;
+        transition: 
+            opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+            transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translate(-50%, -50%) scale(0.95);
         z-index: 100;
         position: fixed;
         top: 0;
         left: 0;
-        will-change: transform;
+        will-change: transform, opacity;
     }
 
     .letter-bubble.visible {
-        @apply opacity-100 scale-100;
-        animation: bubblePop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes bubblePop {
-        0% { transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(0.8); }
-        50% { transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(1.1); }
-        100% { transform: translate(var(--x), var(--y)) translate(-50%, -50%) scale(1); }
+        @apply opacity-100;
+        transform: translate(-50%, -50%) scale(1);
     }
 
     /* Skill Groups */
