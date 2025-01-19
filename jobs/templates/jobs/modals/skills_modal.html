@@ -7,6 +7,9 @@
     currentLetter: null,
     touchStartY: null,
     touchStartTime: null,
+    currentPreviewLetter: null,
+    lastTouchY: null,
+    isScrolling: false,
     
     init() {
         this.$watch('open', value => {
@@ -128,6 +131,74 @@
             });
             group.style.display = hasVisible ? '' : 'none';
         });
+    },
+
+    startLetterDrag(e) {
+        this.lastTouchY = e.touches[0].clientY;
+        this.isScrolling = false;
+    },
+
+    handleLetterDrag(e) {
+        if (!this.lastTouchY) return;
+        
+        const touch = e.touches[0];
+        const nav = e.currentTarget;
+        const rect = nav.getBoundingClientRect();
+        const percentage = (touch.clientY - rect.top) / rect.height;
+        const index = Math.floor(percentage * nav.children.length);
+        const button = nav.children[index];
+        
+        if (button && !this.isScrolling) {
+            e.preventDefault();
+            const letter = button.textContent.trim();
+            this.previewLetter(letter);
+            this.jumpToLetter(letter);
+        }
+    },
+
+    endLetterDrag() {
+        this.lastTouchY = null;
+        setTimeout(() => this.hideLetterPreview(), 1000);
+    },
+
+    previewLetter(letter) {
+        this.currentPreviewLetter = letter;
+    },
+
+    hideLetterPreview() {
+        this.currentPreviewLetter = null;
+    },
+
+    handleScroll(e) {
+        if (!this.isScrolling) {
+            this.isScrolling = true;
+            
+            const container = e.target;
+            const groups = container.querySelectorAll('.skill-group');
+            let mostVisible = null;
+            let maxVisibleHeight = 0;
+            
+            groups.forEach(group => {
+                const rect = group.getBoundingClientRect();
+                const visibleHeight = Math.min(rect.bottom, window.innerHeight) - 
+                                    Math.max(rect.top, 0);
+                
+                if (visibleHeight > maxVisibleHeight) {
+                    maxVisibleHeight = visibleHeight;
+                    mostVisible = group;
+                }
+            });
+            
+            if (mostVisible) {
+                const letter = mostVisible.dataset.letter;
+                this.currentLetter = letter;
+                document.querySelectorAll('.skill-group').forEach(g => {
+                    g.classList.toggle('active', g === mostVisible);
+                });
+            }
+            
+            setTimeout(() => this.isScrolling = false, 100);
+        }
     }
 }" 
      @keydown.escape.window="cancel()"
@@ -146,48 +217,80 @@
 
     <!-- Modal -->
     <div x-show="open" 
-         class="modal modal-open"
-         x-transition>
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3 class="text-lg font-bold">Manage Skills</h3>
-                <div class="flex items-center gap-4">
-                    <span class="text-sm text-base-content/70" x-text="selectedSkills.length + ' selected'"></span>
-                    <input type="text" 
-                           x-model="search"
-                           placeholder="Search skills..."
-                           class="input input-bordered input-sm w-64">
+         class="modal modal-open">
+        <div class="modal-box max-h-[90vh] w-full max-w-5xl overflow-hidden flex flex-col bg-base-100/95 backdrop-blur-md">
+            <!-- Header with search -->
+            <div class="modal-header px-6 py-4">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 w-full">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <iconify-icon icon="heroicons:academic-cap" class="text-primary text-2xl"></iconify-icon>
+                        Manage Skills
+                    </h3>
+                    <div class="flex-1 flex items-center gap-4">
+                        <div class="relative flex-1 max-w-md">
+                            <input type="text" 
+                                   x-model="search"
+                                   @input="handleSearch($event)"
+                                   placeholder="Search skills..."
+                                   class="input input-bordered w-full pl-10">
+                            <iconify-icon icon="heroicons:magnifying-glass" 
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-base-content/50">
+                            </iconify-icon>
+                        </div>
+                        <div class="badge badge-primary badge-lg gap-2">
+                            <span x-text="selectedSkills.length"></span>
+                            <span>Selected</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="modal-content">
-                <div class="flex gap-4">
-                    <!-- Quick letter navigation -->
-                    <div class="quick-letters-nav">
+            <!-- Main content -->
+            <div class="modal-content flex-1 overflow-hidden">
+                <div class="flex h-full">
+                    <!-- Letter navigation with touch preview -->
+                    <div class="quick-letters-nav" 
+                         @touchstart="startLetterDrag" 
+                         @touchmove="handleLetterDrag" 
+                         @touchend="endLetterDrag">
                         {% for group in skill_icons %}
                         <button @click="jumpToLetter('{{ group.letter }}')"
+                                @mouseenter="previewLetter('{{ group.letter }}')"
+                                @mouseleave="hideLetterPreview()"
                                 class="letter-nav-button"
                                 :class="{'active': currentLetter === '{{ group.letter }}'}">
                             {{ group.letter }}
                         </button>
                         {% endfor %}
+                        <!-- Letter preview bubble -->
+                        <div class="letter-bubble" 
+                             :class="{'visible': currentPreviewLetter}"
+                             x-text="currentPreviewLetter">
+                        </div>
                     </div>
 
                     <!-- Skills grid -->
-                    <div class="flex-1" x-ref="skillsContainer">
+                    <div class="flex-1 overflow-y-auto px-6 scroll-smooth" 
+                         x-ref="skillsContainer"
+                         @scroll.throttle.50ms="handleScroll">
                         {% for group in skill_icons %}
                         <div class="skill-group" data-letter="{{ group.letter }}">
-                            <h4 class="skill-group-header">{{ group.letter }}</h4>
+                            <div class="skill-group-header">
+                                <span class="text-4xl font-black text-primary/10">{{ group.letter }}</span>
+                            </div>
                             <div class="skill-grid">
                                 {% for skill in group.skills %}
                                 <button type="button"
-                                        class="skill-button"
+                                        class="skill-card"
                                         :class="{'selected': isSelected('{{ skill.name }}')}"
                                         @click="handleQuickSelect($event, JSON.parse('{{ skill|json|escapejs }}'))">
-                                    <div class="w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg shrink-0">
-                                        <iconify-icon icon="{{ skill.icon }}" class="text-xl"></iconify-icon>
+                                    <div class="icon-wrapper">
+                                        <iconify-icon icon="{{ skill.icon }}" width="24" height="24"></iconify-icon>
                                     </div>
-                                    <span class="text-sm font-medium">{{ skill.name }}</span>
+                                    <span class="skill-name">{{ skill.name }}</span>
+                                    <div class="check-indicator">
+                                        <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
+                                    </div>
                                 </button>
                                 {% endfor %}
                             </div>
@@ -197,38 +300,22 @@
                 </div>
             </div>
 
-            <div class="modal-action">
-                <div class="text-sm text-base-content/70">
-                    Press <kbd class="kbd kbd-sm">Shift</kbd> + Click to select multiple
-                </div>
-                <div class="flex gap-2">
-                    <button @click="cancel()" class="btn btn-ghost">Cancel</button>
-                    <button @click="save()" class="btn btn-primary">
-                        Apply <span x-text="'(' + selectedSkills.length + ')'"></span>
-                    </button>
+            <!-- Footer -->
+            <div class="modal-footer px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <kbd class="hidden sm:inline-flex kbd kbd-sm gap-2 items-center bg-base-200">
+                        <span class="font-sans font-medium">Shift</span> + Click for multi-select
+                    </kbd>
+                    <div class="flex gap-2">
+                        <button @click="cancel()" class="btn">Cancel</button>
+                        <button @click="save()" class="btn btn-primary gap-2">
+                            Apply Changes
+                            <span class="badge badge-sm" x-text="selectedSkills.length"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="modal-backdrop" @click="cancel()"></div>
     </div>
 </div>
-
-<style>
-/* Add CSS to improve touch handling */
-.modal-box {
-    overscroll-behavior: contain;
-}
-
-.overflow-y-auto {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-}
-
-@media (hover: none) {
-    /* Touch device optimizations */
-    .letter-nav-button {
-        min-height: 2.5rem; /* Larger touch target */
-        touch-action: manipulation;
-    }
-}
-</style>

@@ -153,7 +153,7 @@
         margin-top: 0.75rem;
         max-height: 400px;
         position: absolute;
-        z-index: 100; /* Increased from 50 to 100 */
+        z-index: 100;
         background: hsl(var(--b1));
         width: 100%;
         overflow-y: auto;
@@ -250,550 +250,200 @@
         @apply border-primary/30 ring-2 ring-primary/20;
     }
 
-    /* Quick Letters Component */
-    .quick-letters-list {
-        @apply fixed flex flex-col items-center;
-        height: calc(100vh - 24rem);
-        max-height: 32rem;
-        width: 3rem;
-        font-size: 0.75rem;
-        line-height: 1;
-        z-index: 30;
-        padding: 0.5rem 0;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-        right: 0.25rem; /* Closer to edge on mobile */
-
-        @screen sm {
-            right: 1.5rem; /* Original spacing for larger screens */
-        }
-    }
-
-    .quick-letter {
-        @apply flex items-center justify-center text-base-content/50;
-        height: calc(100% / 26);
-        min-height: 1rem;
-        width: 100%;
-        padding: 0;
-        font-weight: 500;
-        transform-origin: center right;
-        position: relative;
-        pointer-events: auto;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: transform, color, opacity;
-    }
-
-    .quick-letter::before {
-        content: '';
-        @apply absolute;
-        width: 300%;
-        height: 100%;
-        left: -200%;
-        top: 0;
-    }
-
-    .quick-letter:hover:not(.active) {
-        @apply text-primary;
-        transform: scale(1.2);
-        transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-        transition-duration: 0.2s;
-    }
-
-    .quick-letter.active {
-        @apply text-primary font-bold;
-        transform: scale(1.4);
-    }
-
-    .quick-letter.active + .quick-letter,
-    .quick-letter.adjacent {
-        transform: scale(1.1);
-        @apply text-primary/70;
-        transition-duration: 0.1s;
-    }
-
-    .quick-letter.adjacent {
-        @apply text-primary/70;
-        transform: scale(1.1);
-    }
-
-    /* Letter Preview and Magnifier */
-    .letter-magnifier {
-        @apply fixed pointer-events-none z-[100];
-        @apply bg-neutral backdrop-blur-lg shadow-lg;
-        @apply shadow-lg border border-primary/20;
-        @apply flex items-center justify-center p-4 pl-3; /* Added padding */
-        @apply text-6xl font-bold text-primary;
-        width: 6rem;
-        height: 6rem;
-        border-radius: 1rem;
-        opacity: 0;
-        transform-origin: center right;
-        transform: scale(0.8) translateX(0);
-        transition: all 0.12s cubic-bezier(0.2, 0, 0, 1);
-        margin-top: -1.75rem;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
-        
-        /* Add these properties to ensure text is perfectly centered */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-    }
-
-    .letter-preview {
-        @apply fixed pointer-events-none select-none;
-        @apply text-[32vmin] font-black text-transparent;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%) scale(0.9);
-        opacity: 0;
-        z-index: 99;
-        
-        /* Dramatic background and text effects */
-        background: linear-gradient(
-            135deg,
-            hsl(var(--p)) 0%,
-            hsl(var(--s)) 100%
-        );
-        background-clip: text;
-        -webkit-background-clip: text;
-        
-        /* Text shadow for depth */
-        text-shadow: 
-            0 0 80px hsl(var(--p) / 0.2),
-            0 0 32px hsl(var(--p) / 0.4);
-        
-        /* Smooth transition */
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        will-change: transform, opacity;
-    }
-
-    .letter-preview::before {
-        content: '';
-        @apply fixed inset-0 opacity-0 transition-all duration-300;
-        background: radial-gradient(
-            circle at center,
-            hsl(var(--b1) / 0.98) 0%,
-            hsl(var(--b1)) 100%
-        );
-        backdrop-filter: blur(24px);
-        z-index: -1;
-    }
-
-    .letter-preview.visible {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    .letter-preview.visible::before {
-        opacity: 0.98;
-    }
-
-    .letter-preview.visible ~ .skill-group {
-        filter: blur(2px);
-        opacity: 0.3;
-        transform: scale(0.99);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .modal-box .overflow-y-auto {
-        @apply transition-all duration-300;
-    }
-
-    .letter-preview.visible {
-        opacity: 0.15;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    /* Skill Group */
-    .skill-group {
-        @apply touch-pan-y overscroll-contain;
-        scroll-margin-top: 0;
-        padding-right: 4rem;
-        margin-bottom: 1rem;
-    }
-
-    .skill-group-header {
-        @apply sticky top-0 z-20 bg-base-100/25 border-b border-base-200/10;
-        transform-style: preserve-3d;
-    }
-
-    .skill-group-label {
-        @apply transition-all duration-200;
-    }
-
-    .skill-group-label--hover {
-        @apply hover:-translate-y-0.5 hover:shadow-lg;
-    }
-
-    /* Modal Styles */
-    .modal-box {
-        @apply p-0 flex flex-col max-h-[90vh];
-        @apply w-11/12 max-w-4xl mx-auto;
-        @apply bg-base-100 rounded-2xl shadow-2xl;
-    }
-
-    .modal-header {
-        @apply flex-none p-4 border-b border-base-200;
-        @apply sticky top-0 z-30 bg-base-100/95 backdrop-blur-sm;
-    }
-
-    .modal-content {
-        @apply flex-1 overflow-y-auto p-4;
-        @apply overscroll-contain touch-pan-y;
-    }
-
-    .modal-action {
-        @apply flex-none p-4 border-t border-base-200;
-        @apply sticky bottom-0 z-30 bg-base-100/95 backdrop-blur-sm;
-    }
-
-    /* Restore desktop styles */
-    @screen sm {
-        .modal-box {
-            width: 91.666667%; /* w-11/12 */
-            height: 85vh;
-            max-width: 80rem; /* max-w-7xl */
-            margin: auto;
-            border-radius: 1rem;
-        }
-    }
-
-    .modal-box--mobile {
-        @apply fixed inset-0 m-0 rounded-none;
-        @apply h-[100dvh] max-h-none;
-        @apply flex flex-col;
-    }
-
-    .modal .btn {
-        @apply relative overflow-hidden;
-        @apply active:scale-95 transition-transform;
-    }
-
-    .modal .btn-primary {
-        @apply shadow-md shadow-primary/20;
-        @apply hover:shadow-lg hover:shadow-primary/30;
-        @apply active:shadow-sm;
-    }
-
-    .modal .btn iconify-icon {
-        @apply transition-transform duration-200;
-    }
-
-    .modal .btn:hover iconify-icon {
-        @apply scale-110;
-    }
-
-    .modal-box .flex-none {
-        @apply backdrop-blur-xl bg-base-100/90;
-    }
-
-    /* Add these backdrop button styles */
-    .modal-backdrop button {
-        @apply opacity-0 absolute;
-        pointer-events: none;
-    }
-
-    /* Keep the backdrop itself clickable */
-    .modal-backdrop {
-        @apply cursor-pointer;
-    }
-
-    /* Skills Container and Placeholder */
-    .form-control .skill-container {
-        @apply relative border border-base-300 rounded-xl;
-        min-height: 8rem; /* Taller on mobile */
-        padding: 4rem;
-        
-        @screen sm {
-            min-height: 5rem; /* Original height on desktop */
-        }
-    }
-
-    .form-control .skill-container .add-skills-button {
-        @apply absolute bottom-3 left-3 right-3;
-        @apply btn btn-outline btn-primary btn-sm w-auto;
-        @apply sm:hidden; /* Only show on mobile */
-    }
-
-    .form-control #selected-skills {
-        @apply relative flex flex-wrap gap-2 z-10;
-        min-height: 1.5rem;
-    }
-
-    .form-control #skills-placeholder {
-        @apply absolute inset-0 flex items-center justify-center;
-        opacity: 1 !important;
-        color: hsl(var(--bc) / 0.5) !important;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .form-control .skill-container:hover #skills-placeholder {
-        color: hsl(var(--p) / 0.7) !important;
-    }
-
-    /* Only hide placeholder when skills are selected */
-    .form-control #selected-skills:not(:empty) + #skills-placeholder {
-        opacity: 0 !important;
-    }
-
-    /* Badge Styles */
-    .badge {
-        gap: 0.25rem;
-    }
-
-    .badge .btn-square {
-        min-height: 1.5rem;
-        height: 100%;
-        width: 1.5rem;
-        margin: -0.125rem -0.125rem -0.125rem 0;
-    }
-
-    .badge .btn-square:hover {
-        background-color: currentColor;
-    }
-
-    /* Skills Container and Interactive Elements */
-    .skill-container {
-        @apply relative border border-base-300 rounded-xl p-4;
-        @apply transition-all duration-200;
-        min-height: 5rem;
-    }
-
-    /* Mobile bottom CTA */
-    .mobile-skills-cta {
-        @apply fixed bottom-0 left-0 right-0 p-4 bg-base-100;
-        @apply border-t border-base-200 shadow-lg;
-        @apply flex items-center justify-center;
-        @apply transform transition-all duration-200;
-        @apply z-50;
-        @apply translate-y-full; /* Hidden by default */
-    }
-
-    .mobile-skills-cta .btn {
-        @apply btn-primary w-full max-w-md;
-    }
-
-    /* Show mobile CTA when skills are selected */
-    .has-skills .mobile-skills-cta {
-        @apply translate-y-0;
-    }
-
-    /* Hide mobile CTA on desktop */
-    @screen sm {
-        .mobile-skills-cta {
-            @apply hidden;
-        }
-
-        .skill-container {
-            min-height: 5rem;
-        }
-    }
-
-    /* Mobile-first CTA design */
-    .skill-trigger {
-        @apply absolute inset-0 flex items-center justify-center;
-        @apply bg-primary/5 hover:bg-primary/10 active:bg-primary/15;
-        @apply transition-all duration-200;
-        @apply rounded-xl;
-    }
-
-    .skill-container:has(#selected-skills:not(:empty)) .skill-trigger {
-        @apply bg-transparent hover:bg-base-200/50;
-    }
-
-    .add-skills-cta {
-        @apply flex flex-col items-center justify-center gap-2 p-4;
-        @apply text-primary/70 hover:text-primary;
-        @apply transition-all duration-200;
-    }
-
-    .add-skills-cta iconify-icon {
-        @apply text-4xl sm:text-3xl;
-        @apply transition-transform duration-300;
-    }
-
-    .add-skills-cta span {
-        @apply text-sm font-medium text-center;
-        @apply sm:text-base;
-    }
-
-    /* Empty state highlight */
-    .skill-container:not(:has(#selected-skills *)) .skill-trigger {
-        @apply animate-pulse;
-    }
-
-    /* Active state feedback */
-    .skill-trigger:active .add-skills-cta {
-        @apply scale-95;
-    }
-
-    /* Selected skills styling */
-    #selected-skills {
-        @apply relative z-10 p-4 flex flex-wrap gap-2;
-        min-height: 1.5rem;
-    }
-
-    /* Desktop hover refinements */
-    @screen sm {
-        .skill-trigger {
-            @apply bg-transparent;
-        }
-        
-        .skill-container:hover .skill-trigger {
-            @apply bg-base-200/30;
-        }
-    }
-
-    /* Mobile CTA styling */
-    .mobile-cta {
-        @apply fixed bottom-0 left-0 right-0;
-        @apply p-4 bg-base-100 border-t border-base-200;
-        @apply shadow-lg backdrop-blur-sm;
-        @apply transform transition-all duration-300;
-        @apply z-50;
-        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
-        transform: translateY(100%);
-    }
-
-    /* Show CTA when skills are present */
-    .has-skills .mobile-cta {
-        transform: translateY(0);
-    }
-
-    /* Hide on desktop */
-    @screen sm {
-        .mobile-cta {
-            @apply hidden;
-        }
-    }
-
-    /* Letter magnifier adjustments */
-    .letter-magnifier, .letter-preview {
-        @apply hidden;
-    }
-
-    .modal[open] .letter-magnifier,
-    .modal[open] .letter-preview {
-        @apply block;
-    }
-
-    /* Skills Container */
-    .skill-container {
-        @apply relative border border-base-300 rounded-xl;
-        @apply transition-all duration-200;
-        @apply cursor-pointer min-h-[8rem];
-        @apply hover:border-primary/30 hover:bg-base-200/10;
-    }
-
-    /* Empty state styling */
-    .empty-state {
-        @apply transition-all duration-200;
-        @apply pointer-events-none;
-    }
-
-    .skill-container:hover .empty-state {
-        @apply text-primary/70;
-    }
-
-    .skill-container:has(#selected-skills:not(:empty)) .empty-state {
-        @apply hidden;
-    }
-
-    #selected-skills {
-        @apply relative z-10;
-        min-height: 1.5rem;
-    }
-
-    /* Mobile styles */
-    @screen sm {
-        .skill-container {
-            min-height: 5rem;
-        }
-    }
-
-    /* Modal Box Improvements */
+    /* Skills Modal Styles */
     .modal-box {
         @apply relative max-h-[90vh] w-11/12 max-w-4xl mx-auto;
-        @apply bg-base-100 rounded-2xl shadow-2xl;
+        @apply bg-base-100/95 backdrop-blur-md rounded-2xl;
+        @apply shadow-2xl shadow-base-300/20;
         @apply flex flex-col;
-        @apply p-6;
+        @apply p-4;
+        @apply border border-base-200/50;
     }
 
-    /* Modal Header */
     .modal-box .modal-header {
         @apply flex items-center justify-between;
-        @apply pb-4 mb-4 border-b border-base-200;
-        @apply sticky top-0 bg-base-100 z-30;
+        @apply pb-3 mb-3 border-b border-base-200/50;
+        @apply sticky top-0 bg-base-100/95 backdrop-blur-md z-30;
     }
 
-    /* Modal Content Area */
     .modal-box .modal-content {
         @apply flex-1 overflow-y-auto overscroll-contain;
-        @apply -mx-6 px-6;  /* Negative margin to allow full-width content */
+        @apply -mx-4 px-4;
+        @apply scroll-smooth;
     }
 
-    /* Modal Actions */
     .modal-box .modal-action {
-        @apply sticky bottom-0 bg-base-100;
-        @apply mt-4 pt-4 border-t border-base-200;
+        @apply sticky bottom-0 bg-base-100/95 backdrop-blur-md;
+        @apply mt-3 pt-3 border-t border-base-200/50;
         @apply flex items-center justify-between;
-        @apply -mx-6 px-6 pb-0;  /* Negative margin to allow full-width */
-    }
-
-    /* Skill Selection Grid */
-    .skill-group {
-        @apply mb-8 last:mb-0;
-    }
-
-    .skill-group-header {
-        @apply text-sm font-semibold mb-3;
-        @apply sticky top-0 bg-base-100 py-2 z-20;
-    }
-
-    .skill-grid {
-        @apply grid gap-2;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-
-    .skill-button {
-        @apply flex items-center gap-3 p-3 rounded-lg;
-        @apply border-2 border-base-200 hover:border-primary/50;
-        @apply transition-all duration-200;
-        @apply active:scale-95;
-    }
-
-    .skill-button.selected {
-        @apply border-primary bg-primary/5;
-    }
-
-    .skill-button-icon {
-        @apply w-8 h-8 flex items-center justify-center;
-        @apply bg-base-200 rounded-lg shrink-0;
-    }
-
-    .skill-button-text {
-        @apply text-sm font-medium text-left;
+        @apply -mx-4 px-4 pb-0;
     }
 
     /* Quick Letters Navigation */
     .quick-letters-nav {
-        @apply px-2 py-4 border-r sticky top-20 self-start;
-        @apply flex flex-col gap-1;
+        @apply w-10 flex flex-col gap-0.5 py-2 pl-0.5 pr-1.5;
+        @apply sticky top-0 self-start;
+        @apply select-none touch-none;
+        height: calc(100vh - 12rem);
     }
 
     .letter-nav-button {
-        @apply w-8 h-8 rounded;
+        @apply w-7 h-5 rounded;
         @apply flex items-center justify-center;
-        @apply text-sm font-medium;
-        @apply transition-colors;
-        @apply hover:bg-base-200;
+        @apply text-[10px] font-medium;
+        @apply text-base-content/50 hover:text-primary;
+        @apply transition-all duration-75;
+        transform-origin: center right;
+    }
+
+    .letter-nav-button:active {
+        @apply scale-125 text-primary;
     }
 
     .letter-nav-button.active {
-        @apply text-primary bg-primary/10;
+        @apply text-primary font-bold scale-110;
+    }
+
+    /* Letter Preview Bubble */
+    .letter-bubble {
+        @apply fixed z-[100] pointer-events-none;
+        @apply bg-primary text-primary-content;
+        @apply w-14 h-14 rounded-xl;
+        @apply flex items-center justify-center;
+        @apply text-2xl font-black;
+        @apply shadow-lg shadow-base-300/20;
+        @apply opacity-0 scale-90;
+        @apply transition-all duration-75;
+        transform-origin: center right;
+        right: 3rem;
+        top: 50vh;
+        transform: translateY(-50%) scale(0.9);
+    }
+
+    .letter-bubble.visible {
+        @apply opacity-100 scale-100;
+        animation: bubblePop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes bubblePop {
+        0% { transform: translateY(-50%) scale(0.8); }
+        50% { transform: translateY(-50%) scale(1.1); }
+        100% { transform: translateY(-50%) scale(1); }
+    }
+
+    /* Skill Groups */
+    .skill-group {
+        @apply mb-8 last:mb-4;
+        scroll-margin-top: 1rem;
+    }
+
+    .skill-group-header {
+        @apply sticky top-0 py-2 z-20;
+        @apply bg-gradient-to-b from-base-100 via-base-100/95 to-transparent;
+    }
+
+    .skill-group-header span {
+        @apply text-4xl font-black opacity-10;
+        @apply transition-all duration-300;
+        background: linear-gradient(to bottom, hsl(var(--p)), transparent);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .skill-group.active .skill-group-header span {
+        @apply opacity-20 scale-105;
+    }
+
+    /* Skill Grid */
+    .skill-grid {
+        @apply grid gap-2 pt-1.5;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    /* Skill Cards */
+    .skill-card {
+        @apply flex items-center gap-2.5 p-2.5 rounded-lg;
+        @apply border border-base-200/80 hover:border-primary/30;
+        @apply bg-base-100/50 hover:bg-base-200/30;
+        @apply transition-all duration-200;
+        @apply relative overflow-hidden;
+        @apply active:scale-95;
+    }
+
+    .skill-card .icon-wrapper {
+        @apply w-8 h-8 flex items-center justify-center;
+        @apply bg-base-200/80 rounded-md;
+        @apply transition-all duration-200;
+    }
+
+    .skill-card:hover .icon-wrapper {
+        @apply scale-110 rotate-3 bg-base-200;
+    }
+
+    .skill-card .skill-name {
+        @apply text-sm font-medium;
+        @apply transition-colors duration-200;
+    }
+
+    .skill-card .check-indicator {
+        @apply absolute right-2 text-primary;
+        @apply opacity-0 scale-75;
+        @apply transition-all duration-200;
+    }
+
+    .skill-card.selected {
+        @apply border-primary/50 bg-primary/5;
+        @apply hover:bg-primary/10 hover:border-primary;
+        @apply shadow-sm shadow-primary/10;
+    }
+
+    .skill-card.selected .skill-name {
+        @apply text-primary font-semibold;
+    }
+
+    .skill-card.selected .icon-wrapper {
+        @apply bg-primary/10;
+    }
+
+    .skill-card.selected .check-indicator {
+        @apply opacity-100 scale-100;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 640px) {
+        .quick-letters-nav {
+            @apply h-10 flex-row overflow-x-auto overflow-y-hidden;
+            @apply w-full sticky top-0 bg-base-100/95 backdrop-blur-sm z-10;
+            @apply px-3 py-1.5;
+            height: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .quick-letters-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .letter-nav-button {
+            @apply min-w-[1.75rem] h-7 rounded;
+            @apply flex-shrink-0;
+            @apply text-[10px] font-medium;
+        }
+
+        .skill-grid {
+            @apply grid-cols-1;
+        }
+
+        .modal-content {
+            height: calc(85vh - 8rem);
+        }
+
+        .letter-bubble {
+            @apply w-10 h-10 text-xl;
+            right: 1rem;
+        }
     }
 }
 

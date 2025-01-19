@@ -1,0 +1,16 @@
+<div class="p-8 form-section" style="--delay: 2">
+    {% include "jobs/includes/section_header.html" with 
+        icon="heroicons:academic-cap"
+        title="Required Skills"
+        extra_content='<button type="button" @click="$dispatch(\'open-skills-modal\')" class="btn btn-ghost btn-sm gap-2"><iconify-icon icon="heroicons:squares-plus"></iconify-icon>Manage Skills</button>' %}
+    
+    <div class="relative">
+        <select id="skills-select" multiple placeholder="Search and select skills...">
+            <!-- Options will be populated via JavaScript -->
+        </select>
+        <input type="hidden" name="skills" id="skills-input">
+        <p class="text-xs text-base-content/60 mt-2">
+            Quick search and select skills, or use the Manage Skills button for more options
+        </p>
+    </div>
+</div>
