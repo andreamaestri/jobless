@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 import json
 import logging
-from .models import JobPosting, SKILL_ICONS
+from .models import JobPosting, SKILL_ICONS  # Remove Skill import
 from .forms import JobPostingForm
 from django import template, forms
 from .utils.skill_icons import DARK_VARIANTS, ICON_NAME_MAPPING
@@ -107,6 +107,7 @@ class JobCreateView(BaseJobView, CreateView):
         """Add additional context if needed"""
         context = super().get_context_data(**kwargs)
         context['skill_icons'] = self._get_grouped_skills()
+        context['icon_name_mapping'] = json.dumps(ICON_NAME_MAPPING)
         return context
 
     def _get_grouped_skills(self):
@@ -199,50 +200,61 @@ def toggle_favourite(request, job_id):
     return redirect("jobs:list")
 
 def skills_autocomplete(request):
-    """Handle skills autocomplete API requests"""
-    query = request.GET.get('q', '').lower()
-    all_param = request.GET.get('all', 'false').lower() == 'true'
-    
-    # Get all skills with proper icon mapping
-    skills_data = []
-    for icon, name in SKILL_ICONS:
-        if not query or query in name.lower():
-            mapped_icon = ICON_NAME_MAPPING.get(name, icon)
-            dark_icon = DARK_VARIANTS.get(mapped_icon, mapped_icon)
-            skills_data.append({
-                'name': name,
-                'icon': mapped_icon,
-                'icon_dark': dark_icon,
-                'value': name
-            })
-    
-    # Always group by first letter when all=true, otherwise only when no query
-    if all_param or not query:
-        grouped_data = {}
-        for skill in skills_data:
-            first_letter = skill['name'][0].upper()
-            if first_letter not in grouped_data:
-                grouped_data[first_letter] = []
-            grouped_data[first_letter].append(skill)
+    """
+    Endpoint for skills autocomplete functionality using SKILL_ICONS
+    """
+    try:
+        query = request.GET.get('q', '').lower()
+        all_skills = request.GET.get('all', 'false').lower() == 'true'
+        logger.debug(f"Skills autocomplete request - query: {query}, all: {all_skills}")
         
-        # Sort groups and skills within groups
-        results = []
-        for letter in sorted(grouped_data.keys()):
-            letter_group = sorted(grouped_data[letter], key=lambda x: x['name'])
-            if all_param:
-                # Return in the same format as the modal
-                results.append({
-                    'letter': letter,
-                    'skills': letter_group
-                })
-            else:
-                results.extend(letter_group)
-    else:
-        results = sorted(skills_data, key=lambda x: x['name'])
-    
-    return JsonResponse({'results': results})
-
-# Remove get_skills_data as it's no longer needed
+        # Use SKILL_ICONS directly
+        skills_data = list(SKILL_ICONS)  # Convert to list to ensure it's mutable
+        
+        # Filter if there's a query and not requesting all
+        if query and not all_skills:
+            skills_data = [
+                (icon, name) for icon, name in skills_data 
+                if query.lower() in name.lower()
+            ]
+        
+        # Group skills by first letter with proper icon handling
+        grouped_skills = {}
+        for icon, name in skills_data:
+            first_letter = name[0].upper()
+            if first_letter not in grouped_skills:
+                grouped_skills[first_letter] = []
+            
+            # Ensure proper icon formatting
+            icon_name = icon.replace('skill-icons:', '')
+            formatted_icon = f"skill-icons:{icon_name}"
+            dark_icon = DARK_VARIANTS.get(formatted_icon, formatted_icon)
+            
+            grouped_skills[first_letter].append({
+                'name': name,
+                'icon': formatted_icon,
+                'icon_dark': dark_icon
+            })
+        
+        # Convert to sorted list of groups
+        results = [
+            {
+                'letter': letter,
+                'skills': sorted(grouped_skills[letter], key=lambda x: x['name'].upper())
+            }
+            for letter in sorted(grouped_skills.keys())
+        ]
+        
+        return JsonResponse({
+            'results': results
+        })
+        
+    except Exception as e:
+        logger.exception("Error in skills_autocomplete")
+        return JsonResponse({
+            'error': str(e),
+            'details': 'Server error occurred'
+        }, status=500)
 
 @require_http_methods(["POST"])
 def parse_job_description(request):
