@@ -106,34 +106,43 @@ class JobCreateView(BaseJobView, CreateView):
     def get_context_data(self, **kwargs):
         """Add additional context if needed"""
         context = super().get_context_data(**kwargs)
-        context['skill_icons'] = self._get_grouped_skills()
-        context['icon_name_mapping'] = json.dumps(ICON_NAME_MAPPING)
-        return context
-
-    def _get_grouped_skills(self):
-        """Helper method to group skills"""
+        # Group skills by first letter using both SKILL_ICONS and ICON_NAME_MAPPING
         skill_groups = {}
+        
+        # Add skills from SKILL_ICONS
         for icon, name in SKILL_ICONS:
             first_letter = name[0].upper()
             if first_letter not in skill_groups:
                 skill_groups[first_letter] = []
-            
+                
+            # Get the formatted icon
+            formatted_icon = icon
+            if icon in DARK_VARIANTS:
+                dark_icon = DARK_VARIANTS[icon]
+            else:
+                # Check if the icon exists in the mapping
+                mapped_icon = ICON_NAME_MAPPING.get(name, icon)
+                dark_icon = DARK_VARIANTS.get(mapped_icon, mapped_icon)
+                
             skill_groups[first_letter].append({
                 'name': name,
-                'icon': ICON_NAME_MAPPING.get(name, icon),
-                'icon_dark': DARK_VARIANTS.get(
-                    ICON_NAME_MAPPING.get(name, icon),
-                    ICON_NAME_MAPPING.get(name, icon)
-                )
+                'icon': formatted_icon,
+                'icon_dark': dark_icon
             })
-        
-        return [
+
+        # Convert to sorted list of groups
+        context['skill_icons'] = [
             {
                 'letter': letter,
-                'skills': sorted(skills, key=lambda x: x['name'].upper())
+                'skills': sorted(skills, key=lambda x: x['name'])
             }
             for letter, skills in sorted(skill_groups.items())
         ]
+        
+        # Add both mappings to the context
+        context['icon_name_mapping'] = json.dumps(ICON_NAME_MAPPING)
+        context['dark_variants'] = json.dumps(DARK_VARIANTS)
+        return context
 
 class JobPostingUpdateView(BaseJobView, UpdateView):
     """View for updating existing job postings"""

@@ -207,26 +207,35 @@
 
     handleMouseMove(event) {
         if (!this.isScrolling) {
-            this.lastMouseX = event.clientX;
-            this.lastMouseY = event.clientY;
+            this.mouseX = this.lastMouseX = event.clientX;
+            this.mouseY = this.lastMouseY = event.clientY;
             
             const nav = event.currentTarget;
             const rect = nav.getBoundingClientRect();
-            const percentage = (event.clientY - rect.top) / rect.height;
-            const index = Math.floor(percentage * (nav.children.length - 1));
-            const button = nav.children[index];
+            const letters = nav.querySelectorAll('button');
+            const letterHeight = rect.height / letters.length;
+            const relativeY = event.clientY - rect.top;
+            const index = Math.min(
+                Math.floor(relativeY / letterHeight),
+                letters.length - 1
+            );
             
-            if (button) {
-                const letter = button.textContent.trim();
+            if (index >= 0 && index < letters.length) {
+                const letter = letters[index].textContent.trim();
                 this.previewLetter(letter);
+                if (this.currentPreviewLetter) {
+                    this.jumpToLetter(letter);
+                }
             }
         }
     },
 
     get previewPosition() {
-        if (!this.currentPreviewLetter) return '';
-        // Use the last known mouse position to prevent resetting
-        return `transform: translate(${this.lastMouseX + 20}px, ${this.lastMouseY}px) translate(-50%, -50%);`;
+        if (!this.currentPreviewLetter) {
+            // Keep last position but hide it
+            return `transform: translate(${this.lastMouseX + 12}px, ${this.lastMouseY}px) translate(-50%, -50%); opacity: 0;`;
+        }
+        return `transform: translate(${this.lastMouseX + 12}px, ${this.lastMouseY}px) translate(-50%, -50%); opacity: 1;`;
     }
 }" 
      @keydown.escape.window="cancel()"
@@ -280,6 +289,7 @@
                     <div class="quick-letters-nav" 
                          @touchstart="startLetterDrag" 
                          @mousemove="handleMouseMove($event)"
+                         @mouseleave="hideLetterPreview()"
                          @touchmove="handleLetterDrag" 
                          @touchend="endLetterDrag">
                         {% for group in skill_icons %}
@@ -315,10 +325,13 @@
                                 {% for skill in group.skills %}
                                 <button type="button"
                                         class="skill-card"
+                                        data-skill="{{ skill|json|escapejs }}"
                                         :class="{'selected': isSelected('{{ skill.name }}')}"
                                         @click="handleQuickSelect($event, JSON.parse('{{ skill|json|escapejs }}'))">
                                     <div class="icon-wrapper">
-                                        <iconify-icon icon="{{ skill.icon }}" width="24" height="24"></iconify-icon>
+                                        <iconify-icon icon="{{ skill.icon_dark|default:skill.icon }}" 
+                                                      width="24" 
+                                                      height="24"></iconify-icon>
                                     </div>
                                     <span class="skill-name">{{ skill.name }}</span>
                                     <div class="check-indicator">
