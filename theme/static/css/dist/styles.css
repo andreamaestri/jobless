@@ -1066,12 +1066,6 @@ html, body {
   height: 100%;
 }
 
-.modal-box main {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-
 main {
   height: 100%;
   overflow-y: auto;
@@ -1202,11 +1196,6 @@ button, a, input, select, textarea {
 @media (hover:hover) {
   .link-hover:hover {
     text-decoration-line: underline;
-  }
-
-  .checkbox-primary:hover {
-    --tw-border-opacity: 1;
-    border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
   }
 
   .label a:hover {
@@ -1782,12 +1771,6 @@ button, a, input, select, textarea {
   margin-top: -1rem;
   margin-bottom: -1rem;
   margin-inline-end: -1rem;
-}
-
-.input-sm[type="number"]::-webkit-inner-spin-button {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  margin-inline-end: -0px;
 }
 
 .join {
@@ -2747,27 +2730,6 @@ button, a, input, select, textarea {
   background-image: linear-gradient(90deg, transparent 80%, var(--chkbg) 80%),
       linear-gradient(-90deg, transparent 80%, var(--chkbg) 80%),
       linear-gradient(0deg, var(--chkbg) 43%, var(--chkfg) 43%, var(--chkfg) 57%, var(--chkbg) 57%);
-}
-
-.checkbox-primary {
-  --chkbg: var(--fallback-p,oklch(var(--p)/1));
-  --chkfg: var(--fallback-pc,oklch(var(--pc)/1));
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
-}
-
-.checkbox-primary:focus-visible {
-  outline-color: var(--fallback-p,oklch(var(--p)/1));
-}
-
-.checkbox-primary:checked,
-    .checkbox-primary[aria-checked="true"] {
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-p,oklch(var(--p)/var(--tw-bg-opacity)));
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
 }
 
 @keyframes checkmark {
@@ -3742,6 +3704,14 @@ details.collapse summary::-webkit-details-marker {
   padding-right: 0.313rem;
 }
 
+.badge-sm {
+  height: 1rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding-left: 0.438rem;
+  padding-right: 0.438rem;
+}
+
 .badge-lg {
   height: 1.5rem;
   font-size: 1rem;
@@ -3838,11 +3808,6 @@ details.collapse summary::-webkit-details-marker {
   padding: 0px;
 }
 
-[type="checkbox"].checkbox-sm {
-  height: 1.25rem;
-  width: 1.25rem;
-}
-
 .divider-horizontal {
   flex-direction: column;
 }
@@ -3855,23 +3820,6 @@ details.collapse summary::-webkit-details-marker {
 .divider-horizontal:after {
   height: 100%;
   width: 0.125rem;
-}
-
-.input-md {
-  height: 3rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  line-height: 2;
-}
-
-.input-sm {
-  height: 2rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-  line-height: 2rem;
 }
 
 .join.join-vertical {
@@ -4905,1220 +4853,435 @@ details.collapse summary::-webkit-details-marker {
   --tw-ring-color: var(--fallback-p,oklch(var(--p)/0.2));
 }
 
-/* Quick Letters Component */
-
-.quick-letters-list {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: calc(100vh - 24rem);
-  max-height: 32rem;
-  width: 3rem;
-  font-size: 0.75rem;
-  line-height: 1;
-  z-index: 30;
-  padding: 0.5rem 0;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  right: 0.25rem;
-}
-
-/* Closer to edge on mobile */
-
-@media (min-width: 640px) {
-
-.quick-letters-list {
-    right: 1.5rem;
-
-    /* Original spacing for larger screens */
-}
-  }
-
-.quick-letter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--fallback-bc,oklch(var(--bc)/0.5));
-  height: calc(100% / 26);
-  min-height: 1rem;
-  width: 100%;
-  padding: 0;
-  font-weight: 500;
-  transform-origin: center right;
-  position: relative;
-  pointer-events: auto;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, color, opacity;
-}
-
-.quick-letter::before {
-  content: '';
-  position: absolute;
-  width: 300%;
-  height: 100%;
-  left: -200%;
-  top: 0;
-}
-
-.quick-letter:hover:not(.active) {
-  --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
-  transform: scale(1.2);
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-  transition-duration: 0.2s;
-}
-
-.quick-letter.active {
-  font-weight: 700;
-  --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
-  transform: scale(1.4);
-}
-
-.quick-letter.active + .quick-letter,
-    .quick-letter.adjacent {
-  transform: scale(1.1);
-  color: var(--fallback-p,oklch(var(--p)/0.7));
-  transition-duration: 0.1s;
-}
-
-.quick-letter.adjacent {
-  color: var(--fallback-p,oklch(var(--p)/0.7));
-  transform: scale(1.1);
-}
-
-/* Letter Preview and Magnifier */
-
-.letter-preview.visible {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.letter-preview.visible::before {
-  opacity: 0.98;
-}
-
-.letter-preview.visible ~ .skill-group {
-  filter: blur(2px);
-  opacity: 0.3;
-  transform: scale(0.99);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.modal-box .overflow-y-auto {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-
-.letter-preview.visible {
-  opacity: 0.15;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-/* Skill Group */
-
-.skill-group {
-  --tw-pan-y: pan-y;
-  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
-  overscroll-behavior: contain;
-  scroll-margin-top: 0;
-  padding-right: 4rem;
-  margin-bottom: 1rem;
-}
-
-/* Modal Styles */
+/* Skills Modal Styles */
 
 .modal-box {
   position: relative;
   margin-left: auto;
   margin-right: auto;
-  height: 100%;
-  width: 100%;
+  max-height: 90vh;
+  width: 91.666667%;
+  max-width: 56rem;
   border-radius: 1rem;
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity, 1)));
-  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.95));
+  --tw-backdrop-blur: blur(12px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  overflow: hidden;
-  padding: 1.5rem;
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  /* Ensure full screen on mobile */
-  width: 100vw;
-  height: 100dvh;
-  max-height: 100dvh;
-  margin: 0;
-  border-radius: 0;
-  padding: 0;
-}
-
-/* Restore desktop styles */
-
-@media (min-width: 640px) {
-  .modal-box {
-    width: 91.666667%;
-    /* w-11/12 */
-    height: 85vh;
-    max-width: 80rem;
-    /* max-w-7xl */
-    margin: auto;
-    border-radius: 1rem;
-  }
-}
-
-.modal .btn {
-  position: relative;
-  overflow: hidden;
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.modal .btn:active {
-  --tw-scale-x: .95;
-  --tw-scale-y: .95;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.modal .btn-primary {
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.2));
+  --tw-shadow-color: var(--fallback-b3,oklch(var(--b3)/0.2));
   --tw-shadow: var(--tw-shadow-colored);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-width: 1px;
+  border-color: var(--fallback-b2,oklch(var(--b2)/0.5));
 }
 
-.modal .btn-primary:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.3));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .btn-primary:active {
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.modal .btn iconify-icon {
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
-}
-
-.modal .btn:hover iconify-icon {
-  --tw-scale-x: 1.1;
-  --tw-scale-y: 1.1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.modal-box .flex-none {
-  background-color: var(--fallback-b1,oklch(var(--b1)/0.9));
-  --tw-backdrop-blur: blur(24px);
+.modal-box .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  border-bottom-width: 1px;
+  border-color: var(--fallback-b2,oklch(var(--b2)/0.5));
+  padding-bottom: 0.75rem;
+  position: sticky;
+  top: 0px;
+  z-index: 30;
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.95));
+  --tw-backdrop-blur: blur(12px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
   backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
-/* Add these backdrop button styles */
-
-.modal-backdrop button {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
+.modal-box .modal-content {
+  flex: 1 1 0%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  scroll-behavior: smooth;
 }
 
-/* Keep the backdrop itself clickable */
-
-.modal-backdrop {
-  cursor: pointer;
+.modal-box .modal-action {
+  position: sticky;
+  bottom: 0px;
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.95));
+  --tw-backdrop-blur: blur(12px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  margin-top: 0.75rem;
+  border-top-width: 1px;
+  border-color: var(--fallback-b2,oklch(var(--b2)/0.5));
+  padding-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0px;
 }
 
-/* Skills Container and Placeholder */
+/* Quick Letters Navigation */
 
-.form-control .skill-container {
-  position: relative;
-  border-radius: 0.75rem;
-  border-width: 1px;
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-border-opacity, 1)));
-  min-height: 8rem;
-  /* Taller on mobile */
-  padding: 4rem;
-}
-
-@media (min-width: 640px) {
-
-.form-control .skill-container {
-    min-height: 5rem;
-
-    /* Original height on desktop */
-}
-  }
-
-.form-control .skill-container .add-skills-button {
-  position: absolute;
-  bottom: 0.75rem;
-  left: 0.75rem;
-  right: 0.75rem;
-  display: inline-flex;
-  height: 3rem;
-  min-height: 3rem;
-  flex-shrink: 0;
-  cursor: pointer;
+.quick-letters-nav {
+  display: flex;
+  width: 2.5rem;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.125rem;
+  padding-right: 0.375rem;
+  position: sticky;
+  top: 0px;
+  align-self: flex-start;
+  touch-action: none;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  flex-wrap: wrap;
+  height: calc(100vh - 12rem);
+}
+
+.letter-nav-button {
+  height: 1.25rem;
+  width: 1.75rem;
+  border-radius: 0.25rem;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--rounded-btn, 0.5rem);
-  border-color: transparent;
-  border-color: oklch(var(--btn-color, var(--b2)) / var(--tw-border-opacity));
-  padding-left: 1rem;
-  padding-right: 1rem;
-  text-align: center;
-  font-size: 0.875rem;
-  line-height: 1em;
-  gap: 0.5rem;
-  font-weight: 600;
-  text-decoration-line: none;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  border-width: var(--border-btn, 1px);
-  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
-  --tw-text-opacity: 1;
-  color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity)));
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  outline-color: var(--fallback-bc,oklch(var(--bc)/1));
-  background-color: oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity));
-  --tw-bg-opacity: 1;
-  --tw-border-opacity: 1;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--fallback-bc,oklch(var(--bc)/0.5));
 }
 
-.form-control .skill-container .add-skills-button[disabled],.form-control .skill-container .add-skills-button:disabled {
+.letter-nav-button:hover {
+  --tw-text-opacity: 1;
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
+}
+
+.letter-nav-button {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 75ms;
+  transform-origin: center right;
+}
+
+.letter-nav-button:active {
+  --tw-scale-x: 1.25;
+  --tw-scale-y: 1.25;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  --tw-text-opacity: 1;
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
+}
+
+.letter-nav-button.active {
+  --tw-scale-x: 1.1;
+  --tw-scale-y: 1.1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  font-weight: 700;
+  --tw-text-opacity: 1;
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
+}
+
+/* Letter Preview Bubble */
+
+.letter-bubble {
   pointer-events: none;
-}
-
-:where(.form-control .skill-container .add-skills-button:is(input[type="checkbox"])),
-:where(.form-control .skill-container .add-skills-button:is(input[type="radio"])) {
-  width: auto;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-
-.form-control .skill-container .add-skills-button:is(input[type="checkbox"]):after,.form-control .skill-container .add-skills-button:is(input[type="radio"]):after {
-  --tw-content: attr(aria-label);
-  content: var(--tw-content);
-}
-
-@media (hover: hover) {
-  .form-control .skill-container .add-skills-button:hover {
-    --tw-border-opacity: 1;
-    border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-border-opacity)));
-    --tw-bg-opacity: 1;
-    background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(
-            in oklab,
-            oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity, 1)) 90%,
-            black
-          );
-      border-color: color-mix(
-            in oklab,
-            oklch(var(--btn-color, var(--b2)) / var(--tw-border-opacity, 1)) 90%,
-            black
-          );
-    }
-  }
-
-  @supports not (color: oklch(0% 0 0)) {
-    .form-control .skill-container .add-skills-button:hover {
-      background-color: var(--btn-color, var(--fallback-b2));
-      border-color: var(--btn-color, var(--fallback-b2));
-    }
-  }
-
-  .form-control .skill-container .add-skills-button:hover {
-    --tw-border-opacity: 1;
-    border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-border-opacity)));
-    --tw-bg-opacity: 1;
-    background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(
-            in oklab,
-            oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity, 1)) 90%,
-            black
-          );
-      border-color: color-mix(
-            in oklab,
-            oklch(var(--btn-color, var(--b2)) / var(--tw-border-opacity, 1)) 90%,
-            black
-          );
-    }
-  }
-
-  @supports not (color: oklch(0% 0 0)) {
-    .form-control .skill-container .add-skills-button:hover {
-      background-color: var(--btn-color, var(--fallback-b2));
-      border-color: var(--btn-color, var(--fallback-b2));
-    }
-  }
-
-  .form-control .skill-container .add-skills-button:hover {
-    --tw-border-opacity: 1;
-    border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-border-opacity)));
-    --tw-bg-opacity: 1;
-    background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(
-            in oklab,
-            oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity, 1)) 90%,
-            black
-          );
-      border-color: color-mix(
-            in oklab,
-            oklch(var(--btn-color, var(--b2)) / var(--tw-border-opacity, 1)) 90%,
-            black
-          );
-    }
-  }
-
-  @supports not (color: oklch(0% 0 0)) {
-    .form-control .skill-container .add-skills-button:hover {
-      background-color: var(--btn-color, var(--fallback-b2));
-      border-color: var(--btn-color, var(--fallback-b2));
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.glass:hover {
-    --glass-opacity: 25%;
-    --glass-border-opacity: 15%;
-  }
-
-  .form-control .skill-container .add-skills-button:hover {
-    --tw-border-opacity: 1;
-    border-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-border-opacity)));
-    --tw-bg-opacity: 1;
-    background-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-bg-opacity)));
-    --tw-text-opacity: 1;
-    color: var(--fallback-b1,oklch(var(--b1)/var(--tw-text-opacity)));
-  }
-
-  .form-control .skill-container .add-skills-button.btn-primary:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-primary:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
-
-  .btn-outline.form-control .skill-container .add-skills-button:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .btn-outline.form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-primary:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-primary:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
-
-  .btn-outline.form-control .skill-container .add-skills-button:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .btn-outline.form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-secondary:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-sc,oklch(var(--sc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-secondary:hover {
-      background-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-secondary:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-sc,oklch(var(--sc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-secondary:hover {
-      background-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-accent:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-ac,oklch(var(--ac)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-accent:hover {
-      background-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-accent:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-ac,oklch(var(--ac)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-accent:hover {
-      background-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-success:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-suc,oklch(var(--suc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-success:hover {
-      background-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-success:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-suc,oklch(var(--suc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-success:hover {
-      background-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-info:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-info:hover {
-      background-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-info:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-info:hover {
-      background-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-warning:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-wac,oklch(var(--wac)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-warning:hover {
-      background-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-warning:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-wac,oklch(var(--wac)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-warning:hover {
-      background-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-error:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-erc,oklch(var(--erc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-error:hover {
-      background-color: color-mix(in oklab, var(--fallback-er,oklch(var(--er)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-er,oklch(var(--er)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button.btn-error:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-erc,oklch(var(--erc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button.btn-error:hover {
-      background-color: color-mix(in oklab, var(--fallback-er,oklch(var(--er)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-er,oklch(var(--er)/1)) 90%, black);
-    }
-  }
-
-  .form-control .skill-container .add-skills-button[disabled]:hover,.form-control .skill-container .add-skills-button:disabled:hover {
-    --tw-border-opacity: 0;
-    background-color: var(--fallback-n,oklch(var(--n)/var(--tw-bg-opacity)));
-    --tw-bg-opacity: 0.2;
-    color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity)));
-    --tw-text-opacity: 0.2;
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .form-control .skill-container .add-skills-button:is(input[type="checkbox"]:checked):hover,.form-control .skill-container .add-skills-button:is(input[type="radio"]:checked):hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .form-control .skill-container .add-skills-button {
-    animation: button-pop var(--animation-btn, 0.25s) ease-out;
-  }
-}
-
-.form-control .skill-container .add-skills-button:active:hover,.form-control .skill-container .add-skills-button:active:focus {
-  animation: button-pop 0s ease-out;
-  transform: scale(var(--btn-focus-scale, 0.97));
-}
-
-@supports not (color: oklch(0% 0 0)) {
-  .form-control .skill-container .add-skills-button {
-    background-color: var(--btn-color, var(--fallback-b2));
-    border-color: var(--btn-color, var(--fallback-b2));
-    --btn-color: var(--fallback-p);
-  }
-}
-
-@supports (color: color-mix(in oklab, black, black)) {
-  .form-control .skill-container .add-skills-button.btn-primary.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-  }
-
-  .btn-outline.form-control .skill-container .add-skills-button.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-  }
-
-  .form-control .skill-container .add-skills-button.btn-secondary.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-  }
-
-  .form-control .skill-container .add-skills-button.btn-accent.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-  }
-
-  .form-control .skill-container .add-skills-button.btn-success.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-  }
-
-  .form-control .skill-container .add-skills-button.btn-info.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-  }
-
-  .form-control .skill-container .add-skills-button.btn-warning.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-  }
-
-  .form-control .skill-container .add-skills-button.btn-error.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-er,oklch(var(--er)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-er,oklch(var(--er)/1)) 90%, black);
-  }
-}
-
-.form-control .skill-container .add-skills-button:focus-visible {
-  outline-style: solid;
-  outline-width: 2px;
-  outline-offset: 2px;
-}
-
-.form-control .skill-container .add-skills-button {
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  outline-color: var(--fallback-p,oklch(var(--p)/1));
-}
-
-@supports (color: oklch(0% 0 0)) {
-  .form-control .skill-container .add-skills-button {
-    --btn-color: var(--p);
-  }
-}
-
-.form-control .skill-container .add-skills-button.glass {
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  outline-color: currentColor;
-}
-
-.form-control .skill-container .add-skills-button.glass.btn-active {
-  --glass-opacity: 25%;
-  --glass-border-opacity: 15%;
-}
-
-.form-control .skill-container .add-skills-button {
-  border-color: currentColor;
-  background-color: transparent;
-  --tw-text-opacity: 1;
-  color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity)));
-  --tw-shadow: 0 0 #0000;
-  --tw-shadow-colored: 0 0 #0000;
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.form-control .skill-container .add-skills-button.btn-active {
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-border-opacity)));
+  position: fixed;
+  z-index: 100;
   --tw-bg-opacity: 1;
-  background-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-bg-opacity)));
+  background-color: var(--fallback-p,oklch(var(--p)/var(--tw-bg-opacity, 1)));
   --tw-text-opacity: 1;
-  color: var(--fallback-b1,oklch(var(--b1)/var(--tw-text-opacity)));
+  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity, 1)));
+  height: 3.5rem;
+  width: 3.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 900;
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  --tw-shadow-color: var(--fallback-b3,oklch(var(--b3)/0.2));
+  --tw-shadow: var(--tw-shadow-colored);
+  --tw-scale-x: .9;
+  --tw-scale-y: .9;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  opacity: 0;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 75ms;
+  transform-origin: center right;
+  right: 3rem;
+  top: 50vh;
+  transform: translateY(-50%) scale(0.9);
 }
 
-.form-control .skill-container .add-skills-button.btn-primary {
-  --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
+.letter-bubble.visible {
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  opacity: 1;
+  animation: bubblePop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.btn-outline.form-control .skill-container .add-skills-button {
-  --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
+@keyframes bubblePop {
+  0% {
+    transform: translateY(-50%) scale(0.8);
+  }
+
+  50% {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
 }
 
-.form-control .skill-container .add-skills-button.btn-primary.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
+/* Skill Groups */
+
+.skill-group {
+  margin-bottom: 2rem;
 }
 
-.btn-outline.form-control .skill-container .add-skills-button.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
+.skill-group:last-child {
+  margin-bottom: 1rem;
 }
 
-.form-control .skill-container .add-skills-button.btn-secondary {
-  --tw-text-opacity: 1;
-  color: var(--fallback-s,oklch(var(--s)/var(--tw-text-opacity)));
+.skill-group {
+  scroll-margin-top: 1rem;
 }
 
-.form-control .skill-container .add-skills-button.btn-secondary.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-sc,oklch(var(--sc)/var(--tw-text-opacity)));
+.skill-group-header {
+  position: sticky;
+  top: 0px;
+  z-index: 20;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+  --tw-gradient-from: var(--fallback-b1,oklch(var(--b1)/1)) var(--tw-gradient-from-position);
+  --tw-gradient-to: var(--fallback-b1,oklch(var(--b1)/0)) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  --tw-gradient-to: rgb(255 255 255 / 0)  var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--fallback-b1,oklch(var(--b1)/0.95)) var(--tw-gradient-via-position), var(--tw-gradient-to);
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
 }
 
-.form-control .skill-container .add-skills-button.btn-accent {
-  --tw-text-opacity: 1;
-  color: var(--fallback-a,oklch(var(--a)/var(--tw-text-opacity)));
+.skill-group-header span {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 900;
+  opacity: 0.1;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  background: linear-gradient(to bottom, hsl(var(--p)), transparent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.form-control .skill-container .add-skills-button.btn-accent.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-ac,oklch(var(--ac)/var(--tw-text-opacity)));
+.skill-group.active .skill-group-header span {
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  opacity: 0.2;
 }
 
-.form-control .skill-container .add-skills-button.btn-success {
-  --tw-text-opacity: 1;
-  color: var(--fallback-su,oklch(var(--su)/var(--tw-text-opacity)));
+/* Skill Grid */
+
+.skill-grid {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 0.375rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
-.form-control .skill-container .add-skills-button.btn-success.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-suc,oklch(var(--suc)/var(--tw-text-opacity)));
+/* Skill Cards */
+
+.skill-card {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 0.5rem;
+  padding: 0.625rem;
+  border-width: 1px;
+  border-color: var(--fallback-b2,oklch(var(--b2)/0.8));
 }
 
-.form-control .skill-container .add-skills-button.btn-info {
-  --tw-text-opacity: 1;
-  color: var(--fallback-in,oklch(var(--in)/var(--tw-text-opacity)));
+.skill-card:hover {
+  border-color: var(--fallback-p,oklch(var(--p)/0.3));
 }
 
-.form-control .skill-container .add-skills-button.btn-info.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity)));
+.skill-card {
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.5));
 }
 
-.form-control .skill-container .add-skills-button.btn-warning {
-  --tw-text-opacity: 1;
-  color: var(--fallback-wa,oklch(var(--wa)/var(--tw-text-opacity)));
+.skill-card:hover {
+  background-color: var(--fallback-b2,oklch(var(--b2)/0.3));
 }
 
-.form-control .skill-container .add-skills-button.btn-warning.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-wac,oklch(var(--wac)/var(--tw-text-opacity)));
-}
-
-.form-control .skill-container .add-skills-button.btn-error {
-  --tw-text-opacity: 1;
-  color: var(--fallback-er,oklch(var(--er)/var(--tw-text-opacity)));
-}
-
-.form-control .skill-container .add-skills-button.btn-error.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-erc,oklch(var(--erc)/var(--tw-text-opacity)));
-}
-
-.form-control .skill-container .add-skills-button.btn-disabled,.form-control .skill-container .add-skills-button[disabled],.form-control .skill-container .add-skills-button:disabled {
-  --tw-border-opacity: 0;
-  background-color: var(--fallback-n,oklch(var(--n)/var(--tw-bg-opacity)));
-  --tw-bg-opacity: 0.2;
-  color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity)));
-  --tw-text-opacity: 0.2;
-}
-
-.form-control .skill-container .add-skills-button:is(input[type="checkbox"]:checked),.form-control .skill-container .add-skills-button:is(input[type="radio"]:checked) {
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-p,oklch(var(--p)/var(--tw-bg-opacity)));
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-}
-
-.form-control .skill-container .add-skills-button:is(input[type="checkbox"]:checked):focus-visible,.form-control .skill-container .add-skills-button:is(input[type="radio"]:checked):focus-visible {
-  outline-color: var(--fallback-p,oklch(var(--p)/1));
-}
-
-.join > :where(*:not(:first-child)):is(.form-control .skill-container .add-skills-button) {
-  margin-inline-start: calc(var(--border-btn) * -1);
-}
-
-.form-control .skill-container .add-skills-button {
-  height: 2rem;
-  min-height: 2rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  font-size: 0.875rem;
-}
-
-.btn-square:where(.form-control .skill-container .add-skills-button) {
-  height: 2rem;
-  width: 2rem;
-  padding: 0px;
-}
-
-.btn-circle:where(.form-control .skill-container .add-skills-button) {
-  height: 2rem;
-  width: 2rem;
-  border-radius: 9999px;
-  padding: 0px;
-}
-
-.join.join-vertical > :where(*:not(:first-child)):is(.form-control .skill-container .add-skills-button) {
-  margin-top: calc(var(--border-btn) * -1);
-}
-
-.join.join-horizontal > :where(*:not(:first-child)):is(.form-control .skill-container .add-skills-button) {
-  margin-inline-start: calc(var(--border-btn) * -1);
-  margin-top: 0px;
-}
-
-.modal .form-control .skill-container .add-skills-button {
+.skill-card {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
   position: relative;
   overflow: hidden;
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
 }
 
-.modal .form-control .skill-container .add-skills-button:active {
+.skill-card:active {
   --tw-scale-x: .95;
   --tw-scale-y: .95;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.modal .form-control .skill-container .add-skills-button {
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.2));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .form-control .skill-container .add-skills-button:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.3));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .form-control .skill-container .add-skills-button:active {
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.modal .form-control .skill-container .add-skills-button iconify-icon {
-  transition-property: transform;
+.skill-card .icon-wrapper {
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background-color: var(--fallback-b2,oklch(var(--b2)/0.8));
+  transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
 
-.modal .form-control .skill-container .add-skills-button:hover iconify-icon {
+.skill-card:hover .icon-wrapper {
+  --tw-rotate: 3deg;
   --tw-scale-x: 1.1;
   --tw-scale-y: 1.1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-b2,oklch(var(--b2)/var(--tw-bg-opacity, 1)));
 }
 
-@media (hover: hover) {
-  .btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
-
-  .btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  }
-
-  @supports (color: color-mix(in oklab, black, black)) {
-    .btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
-  }
+.skill-card .skill-name {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
-@supports not (color: oklch(0% 0 0)) {
-  .mobile-skills-cta .form-control .skill-container .add-skills-button {
-    --btn-color: var(--fallback-p);
-  }
-}
-
-@supports (color: color-mix(in oklab, black, black)) {
-  .btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-  }
-}
-
-.mobile-skills-cta .form-control .skill-container .add-skills-button {
+.skill-card .check-indicator {
+  position: absolute;
+  right: 0.5rem;
   --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  outline-color: var(--fallback-p,oklch(var(--p)/1));
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
+  --tw-scale-x: .75;
+  --tw-scale-y: .75;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  opacity: 0;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
-@supports (color: oklch(0% 0 0)) {
-  .mobile-skills-cta .form-control .skill-container .add-skills-button {
-    --btn-color: var(--p);
-  }
+.skill-card.selected {
+  border-color: var(--fallback-p,oklch(var(--p)/0.5));
+  background-color: var(--fallback-p,oklch(var(--p)/0.05));
 }
 
-.btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button {
-  --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
+.skill-card.selected:hover {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity, 1)));
+  background-color: var(--fallback-p,oklch(var(--p)/0.1));
 }
 
-.btn-outline.mobile-skills-cta .form-control .skill-container .add-skills-button.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-}
-
-.modal .mobile-skills-cta .form-control .skill-container .add-skills-button {
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.2));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .mobile-skills-cta .form-control .skill-container .add-skills-button:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.3));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .mobile-skills-cta .form-control .skill-container .add-skills-button:active {
+.skill-card.selected {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.1));
+  --tw-shadow: var(--tw-shadow-colored);
 }
 
-.mobile-skills-cta .form-control .skill-container .add-skills-button {
-  width: 100%;
-  max-width: 28rem;
+.skill-card.selected .skill-name {
+  font-weight: 600;
+  --tw-text-opacity: 1;
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity, 1)));
 }
 
-.form-control .skill-container .add-skills-button {
-  width: auto;
+.skill-card.selected .icon-wrapper {
+  background-color: var(--fallback-p,oklch(var(--p)/0.1));
 }
 
-@media (min-width: 640px) {
-  .dropdown-menu-container .form-control .skill-container .add-skills-button.dropdown-content {
-    animation: none;
+.skill-card.selected .check-indicator {
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  opacity: 1;
+}
+
+/* Mobile Optimizations */
+
+@media (max-width: 640px) {
+  .quick-letters-nav {
+    height: 2.5rem;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+    width: 100%;
+    background-color: var(--fallback-b1,oklch(var(--b1)/0.95));
+    --tw-backdrop-blur: blur(4px);
+    -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    height: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .form-control .skill-container .add-skills-button {
+  .quick-letters-nav::-webkit-scrollbar {
     display: none;
   }
-}
 
-.form-control .skill-container .add-skills-button {
-  /* Only show on mobile */
-}
-
-.form-control #selected-skills {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  min-height: 1.5rem;
-}
-
-.form-control #skills-placeholder {
-  position: absolute;
-  inset: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1 !important;
-  color: hsl(var(--bc) / 0.5) !important;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.form-control .skill-container:hover #skills-placeholder {
-  color: hsl(var(--p) / 0.7) !important;
-}
-
-/* Only hide placeholder when skills are selected */
-
-.form-control #selected-skills:not(:empty) + #skills-placeholder {
-  opacity: 0 !important;
-}
-
-/* Badge Styles */
-
-.badge {
-  gap: 0.25rem;
-}
-
-.badge .btn-square {
-  min-height: 1.5rem;
-  height: 100%;
-  width: 1.5rem;
-  margin: -0.125rem -0.125rem -0.125rem 0;
-}
-
-.badge .btn-square:hover {
-  background-color: currentColor;
-}
-
-/* Skills Container and Interactive Elements */
-
-/* Mobile bottom CTA */
-
-@media (hover: hover) {
-  .btn-outline.mobile-skills-cta .btn:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
+  .letter-nav-button {
+    height: 1.75rem;
+    min-width: 1.75rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 500;
   }
 
-  @supports (color: color-mix(in oklab, black, black)) {
-    .btn-outline.mobile-skills-cta .btn:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
+  .skill-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  .btn-outline.mobile-skills-cta .btn:hover {
-    --tw-text-opacity: 1;
-    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
+  .modal-content {
+    height: calc(85vh - 8rem);
   }
 
-  @supports (color: color-mix(in oklab, black, black)) {
-    .btn-outline.mobile-skills-cta .btn:hover {
-      background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-      border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    }
+  .letter-bubble {
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    right: 1rem;
   }
 }
-
-@supports not (color: oklch(0% 0 0)) {
-  .mobile-skills-cta .btn {
-    --btn-color: var(--fallback-p);
-  }
-}
-
-@supports (color: color-mix(in oklab, black, black)) {
-  .btn-outline.mobile-skills-cta .btn.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
-  }
-}
-
-.mobile-skills-cta .btn {
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-  outline-color: var(--fallback-p,oklch(var(--p)/1));
-}
-
-@supports (color: oklch(0% 0 0)) {
-  .mobile-skills-cta .btn {
-    --btn-color: var(--p);
-  }
-}
-
-.btn-outline.mobile-skills-cta .btn {
-  --tw-text-opacity: 1;
-  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
-}
-
-.btn-outline.mobile-skills-cta .btn.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
-}
-
-.modal .mobile-skills-cta .btn {
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.2));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .mobile-skills-cta .btn:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-shadow-color: var(--fallback-p,oklch(var(--p)/0.3));
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.modal .mobile-skills-cta .btn:active {
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.mobile-skills-cta .btn {
-  width: 100%;
-  max-width: 28rem;
-}
-
-/* Show mobile CTA when skills are selected */
-
-/* Hide mobile CTA on desktop */
-
-/* Mobile-first CTA design */
-
-/* Empty state highlight */
-
-/* Active state feedback */
-
-/* Selected skills styling */
-
-#selected-skills {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 1rem;
-  min-height: 1.5rem;
-}
-
-/* Desktop hover refinements */
-
-/* Mobile CTA styling */
-
-/* Show CTA when skills are present */
-
-/* Hide on desktop */
-
-/* Letter magnifier adjustments */
-
-.modal[open] .letter-magnifier,
-    .modal[open] .letter-preview {
-  display: block;
-}
-
-/* Skills Container */
-
-/* Empty state styling */
-
-#selected-skills {
-  position: relative;
-  z-index: 10;
-  min-height: 1.5rem;
-}
-
-/* Mobile styles */
 
 .sr-only {
   position: absolute;
@@ -6176,8 +5339,8 @@ details.collapse summary::-webkit-details-marker {
   left: 0px;
 }
 
-.left-4 {
-  left: 1rem;
+.left-3 {
+  left: 0.75rem;
 }
 
 .left-full {
@@ -6220,10 +5383,6 @@ details.collapse summary::-webkit-details-marker {
   top: 100%;
 }
 
-.top-20 {
-  top: 5rem;
-}
-
 .z-10 {
   z-index: 10;
 }
@@ -6252,10 +5411,6 @@ details.collapse summary::-webkit-details-marker {
   grid-column: span 2 / span 2;
 }
 
-.m-0 {
-  margin: 0px;
-}
-
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -6266,21 +5421,12 @@ details.collapse summary::-webkit-details-marker {
   margin-bottom: 0.25rem;
 }
 
-.-mx-4 {
-  margin-left: -1rem;
-  margin-right: -1rem;
-}
-
 .mb-1 {
   margin-bottom: 0.25rem;
 }
 
 .mb-2 {
   margin-bottom: 0.5rem;
-}
-
-.mb-3 {
-  margin-bottom: 0.75rem;
 }
 
 .mb-4 {
@@ -6313,6 +5459,10 @@ details.collapse summary::-webkit-details-marker {
 
 .ml-80 {
   margin-left: 20rem;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
 
 .mr-1 {
@@ -6386,10 +5536,6 @@ details.collapse summary::-webkit-details-marker {
   height: 0.25rem;
 }
 
-.h-10 {
-  height: 2.5rem;
-}
-
 .h-16 {
   height: 4rem;
 }
@@ -6454,6 +5600,10 @@ details.collapse summary::-webkit-details-marker {
   max-height: 60vh;
 }
 
+.max-h-\[90vh\] {
+  max-height: 90vh;
+}
+
 .min-h-\[120px\] {
   min-height: 120px;
 }
@@ -6464,10 +5614,6 @@ details.collapse summary::-webkit-details-marker {
 
 .min-h-\[65vh\] {
   min-height: 65vh;
-}
-
-.min-h-full {
-  min-height: 100%;
 }
 
 .min-h-min {
@@ -6547,14 +5693,6 @@ details.collapse summary::-webkit-details-marker {
   width: 100vw;
 }
 
-.w-64 {
-  width: 16rem;
-}
-
-.min-w-0 {
-  min-width: 0px;
-}
-
 .min-w-\[100px\] {
   min-width: 100px;
 }
@@ -6599,6 +5737,10 @@ details.collapse summary::-webkit-details-marker {
   max-width: 56rem;
 }
 
+.max-w-5xl {
+  max-width: 64rem;
+}
+
 .max-w-6xl {
   max-width: 72rem;
 }
@@ -6631,10 +5773,6 @@ details.collapse summary::-webkit-details-marker {
   flex-shrink: 0;
 }
 
-.shrink-0 {
-  flex-shrink: 0;
-}
-
 .-translate-x-full {
   --tw-translate-x: -100%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -6657,11 +5795,6 @@ details.collapse summary::-webkit-details-marker {
 
 .translate-y-0 {
   --tw-translate-y: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.translate-y-4 {
-  --tw-translate-y: 1rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -6889,10 +6022,6 @@ details.collapse summary::-webkit-details-marker {
   border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-divide-opacity, 1)));
 }
 
-.self-start {
-  align-self: flex-start;
-}
-
 .overflow-hidden {
   overflow: hidden;
 }
@@ -6909,14 +6038,8 @@ details.collapse summary::-webkit-details-marker {
   overflow-x: hidden;
 }
 
-.overscroll-contain {
-  overscroll-behavior: contain;
-}
-
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.scroll-smooth {
+  scroll-behavior: smooth;
 }
 
 .whitespace-normal {
@@ -6983,10 +6106,6 @@ details.collapse summary::-webkit-details-marker {
   border-top-width: 1px;
 }
 
-.border-r {
-  border-right-width: 1px;
-}
-
 .border-base-200 {
   --tw-border-opacity: 1;
   border-color: var(--fallback-b2,oklch(var(--b2)/var(--tw-border-opacity, 1)));
@@ -7023,11 +6142,6 @@ details.collapse summary::-webkit-details-marker {
   border-color: transparent;
 }
 
-.border-primary {
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity, 1)));
-}
-
 .bg-\[\#0A66C2\] {
   --tw-bg-opacity: 1;
   background-color: rgb(10 102 194 / var(--tw-bg-opacity, 1));
@@ -7060,6 +6174,10 @@ details.collapse summary::-webkit-details-marker {
 
 .bg-base-100\/50 {
   background-color: var(--fallback-b1,oklch(var(--b1)/0.5));
+}
+
+.bg-base-100\/95 {
+  background-color: var(--fallback-b1,oklch(var(--b1)/0.95));
 }
 
 .bg-base-200 {
@@ -7157,10 +6275,6 @@ details.collapse summary::-webkit-details-marker {
 
 .bg-white\/50 {
   background-color: rgb(255 255 255 / 0.5);
-}
-
-.bg-primary\/5 {
-  background-color: var(--fallback-p,oklch(var(--p)/0.05));
 }
 
 .bg-opacity-90 {
@@ -7294,8 +6408,8 @@ details.collapse summary::-webkit-details-marker {
   padding-bottom: 1.5rem;
 }
 
-.pl-12 {
-  padding-left: 3rem;
+.pl-10 {
+  padding-left: 2.5rem;
 }
 
 .pr-10 {
@@ -7304,10 +6418,6 @@ details.collapse summary::-webkit-details-marker {
 
 .pr-2 {
   padding-right: 0.5rem;
-}
-
-.pr-8 {
-  padding-right: 2rem;
 }
 
 .pt-0 {
@@ -7322,14 +6432,6 @@ details.collapse summary::-webkit-details-marker {
   padding-top: 1.5rem;
 }
 
-.pb-4 {
-  padding-bottom: 1rem;
-}
-
-.pt-4 {
-  padding-top: 1rem;
-}
-
 .text-left {
   text-align: left;
 }
@@ -7342,6 +6444,10 @@ details.collapse summary::-webkit-details-marker {
   text-align: right;
 }
 
+.font-sans {
+  font-family: Work Sans Variable, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -7350,6 +6456,11 @@ details.collapse summary::-webkit-details-marker {
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 .text-base {
@@ -7375,6 +6486,10 @@ details.collapse summary::-webkit-details-marker {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.font-black {
+  font-weight: 900;
 }
 
 .font-bold {
@@ -7494,6 +6609,10 @@ details.collapse summary::-webkit-details-marker {
   color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity, 1)));
 }
 
+.text-primary\/10 {
+  color: var(--fallback-p,oklch(var(--p)/0.1));
+}
+
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity, 1));
@@ -7604,6 +6723,12 @@ details.collapse summary::-webkit-details-marker {
 
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.backdrop-blur-md {
+  --tw-backdrop-blur: blur(12px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
 .backdrop-blur-sm {
@@ -7733,12 +6858,6 @@ details.collapse summary::-webkit-details-marker {
 }
 
 @media (min-width: 640px) {
-  .sm\:input-lg[type="number"]::-webkit-inner-spin-button {
-    margin-top: -1.5rem;
-    margin-bottom: -1.5rem;
-    margin-inline-end: -1.5rem;
-  }
-
   .sm\:badge-sm {
     height: 1rem;
     font-size: 0.75rem;
@@ -7787,20 +6906,6 @@ details.collapse summary::-webkit-details-marker {
     width: 3rem;
     border-radius: 9999px;
     padding: 0px;
-  }
-
-  .sm\:checkbox-md[type="checkbox"] {
-    height: 1.5rem;
-    width: 1.5rem;
-  }
-
-  .sm\:input-lg {
-    height: 4rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-    line-height: 2;
   }
 
   .sm\:modal-middle {
@@ -7902,10 +7007,6 @@ details.collapse summary::-webkit-details-marker {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.hover\:border-primary\/50:hover {
-  border-color: var(--fallback-p,oklch(var(--p)/0.5));
-}
-
 .hover\:bg-\[\#c77857\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(199 120 87 / var(--tw-bg-opacity, 1));
@@ -7987,12 +7088,6 @@ details.collapse summary::-webkit-details-marker {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.hover\:shadow-md:hover {
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 .hover\:shadow-xl:hover {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
@@ -8066,12 +7161,6 @@ details.collapse summary::-webkit-details-marker {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.active\:scale-\[0\.98\]:active {
-  --tw-scale-x: 0.98;
-  --tw-scale-y: 0.98;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
 .disabled\:transform-none:disabled {
   transform: none;
 }
@@ -8084,19 +7173,8 @@ details.collapse summary::-webkit-details-marker {
   opacity: 0.7;
 }
 
-.group:hover .group-hover\:scale-110 {
-  --tw-scale-x: 1.1;
-  --tw-scale-y: 1.1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
 .group:hover .group-hover\:border-primary\/60 {
   border-color: var(--fallback-p,oklch(var(--p)/0.6));
-}
-
-.group:hover .group-hover\:bg-base-300 {
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity, 1)));
 }
 
 .group:hover .group-hover\:text-base-content\/90 {
@@ -8112,44 +7190,24 @@ details.collapse summary::-webkit-details-marker {
 }
 
 @media (min-width: 640px) {
-  .sm\:m-auto {
-    margin: auto;
-  }
-
-  .sm\:mb-4 {
-    margin-bottom: 1rem;
-  }
-
   .sm\:inline {
     display: inline;
+  }
+
+  .sm\:inline-flex {
+    display: inline-flex;
   }
 
   .sm\:h-10 {
     height: 2.5rem;
   }
 
-  .sm\:h-12 {
-    height: 3rem;
-  }
-
   .sm\:h-24 {
     height: 6rem;
   }
 
-  .sm\:h-\[85vh\] {
-    height: 85vh;
-  }
-
   .sm\:w-10 {
     width: 2.5rem;
-  }
-
-  .sm\:w-11\/12 {
-    width: 91.666667%;
-  }
-
-  .sm\:w-12 {
-    width: 3rem;
   }
 
   .sm\:w-24 {
@@ -8176,27 +7234,6 @@ details.collapse summary::-webkit-details-marker {
     min-width: 80px;
   }
 
-  .sm\:max-w-7xl {
-    max-width: 80rem;
-  }
-
-  .sm\:translate-y-0 {
-    --tw-translate-y: 0px;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-
-  .sm\:scale-100 {
-    --tw-scale-x: 1;
-    --tw-scale-y: 1;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-
-  .sm\:scale-95 {
-    --tw-scale-x: .95;
-    --tw-scale-y: .95;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -8215,14 +7252,6 @@ details.collapse summary::-webkit-details-marker {
 
   .sm\:gap-6 {
     gap: 1.5rem;
-  }
-
-  .sm\:rounded-2xl {
-    border-radius: 1rem;
-  }
-
-  .sm\:p-3 {
-    padding: 0.75rem;
   }
 
   .sm\:p-4 {
@@ -8275,10 +7304,6 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .md\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .md\:rounded-2xl {
@@ -8354,10 +7379,6 @@ details.collapse summary::-webkit-details-marker {
 @media (min-width: 1280px) {
   .xl\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .xl\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .xl\:grid-cols-4 {

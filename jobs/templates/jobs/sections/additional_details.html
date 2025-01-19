@@ -1,0 +1,10 @@
+<div class="p-8 form-section" style="--delay: 1">
+    {% include "jobs/includes/section_header.html" with 
+        icon="heroicons:clipboard-document-list"
+        title="Additional Details" %}
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% include "jobs/includes/form_field.html" with field=form.url %}
+        {% include "jobs/includes/form_field.html" with field=form.salary_range %}
+    </div>
+</div>
