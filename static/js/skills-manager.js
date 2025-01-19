@@ -124,3 +124,43 @@ class SkillsManager {
 document.addEventListener('DOMContentLoaded', () => {
     window.skillsManager = new SkillsManager();
 });
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('skillsModal', () => ({
+        open: false,
+        selectedSkills: [],
+        
+        init() {
+            // Initialize with current TomSelect selections
+            if (window.skillSelect) {
+                this.selectedSkills = window.skillSelect.items.map(name => {
+                    const option = window.skillSelect.options[name];
+                    return {
+                        name: option.name,
+                        icon: option.icon,
+                        icon_dark: option.icon_dark
+                    };
+                });
+            }
+        },
+
+        toggleSkill(skill) {
+            const index = this.selectedSkills.findIndex(s => s.name === skill.name);
+            if (index === -1) {
+                this.selectedSkills.push(skill);
+            } else {
+                this.selectedSkills.splice(index, 1);
+            }
+        },
+
+        saveSkills() {
+            // Dispatch event for TomSelect to handle
+            this.$dispatch('skills-updated', this.selectedSkills);
+            this.open = false;
+        },
+
+        isSelected(skillName) {
+            return this.selectedSkills.some(s => s.name === skillName);
+        }
+    }));
+});

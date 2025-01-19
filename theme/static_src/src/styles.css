@@ -127,13 +127,127 @@
 
     /* Tom Select Styles */
     .ts-wrapper {
-        @apply relative w-full;
+        min-height: 120px;
+        border: 1px solid hsl(var(--bc) / 0.2);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+    .ts-wrapper.focus {
+        border-color: hsl(var(--p) / 0.5);
+        box-shadow: 0 0 0 2px hsl(var(--p) / 0.2);
+    }
+    
+    .ts-control {
+        border: none !important;
+        padding: 0 !important;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .ts-dropdown {
+        border: 1px solid hsl(var(--bc) / 0.2);
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15), 0 4px 10px -6px rgb(0 0 0 / 0.1);
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+        max-height: 400px;
+        position: absolute;
+        z-index: 100; /* Increased from 50 to 100 */
+        background: hsl(var(--b1));
+        width: 100%;
+        overflow-y: auto;
+    }
+    
+    .ts-dropdown .optgroup {
+        padding: 0;
+        border: none;
+    }
+    
+    .ts-dropdown .optgroup-header {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: hsl(var(--p));
+        padding: 1rem 0.75rem 0.5rem;
+        background: hsl(var(--b1));
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .ts-dropdown .option {
+        padding: 0.5rem !important;
+        margin: 0.25rem 0;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .ts-dropdown .active {
+        background-color: hsl(var(--p) / 0.1);
+        color: hsl(var(--p));
+    }
+    
+    .ts-dropdown .option:hover {
+        background-color: hsl(var(--b2));
+        transform: translateX(4px);
+    }
+    
+    .ts-dropdown .option.active:hover {
+        background-color: hsl(var(--p) / 0.15);
+    }
+    
+    .ts-wrapper.multi .ts-control > div {
+        background: none;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .ts-wrapper.plugin-remove_button .item .remove {
+        border: none;
+        padding: 0 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+    
+    .ts-wrapper.plugin-remove_button .item .remove:hover {
+        background-color: hsl(var(--b3));
     }
 
-    .ts-control {
-        @apply min-h-[3rem] px-3 py-2 bg-base-100 border border-base-300 rounded-xl;
-        @apply flex flex-wrap items-center gap-2;
-        @apply cursor-pointer hover:border-primary/50 transition-colors duration-200;
+    /* Enhanced TomSelect Styles */
+    .ts-dropdown-custom {
+        @apply fixed z-[100] w-full max-w-lg mx-auto rounded-xl shadow-xl border border-base-300;
+        @apply bg-base-100/95 backdrop-blur-md;
+        @apply animate-in fade-in slide-in-from-top-2 duration-200;
+        max-height: min(400px, 60vh);
+        transform-origin: top center;
+    }
+
+    .ts-dropdown-custom .optgroup {
+        @apply border-none p-0;
+    }
+
+    .ts-dropdown-custom .option {
+        @apply transition-all duration-200 px-3 py-2 hover:pl-4;
+    }
+
+    .ts-dropdown-custom .option:hover {
+        @apply bg-base-200/50;
+    }
+
+    .ts-dropdown-custom .option.active {
+        @apply bg-primary/10 text-primary;
+    }
+
+    .ts-dropdown-custom .no-results {
+        @apply p-8 text-center text-base-content/70;
+    }
+
+    .ts-wrapper.focus .ts-control {
+        @apply border-primary/30 ring-2 ring-primary/20;
     }
 
     /* Quick Letters Component */
@@ -315,18 +429,24 @@
 
     /* Modal Styles */
     .modal-box {
-        @apply relative w-full h-full mx-auto;
-        @apply bg-base-100 rounded-2xl shadow-xl;
-        @apply p-6 overflow-hidden;
-        @apply transition-all duration-300 ease-out;
-        
-        /* Ensure full screen on mobile */
-        width: 100vw;
-        height: 100dvh;
-        max-height: 100dvh;
-        margin: 0;
-        border-radius: 0;
-        padding: 0;
+        @apply p-0 flex flex-col max-h-[90vh];
+        @apply w-11/12 max-w-4xl mx-auto;
+        @apply bg-base-100 rounded-2xl shadow-2xl;
+    }
+
+    .modal-header {
+        @apply flex-none p-4 border-b border-base-200;
+        @apply sticky top-0 z-30 bg-base-100/95 backdrop-blur-sm;
+    }
+
+    .modal-content {
+        @apply flex-1 overflow-y-auto p-4;
+        @apply overscroll-contain touch-pan-y;
+    }
+
+    .modal-action {
+        @apply flex-none p-4 border-t border-base-200;
+        @apply sticky bottom-0 z-30 bg-base-100/95 backdrop-blur-sm;
     }
 
     /* Restore desktop styles */
@@ -592,6 +712,88 @@
         .skill-container {
             min-height: 5rem;
         }
+    }
+
+    /* Modal Box Improvements */
+    .modal-box {
+        @apply relative max-h-[90vh] w-11/12 max-w-4xl mx-auto;
+        @apply bg-base-100 rounded-2xl shadow-2xl;
+        @apply flex flex-col;
+        @apply p-6;
+    }
+
+    /* Modal Header */
+    .modal-box .modal-header {
+        @apply flex items-center justify-between;
+        @apply pb-4 mb-4 border-b border-base-200;
+        @apply sticky top-0 bg-base-100 z-30;
+    }
+
+    /* Modal Content Area */
+    .modal-box .modal-content {
+        @apply flex-1 overflow-y-auto overscroll-contain;
+        @apply -mx-6 px-6;  /* Negative margin to allow full-width content */
+    }
+
+    /* Modal Actions */
+    .modal-box .modal-action {
+        @apply sticky bottom-0 bg-base-100;
+        @apply mt-4 pt-4 border-t border-base-200;
+        @apply flex items-center justify-between;
+        @apply -mx-6 px-6 pb-0;  /* Negative margin to allow full-width */
+    }
+
+    /* Skill Selection Grid */
+    .skill-group {
+        @apply mb-8 last:mb-0;
+    }
+
+    .skill-group-header {
+        @apply text-sm font-semibold mb-3;
+        @apply sticky top-0 bg-base-100 py-2 z-20;
+    }
+
+    .skill-grid {
+        @apply grid gap-2;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .skill-button {
+        @apply flex items-center gap-3 p-3 rounded-lg;
+        @apply border-2 border-base-200 hover:border-primary/50;
+        @apply transition-all duration-200;
+        @apply active:scale-95;
+    }
+
+    .skill-button.selected {
+        @apply border-primary bg-primary/5;
+    }
+
+    .skill-button-icon {
+        @apply w-8 h-8 flex items-center justify-center;
+        @apply bg-base-200 rounded-lg shrink-0;
+    }
+
+    .skill-button-text {
+        @apply text-sm font-medium text-left;
+    }
+
+    /* Quick Letters Navigation */
+    .quick-letters-nav {
+        @apply px-2 py-4 border-r sticky top-20 self-start;
+        @apply flex flex-col gap-1;
+    }
+
+    .letter-nav-button {
+        @apply w-8 h-8 rounded;
+        @apply flex items-center justify-center;
+        @apply text-sm font-medium;
+        @apply transition-colors;
+        @apply hover:bg-base-200;
+    }
+
+    .letter-nav-button.active {
+        @apply text-primary bg-primary/10;
     }
 }
 
