@@ -275,19 +275,23 @@
             <!-- Main content -->
             <div class="flex-1 overflow-y-auto bg-base-100/50 overscroll-contain scroll-smooth">
                 <div class="flex h-full">
-                    <!-- Letter navigation with touch preview -->
-                    <div class="quick-letters-nav flex" 
+                    <!-- Letter navigation -->
+                    <nav class="quick-letters-nav sticky top-0 flex flex-col py-2 bg-base-100/50 backdrop-blur-md"
+                         @touchstart="startLetterDrag"
+                         @touchmove.passive="handleLetterDrag"
+                         @touchend="endLetterDrag"
                          @mousemove="handleMouseMove($event)"
                          @mouseleave="hideLetterPreview()">
                         {% for group in skill_icons %}
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
                                 @mouseleave="hideLetterPreview()"
-                                class="letter-nav-button"
-                                :class="{'active': currentLetter === '{{ group.letter }}'}">
+                                class="w-8 h-8 flex items-center justify-center text-sm font-medium transition-colors hover:text-primary"
+                                :class="{'text-primary font-bold': currentLetter === '{{ group.letter }}'}">
                             {{ group.letter }}
                         </button>
                         {% endfor %}
+                        
                         <!-- Letter preview bubble -->
                         <div class="letter-bubble hidden sm:block" 
                              :style="previewPosition"
@@ -297,7 +301,7 @@
                             </div>
                             <div class="letter-bubble-arrow"></div>
                         </div>
-                    </div>
+                    </nav>
 
                     <!-- Skills grid -->
                     <div class="flex-1 overflow-y-auto px-6 scroll-smooth" 
