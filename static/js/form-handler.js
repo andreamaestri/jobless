@@ -86,16 +86,18 @@ class FormHandler {
             return;
         }
 
-        const formData = new FormData(this.parseForm);
-        formData.set('description', this.cleanText(description));
+        const formData = new FormData();
+        formData.append('description', this.cleanText(description));
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
 
         const submitButton = this.parseButton;
         console.log('Submit button:', submitButton);
         this.setButtonState(submitButton, true, 'Processing...');
 
         try {
-            console.log('Sending request to:', this.parseForm.dataset.url);
-            const response = await fetch(this.parseForm.dataset.url, {
+            const parseUrl = this.parseForm.dataset.url;
+            console.log('Sending request to:', parseUrl);
+            const response = await fetch(parseUrl, {
                 method: 'POST',
                 body: formData,
                 headers: {
