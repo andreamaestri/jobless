@@ -4946,6 +4946,10 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.h-3\.5 {
+  height: 0.875rem;
+}
+
 .max-h-48 {
   max-height: 12rem;
 }
@@ -5065,6 +5069,10 @@ details.collapse summary::-webkit-details-marker {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-3\.5 {
+  width: 0.875rem;
 }
 
 .min-w-\[1\.25rem\] {
@@ -8152,6 +8160,10 @@ main {
     height: 2rem;
   }
 
+  .sm\:h-4 {
+    height: 1rem;
+  }
+
   .sm\:w-10 {
     width: 2.5rem;
   }
@@ -8162,6 +8174,10 @@ main {
 
   .sm\:w-auto {
     width: auto;
+  }
+
+  .sm\:w-4 {
+    width: 1rem;
   }
 
   .sm\:min-w-\[100px\] {

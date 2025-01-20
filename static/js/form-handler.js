@@ -61,14 +61,7 @@ class FormHandler {
 
         try {
             const formData = new FormData(this.jobForm);
-            const skillsInput = document.getElementById('skills-input');
-            if (skillsInput?.value) {
-                // Parse skills to remove duplicates
-                const skills = JSON.parse(skillsInput.value);
-                const uniqueSkills = Array.from(new Set(skills.map(s => JSON.stringify(s))))
-                    .map(s => JSON.parse(s));
-                formData.set('skills', JSON.stringify(uniqueSkills));
-            }
+            // Tagulous handles skills input, no need for custom processing
 
             const response = await this.submitForm(this.jobForm.action, formData);
             

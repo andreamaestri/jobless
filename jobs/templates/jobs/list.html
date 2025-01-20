@@ -68,11 +68,9 @@
                                                         transition-all duration-200 ease-in-out
                                                         transform hover:scale-105 hover:shadow-md">
                                                 <div class="w-8 h-8 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-200">
-                                                    {% with icon=skill.get_icon %}
-                                                        <iconify-icon icon="{{ icon|default:'heroicons:academic-cap' }}"></iconify-icon>
-                                                    {% endwith %}
+                                                    <iconify-icon icon="{{ skill.icon|default:'heroicons:academic-cap' }}"></iconify-icon>
                                                 </div>
-                                                <span class="font-medium">{{ skill }}</span>
+                                                <span class="font-medium">{{ skill.name }}</span>
                                             </div>
                                             {% endfor %}
                                             {% with skill_count=skills.count %}
@@ -84,10 +82,10 @@
                                                             data-skills="{{ skills|skills_to_json }}"
                                                             onclick="event.stopPropagation()">
                                                         +{{ remaining }} more
-                                                    </button>
+                                                        </button>
+                                                    {% endwith %}
                                                 {% endif %}
-                                                {% endwith %}
-                                            {% endif %}
+                                            {% endwith %}
                                         {% endwith %}
                                     {% endwith %}
                                 </div>
@@ -168,9 +166,11 @@ document.addEventListener('DOMContentLoaded', function() {
     skillButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            const skills = JSON.parse(e.currentTarget.dataset.skills || '[]');
             window.dispatchEvent(new CustomEvent('open-skills-modal', {
                 detail: {
-                    selectedSkills: JSON.parse(e.currentTarget.dataset.skills || '[]')
+                    selectedSkills: skills
                 }
             }));
         });
