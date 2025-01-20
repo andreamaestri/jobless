@@ -223,6 +223,7 @@ Include all requirements, responsibilities, and benefits in the Description sect
             'description': forms.Textarea(attrs={
                 'id': 'id_description',
                 'name': 'description',
+                'data-field': 'description',
                 'placeholder': '• About the Role:\n• Key Responsibilities:\n• Required Skills:\n• Nice to Have:\n• Benefits & Perks:\n• How to Apply:',
                 'rows': 12,
                 'class': 'textarea textarea-bordered w-full font-mono'
