@@ -156,13 +156,21 @@
                                 </div>
                                 
                                 <div class="relative">
-                                    <select id="skills-select" multiple placeholder="Search and select skills...">
-                                        <!-- Options will be populated via JavaScript -->
-                                    </select>
+                                    <div class="form-control">
+                                        <select id="skills-select" 
+                                                multiple 
+                                                placeholder="Search and select skills..."
+                                                class="select select-bordered w-full min-h-[120px] focus:outline-none focus:ring-2 focus:ring-primary/20">
+                                            <!-- Options will be populated via JavaScript -->
+                                        </select>
+                                    </div>
                                     <input type="hidden" name="skills" id="skills-input">
-                                    <p class="text-xs text-base-content/60 mt-2">
-                                        Quick search and select skills, or use the Manage Skills button for more options
-                                    </p>
+                                    <div class="flex items-center justify-between mt-2">
+                                        <p class="text-xs text-base-content/60">
+                                            Quick search and select skills, or use the Manage Skills button for more options
+                                        </p>
+                                        <span class="badge badge-sm" id="skills-count">0 selected</span>
+                                    </div>
                                 </div>
                             </div>
 
