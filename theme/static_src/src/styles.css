@@ -153,20 +153,21 @@ main {
 
     .quick-letters-nav {
         position: fixed;
-        bottom: 4rem;
-        left: 0;
         right: 0;
+        top: 50%;
+        transform: translateY(-50%);
         z-index: 41;
         height: auto;
+        max-height: 80vh;
         display: flex;
-        flex-direction: row;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        overflow-x: auto;
+        flex-direction: column;
+        gap: 1px;
+        padding: 0.25rem;
         background-color: hsl(var(--b1) / 0.95);
         backdrop-filter: blur(12px);
-        border-top: 1px solid hsl(var(--b2) / 0.3);
+        border-left: 1px solid hsl(var(--b2) / 0.3);
         -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
     }
 
     .letter-nav-button {
