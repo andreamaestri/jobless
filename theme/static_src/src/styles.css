@@ -77,7 +77,7 @@ main {
 
 /* Quick Letters Navigation */
 .quick-letters-nav {
-    width: 2rem;
+    width: 32px;
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -99,8 +99,8 @@ main {
 }
 
 .letter-nav-button {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
