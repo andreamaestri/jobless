@@ -189,18 +189,29 @@
                                                 class="hidden"
                                                 autocomplete="off">
                                         </select>
-                                        <div class="flex flex-wrap gap-2" x-show="selectedSkills.length > 0">
+                                        <div class="flex flex-wrap gap-2" 
+                                             x-show="selectedSkills.length > 0"
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 transform scale-95"
+                                             x-transition:enter-end="opacity-100 transform scale-100">
                                             <template x-for="skill in selectedSkills" :key="skill.name">
-                                                <div class="badge badge-primary gap-2">
-                                                    <div class="icon-wrapper">
-                                                        <iconify-icon x-bind:icon="skill.icon_dark || skill.icon || 'heroicons:academic-cap'" 
-                                                                     width="16" 
-                                                                     height="16"></iconify-icon>
+                                                <div class="badge badge-lg gap-2 group relative overflow-hidden p-4
+                                                            bg-primary hover:bg-primary/20 
+                                                            border border-primary/30 hover:border-primary
+                                                            text-primary-content/90 hover:text-primary-content
+                                                            transition-all duration-200 ease-in-out
+                                                            transform hover:scale-105 hover:shadow-md">
+                                                    <div class="w-8 h-8 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-200">
+                                                        <iconify-icon x-bind:icon="skill.icon_dark || skill.icon || 'heroicons:academic-cap'"></iconify-icon>
                                                     </div>
-                                                    <span x-text="skill.name"></span>
+                                                    <span x-text="skill.name" class="font-medium"></span>
                                                     <button type="button" 
                                                             @click="$dispatch('toggle-skill', skill)"
-                                                            class="btn btn-ghost btn-xs btn-circle">
+                                                            class="ml-1 rounded-full p-1.5
+                                                                   hover:bg-primary/20 active:bg-primary/30
+                                                                   transition-all duration-200
+                                                                   opacity-60 hover:opacity-100"
+                                                            title="Remove skill">
                                                         <iconify-icon icon="heroicons:x-mark" class="text-sm"></iconify-icon>
                                                     </button>
                                                 </div>
