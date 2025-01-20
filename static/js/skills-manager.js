@@ -16,31 +16,47 @@ if (!window.Alpine) {
         lastMouseX: 0,
         lastMouseY: 0,
         lastSelected: null,
-        open: false,
-        search: '',
-        selectedSkills: [],
-        currentLetter: null,
-        touchStartY: null,
-        touchStartTime: null,
-        currentPreviewLetter: null,
-        lastTouchY: null,
-        isScrolling: false,
-        mouseX: 0,
-        mouseY: 0,
-        lastMouseX: 0,
-        lastMouseY: 0,
-        lastSelected: null,
         init() {
             this.$watch('open', value => {
                 if (value) {
                     this.search = '';
-                    this.selectedSkills = window.skillSelect?.items.map(name => ({
-                        name: name,
-                        ...window.skillSelect.options[name]
-                    })) || [];
-                } else {
-                    this.search = '';
-                    window.skillsManager?.resetModalState();
+                    if (window.skillSelect) {
+                        this.selectedSkills = window.skillSelect.items.map(name => ({
+                            name: name,
+                            icon: window.skillSelect.options[name]?.icon,
+                            icon_dark: window.skillSelect.options[name]?.icon_dark
+                        }));
+                    }
+                }
+            });
+
+            // Listen for skills-updated event
+            window.addEventListener('skills-updated', (event) => {
+                if (window.skillSelect) {
+                    const updatedSkills = event.detail;
+                    window.skillSelect.clear(true);
+                    window.skillSelect.clearOptions();
+                    
+                    updatedSkills.forEach(skill => {
+                        window.skillSelect.addOption({
+                            name: skill.name,
+                            icon: skill.icon,
+                            icon_dark: skill.icon_dark
+                        });
+                        window.skillSelect.addItem(skill.name);
+                    });
+
+                    // Update hidden input
+                    const skillsInput = document.getElementById('skills-input');
+                    if (skillsInput) {
+                        skillsInput.value = JSON.stringify(updatedSkills);
+                    }
+
+                    // Update skills count
+                    const skillsCount = document.getElementById('skills-count');
+                    if (skillsCount) {
+                        skillsCount.textContent = `${updatedSkills.length} selected`;
+                    }
                 }
             });
         },
@@ -76,13 +92,18 @@ if (!window.Alpine) {
             }
         },
 
-        saveSkills() {
-            try {
-                this.$dispatch('skills-updated', this.selectedSkills);
-                this.open = false;
-            } catch (error) {
-                console.error('Error saving skills:', error);
-            }
+        save() {
+            const skillsToUpdate = this.selectedSkills.map(skill => ({
+                name: skill.name,
+                icon: skill.icon,
+                icon_dark: skill.icon_dark
+            }));
+            
+            window.dispatchEvent(new CustomEvent('skills-updated', {
+                detail: skillsToUpdate
+            }));
+            
+            this.open = false;
         },
 
         resetModalState() {
