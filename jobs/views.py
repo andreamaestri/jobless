@@ -271,7 +271,7 @@ def parse_job_description(request):
     if not request.user.is_authenticated:
         return JsonResponse({'status': 'error', 'message': 'Authentication required.'}, status=401)
     
-    text = request.POST.get('paste', '').strip()
+    text = request.POST.get('description', '').strip()
     if not text:
         return JsonResponse({
             'status': 'error',
