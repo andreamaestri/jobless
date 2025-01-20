@@ -25,7 +25,7 @@ class BaseJobView(LoginRequiredMixin):
     model = JobPosting
     
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user).prefetch_related('required_skills')
+        return super().get_queryset().filter(user=self.request.user).prefetch_related('skills')
 
 class JobListView(BaseJobView, ListView):
     """View for listing job postings"""
