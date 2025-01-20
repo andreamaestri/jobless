@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load job_tags %}
 
 {% block content %}
 <div class="min-h-screen p-2 sm:p-4 md:p-6 lg:p-8 rounded-lg md:rounded-2xl bg-base-200 overflow-hidden">
@@ -72,11 +73,15 @@
                                                 <span class="font-medium">{{ skill.name }}</span>
                                             </div>
                                             {% endfor %}
-                                            {% with remaining=skills.count|add:"-3" %}
-                                                {% if remaining > 0 %}
-                                                <div class="badge badge-ghost badge-xs sm:badge-sm">+{{ remaining }}</div>
-                                                {% endif %}
-                                            {% endwith %}
+                                            {% if skills.count > 3 %}
+                                                <button type="button"
+                                                        class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
+                                                        data-action="open-skills"
+                                                        data-skills="{{ skills|skills_to_json }}"
+                                                        onclick="event.stopPropagation()">
+                                                    +{{ skills.count|add:"-3" }} more
+                                                </button>
+                                            {% endif %}
                                         {% endwith %}
                                     {% endwith %}
                                 </div>
@@ -141,4 +146,29 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block modal %}
+{% include "jobs/modals/skills_modal.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/skills-manager.js' %}"></script>
+<script src="{% static 'js/form-handler.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize skills modal opener
+    const skillButtons = document.querySelectorAll('[data-action="open-skills"]');
+    skillButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent('open-skills-modal', {
+                detail: {
+                    selectedSkills: JSON.parse(e.currentTarget.dataset.skills || '[]')
+                }
+            }));
+        });
+    });
+});
+</script>
 {% endblock %}
