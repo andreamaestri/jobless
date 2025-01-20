@@ -22,8 +22,10 @@ class FormHandler {
 
         if (this.parseForm) {
             console.log('Adding parser form submit handler');
-            this.parseForm.addEventListener('submit', (e) => {
-                console.log('Parser form submit event triggered');
+            this.parseButton.addEventListener('click', (e) => {
+                console.log('Parse button clicked');
+                e.preventDefault();
+                e.stopPropagation();
                 this.handleParse(e);
             });
         }
@@ -114,7 +116,7 @@ class FormHandler {
                 console.log('Successfully parsed job data');
                 this.populateFormFields(data.data);
                 this.showNotification('Success', 'Job details extracted successfully!', 'success');
-                form.reset();
+                this.parseForm.querySelector('#paste').value = '';
             } else {
                 throw new Error(data.message || data.error || 'Failed to parse description');
             }
