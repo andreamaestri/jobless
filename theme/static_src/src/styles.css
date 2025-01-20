@@ -507,6 +507,11 @@ main {
 }
 
 /* Letter Preview Bubble */
+.quick-letters-nav {
+    border-right: 1px solid hsl(var(--b2));
+    min-width: 2rem;
+}
+
 .letter-bubble {
     position: fixed;
     z-index: 50;
@@ -520,7 +525,7 @@ main {
 }
 
 .letter-bubble-content {
-    background-color: hsl(var(--p));
+    background: hsl(var(--p));
     color: hsl(var(--pc));
     padding: 1rem 1.5rem;
     border-radius: 1rem;
@@ -541,11 +546,15 @@ main {
 }
 
 @media (prefers-color-scheme: dark) {
+    .quick-letters-nav {
+        border-right-color: hsl(var(--b3));
+    }
+    
     .letter-bubble-content {
-        background-color: hsl(var(--p));
+        background: hsl(var(--p));
         color: hsl(var(--pc));
     }
-
+    
     .letter-bubble-arrow {
         border-right-color: hsl(var(--p));
     }
