@@ -45,25 +45,28 @@
                                 </div>
                                 <div class="space-y-4 relative">
                                     <div id="parse-form" class="parse-form">
-                                        <div>
-                                            <label for="paste" class="block text-sm font-medium text-base-content mb-2">
-                                                Paste Job Description
-                                                <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
-                                            </label>
-                                            <textarea id="paste" 
-                                                      name="paste"
-                                                      class="textarea textarea-bordered w-full min-h-[120px]"
-                                                      placeholder="Paste the job description here..."></textarea>
-                                        </div>
-                                        <div class="flex justify-end mt-4">
-                                            <button type="button" 
-                                                    id="parse-button"
-                                                    class="btn btn-primary btn-sm gap-2">
-                                                <span class="loading loading-spinner loading-sm hidden"></span>
-                                                <iconify-icon icon="heroicons:sparkles"></iconify-icon>
-                                                <span>Process with AI</span>
-                                            </button>
-                                        </div>
+                                        <form action="{% url 'jobs:parse-description' %}" method="POST" id="description-parser">
+                                            {% csrf_token %}
+                                            <div>
+                                                <label for="paste" class="block text-sm font-medium text-base-content mb-2">
+                                                    Paste Job Description
+                                                    <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
+                                                </label>
+                                                <textarea id="paste" 
+                                                          name="description"
+                                                          class="textarea textarea-bordered w-full min-h-[120px]"
+                                                          placeholder="Paste the job description here..."></textarea>
+                                            </div>
+                                            <div class="flex justify-end mt-4">
+                                                <button type="submit" 
+                                                        id="parse-button"
+                                                        class="btn btn-primary btn-sm gap-2">
+                                                    <span class="loading loading-spinner loading-sm hidden"></span>
+                                                    <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+                                                    <span>Process with AI</span>
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
