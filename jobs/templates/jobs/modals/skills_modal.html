@@ -115,12 +115,12 @@
 
     handleSearch(e) {
         this.search = e.target.value;
-        document.querySelectorAll('.skill-group').forEach(group => {
+        this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
             let hasVisible = false;
-            group.querySelectorAll('label').forEach(label => {
-                const name = label.querySelector('span').textContent;
+            group.querySelectorAll('.skill-card').forEach(card => {
+                const name = card.querySelector('.skill-name').textContent;
                 const visible = !this.search || name.toLowerCase().includes(this.search.toLowerCase());
-                label.style.display = visible ? '' : 'none';
+                card.style.display = visible ? '' : 'none';
                 if (visible) hasVisible = true;
             });
             group.style.display = hasVisible ? '' : 'none';
