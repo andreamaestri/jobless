@@ -6,25 +6,24 @@ class FormHandler {
 
     init() {
         console.log('FormHandler initializing...');
-        // Get form elements
         this.jobForm = document.getElementById('job-form');
-        this.descriptionParser = document.getElementById('description-parser');
+        this.parseForm = document.getElementById('description-parser');
+        this.parseButton = document.getElementById('parse-button');
         
         console.log('Forms found:', {
             jobForm: !!this.jobForm,
-            descriptionParser: !!this.descriptionParser
+            parseForm: !!this.parseForm,
+            parseButton: !!this.parseButton
         });
 
-        // Add event listeners
         if (this.jobForm) {
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));
         }
-        
-        if (this.descriptionParser) {
+
+        if (this.parseForm) {
             console.log('Adding parser form submit handler');
-            this.descriptionParser.addEventListener('submit', (e) => {
-                console.log('Parser form submitted');
-                e.preventDefault();
+            this.parseForm.addEventListener('submit', (e) => {
+                console.log('Parser form submit event triggered');
                 this.handleParse(e);
             });
         }
@@ -70,10 +69,7 @@ class FormHandler {
         e.preventDefault();
         e.stopPropagation();
         
-        const form = e.target;
-        console.log('Form:', form);
-        
-        if (!form || form.id !== 'description-parser') {
+        if (!this.parseForm) {
             console.error('Parser form not found');
             this.showNotification('Error', 'Parse form not found', 'error');
             return;
