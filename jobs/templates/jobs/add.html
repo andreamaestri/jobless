@@ -156,14 +156,22 @@
                                     </button>
                                 </div>
                                 
-                                <div class="relative">
+                                <div class="relative" x-data="{ selectedSkills: [] }" @skills-updated.window="selectedSkills = $event.detail">
                                     <div class="form-control">
                                         <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
                                             <div id="skills-display" class="flex flex-wrap gap-2">
                                                 <!-- Skills badges will be added here -->
-                                                <div class="empty-state text-base-content/50 flex items-center justify-center w-full h-full">
-                                                    Click 'Manage Skills' to add required skills
-                                                </div>
+                                                <template x-if="!selectedSkills?.length">
+                                                    <div class="empty-state text-base-content/50 flex items-center justify-center w-full h-full">
+                                                        Click 'Manage Skills' to add required skills
+                                                    </div>
+                                                </template>
+                                                <template x-for="skill in selectedSkills" :key="skill.name">
+                                                    <div class="badge badge-primary gap-2">
+                                                        <iconify-icon :icon="skill.icon"></iconify-icon>
+                                                        <span x-text="skill.name"></span>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </div>
                                     </div>
