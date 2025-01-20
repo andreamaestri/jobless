@@ -45,7 +45,9 @@
                                 </div>
                                 <div class="space-y-4 relative">
                                     <div id="parse-form" class="parse-form">
-                                        <form action="{% url 'jobs:parse_description' %}" method="POST" id="description-parser">
+                                        <form action="{% url 'jobs:parse_description' %}" 
+                                              method="POST" 
+                                              id="description-parser">
                                             {% csrf_token %}
                                             <div>
                                                 <label for="paste" class="block text-sm font-medium text-base-content mb-2">
@@ -63,7 +65,7 @@
                                                         class="btn btn-primary btn-sm gap-2">
                                                     <span class="loading loading-spinner loading-sm hidden"></span>
                                                     <iconify-icon icon="heroicons:sparkles"></iconify-icon>
-                                                    <span>Process with AI</span>
+                                                    <span class="button-text">Process with AI</span>
                                                 </button>
                                             </div>
                                         </form>

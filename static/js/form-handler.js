@@ -12,8 +12,10 @@ class FormHandler {
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));
         }
         
-        if (this.parseButton) {
-            this.parseButton.addEventListener('click', this.handleParse.bind(this));
+        // Change this section to handle the parse form submission
+        const descriptionParser = document.getElementById('description-parser');
+        if (descriptionParser) {
+            descriptionParser.addEventListener('submit', this.handleParse.bind(this));
         }
     }
 
@@ -54,13 +56,9 @@ class FormHandler {
 
     async handleParse(e) {
         e.preventDefault();
+        console.debug('Parse form submitted');
         
-        const form = document.getElementById('description-parser');
-        if (!form) {
-            this.showNotification('Error', 'Parse form not found', 'error');
-            return;
-        }
-
+        const form = e.target;
         const description = form.querySelector('#paste')?.value?.trim();
         if (!description) {
             this.showNotification('Error', 'Please paste a job description first', 'error');
@@ -70,9 +68,11 @@ class FormHandler {
         const formData = new FormData(form);
         formData.set('description', this.cleanText(description));
 
-        this.setButtonState(this.parseButton, true, 'Processing...');
+        const submitButton = form.querySelector('button[type="submit"]');
+        this.setButtonState(submitButton, true, 'Processing...');
 
         try {
+            console.debug('Sending parse request...');
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -83,9 +83,10 @@ class FormHandler {
             });
 
             const data = await response.json();
+            console.debug('Parse response:', data);
             
             if (!response.ok) {
-                throw new Error(data.message || 'Server error occurred');
+                throw new Error(data.message || data.error || 'Server error occurred');
             }
 
             if (data.status === 'success' && data.data) {
@@ -93,13 +94,13 @@ class FormHandler {
                 this.showNotification('Success', 'Job details extracted successfully!', 'success');
                 form.reset();
             } else {
-                throw new Error(data.message || 'Failed to parse description');
+                throw new Error(data.message || data.error || 'Failed to parse description');
             }
         } catch (error) {
             console.error('Parse error:', error);
             this.showNotification('Error', error.message || 'Failed to process job description', 'error');
         } finally {
-            this.setButtonState(this.parseButton, false, 'Process with AI');
+            this.setButtonState(submitButton, false, 'Process with AI');
         }
     }
 
