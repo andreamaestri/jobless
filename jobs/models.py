@@ -254,6 +254,13 @@ class SkillsTagModel(tagulous.models.TagModel):
         max_count = 10
         case_sensitive = False
 
+    def get_icon(self):
+        """Get the icon for this skill"""
+        for icon, name in SKILL_ICONS:
+            if name.lower() == str(self).lower():
+                return icon
+        return 'heroicons:academic-cap'  # Default icon
+
 class JobPosting(models.Model):
     STATUS_CHOICES = [
         ('interested', 'Interested'),
