@@ -7,7 +7,6 @@ class FormHandler {
     init() {
         console.log('FormHandler initializing...');
         this.jobForm = document.getElementById('job-form');
-        this.descriptionParser = document.getElementById('description-parser');
         this.parseButton = document.getElementById('parse-button');
         
         if (this.jobForm) {
@@ -21,7 +20,14 @@ class FormHandler {
                 console.log('Parse button clicked - initiating parse');
                 e.preventDefault();
                 e.stopPropagation();
-                this.handleParse(e);
+                const form = document.getElementById('description-parser');
+                if (form) {
+                    console.log('Description parser form found');
+                    this.handleParse(e, form);
+                } else {
+                    console.error('Description parser form not found');
+                    this.showNotification('Error', 'Parse form not found', 'error');
+                }
             });
         }
     }
@@ -61,12 +67,11 @@ class FormHandler {
         }
     }
 
-    async handleParse(e) {
+    async handleParse(e, form) {
         console.log('handleParse called', e.type);
         e.preventDefault();
         e.stopPropagation();
         
-        const form = this.descriptionParser;
         console.log('Form:', form);
         
         if (!form) {
