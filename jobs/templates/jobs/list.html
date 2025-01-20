@@ -87,12 +87,12 @@
                                     {{ job.status|title }}
                                 </span>
                             </td>
-                            <td class="relative" data-dropdown-parent="job-{{ job.pk }}">
+                            <td class="relative" data-dropdown-parent>
                                 <div class="flex items-center gap-2">
                                     <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline" onclick="event.stopPropagation()">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
-                                            {% if request.user in job.favourites.all %}
+                                            {% if job in request.user.favourite_jobs.all %}
                                                 <iconify-icon icon="octicon:star-fill-24" class="w-5 h-5 text-warning"></iconify-icon>
                                             {% else %}
                                                 <iconify-icon icon="octicon:star-24" class="w-5 h-5"></iconify-icon>
@@ -100,9 +100,19 @@
                                         </button>
                                     </form>
                                     <div class="dropdown dropdown-end" onclick="event.stopPropagation()">
-                                        <button class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
+                                        <button tabindex="0" class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
                                             <iconify-icon icon="octicon:kebab-horizontal-16" class="w-5 h-5"></iconify-icon>
                                         </button>
+                                        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                            <li><a class="text-base py-3" href="{% url 'jobs:detail' job.pk %}">View Details</a></li>
+                                            <li><a class="text-base py-3 text-warning" href="{% url 'jobs:edit' job.pk %}">Edit</a></li>
+                                            <li>
+                                                <form method="POST" action="{% url 'jobs:delete' job.pk %}" class="w-full">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="text-base py-3 text-error w-full text-left">Delete</button>
+                                                </form>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </td>
@@ -112,20 +122,6 @@
                     </table>
                 </div>
             </div>
-            {% for job in jobs %}
-            <div class="dropdown-menu-container" id="job-{{ job.pk }}">
-                <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 fixed hidden">
-                    <li><a class="text-base py-3" href="{% url 'jobs:detail' job.pk %}">View Details</a></li>
-                    <li><a class="text-base py-3 text-warning" href="{% url 'jobs:edit' job.pk %}">Edit</a></li>
-                    <li>
-                        <form method="POST" action="{% url 'jobs:delete' job.pk %}" class="w-full">
-                            {% csrf_token %}
-                            <button type="submit" class="text-base py-3 text-error w-full text-left">Delete</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-            {% endfor %}
         </div>
         {% else %}
         <div class="card bg-base-100 shadow-xl">
@@ -141,45 +137,4 @@
         {% endif %}
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    
-    dropdowns.forEach(dropdown => {
-        const button = dropdown.querySelector('button');
-        const parentCell = dropdown.closest('[data-dropdown-parent]');
-        const parentId = parentCell.getAttribute('data-dropdown-parent');
-        const menu = document.querySelector(`#${parentId} .dropdown-content`);
-        
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            
-            // Hide all other dropdowns
-            document.querySelectorAll('.dropdown-content').forEach(m => {
-                if (m !== menu) m.classList.add('hidden');
-            });
-            
-            // Toggle current dropdown
-            menu.classList.toggle('hidden');
-            
-            // Position the dropdown
-            const rect = button.getBoundingClientRect();
-            menu.style.top = `${rect.bottom + window.scrollY}px`;
-            menu.style.left = `${rect.left + window.scrollX - menu.offsetWidth + button.offsetWidth}px`;
-        });
-    });
-    
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown') && !e.target.closest('.dropdown-content')) {
-            document.querySelectorAll('.dropdown-content').forEach(menu => {
-                menu.classList.add('hidden');
-            });
-        }
-    });
-});
-</script>
 {% endblock %}
