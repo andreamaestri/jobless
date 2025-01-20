@@ -19,7 +19,7 @@ def upper(value):
 def skills_to_json(skills):
     """Convert skills queryset to JSON for use in data attributes"""
     return mark_safe(json.dumps([{
-        'name': skill.name,
-        'icon': skill.icon,
-        'icon_dark': skill.icon_dark
+        'name': str(skill),  # Convert skill object to string
+        'icon': getattr(skill, 'icon', 'heroicons:academic-cap'),  # Default icon if none set
+        'icon_dark': getattr(skill, 'icon_dark', None)  # Optional dark variant
     } for skill in skills]))

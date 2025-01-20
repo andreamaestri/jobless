@@ -62,8 +62,8 @@ class JobCreateView(BaseJobView, CreateView):
                 try:
                     # Parse the JSON string into a list
                     skills_data = json.loads(skills)
-                    # Extract just the skill names
-                    skill_names = [skill['name'] for skill in skills_data]
+                    # Extract just the skill names and ensure they're strings
+                    skill_names = [str(skill['name']).lower() for skill in skills_data]
                     # Set the skills
                     self.object.skills.set(skill_names)
                 except json.JSONDecodeError as e:
