@@ -58,20 +58,22 @@
                             <td>
                                 <div class="flex flex-wrap gap-1">
                                     {% with skills=job.required_skills.all %}
-                                    {% with visible_skills=skills|slice:":3" skill_count=skills|length %}
-                                    {% for skill in visible_skills %}
-                                    <div class="badge badge-ghost badge-xs sm:badge-sm gap-1.5">
-                                        <iconify-icon icon="{{ skill.icon|default:'skill-icons:unknown' }}" 
-                                                    width="14" 
-                                                    height="14">
-                                        </iconify-icon>
-                                        <span>{{ skill.name }}</span>
-                                    </div>
-                                    {% endfor %}
-                                    {% if skill_count > 3 %}
-                                    <div class="badge badge-ghost badge-xs sm:badge-sm">+{{ skill_count|add:"-3" }}</div>
-                                    {% endif %}
-                                    {% endwith %}
+                                        {% with visible_skills=skills|slice:":3" %}
+                                            {% for skill in visible_skills %}
+                                            <div class="badge badge-ghost badge-xs sm:badge-sm gap-1.5">
+                                                <iconify-icon icon="{{ skill.icon|default:'skill-icons:unknown' }}" 
+                                                            width="14" 
+                                                            height="14">
+                                                </iconify-icon>
+                                                <span>{{ skill.name }}</span>
+                                            </div>
+                                            {% endfor %}
+                                            {% with remaining=skills.count|add:"-3" %}
+                                                {% if remaining > 0 %}
+                                                <div class="badge badge-ghost badge-xs sm:badge-sm">+{{ remaining }}</div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
                                     {% endwith %}
                                 </div>
                             </td>
