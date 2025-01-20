@@ -46,7 +46,8 @@
                                 <div class="space-y-4 relative">
                                     <form action="{% url 'jobs:parse_description' %}" 
                                           method="POST" 
-                                          id="description-parser">
+                                          id="description-parser"
+                                          novalidate>
                                         {% csrf_token %}
                                         <div>
                                             <label for="paste" class="block text-sm font-medium text-base-content mb-2">
@@ -59,8 +60,9 @@
                                                       placeholder="Paste the job description here..."></textarea>
                                         </div>
                                         <div class="flex justify-end mt-4">
-                                            <button type="submit" 
-                                                    id="parse-button"
+                                            <button type="submit"
+                                                    id="parse-button" 
+                                                    form="description-parser"
                                                     class="btn btn-primary btn-sm gap-2">
                                                 <span class="loading loading-spinner loading-sm hidden"></span>
                                                 <iconify-icon icon="heroicons:sparkles"></iconify-icon>
