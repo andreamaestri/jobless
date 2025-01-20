@@ -263,13 +263,14 @@ class FormHandler {
     }
 
     showNotification(title, message, type) {
-        const toastManager = window.$store?.toastManager;
-        if (toastManager) {
-            toastManager.show({
+        if (window.Alpine && Alpine.store('toastManager')) {
+            Alpine.store('toastManager').show({
                 type: type,
                 message: message,
                 description: title !== message ? title : ''
             });
+        } else {
+            console.warn('Toast manager not available');
         }
     }
 }
