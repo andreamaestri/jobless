@@ -73,7 +73,8 @@
                                                 <span class="font-medium">{{ skill }}</span>
                                             </div>
                                             {% endfor %}
-                                            {% if skills.count > 3 %}
+                                            {% with skill_count=job.skills.count %}
+                                            {% if skill_count > 3 %}
                                                 <button type="button"
                                                         class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
                                                         data-action="open-skills"
