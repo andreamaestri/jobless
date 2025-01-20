@@ -4,13 +4,6 @@
      x-cloak 
      @keydown.escape.window="cancel()" 
      @open-skills-modal.window="handleSkillsUpdate($event)">
-        this.$watch('open', value => {
-            if (value) {
-                this.search = '';
-                this.selectedSkills = window.skillSelect?.items.map(name => ({
-                    name: name,
-                    ...window.skillSelect.options[name]
-                })) || [];
             } else {
                 window.skillsManager?.resetModalState();
             }

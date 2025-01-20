@@ -24,15 +24,16 @@ if (!window.Alpine) {
         touchStartTime: null,
         
         init() {
-            this.initializeSkills();
-            
-            // Watch for modal state changes
             this.$watch('open', value => {
-                if (!value) {
+                if (value) {
                     this.search = '';
-                    this.resetModalState();
+                    this.selectedSkills = window.skillSelect?.items.map(name => ({
+                        name: name,
+                        ...window.skillSelect.options[name]
+                    })) || [];
                 } else {
-                    this.initializeSkills();
+                    this.search = '';
+                    window.skillsManager?.resetModalState();
                 }
             });
         },
