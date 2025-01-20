@@ -77,22 +77,49 @@ main {
 
 /* Quick Letters Navigation */
 .quick-letters-nav {
-    width: 2.5rem;
+    width: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.5rem;
+    gap: 1px;
+    padding: 0.25rem;
     position: sticky;
     top: 1rem;
     z-index: 40;
-    opacity: 0.5;
+    opacity: 0.75;
     transition: opacity var(--transition-standard);
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     height: calc(100vh - 12rem);
+    background: hsl(var(--b1));
+    backdrop-filter: blur(12px);
+    border-right: 1px solid hsl(var(--b2));
 }
 
 .quick-letters-nav:hover {
     opacity: 1;
+}
+
+.letter-nav-button {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: hsl(var(--bc) / 0.6);
+    transition: all 75ms ease;
+    border-radius: 0.25rem;
+}
+
+.letter-nav-button:hover {
+    color: hsl(var(--p));
+    background: hsl(var(--b2));
+}
+
+.letter-nav-button.active {
+    color: hsl(var(--p));
+    font-weight: 600;
+    background: hsl(var(--p) / 0.1);
 }
 
 /* Responsive Styles */
