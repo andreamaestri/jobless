@@ -82,6 +82,16 @@ document.addEventListener('alpine:init', () => {
         persist: false,
         createFilter: null,
         preload: true,
+        onFocus: function() {
+            // Check if required fields are filled
+            const titleField = document.querySelector('#id_title');
+            if (titleField && !titleField.value) {
+                titleField.focus();
+                this.blur();
+                return false;
+            }
+            return true;
+        },
         
         // Dropdown configuration
         dropdownParent: 'body',
