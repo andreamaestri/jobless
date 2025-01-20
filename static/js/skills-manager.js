@@ -103,6 +103,21 @@ if (!window.Alpine) {
                 detail: skillsToUpdate
             }));
             
+            // Update TomSelect directly
+            if (window.skillSelect) {
+                window.skillSelect.clear(true);
+                window.skillSelect.clearOptions();
+                
+                skillsToUpdate.forEach(skill => {
+                    window.skillSelect.addOption({
+                        name: skill.name,
+                        icon: skill.icon,
+                        icon_dark: skill.icon_dark
+                    });
+                    window.skillSelect.addItem(skill.name);
+                });
+            }
+            
             this.open = false;
         },
 
