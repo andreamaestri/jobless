@@ -125,12 +125,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.skillsManager = new SkillsManager();
 });
 
-document.addEventListener('alpine:init', () => {
-    Alpine.data('skillsModal', () => ({
+if (window.Alpine) {
+    window.Alpine.data('skillsModal', () => ({
         open: false,
         selectedSkills: [],
+        search: '',
+        currentLetter: null,
         
         init() {
+            this.$watch('open', value => {
+                if (!value) {
+                    this.search = '';
+                    window.skillsManager?.resetModalState();
+                }
+            });
             // Initialize with current TomSelect selections
             if (window.skillSelect) {
                 this.selectedSkills = window.skillSelect.items.map(name => {

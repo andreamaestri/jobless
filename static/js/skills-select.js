@@ -1,4 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
+// Wait for both DOM and Alpine.js to be ready
+document.addEventListener('alpine:init', () => {
+    if (!window.Alpine) {
+        console.error('Alpine.js not loaded');
+        return;
+    }
     // Icon loading utility with cache and better error handling
     const iconCache = new Map();
     const loadIcon = (icon, name) => {
