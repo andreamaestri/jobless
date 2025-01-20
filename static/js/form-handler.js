@@ -75,7 +75,7 @@ class FormHandler {
             return;
         }
 
-        const description = form.querySelector('#paste')?.value?.trim();
+        const description = this.parseForm.querySelector('#paste')?.value?.trim();
         console.log('Description:', description?.substring(0, 100) + '...');
         
         if (!description) {
@@ -84,7 +84,7 @@ class FormHandler {
             return;
         }
 
-        const formData = new FormData(form);
+        const formData = new FormData(this.parseForm);
         formData.set('description', this.cleanText(description));
 
         const submitButton = form.querySelector('button[type="submit"]');
@@ -92,7 +92,7 @@ class FormHandler {
         this.setButtonState(submitButton, true, 'Processing...');
 
         try {
-            console.log('Sending request to:', form.action);
+            console.log('Sending request to:', this.parseForm.action);
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
