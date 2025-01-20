@@ -15,21 +15,14 @@ class FormHandler {
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));
         }
         
-        if (this.descriptionParser) {
-            console.log('Description parser form found');
-            // Add both submit and click handlers for redundancy
-            this.descriptionParser.addEventListener('submit', (e) => {
-                console.log('Form submit event triggered');
+        if (this.parseButton) {
+            console.log('Parse button found');
+            this.parseButton.addEventListener('click', (e) => {
+                console.log('Parse button clicked - initiating parse');
+                e.preventDefault();
+                e.stopPropagation();
                 this.handleParse(e);
             });
-            
-            if (this.parseButton) {
-                console.log('Parse button found');
-                this.parseButton.addEventListener('click', (e) => {
-                    console.log('Parse button clicked');
-                    this.handleParse(e);
-                });
-            }
         }
     }
 

@@ -48,8 +48,6 @@
                                         <form action="{% url 'jobs:parse_description' %}" 
                                               method="POST" 
                                               id="description-parser"
-                                              x-data
-                                              @submit.prevent="console.log('Form submitted')"
                                               class="debug-form">
                                             {% csrf_token %}
                                             <div>
@@ -63,9 +61,8 @@
                                                           placeholder="Paste the job description here..."></textarea>
                                             </div>
                                             <div class="flex justify-end mt-4">
-                                                <button type="submit" 
+                                                <button type="button"
                                                         id="parse-button"
-                                                        onclick="console.log('Parse button clicked')"
                                                         class="btn btn-primary btn-sm gap-2">
                                                     <span class="loading loading-spinner loading-sm hidden"></span>
                                                     <iconify-icon icon="heroicons:sparkles"></iconify-icon>
