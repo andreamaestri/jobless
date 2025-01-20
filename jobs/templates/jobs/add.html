@@ -48,7 +48,9 @@
                                         <form action="{% url 'jobs:parse_description' %}" 
                                               method="POST" 
                                               id="description-parser"
-                                              onsubmit="return false;">
+                                              x-data
+                                              @submit.prevent="console.log('Form submitted')"
+                                              class="debug-form">
                                             {% csrf_token %}
                                             <div>
                                                 <label for="paste" class="block text-sm font-medium text-base-content mb-2">
@@ -63,7 +65,7 @@
                                             <div class="flex justify-end mt-4">
                                                 <button type="submit" 
                                                         id="parse-button"
-                                                        form="description-parser"
+                                                        onclick="console.log('Parse button clicked')"
                                                         class="btn btn-primary btn-sm gap-2">
                                                     <span class="loading loading-spinner loading-sm hidden"></span>
                                                     <iconify-icon icon="heroicons:sparkles"></iconify-icon>
