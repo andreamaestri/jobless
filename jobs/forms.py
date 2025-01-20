@@ -28,7 +28,7 @@ class CustomTagWidget(tagulous.forms.TagWidget):
         )
 
 class JobPostingForm(forms.ModelForm):
-    description = forms.CharField(
+    paste_description = forms.CharField(
         widget=forms.Textarea(attrs={
             'id': 'paste',
             'placeholder': 'Paste job description here to auto-fill fields',
