@@ -9,11 +9,15 @@ class FormHandler {
         this.jobForm = document.getElementById('job-form');
         this.parseForm = document.getElementById('description-parser');
         this.parseButton = document.getElementById('parse-button');
+        this.descriptionField = document.getElementById('id_description');
+        this.charCounter = document.getElementById('char-counter');
         
         console.log('Forms found:', {
             jobForm: !!this.jobForm,
             parseForm: !!this.parseForm,
-            parseButton: !!this.parseButton
+            parseButton: !!this.parseButton,
+            descriptionField: !!this.descriptionField,
+            charCounter: !!this.charCounter
         });
 
         if (this.jobForm) {
@@ -28,6 +32,16 @@ class FormHandler {
                 e.stopPropagation();
                 this.handleParse(e);
             });
+        }
+
+        if (this.descriptionField && this.charCounter) {
+            this.descriptionField.addEventListener('input', () => {
+                const count = this.descriptionField.value.length;
+                this.charCounter.textContent = `${count}/4000`;
+                this.charCounter.classList.toggle('text-error', count > 4000);
+            });
+            // Initialize counter
+            this.descriptionField.dispatchEvent(new Event('input'));
         }
     }
 
