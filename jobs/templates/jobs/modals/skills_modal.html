@@ -296,10 +296,6 @@
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-base-content/50">
                             </iconify-icon>
                         </div>
-                        <div class="badge badge-primary badge-lg gap-2">
-                            <span x-text="selectedSkills.length"></span>
-                            <span>Selected</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -376,21 +372,20 @@
             </div>
 
             <!-- Footer -->
-            <div class="sticky bottom-0 z-30 px-4 sm:px-6 py-4 bg-base-100/95 backdrop-blur-md border-t border-base-200/30">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-2">
-                        <iconify-icon icon="heroicons:information-circle" class="text-base-content/60 text-xl"></iconify-icon>
-                        <span class="text-sm text-base-content/60">Selected skills: <span class="font-semibold text-primary" x-text="selectedSkills.length"></span></span>
-                    </div>
-                    <div class="flex gap-3 w-full sm:w-auto">
+            <div class="sticky bottom-0 z-50 px-6 py-4 bg-base-100/95 backdrop-blur-xl border-t border-base-200">
+                <div class="flex items-center justify-end gap-3">
+                    <span class="text-base-content/60">
+                        <span x-text="selectedSkills.length"></span> skills selected
+                    </span>
+                    <div class="divider divider-horizontal"></div>
+                    <div class="flex gap-3">
                         <button @click="cancel()" 
-                                class="btn btn-ghost flex-1 sm:flex-none hover:bg-error/10 hover:text-error">
+                                class="btn btn-ghost hover:bg-error/10 hover:text-error">
                             Cancel
                         </button>
                         <button @click="save()" 
-                                class="btn btn-primary flex-1 sm:flex-none gap-2">
+                                class="btn btn-primary">
                             Apply Changes
-                            <span class="badge badge-primary-content badge-sm" x-text="selectedSkills.length"></span>
                         </button>
                     </div>
                 </div>

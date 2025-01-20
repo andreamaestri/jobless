@@ -1351,13 +1351,7 @@ main {
 
     .quick-letters-nav {
         position: fixed;
-        bottom: 16rem;
-        width: 100%;
-    }
-
-    .modal-footer {
-        position: fixed;
-        bottom: 0;
+        bottom: 5rem;
         width: 100%;
     }
 }
