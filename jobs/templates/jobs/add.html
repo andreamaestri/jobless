@@ -44,10 +44,7 @@
                                     <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
                                 </div>
                                 <div class="space-y-4 relative">
-                                    <form action="{% url 'jobs:parse_description' %}" 
-                                          method="POST" 
-                                          id="description-parser"
-                                          novalidate>
+                                    <div id="description-parser" data-url="{% url 'jobs:parse_description' %}">
                                         {% csrf_token %}
                                         <div>
                                             <label for="paste" class="block text-sm font-medium text-base-content mb-2">
@@ -69,7 +66,7 @@
                                                 <span class="button-text">Process with AI</span>
                                             </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
 

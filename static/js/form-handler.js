@@ -87,13 +87,13 @@ class FormHandler {
         const formData = new FormData(this.parseForm);
         formData.set('description', this.cleanText(description));
 
-        const submitButton = form.querySelector('button[type="submit"]');
+        const submitButton = this.parseButton;
         console.log('Submit button:', submitButton);
         this.setButtonState(submitButton, true, 'Processing...');
 
         try {
-            console.log('Sending request to:', this.parseForm.action);
-            const response = await fetch(form.action, {
+            console.log('Sending request to:', this.parseForm.dataset.url);
+            const response = await fetch(this.parseForm.dataset.url, {
                 method: 'POST',
                 body: formData,
                 headers: {
