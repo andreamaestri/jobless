@@ -38,6 +38,7 @@
     cancel() {
         this.open = false;
         this.search = '';
+        this.handleSearch({ target: { value: '' } }); // Reset search results
         // Restore original selections
         if (window.skillSelect) {
             this.selectedSkills = window.skillSelect.items.map(name => ({
