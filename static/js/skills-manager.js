@@ -17,15 +17,23 @@ if (!window.Alpine) {
         lastMouseY: 0,
         lastSelected: null,
         init() {
+            // Initialize selectedSkills as empty array
+            this.selectedSkills = [];
+            
+            // Watch for modal open
             this.$watch('open', value => {
                 if (value) {
                     this.search = '';
                     if (window.skillSelect) {
-                        this.selectedSkills = window.skillSelect.items.map(name => ({
-                            name: name,
-                            icon: window.skillSelect.options[name]?.icon,
-                            icon_dark: window.skillSelect.options[name]?.icon_dark
-                        }));
+                        const items = window.skillSelect.items || [];
+                        this.selectedSkills = items.map(name => {
+                            const option = window.skillSelect.options[name] || {};
+                            return {
+                                name: name,
+                                icon: option.icon || 'heroicons:academic-cap',
+                                icon_dark: option.icon_dark
+                            };
+                        });
                     }
                 }
             });
