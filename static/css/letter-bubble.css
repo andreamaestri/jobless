@@ -1,0 +1,52 @@
+.quick-letters-nav {
+    border-right: 1px solid theme('colors.base-200');
+    min-width: 2rem;
+}
+
+.letter-bubble {
+    position: fixed;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+}
+
+.letter-bubble.visible {
+    opacity: 1;
+}
+
+.letter-bubble-content {
+    background: theme('colors.primary.DEFAULT');
+    color: theme('colors.primary.content');
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15);
+    position: relative;
+}
+
+.letter-bubble-arrow {
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid theme('colors.primary.DEFAULT');
+}
+
+@media (prefers-color-scheme: dark) {
+    .quick-letters-nav {
+        border-right-color: theme('colors.base-300');
+    }
+    
+    .letter-bubble-content {
+        background: theme('colors.primary.DEFAULT');
+        color: theme('colors.primary.content');
+    }
+    
+    .letter-bubble-arrow {
+        border-right-color: theme('colors.primary.DEFAULT');
+    }
+}
