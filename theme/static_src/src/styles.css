@@ -134,11 +134,21 @@ main {
         border-radius: 0;
         margin: 0;
         padding: 0;
+        overflow: hidden;
+    }
+
+    .modal-inner {
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
     .modal-content {
-        height: calc(100dvh - var(--modal-footer-height));
-        padding-bottom: 6rem;
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8rem;
     }
 
     .quick-letters-nav {
@@ -146,15 +156,17 @@ main {
         bottom: 4rem;
         left: 0;
         right: 0;
+        z-index: 41;
         height: auto;
-        width: 100%;
+        display: flex;
         flex-direction: row;
-        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        overflow-x: auto;
         background-color: hsl(var(--b1) / 0.95);
         backdrop-filter: blur(12px);
         border-top: 1px solid hsl(var(--b2) / 0.3);
-        padding: 0.5rem;
-        z-index: 50;
+        -webkit-overflow-scrolling: touch;
     }
 
     .letter-nav-button {
