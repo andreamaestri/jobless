@@ -334,12 +334,12 @@
                     </nav>
 
                     <!-- Skills grid -->
-                    <div class="flex-1 overflow-y-auto px-6 pb-32 scroll-smooth" 
+                    <div class="flex-1 overflow-y-auto bg-base-300 px-6 pb-32 scroll-smooth" 
                          x-ref="skillsContainer"
                          @scroll.throttle.50ms="handleScroll">
                         {% for group in skill_icons %}
                         <div class="skill-group" data-letter="{{ group.letter }}">
-                            <div class="sticky bg-base-100/95 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
+                            <div class="sticky bg-base-200 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
                                 <div class="flex items-center gap-3">
                                     <span class="text-4xl font-black text-primary">{{ group.letter }}</span>
                                     <div class="h-px flex-1 bg-gradient-to-r from-base-300 to-transparent"></div>
@@ -348,7 +348,7 @@
                             <div class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                 {% for skill in group.skills %}
                                 <button type="button"
-                                        class="skill-card group hover:bg-base-200/50"
+                                        class="skill-card group bg-base-100 hover:bg-base-200 transition-colors duration-200 rounded-xl p-4 flex items-center gap-4 relative shadow-sm hover:shadow-md"
                                         data-skill="{{ skill|json|escapejs }}"
                                         :class="{'selected': isSelected('{{ skill.name }}')}"
                                         @click="handleQuickSelect($event, JSON.parse('{{ skill|json|escapejs }}'))">
