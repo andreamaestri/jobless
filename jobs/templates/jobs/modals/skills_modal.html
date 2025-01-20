@@ -339,9 +339,9 @@
                          @scroll.throttle.50ms="handleScroll">
                         {% for group in skill_icons %}
                         <div class="skill-group" data-letter="{{ group.letter }}">
-                            <div class="sticky bg-primary rounded-xl top-0 p-3 mb-4 z-[100] border-b border-base-200/30">
+                            <div class="sticky bg-base-100/95 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
                                 <div class="flex items-center gap-3">
-                                    <span class="text-4xl font-black text-primary-content">{{ group.letter }}</span>
+                                    <span class="text-4xl font-black text-primary">{{ group.letter }}</span>
                                     <div class="h-px flex-1 bg-gradient-to-r from-base-300 to-transparent"></div>
                                 </div>
                             </div>
