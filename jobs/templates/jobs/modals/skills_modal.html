@@ -304,7 +304,7 @@
             <div class="flex-1 min-h-0 bg-base-100/50 overscroll-contain">
                 <div class="flex h-full overflow-hidden">
                     <!-- Letter navigation -->
-                    <nav class="w-8 flex flex-col gap-px p-1 sticky top-4 z-40 opacity-75 hover:opacity-100 transition-opacity duration-200 mr-2 h-[calc(100vh-12rem)] bg-base-100 backdrop-blur border-r border-base-200 sm:flex-row sm:fixed sm:bottom-[4.5rem] sm:top-auto sm:left-0 sm:right-0 sm:h-auto sm:w-full sm:flex-nowrap sm:justify-center sm:border-r-0 sm:border-t"
+                    <nav class="w-8 flex flex-col gap-px p-1 sticky top-4 z-[60] opacity-75 hover:opacity-100 transition-opacity duration-200 mr-2 h-[calc(100vh-12rem)] bg-base-100 backdrop-blur border-r border-base-200 sm:flex-row sm:fixed sm:bottom-[4.5rem] sm:top-auto sm:left-0 sm:right-0 sm:h-auto sm:w-full sm:flex-nowrap sm:justify-center sm:border-r-0 sm:border-t"
                          @touchstart="startLetterDrag"
                          @touchmove.passive="handleLetterDrag"
                          @touchend="endLetterDrag"
@@ -334,7 +334,7 @@
                     </nav>
 
                     <!-- Skills grid -->
-                    <div class="flex-1 overflow-y-auto px-6 pb-32 scroll-smooth" 
+                    <div class="flex-1 overflow-y-auto px-6 pb-40 scroll-smooth" 
                          x-ref="skillsContainer"
                          @scroll.throttle.50ms="handleScroll">
                         {% for group in skill_icons %}
@@ -372,7 +372,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="fixed bottom-0 left-0 right-0 z-50 px-6 py-4 bg-base-100/95 backdrop-blur-xl border-t border-base-200">
+            <div class="fixed bottom-0 left-0 right-0 z-[70] px-6 py-4 bg-base-100/95 backdrop-blur-xl border-t border-base-200">
                 <div class="flex items-center justify-end gap-3">
                     <span class="text-base-content/60">
                         <span x-text="selectedSkills.length"></span> skills selected
