@@ -276,7 +276,7 @@
             <div class="flex-1 min-h-0 bg-base-100/50 overscroll-contain">
                 <div class="flex h-full overflow-hidden">
                     <!-- Letter navigation -->
-                    <nav class="quick-letters-nav"
+                    <nav class="w-8 flex flex-col gap-px p-1 sticky top-4 z-40 opacity-75 hover:opacity-100 transition-opacity duration-200 mr-2 h-[calc(100vh-12rem)] bg-base-100 backdrop-blur border-r border-base-200 sm:flex-row sm:fixed sm:bottom-16 sm:top-auto sm:left-0 sm:right-0 sm:h-auto sm:w-full sm:overflow-x-auto sm:border-r-0 sm:border-t"
                          @touchstart="startLetterDrag"
                          @touchmove.passive="handleLetterDrag"
                          @touchend="endLetterDrag"
@@ -286,20 +286,20 @@
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
                                 @mouseleave="hideLetterPreview()"
-                                class="letter-nav-button"
-                                :class="{'active': currentLetter === '{{ group.letter }}'}">
+                                class="w-6 h-6 flex items-center justify-center text-xs font-medium text-base-content/60 hover:text-primary hover:bg-base-200 rounded transition-colors sm:w-8 sm:h-8"
+                                :class="{'text-primary font-semibold bg-primary/10': currentLetter === '{{ group.letter }}'}">
                             {{ group.letter }}
                         </button>
                         {% endfor %}
                         
                         <!-- Letter preview bubble -->
-                        <div class="letter-bubble hidden sm:block" 
+                        <div class="fixed z-50 pointer-events-none opacity-0 transition-opacity duration-150 hidden sm:block" 
                              :style="previewPosition"
-                             :class="{'visible': currentPreviewLetter}">
-                            <div class="letter-bubble-content">
+                             :class="{'opacity-100': currentPreviewLetter}">
+                            <div class="bg-primary text-primary-content px-6 py-4 rounded-xl shadow-lg">
                                 <span x-text="currentPreviewLetter" class="text-4xl font-black"></span>
                             </div>
-                            <div class="letter-bubble-arrow"></div>
+                            <div class="absolute -left-1.5 top-1/2 -translate-y-1/2 border-8 border-transparent border-r-primary"></div>
                         </div>
                     </nav>
 
