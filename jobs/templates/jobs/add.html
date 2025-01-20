@@ -272,7 +272,11 @@
 </div>
 
 <!-- Form Actions (outside form but controls it) -->
-<div class="fixed bottom-0 left-0 right-0 z-10 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 lg:left-[20rem] form-actions">
+<div class="fixed bottom-0 left-0 right-0 z-10 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 transition-[left] duration-300"
+     :class="{
+         'lg:left-80': !$store.sidebar.collapsed,
+         'lg:left-20': $store.sidebar.collapsed
+     }">
     <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="text-sm text-base-content/60 order-2 sm:order-1">
