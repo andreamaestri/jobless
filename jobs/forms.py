@@ -58,29 +58,35 @@ class JobPostingForm(forms.ModelForm):
                 api_key=settings.GROQ_API_KEY
             )
 
-            # Simple, direct prompt
-            prompt = """Extract these job details into a clear format:
-Title: [job title]
-Company: [company name]
-Location: [location]
-Salary: [salary if listed]
-Description: [full job description]"""
+            # Improved prompt with clearer structure
+            prompt = """Extract these job details from the provided job posting.
+Use this exact format for your response, keeping the exact field names:
+
+Title: [extract the job title]
+Company: [extract the company name]
+Location: [extract the location, including remote if applicable]
+Salary: [extract salary information if present, or leave blank]
+Description:
+[extract and format the full job description, maintaining the original structure]
+
+Include all requirements, responsibilities, and benefits in the Description section."""
 
             # Get AI response
             response = client.chat.completions.create(
-                model="mixtral-8x7b-32768",
+                model="llama-3.1-8b-instant",
                 messages=[
-                    {"role": "system", "content": "Extract job posting details in a clear format"},
-                    {"role": "user", "content": f"{prompt}\n\n{text}"}
+                    {"role": "system", "content": "You are a precise job details extractor. Extract and format job posting details exactly as requested."},
+                    {"role": "user", "content": f"{prompt}\n\nJob Posting:\n{text}"}
                 ],
-                temperature=0
+                temperature=0.1,  # Slightly higher temperature for better extraction
+                max_tokens=2000
             )
 
             # Get response text
             extracted = response.choices[0].message.content.strip()
             logger.debug(f"AI Response:\n{extracted}")
 
-            # Map response to form fields
+            # Initialize form data
             form_data = {
                 'title': '',
                 'company': '',
@@ -91,65 +97,59 @@ Description: [full job description]"""
             }
 
             # Parse AI response into fields
-            lines = extracted.split('\n')
-            in_description = False
+            current_field = None
             description_lines = []
             
-            for line in lines:
+            for line in extracted.split('\n'):
                 line = line.strip()
                 
-                # If we're in description mode, collect all non-empty lines
-                if in_description:
-                    if line and not any(line.startswith(f"{field}:") for field in ['Title', 'Company', 'Location', 'Salary']):
-                        description_lines.append(line)
+                if not line:
                     continue
-                
+                    
                 # Check for field headers
                 if line.startswith('Title:'):
+                    current_field = 'title'
                     form_data['title'] = line.replace('Title:', '').strip()
                 elif line.startswith('Company:'):
+                    current_field = 'company'
                     form_data['company'] = line.replace('Company:', '').strip()
                 elif line.startswith('Location:'):
+                    current_field = 'location'
                     form_data['location'] = line.replace('Location:', '').strip()
                 elif line.startswith('Salary:'):
+                    current_field = 'salary_range'
                     form_data['salary_range'] = line.replace('Salary:', '').strip()
-                elif line.startswith('Description:') or line == 'Job Description:':
-                    in_description = True
-                    # If there's content after the Description: label, add it
-                    content = line.replace('Description:', '').replace('Job Description:', '').strip()
-                    if content:
-                        description_lines.append(content)
-            
-            # Join all description lines
-            if description_lines:
-                form_data['description'] = '\n'.join(description_lines)
+                elif line.startswith('Description:'):
+                    current_field = 'description'
+                elif current_field == 'description':
+                    description_lines.append(line)
 
-            # Format description with bullets if not empty
-            if form_data['description']:
-                form_data['description'] = '• ' + form_data['description'].replace('\n', '\n• ').strip('• ')
+            # Process description
+            if description_lines:
+                # Clean and format description
+                description = '\n'.join(description_lines).strip()
+                # Convert lists to bullet points
+                description = re.sub(r'(?m)^[-•*]\s*', '• ', description)
+                description = re.sub(r'(?m)^(\d+\.|\w+\.)\s+', '• ', description)
+                form_data['description'] = description
 
             # Validate required fields
             required = ['title', 'company', 'location']
-            missing = [f for f in required if not form_data[f]]
+            missing = [f for f in required if not form_data.get(f)]
             if missing:
-                error_msg = f"Missing required fields: {', '.join(missing)}"
-                logger.error(f"Validation failed: {error_msg}\nAI Response:\n{extracted}")
+                error_msg = f"Could not extract these required fields: {', '.join(missing)}"
+                logger.error(f"Validation failed: {error_msg}")
                 return {'error': error_msg}
 
             logger.info("Successfully extracted all required fields")
             return {'status': 'success', 'data': form_data}
 
         except Exception as e:
-            if isinstance(e, openai.APIError):
-                error_msg = "AI service temporarily unavailable. Please try again later."
-            elif isinstance(e, openai.APITimeoutError):
-                error_msg = "Request timed out. Please try again."
-            elif isinstance(e, openai.APIConnectionError):
-                error_msg = "Connection error. Please check your internet connection."
-            else:
-                error_msg = f"Error processing job description: {str(e)}"
+            error_msg = "Failed to process job description. Please try again or fill in the fields manually."
+            if isinstance(e, (openai.APIError, openai.APITimeoutError, openai.APIConnectionError)):
+                error_msg = "AI service is temporarily unavailable. Please try again later."
             
-            logger.exception(error_msg)
+            logger.exception(f"Error in parse_job_with_ai: {str(e)}")
             return {'error': error_msg}
 
     def clean(self):
@@ -189,47 +189,47 @@ Description: [full job description]"""
         widgets = {
             'title': forms.TextInput(attrs={
                 'required': True,
-                'id': 'id_title',  # Explicitly set ID
-                'name': 'title',  # Ensure the name attribute is set
-                'placeholder': 'e.g. Senior Developer, UX Designer',
+                'id': 'id_title',
+                'name': 'title',
+                'placeholder': 'Job title (e.g., Senior Python Developer, UI/UX Designer)',
                 'class': 'input input-bordered w-full'
             }),
             'company': forms.TextInput(attrs={
                 'required': True,
-                'id': 'id_company',  # Explicitly set ID
-                'name': 'company',  # Ensure the name attribute is set
-                'placeholder': 'e.g. Toyota, Google, Tata',
+                'id': 'id_company',
+                'name': 'company',
+                'placeholder': 'Company name (e.g., Microsoft, Apple, Amazon)',
                 'class': 'input input-bordered w-full'
             }),
             'location': forms.TextInput(attrs={
                 'required': True,
-                'id': 'id_location',  # Explicitly set ID
-                'name': 'location',  # Ensure the name attribute is set
-                'placeholder': 'e.g. Tokyo, Berlin (Remote)',
+                'id': 'id_location',
+                'name': 'location',
+                'placeholder': 'Location (e.g., San Francisco, Remote, London UK)',
                 'class': 'input input-bordered w-full'
             }),
             'url': forms.URLInput(attrs={
-                'id': 'id_url',  # Explicitly set ID
-                'name': 'url',  # Ensure the name attribute is set
-                'placeholder': 'Job posting URL',
+                'id': 'id_url',
+                'name': 'url',
+                'placeholder': 'Link to original job posting (https://...)',
                 'class': 'input input-bordered w-full'
             }),
             'salary_range': forms.TextInput(attrs={
-                'id': 'id_salary_range',  # Explicitly set ID
-                'name': 'salary_range',  # Ensure the name attribute is set
-                'placeholder': 'e.g. €45-65k/yr, $5-7k/mo',
+                'id': 'id_salary_range',
+                'name': 'salary_range',
+                'placeholder': 'Salary range (e.g., $80K-120K/year, €50-60K, Competitive)',
                 'class': 'input input-bordered w-full'
             }),
             'description': forms.Textarea(attrs={
-                'id': 'id_description',  # Explicitly set ID
-                'name': 'description',  # Ensure the name attribute is set
-                'placeholder': '• Key responsibilities\n• Required skills\n• Benefits\n• How to apply',
+                'id': 'id_description',
+                'name': 'description',
+                'placeholder': '• About the Role:\n• Key Responsibilities:\n• Required Skills:\n• Nice to Have:\n• Benefits & Perks:\n• How to Apply:',
                 'rows': 12,
                 'class': 'textarea textarea-bordered w-full font-mono'
             }),
             'status': forms.Select(attrs={
-                'id': 'id_status',  # Explicitly set ID
-                'name': 'status',  # Ensure the name attribute is set
+                'id': 'id_status',
+                'name': 'status',
                 'class': 'select select-bordered w-full'
             })
         }
