@@ -157,23 +157,12 @@
                                 </div>
                                 
                                 <div class="relative" x-data="{ selectedSkills: [] }" @skills-updated.window="selectedSkills = $event.detail">
-                                    <div class="form-control">
+                                    <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
                                         <select id="skills-select" 
                                                 name="skills"
                                                 multiple
-                                                placeholder="Select required skills..."
+                                                placeholder="Click 'Manage Skills' to add required skills"
                                                 autocomplete="off">
-                                            {% for group in skill_icons %}
-                                                <optgroup label="{{ group.letter }}">
-                                                {% for skill in group.skills %}
-                                                    <option value="{{ skill.name }}" 
-                                                            data-icon="{{ skill.icon }}"
-                                                            data-icon-dark="{{ skill.icon_dark|default:skill.icon }}">
-                                                        {{ skill.name }}
-                                                    </option>
-                                                {% endfor %}
-                                                </optgroup>
-                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
