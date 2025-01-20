@@ -287,12 +287,9 @@
             <div class="flex-1 overflow-y-auto bg-base-100/50 overscroll-contain scroll-smooth">
                 <div class="flex h-full">
                     <!-- Letter navigation with touch preview -->
-                    <div class="quick-letters-nav flex" 
-                         @touchstart="startLetterDrag" 
+                    <div class="quick-letters-nav flex hidden sm:flex" 
                          @mousemove="handleMouseMove($event)"
-                         @mouseleave="hideLetterPreview()"
-                         @touchmove.passive="handleLetterDrag" 
-                         @touchend="endLetterDrag">
+                         @mouseleave="hideLetterPreview()">
                         {% for group in skill_icons %}
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
@@ -303,10 +300,13 @@
                         </button>
                         {% endfor %}
                         <!-- Letter preview bubble -->
-                        <div class="letter-bubble" 
+                        <div class="letter-bubble hidden sm:block" 
                              :style="previewPosition"
-                             :class="{'visible': currentPreviewLetter}"
-                             x-text="currentPreviewLetter">
+                             :class="{'visible': currentPreviewLetter}">
+                            <div class="letter-bubble-content">
+                                <span x-text="currentPreviewLetter" class="text-4xl font-black"></span>
+                            </div>
+                            <div class="letter-bubble-arrow"></div>
                         </div>
                     </div>
 
