@@ -47,11 +47,15 @@ class FormHandler {
 
     async handleJobSubmit(e) {
         e.preventDefault();
+        e.stopPropagation();
         
         if (!this.validateForm()) return;
 
-        const actionBtn = document.querySelector('.form-actions button.btn-primary');
-        if (!actionBtn) return;
+        const actionBtn = document.querySelector('button[type="submit"][form="job-form"]');
+        if (!actionBtn) {
+            console.error('Submit button not found');
+            return;
+        }
 
         this.setButtonState(actionBtn, true, 'Saving...');
 
@@ -172,23 +176,30 @@ class FormHandler {
     }
 
     async submitForm(url, formData) {
-        const response = await fetch(url, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            }
-        });
+        try {
+            console.log('Submitting form to:', url);
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
 
-        const data = await response.json();
-        
-        if (!response.ok) {
-            if (data.errors) return data;
-            throw new Error(data.message || 'Server error occurred');
+            const data = await response.json();
+            console.log('Form submission response:', data);
+            
+            if (!response.ok) {
+                if (data.errors) return data;
+                throw new Error(data.message || `Server error: ${response.status}`);
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Form submission error:', error);
+            throw error;
         }
-        
-        return data;
     }
 
     handleErrors(data) {
