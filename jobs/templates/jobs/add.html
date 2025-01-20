@@ -45,7 +45,7 @@
                                 </div>
                                 <div class="space-y-4 relative">
                                     <div id="parse-form" class="parse-form">
-                                        <form action="{% url 'jobs:parse-description' %}" method="POST" id="description-parser">
+                                        <form action="{% url 'jobs:parse_description' %}" method="POST" id="description-parser">
                                             {% csrf_token %}
                                             <div>
                                                 <label for="paste" class="block text-sm font-medium text-base-content mb-2">
