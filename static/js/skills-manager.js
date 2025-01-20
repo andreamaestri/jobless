@@ -1,7 +1,7 @@
-// Wait for Alpine.js to load
-document.addEventListener('alpine:init', () => {
-    // Register the skillsModal component globally
-    Alpine.data('skillsModal', () => ({
+if (!window.Alpine) {
+    console.error('Alpine.js not loaded');
+} else {
+    window.Alpine.data('skillsModal', () => ({
         open: false,
         selectedSkills: [],
         search: '',
@@ -86,7 +86,7 @@ document.addEventListener('alpine:init', () => {
             });
         }
     }));
-});
+}
 
 // Initialize SkillsManager class
 class SkillsManager {

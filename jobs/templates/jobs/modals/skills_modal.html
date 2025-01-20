@@ -1,6 +1,6 @@
 {% load job_tags %}
 
-<div x-data="{
+<div x-data="skillsModal" x-cloak @keydown.escape.window="cancel()" @open-skills-modal.window="handleSkillsUpdate($event)">
     open: false,
     search: '',
     selectedSkills: [],
