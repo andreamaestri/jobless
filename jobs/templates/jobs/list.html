@@ -68,9 +68,9 @@
                                                         transition-all duration-200 ease-in-out
                                                         transform hover:scale-105 hover:shadow-md">
                                                 <div class="w-8 h-8 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-200">
-                                                    <iconify-icon icon="{{ skill.icon_dark|default:skill.icon|default:'heroicons:academic-cap' }}"></iconify-icon>
+                                                    <iconify-icon icon="{{ skill.icon|default:'heroicons:academic-cap' }}"></iconify-icon>
                                                 </div>
-                                                <span class="font-medium">{{ skill.name }}</span>
+                                                <span class="font-medium">{{ skill }}</span>
                                             </div>
                                             {% endfor %}
                                             {% if skills.count > 3 %}
