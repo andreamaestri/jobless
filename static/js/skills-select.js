@@ -81,7 +81,7 @@ document.addEventListener('alpine:init', () => {
         maxItems: 10,
         persist: false,
         createFilter: null,
-        preload: 'focus',
+        preload: true,
         
         // Dropdown configuration
         dropdownParent: 'body',
@@ -210,7 +210,18 @@ document.addEventListener('alpine:init', () => {
                     icon_dark: item.icon_dark
                 };
             });
-            document.getElementById('skills-input').value = JSON.stringify(selectedSkills);
+            
+            // Update hidden input
+            const skillsInput = document.getElementById('skills-input');
+            if (skillsInput) {
+                skillsInput.value = JSON.stringify(selectedSkills);
+            }
+            
+            // Update skills count
+            const skillsCount = document.getElementById('skills-count');
+            if (skillsCount) {
+                skillsCount.textContent = `${selectedSkills.length} selected`;
+            }
         }
     });
 
