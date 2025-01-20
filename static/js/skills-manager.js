@@ -17,12 +17,19 @@ if (!window.Alpine) {
         lastMouseY: 0,
         lastSelected: null,
         open: false,
-        selectedSkills: [],
         search: '',
+        selectedSkills: [],
         currentLetter: null,
         touchStartY: null,
         touchStartTime: null,
-        
+        currentPreviewLetter: null,
+        lastTouchY: null,
+        isScrolling: false,
+        mouseX: 0,
+        mouseY: 0,
+        lastMouseX: 0,
+        lastMouseY: 0,
+        lastSelected: null,
         init() {
             this.$watch('open', value => {
                 if (value) {
