@@ -68,9 +68,9 @@
                                                 <span>{{ skill.name }}</span>
                                             </div>
                                             {% endfor %}
-                                            {% with remaining=skills.count|add:"-3" %}
-                                                {% if remaining > 0 %}
-                                                <div class="badge badge-ghost badge-xs sm:badge-sm">+{{ remaining }}</div>
+                                            {% with total=skills.count %}
+                                                {% if total > 3 %}
+                                                <div class="badge badge-ghost badge-xs sm:badge-sm">+{{ total|add:"-3" }}</div>
                                                 {% endif %}
                                             {% endwith %}
                                         {% endwith %}
