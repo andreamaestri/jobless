@@ -649,8 +649,8 @@ main {
     gap: 1rem;
     padding: 1rem;
     border-radius: 1rem;
-    border: 1px solid hsl(var(--b2) / 0.8);
-    background-color: hsl(var(--b1) / 0.9);
+    border: 1px solid hsl(var(--b2));
+    background-color: hsl(var(--b2) / 0.3);
     backdrop-filter: blur(4px);
     transition: all 200ms ease;
     overflow: hidden;
@@ -663,23 +663,24 @@ main {
 }
 
 .skill-card:hover {
-    background-color: hsl(var(--b1));
-    border-color: hsl(var(--p) / 0.3);
+    background-color: hsl(var(--b2) / 0.5);
+    border-color: hsl(var(--p) / 0.5);
     transform: translateY(-2px);
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
 .skill-card .icon-wrapper {
-    width: 5rem;
-    height: 5rem;
+    width: 3.5rem;
+    height: 3.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: hsl(var(--b2) / 0.8);
+    background-color: hsl(var(--b1));
     border-radius: 0.75rem;
     transition: all 200ms ease;
     flex-shrink: 0;
     padding: 0.5rem;
+    border: 1px solid hsl(var(--b2));
 }
 
 .skill-card:hover .icon-wrapper {
@@ -704,8 +705,8 @@ main {
 }
 
 .skill-card.selected {
-    border-color: hsl(var(--p) / 0.5);
-    background-color: hsl(var(--p) / 0.05);
+    border-color: hsl(var(--p));
+    background-color: hsl(var(--p) / 0.1);
     box-shadow: 0 2px 4px 0 hsl(var(--p) / 0.1);
 }
 
