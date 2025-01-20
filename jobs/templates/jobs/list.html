@@ -78,7 +78,7 @@
                                             {% with skill_count=skills.count %}
                                                 {% if skill_count > 3 %}
                                                     {% with remaining=skill_count|add:"-3" %}
-                                                    <button type="button"
+                                                        <button type="button"
                                                             class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
                                                             data-action="open-skills"
                                                             data-skills="{{ skills|skills_to_json }}"
