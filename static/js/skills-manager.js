@@ -106,16 +106,22 @@ if (!window.Alpine) {
                 icon: skill.icon,
                 icon_dark: skill.icon_dark
             }));
-            
+        
+            // Update hidden input
+            const skillsInput = document.getElementById('skills-input');
+            if (skillsInput) {
+                skillsInput.value = JSON.stringify(skillsToUpdate);
+            }
+
             window.dispatchEvent(new CustomEvent('skills-updated', {
                 detail: skillsToUpdate
             }));
-            
+        
             // Update TomSelect directly
             if (window.skillSelect) {
                 window.skillSelect.clear(true);
                 window.skillSelect.clearOptions();
-                
+            
                 skillsToUpdate.forEach(skill => {
                     window.skillSelect.addOption({
                         name: skill.name,
@@ -125,8 +131,44 @@ if (!window.Alpine) {
                     window.skillSelect.addItem(skill.name);
                 });
             }
-            
+        
+            this.updateSelectedSkillsDisplay();
             this.open = false;
+        },
+
+        updateSelectedSkillsDisplay() {
+            const container = document.querySelector('.selected-skills-container');
+            if (!container) return;
+
+            // Clear existing skills
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            // Show empty state if no skills selected
+            if (this.selectedSkills.length === 0) {
+                container.innerHTML = '<div class="text-base-content/60 text-sm">Click \'Manage Skills\' to add required skills</div>';
+                return;
+            }
+
+            // Add each skill badge
+            this.selectedSkills.forEach(skill => {
+                const badge = document.createElement('div');
+                badge.className = 'badge badge-lg gap-2 group relative overflow-hidden p-4 ' +
+                                'bg-primary hover:bg-primary/20 ' +
+                                'border border-primary/30 hover:border-primary ' +
+                                'text-primary-content/90 hover:text-primary-content ' +
+                                'transition-all duration-200 ease-in-out ' +
+                                'transform hover:scale-105 hover:shadow-md';
+            
+                badge.innerHTML = `
+                    <div class="w-8 h-8 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-200">
+                        <iconify-icon icon="${skill.icon_dark || skill.icon || 'heroicons:academic-cap'}"></iconify-icon>
+                    </div>
+                    <span class="font-medium">${skill.name}</span>
+                `;
+                container.appendChild(badge);
+            });
         },
 
         resetModalState() {
