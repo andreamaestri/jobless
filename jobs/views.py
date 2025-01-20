@@ -56,19 +56,7 @@ class JobCreateView(BaseJobView, CreateView):
             form.instance.user = self.request.user
             self.object = form.save()
             
-            # Handle skills if present
-            skills = self.request.POST.get('skills')
-            if skills:
-                try:
-                    # Parse the JSON string into a list
-                    skills_data = json.loads(skills)
-                    # Extract just the skill names and ensure they're strings
-                    skill_names = [str(skill['name']).lower() for skill in skills_data]
-                    # Set the skills
-                    self.object.skills.set(skill_names)
-                except json.JSONDecodeError as e:
-                    logger.error(f"Error parsing skills JSON: {e}")
-                    raise
+            # Skills are now handled by Tagulous, no need for manual processing
 
             # Handle AJAX requests
             if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':

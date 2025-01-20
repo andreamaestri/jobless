@@ -43,6 +43,24 @@ class JobPostingForm(forms.ModelForm):
         # Mark required fields
         for field in ['title', 'company', 'location']:
             self.fields[field].required = True
+        
+        # Use Tagulous widget for skills field
+        self.fields['skills'] = tagulous.forms.TagField(
+            required=False,
+            tag_options=tagulous.models.TagOptions(
+                force_lowercase=True,
+                max_count=10,
+                autocomplete_view='jobs:skills_autocomplete'
+            ),
+            widget=CustomTagWidget(
+                attrs={
+                    'id': 'id_skills',
+                    'name': 'skills',
+                    'class': 'input input-bordered w-full',
+                    'placeholder': 'Add skills (e.g., Python, React, AWS)'
+                }
+            )
+        )
 
     def parse_job_with_ai(self, text):
         """Extract job details using AI and return form-ready data"""
@@ -176,6 +194,13 @@ Include all requirements, responsibilities, and benefits in the Description sect
         try:
             if commit:
                 instance.save()
+                # Explicitly save the skills
+                if 'skills' in self.cleaned_data:
+                    skills = self.cleaned_data['skills']
+                    instance.skills.set(skills)
+                    logger.info(f"Saved skills for job posting: {skills}")
+                # Save the many-to-many data for other fields
+                self.save_m2m()
                 logger.info(f"Successfully saved job posting with ID: {instance.id}")
         except Exception as e:
             logger.exception("Error saving job posting")
@@ -185,7 +210,7 @@ Include all requirements, responsibilities, and benefits in the Description sect
 
     class Meta:
         model = JobPosting
-        fields = ['title', 'company', 'location', 'url', 'salary_range', 'description', 'status']
+        fields = ['title', 'company', 'location', 'url', 'salary_range', 'description', 'status', 'skills']
         widgets = {
             'title': forms.TextInput(attrs={
                 'required': True,
@@ -232,5 +257,11 @@ Include all requirements, responsibilities, and benefits in the Description sect
                 'id': 'id_status',
                 'name': 'status',
                 'class': 'select select-bordered w-full'
+            }),
+            'skills': CustomTagWidget(attrs={
+                'id': 'id_skills',
+                'name': 'skills',
+                'class': 'input input-bordered w-full',
+                'placeholder': 'Add skills (e.g., Python, React, AWS)'
             })
         }
