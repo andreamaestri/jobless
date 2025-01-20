@@ -75,8 +75,9 @@
                                                 <span class="font-medium">{{ skill }}</span>
                                             </div>
                                             {% endfor %}
-                                            {% with remaining=skills.count|add:"-3" %}
-                                                {% if remaining > 0 %}
+                                            {% if skills %}
+                                                {% with remaining=skills.count|add:"-3" %}
+                                                    {% if remaining > 0 %}
                                                     <button type="button"
                                                             class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
                                                             data-action="open-skills"
@@ -85,7 +86,8 @@
                                                         +{{ remaining }} more
                                                     </button>
                                                 {% endif %}
-                                            {% endwith %}
+                                                {% endwith %}
+                                            {% endif %}
                                         {% endwith %}
                                     {% endwith %}
                                 </div>
