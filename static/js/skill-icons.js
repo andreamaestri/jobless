@@ -867,16 +867,9 @@ class SkillsModalManager {
         }, { passive: true });
 
         container.addEventListener('touchmove', (e) => {
-            if (this._touchStartY) {
-                const deltaY = e.touches[0].clientY - this._touchStartY;
-                // Only prevent default if significant vertical movement
-                if (Math.abs(deltaY) > 5) {
-                    e.preventDefault();
-                }
-            }
             const letter = this.findLetterAtPosition(e.touches[0].clientY);
             if (letter) this.jumpToLetter(letter, false);
-        }, { passive: false });
+        }, { passive: true });
 
         container.addEventListener('touchend', () => {
             this._touchStartY = null;
