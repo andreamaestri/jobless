@@ -286,7 +286,7 @@
             <div class="flex-1 overflow-y-auto bg-base-100/50 overscroll-contain scroll-smooth">
                 <div class="flex h-full">
                     <!-- Letter navigation with touch preview -->
-                    <div class="quick-letters-nav" 
+                    <div class="quick-letters-nav hidden sm:flex" 
                          @touchstart="startLetterDrag" 
                          @mousemove="handleMouseMove($event)"
                          @mouseleave="hideLetterPreview()"
