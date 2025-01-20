@@ -304,7 +304,7 @@
             <div class="flex-1 min-h-0 bg-base-100/50 overscroll-contain">
                 <div class="flex h-full overflow-hidden">
                     <!-- Letter navigation -->
-                    <nav class="fixed bottom-0 left-0 right-0 z-[70] flex flex-row justify-center items-center gap-1 p-2 bg-base-100/95 backdrop-blur border-t border-base-200 h-16"
+                    <nav class="fixed bottom-16 left-0 right-0 z-[70] flex flex-row justify-center items-center gap-1 p-2 bg-base-100/95 backdrop-blur border-t border-base-200 h-16"
                          @touchstart="startLetterDrag"
                          @touchmove.passive="handleLetterDrag"
                          @touchend="endLetterDrag"
@@ -334,7 +334,7 @@
                     </nav>
 
                     <!-- Skills grid -->
-                    <div class="flex-1 overflow-y-auto px-6 pb-48 scroll-smooth" 
+                    <div class="flex-1 overflow-y-auto px-6 pb-32 scroll-smooth" 
                          x-ref="skillsContainer"
                          @scroll.throttle.50ms="handleScroll">
                         {% for group in skill_icons %}
@@ -372,7 +372,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="fixed bottom-16 left-0 right-0 z-[60] px-6 py-4 bg-base-100/95 backdrop-blur-xl border-t border-base-200">
+            <div class="fixed bottom-0 left-0 right-0 z-[80] px-6 py-4 bg-base-100/95 backdrop-blur-xl border-t border-base-200">
                 <div class="flex items-center justify-end gap-3">
                     <span class="text-base-content/60">
                         <span x-text="selectedSkills.length"></span> skills selected
