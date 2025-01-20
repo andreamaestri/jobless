@@ -156,20 +156,24 @@
                                 </div>
                                 
                                 <div class="relative">
-                                    <div class="form-control relative">
-                                        <select id="skills-select" 
-                                                multiple 
-                                                placeholder="Search and select skills..."
-                                                class="select select-bordered w-full min-h-[120px]">
-                                            <!-- Options will be populated via JavaScript -->
-                                        </select>
-                                        <div class="ts-wrapper-overlay absolute inset-0 pointer-events-none"></div>
+                                    <div class="form-control">
+                                        <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
+                                            <div id="skills-display" class="flex flex-wrap gap-2">
+                                                <!-- Skills badges will be added here -->
+                                                <div class="empty-state text-base-content/50 flex items-center justify-center w-full h-full">
+                                                    Click 'Manage Skills' to add required skills
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="skills" id="skills-input">
                                     </div>
-                                    <input type="hidden" name="skills" id="skills-input">
                                     <div class="flex items-center justify-between mt-2">
-                                        <p class="text-xs text-base-content/60">
-                                            Quick search and select skills, or use the Manage Skills button for more options
-                                        </p>
+                                        <button type="button" 
+                                                @click="$dispatch('open-skills-modal')"
+                                                class="btn btn-primary btn-sm gap-2">
+                                            <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
+                                            Manage Skills
+                                        </button>
                                         <span class="badge badge-sm" id="skills-count">0 selected</span>
                                     </div>
                                 </div>
