@@ -376,16 +376,21 @@
             </div>
 
             <!-- Footer -->
-            <div class="sticky bottom-0 z-30 px-6 py-4 md:pt-6 bg-base-100/50 backdrop-blur-md border-t border-base-200/30">
-                <div class="flex items-center justify-between">
-                    <kbd class="hidden sm:inline-flex kbd kbd-sm gap-2 items-center bg-base-200">
-                        <span class="font-sans font-medium">Shift</span> + Click for multi-select
-                    </kbd>
-                    <div class="flex gap-2">
-                        <button @click="cancel()" class="btn">Cancel</button>
-                        <button @click="save()" class="btn btn-primary gap-2">
+            <div class="sticky bottom-0 z-30 px-4 sm:px-6 py-4 bg-base-100/95 backdrop-blur-md border-t border-base-200/30">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="heroicons:information-circle" class="text-base-content/60 text-xl"></iconify-icon>
+                        <span class="text-sm text-base-content/60">Selected skills: <span class="font-semibold text-primary" x-text="selectedSkills.length"></span></span>
+                    </div>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button @click="cancel()" 
+                                class="btn btn-ghost flex-1 sm:flex-none hover:bg-error/10 hover:text-error">
+                            Cancel
+                        </button>
+                        <button @click="save()" 
+                                class="btn btn-primary flex-1 sm:flex-none gap-2">
                             Apply Changes
-                            <span class="badge badge-sm" x-text="selectedSkills.length"></span>
+                            <span class="badge badge-primary-content badge-sm" x-text="selectedSkills.length"></span>
                         </button>
                     </div>
                 </div>
