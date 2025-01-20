@@ -640,8 +640,6 @@ main {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
     margin-bottom: 1rem;
-    background-color: hsl(var(--b1) / 0.8);
-    backdrop-filter: blur(4px);
 }
 
 .skill-group-header span {
