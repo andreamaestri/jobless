@@ -358,9 +358,8 @@
                                         @click="handleQuickSelect($event, JSON.parse('{{ skill|json|escapejs }}'))">
                                     <div class="icon-wrapper !m-2">
                                         <iconify-icon icon="{{ skill.icon_dark|default:skill.icon }}" 
-                                                      width="64" 
-                                                      height="64"
-                                                      class="p-4"></iconify-icon>
+                                                     width="64" 
+                                                     height="64"></iconify-icon>
                                     </div>
                                     <span class="skill-name">{{ skill.name }}</span>
                                     <div class="check-indicator">
