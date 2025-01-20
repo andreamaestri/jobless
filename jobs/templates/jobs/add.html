@@ -47,7 +47,8 @@
                                     <div id="parse-form" class="parse-form">
                                         <form action="{% url 'jobs:parse_description' %}" 
                                               method="POST" 
-                                              id="description-parser">
+                                              id="description-parser"
+                                              onsubmit="return false;">
                                             {% csrf_token %}
                                             <div>
                                                 <label for="paste" class="block text-sm font-medium text-base-content mb-2">

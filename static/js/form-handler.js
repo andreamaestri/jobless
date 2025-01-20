@@ -56,6 +56,7 @@ class FormHandler {
 
     async handleParse(e) {
         e.preventDefault();
+        e.stopPropagation();
         console.debug('Parse form submitted');
         
         const form = e.target;
