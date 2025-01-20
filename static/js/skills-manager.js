@@ -171,4 +171,3 @@ if (window.Alpine) {
             return this.selectedSkills.some(s => s.name === skillName);
         }
     }));
-});
