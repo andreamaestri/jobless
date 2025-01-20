@@ -7,9 +7,14 @@ document.addEventListener('alpine:init', () => {
             this.toasts = [];
         },
         
-        show(message, type = 'info', duration = 3000) {
+        show(options = {}, duration = 3000) {
             const id = Date.now();
-            const toast = { id, message, type };
+            const toast = {
+                id,
+                type: options.type || 'info',
+                message: options.message || '',
+                description: options.description || ''
+            };
             
             this.toasts.push(toast);
             
