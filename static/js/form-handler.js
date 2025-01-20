@@ -55,31 +55,49 @@ class FormHandler {
     async handleParse(e) {
         e.preventDefault();
         
-        const pasteText = document.getElementById('paste')?.value?.trim();
-        if (!pasteText) {
+        const form = document.getElementById('description-parser');
+        if (!form) {
+            this.showNotification('Error', 'Parse form not found', 'error');
+            return;
+        }
+
+        const description = form.querySelector('#paste')?.value?.trim();
+        if (!description) {
             this.showNotification('Error', 'Please paste a job description first', 'error');
             return;
         }
 
-        const cleanedText = this.cleanText(pasteText);
-        const formData = new FormData();
-        formData.append('paste', cleanedText);
-        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        const formData = new FormData(form);
+        formData.set('description', this.cleanText(description));
 
         this.setButtonState(this.parseButton, true, 'Processing...');
 
         try {
-            const response = await this.submitForm('/jobs/parse-description/', formData);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+
+            const data = await response.json();
             
-            if (response.status === 'success' && response.data) {
-                this.populateFormFields(response.data);
+            if (!response.ok) {
+                throw new Error(data.message || 'Server error occurred');
+            }
+
+            if (data.status === 'success' && data.data) {
+                this.populateFormFields(data.data);
                 this.showNotification('Success', 'Job details extracted successfully!', 'success');
-                document.getElementById('paste').value = '';
+                form.reset();
             } else {
-                throw new Error(response.message || 'Failed to parse description');
+                throw new Error(data.message || 'Failed to parse description');
             }
         } catch (error) {
-            this.showNotification('Error', error.message, 'error');
+            console.error('Parse error:', error);
+            this.showNotification('Error', error.message || 'Failed to process job description', 'error');
         } finally {
             this.setButtonState(this.parseButton, false, 'Process with AI');
         }
