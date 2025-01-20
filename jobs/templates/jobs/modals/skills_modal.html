@@ -291,7 +291,7 @@
                          @touchstart="startLetterDrag" 
                          @mousemove="handleMouseMove($event)"
                          @mouseleave="hideLetterPreview()"
-                         @touchmove="handleLetterDrag" 
+                         @touchmove.passive="handleLetterDrag" 
                          @touchend="endLetterDrag">
                         {% for group in skill_icons %}
                         <button @click="jumpToLetter('{{ group.letter }}')"
