@@ -6,28 +6,26 @@ class FormHandler {
 
     init() {
         console.log('FormHandler initializing...');
+        // Get form elements
         this.jobForm = document.getElementById('job-form');
-        this.parseButton = document.getElementById('parse-button');
+        this.descriptionParser = document.getElementById('description-parser');
         
+        console.log('Forms found:', {
+            jobForm: !!this.jobForm,
+            descriptionParser: !!this.descriptionParser
+        });
+
+        // Add event listeners
         if (this.jobForm) {
-            console.log('Job form found');
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));
         }
         
-        if (this.parseButton) {
-            console.log('Parse button found');
-            this.parseButton.addEventListener('click', (e) => {
-                console.log('Parse button clicked - initiating parse');
+        if (this.descriptionParser) {
+            console.log('Adding parser form submit handler');
+            this.descriptionParser.addEventListener('submit', (e) => {
+                console.log('Parser form submitted');
                 e.preventDefault();
-                e.stopPropagation();
-                const form = document.getElementById('description-parser');
-                if (form) {
-                    console.log('Description parser form found');
-                    this.handleParse(e, form);
-                } else {
-                    console.error('Description parser form not found');
-                    this.showNotification('Error', 'Parse form not found', 'error');
-                }
+                this.handleParse(e);
             });
         }
     }
@@ -67,14 +65,15 @@ class FormHandler {
         }
     }
 
-    async handleParse(e, form) {
-        console.log('handleParse called', e.type);
+    async handleParse(e) {
+        console.log('handleParse called');
         e.preventDefault();
         e.stopPropagation();
         
+        const form = e.target;
         console.log('Form:', form);
         
-        if (!form) {
+        if (!form || form.id !== 'description-parser') {
             console.error('Parser form not found');
             this.showNotification('Error', 'Parse form not found', 'error');
             return;
@@ -266,21 +265,12 @@ class FormHandler {
     }
 }
 
-// Initialize form handler when DOM is loaded
+// Add this outside the class to debug form availability
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing FormHandler');
+    console.log('DOM loaded, checking form elements...');
+    const descriptionParser = document.getElementById('description-parser');
+    console.log('Description parser form found:', !!descriptionParser);
+    
+    // Initialize form handler
     window.formHandler = new FormHandler();
-    
-    // Additional debug logging
-    const parseForm = document.getElementById('description-parser');
-    const parseButton = document.getElementById('parse-button');
-    
-    console.log('Parse form found:', !!parseForm);
-    console.log('Parse button found:', !!parseButton);
-    
-    if (parseButton) {
-        parseButton.addEventListener('click', () => {
-            console.log('Direct button click detected');
-        });
-    }
 });
