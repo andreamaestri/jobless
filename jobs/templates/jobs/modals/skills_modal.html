@@ -356,12 +356,13 @@
                                         data-skill="{{ skill|json|escapejs }}"
                                         :class="{'selected': isSelected('{{ skill.name }}')}"
                                         @click="handleQuickSelect($event, JSON.parse('{{ skill|json|escapejs }}'))">
-                                    <div class="icon-wrapper !m-2">
+                                    <div class="icon-wrapper">
                                         <iconify-icon icon="{{ skill.icon_dark|default:skill.icon }}" 
-                                                     width="64" 
-                                                     height="64"></iconify-icon>
+                                                      width="45" 
+                                                      height="45"
+                                                      ></iconify-icon>
                                     </div>
-                                    <span class="skill-name">{{ skill.name }}</span>
+                                    <span class="skill-name p-2">{{ skill.name }}</span>
                                     <div class="check-indicator">
                                         <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
                                     </div>
@@ -375,7 +376,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="sticky bottom-0 z-30 px-6 py-4 bg-base-100/50 backdrop-blur-md border-t border-base-200/30">
+            <div class="sticky bottom-0 z-30 px-6 py-4 md:pt-6 bg-base-100/50 backdrop-blur-md border-t border-base-200/30">
                 <div class="flex items-center justify-between">
                     <kbd class="hidden sm:inline-flex kbd kbd-sm gap-2 items-center bg-base-200">
                         <span class="font-sans font-medium">Shift</span> + Click for multi-select
