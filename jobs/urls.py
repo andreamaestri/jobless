@@ -14,5 +14,5 @@ urlpatterns = [
     path('toggle-favourite/<int:job_id>/', views.toggle_favourite, name='toggle_favourite'),
     path('skills/autocomplete/', views.skills_autocomplete, name='skills_autocomplete'),
     path('skills/list/', views.skills_autocomplete, {'all': True}, name='skills_list'),  # Add this new route
-    path('parse-description/', views.parse_job_description, name='parse_description'),
+    path('parse-description/', views.parse_job_description, name='parse_description'),  # Keep the URL path the same but ensure view exists
 ]
