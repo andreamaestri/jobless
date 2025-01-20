@@ -1,3 +1,94 @@
+// Wait for Alpine.js to load
+document.addEventListener('alpine:init', () => {
+    // Register the skillsModal component globally
+    Alpine.data('skillsModal', () => ({
+        open: false,
+        selectedSkills: [],
+        search: '',
+        currentLetter: null,
+        touchStartY: null,
+        touchStartTime: null,
+        
+        init() {
+            this.initializeSkills();
+            
+            // Watch for modal state changes
+            this.$watch('open', value => {
+                if (!value) {
+                    this.search = '';
+                    this.resetModalState();
+                } else {
+                    this.initializeSkills();
+                }
+            });
+        },
+
+        initializeSkills() {
+            try {
+                if (window.skillSelect && window.skillSelect.items) {
+                    this.selectedSkills = window.skillSelect.items.map(name => {
+                        const option = window.skillSelect.options[name];
+                        return {
+                            name: option.name,
+                            icon: option.icon,
+                            icon_dark: option.icon_dark
+                        };
+                    });
+                }
+            } catch (error) {
+                console.error('Error initializing skills:', error);
+                this.selectedSkills = [];
+            }
+        },
+
+        toggleSkill(skill) {
+            try {
+                const index = this.selectedSkills.findIndex(s => s.name === skill.name);
+                if (index === -1) {
+                    this.selectedSkills.push({ ...skill });
+                } else {
+                    this.selectedSkills.splice(index, 1);
+                }
+            } catch (error) {
+                console.error('Error toggling skill:', error);
+            }
+        },
+
+        saveSkills() {
+            try {
+                this.$dispatch('skills-updated', this.selectedSkills);
+                this.open = false;
+            } catch (error) {
+                console.error('Error saving skills:', error);
+            }
+        },
+
+        resetModalState() {
+            this.search = '';
+            window.skillsManager?.resetModalState();
+        },
+
+        isSelected(skillName) {
+            return this.selectedSkills.some(s => s.name === skillName);
+        },
+
+        handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            document.querySelectorAll('.skill-group').forEach(group => {
+                let hasVisible = false;
+                group.querySelectorAll('.skill-card').forEach(card => {
+                    const name = card.querySelector('.skill-name').textContent.toLowerCase();
+                    const visible = !searchTerm || name.includes(searchTerm);
+                    card.style.display = visible ? '' : 'none';
+                    if (visible) hasVisible = true;
+                });
+                group.style.display = hasVisible ? '' : 'none';
+            });
+        }
+    }));
+});
+
+// Initialize SkillsManager class
 class SkillsManager {
     constructor() {
         this.selectedSkills = new Set();
@@ -124,50 +215,3 @@ class SkillsManager {
 document.addEventListener('DOMContentLoaded', () => {
     window.skillsManager = new SkillsManager();
 });
-
-if (window.Alpine) {
-    window.Alpine.data('skillsModal', () => ({
-        open: false,
-        selectedSkills: [],
-        search: '',
-        currentLetter: null,
-        
-        init() {
-            this.$watch('open', value => {
-                if (!value) {
-                    this.search = '';
-                    window.skillsManager?.resetModalState();
-                }
-            });
-            // Initialize with current TomSelect selections
-            if (window.skillSelect) {
-                this.selectedSkills = window.skillSelect.items.map(name => {
-                    const option = window.skillSelect.options[name];
-                    return {
-                        name: option.name,
-                        icon: option.icon,
-                        icon_dark: option.icon_dark
-                    };
-                });
-            }
-        },
-
-        toggleSkill(skill) {
-            const index = this.selectedSkills.findIndex(s => s.name === skill.name);
-            if (index === -1) {
-                this.selectedSkills.push(skill);
-            } else {
-                this.selectedSkills.splice(index, 1);
-            }
-        },
-
-        saveSkills() {
-            // Dispatch event for TomSelect to handle
-            this.$dispatch('skills-updated', this.selectedSkills);
-            this.open = false;
-        },
-
-        isSelected(skillName) {
-            return this.selectedSkills.some(s => s.name === skillName);
-        }
-    }));
