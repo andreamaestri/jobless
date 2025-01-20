@@ -725,25 +725,25 @@ main {
 @media (max-width: 640px) {
     .modal-box {
         height: 100dvh;
-        max-height: 100dvh;
         border-radius: 0;
         margin: 0;
         padding: 0;
-        overflow: hidden;
     }
 
     .modal-inner {
         height: 100dvh;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
     }
 
     .modal-content {
         flex: 1;
+        min-height: 0;
         overflow-y: auto;
         padding-bottom: 8rem;
         -webkit-overflow-scrolling: touch;
+        display: flex;
+        flex-direction: column;
     }
 
     .quick-letters-nav {
@@ -1055,7 +1055,7 @@ main {
         border-radius: 1rem;
         display: flex;
         flex-direction: column;
-        max-height: 90vh;
+        height: 90vh;
     }
 
     .modal-content {
@@ -1063,6 +1063,8 @@ main {
         min-height: 0;
         overflow-y: auto;
         padding: 1rem;
+        display: flex;
+        flex-direction: column;
     }
 
     /* Skills Container */
