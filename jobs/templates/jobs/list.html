@@ -74,15 +74,16 @@
                                             </div>
                                             {% endfor %}
                                             {% with skill_count=job.skills.count %}
-                                            {% if skill_count > 3 %}
-                                                <button type="button"
-                                                        class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
-                                                        data-action="open-skills"
-                                                        data-skills="{{ skills|skills_to_json }}"
-                                                        onclick="event.stopPropagation()">
-                                                    +{{ skills.count|add:"-3" }} more
-                                                </button>
-                                            {% endif %}
+                                                {% if skill_count > 3 %}
+                                                    <button type="button"
+                                                            class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
+                                                            data-action="open-skills"
+                                                            data-skills="{{ skills|skills_to_json }}"
+                                                            onclick="event.stopPropagation()">
+                                                        +{{ skills.count|add:"-3" }} more
+                                                    </button>
+                                                {% endif %}
+                                            {% endwith %}
                                         {% endwith %}
                                     {% endwith %}
                                 </div>
