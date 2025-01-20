@@ -57,7 +57,7 @@ class JobCreateView(BaseJobView, CreateView):
             self.object = form.save()
             
             # Handle skills if present
-            skills = self.request.POST.get('required_skills')
+            skills = self.request.POST.get('skills')
             if skills:
                 try:
                     # Parse the JSON string into a list
@@ -65,7 +65,7 @@ class JobCreateView(BaseJobView, CreateView):
                     # Extract just the skill names
                     skill_names = [skill['name'] for skill in skills_data]
                     # Set the skills
-                    self.object.required_skills.set(skill_names)
+                    self.object.skills.set(skill_names)
                 except json.JSONDecodeError as e:
                     logger.error(f"Error parsing skills JSON: {e}")
                     raise
