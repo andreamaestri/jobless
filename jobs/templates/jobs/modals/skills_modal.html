@@ -286,8 +286,8 @@
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
                                 @mouseleave="hideLetterPreview()"
-                                class="w-8 h-8 flex items-center justify-center text-sm font-medium transition-colors hover:text-primary"
-                                :class="{'text-primary font-bold': currentLetter === '{{ group.letter }}'}">
+                                class="letter-nav-button"
+                                :class="{'active': currentLetter === '{{ group.letter }}'}">
                             {{ group.letter }}
                         </button>
                         {% endfor %}
