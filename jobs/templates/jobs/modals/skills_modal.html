@@ -196,13 +196,35 @@
         }
     },
 
+    letterNavigationActive: false,
+    letterHoverTimeout: null,
+
+    startLetterNavigation() {
+        this.letterNavigationActive = true;
+    },
+
+    stopLetterNavigation() {
+        this.letterNavigationActive = false;
+        if (this.letterHoverTimeout) {
+            clearTimeout(this.letterHoverTimeout);
+            this.letterHoverTimeout = null;
+        }
+    },
+
     handleMouseMove(event) {
-        if (!this.isScrolling) {
+        if (!this.isScrolling && this.letterNavigationActive) {
             this.mouseX = this.lastMouseX = event.clientX;
             this.mouseY = this.lastMouseY = event.clientY;
             
             const nav = event.currentTarget;
             const rect = nav.getBoundingClientRect();
+            
+            // Don't trigger near the bottom where the Apply button is
+            const bottomThreshold = rect.bottom - 60;
+            if (event.clientY > bottomThreshold) {
+                return;
+            }
+            
             const letters = nav.querySelectorAll('button');
             const letterHeight = rect.height / letters.length;
             const relativeY = event.clientY - rect.top;
@@ -214,9 +236,18 @@
             if (index >= 0 && index < letters.length) {
                 const letter = letters[index].textContent.trim();
                 this.previewLetter(letter);
-                if (this.currentPreviewLetter) {
-                    this.jumpToLetter(letter);
+                
+                // Clear any existing timeout
+                if (this.letterHoverTimeout) {
+                    clearTimeout(this.letterHoverTimeout);
                 }
+                
+                // Set new timeout for jumping to letter
+                this.letterHoverTimeout = setTimeout(() => {
+                    if (this.letterNavigationActive) {
+                        this.jumpToLetter(letter);
+                    }
+                }, 150); // 150ms delay before jumping
             }
         }
     },
@@ -281,8 +312,10 @@
                          @touchstart="startLetterDrag"
                          @touchmove.passive="handleLetterDrag"
                          @touchend="endLetterDrag"
-                         @mousemove="handleMouseMove($event)"
-                         @mouseleave="hideLetterPreview()">
+                         @mousemove.throttle.100ms="handleMouseMove($event)"
+                         @mouseleave="hideLetterPreview()"
+                         @mouseenter="startLetterNavigation"
+                         @mouseleave="stopLetterNavigation">
                         {% for group in skill_icons %}
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
