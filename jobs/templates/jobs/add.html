@@ -156,13 +156,14 @@
                                 </div>
                                 
                                 <div class="relative">
-                                    <div class="form-control">
+                                    <div class="form-control relative">
                                         <select id="skills-select" 
                                                 multiple 
                                                 placeholder="Search and select skills..."
-                                                class="w-full min-h-[120px]">
+                                                class="select select-bordered w-full min-h-[120px]">
                                             <!-- Options will be populated via JavaScript -->
                                         </select>
+                                        <div class="ts-wrapper-overlay absolute inset-0 pointer-events-none"></div>
                                     </div>
                                     <input type="hidden" name="skills" id="skills-input">
                                     <div class="flex items-center justify-between mt-2">

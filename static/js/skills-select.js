@@ -79,15 +79,16 @@ document.addEventListener('alpine:init', () => {
         searchField: ['name'],
         plugins: ['remove_button'],
         maxItems: 10,
-        persist: true,
+        persist: false,
         createFilter: null,
-        preload: true,
+        preload: 'focus',
         
         // Dropdown configuration
         dropdownParent: 'body',
         maxOptions: 200,
-        hideSelected: false,
-        closeAfterSelect: true,
+        hideSelected: true,
+        closeAfterSelect: false,
+        openOnFocus: true,
         
         // Search configuration
         searchConjunction: 'and',
@@ -165,6 +166,8 @@ document.addEventListener('alpine:init', () => {
             fetch(url)
                 .then(response => response.ok ? response.json() : Promise.reject(response))
                 .then(json => {
+                    // Clear existing options first
+                    this.clearOptions();
                     if (!json.results || !Array.isArray(json.results)) {
                         throw new Error('Invalid response format');
                     }
