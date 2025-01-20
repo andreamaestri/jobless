@@ -229,9 +229,10 @@ class FormHandler {
             const fieldId = fieldMap[key];
             console.log(`Setting ${key} (${fieldId}) to:`, value.substring(0, 50) + '...');
             
-            const field = document.getElementById(fieldId);
+            const field = document.getElementById(fieldId) || 
+                         document.querySelector(`[data-field="${key}"]`);
             if (!field) {
-                console.warn(`Field not found: ${fieldId}`);
+                console.warn(`Field not found: ${fieldId} or data-field="${key}"`);
                 return;
             }
             
