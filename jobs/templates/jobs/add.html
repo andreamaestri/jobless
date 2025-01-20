@@ -159,28 +159,22 @@
                                 <div class="relative" x-data="{ selectedSkills: [] }" @skills-updated.window="selectedSkills = $event.detail">
                                     <div class="form-control">
                                         <select id="skills-select" 
-                                                class="form-select"
+                                                name="skills"
                                                 multiple
-                                                placeholder="Select required skills...">
+                                                placeholder="Select required skills..."
+                                                autocomplete="off">
                                             {% for group in skill_icons %}
+                                                <optgroup label="{{ group.letter }}">
                                                 {% for skill in group.skills %}
-                                                <option value="{{ skill.name }}" 
-                                                        data-icon="{{ skill.icon }}"
-                                                        data-icon-dark="{{ skill.icon_dark|default:skill.icon }}">
-                                                    {{ skill.name }}
-                                                </option>
+                                                    <option value="{{ skill.name }}" 
+                                                            data-icon="{{ skill.icon }}"
+                                                            data-icon-dark="{{ skill.icon_dark|default:skill.icon }}">
+                                                        {{ skill.name }}
+                                                    </option>
                                                 {% endfor %}
+                                                </optgroup>
                                             {% endfor %}
                                         </select>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-2">
-                                        <button type="button" 
-                                                @click="$dispatch('open-skills-modal')"
-                                                class="btn btn-primary btn-sm gap-2">
-                                            <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
-                                            Manage Skills
-                                        </button>
-                                        <span class="badge badge-sm" id="skills-count">0 selected</span>
                                     </div>
                                 </div>
                             </div>
