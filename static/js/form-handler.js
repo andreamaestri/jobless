@@ -211,6 +211,8 @@ class FormHandler {
     }
 
     populateFormFields(fields) {
+        console.log('Populating form fields:', fields);
+        
         const fieldMap = {
             title: 'id_title',
             company: 'id_company',
@@ -222,20 +224,26 @@ class FormHandler {
         };
 
         Object.entries(fields).forEach(([key, value]) => {
-            const field = document.getElementById(fieldMap[key] || `id_${key}`) 
-                      || document.querySelector(`[name="${key}"]`);
+            if (!value) return; // Skip empty values
             
-            if (field) {
-                field.value = value;
-                
-                if (field.tagName === 'TEXTAREA') {
-                    field.style.height = 'auto';
-                    field.style.height = field.scrollHeight + 'px';
-                }
-                
-                field.dispatchEvent(new Event('input', { bubbles: true }));
-                field.dispatchEvent(new Event('change', { bubbles: true }));
+            const fieldId = fieldMap[key];
+            console.log(`Setting ${key} (${fieldId}) to:`, value.substring(0, 50) + '...');
+            
+            const field = document.getElementById(fieldId);
+            if (!field) {
+                console.warn(`Field not found: ${fieldId}`);
+                return;
             }
+            
+            field.value = value;
+            
+            if (field.tagName === 'TEXTAREA') {
+                field.style.height = 'auto';
+                field.style.height = field.scrollHeight + 'px';
+            }
+            
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
         });
         
         this.jobForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
