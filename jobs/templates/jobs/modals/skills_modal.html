@@ -304,7 +304,7 @@
             <div class="flex-1 min-h-0 overscroll-contain">
                 <div class="flex h-full overflow-hidden">
                     <!-- Letter navigation -->
-                    <nav class="fixed bottom-[4.5rem] inset-x-0 z-[70] flex flex-row justify-center items-center gap-1 p-2 bg-base-100/95 backdrop-blur border-t border-base-200"
+                    <nav class="fixed bottom-[4.5rem] inset-x-0 z-[70] flex flex-row justify-center items-center gap-0.5 p-1.5 bg-base-100/95 backdrop-blur border-t border-base-200 sm:gap-1 sm:p-2"
                          @touchstart="startLetterDrag"
                          @touchmove.passive="handleLetterDrag"
                          @touchend="endLetterDrag"
@@ -316,7 +316,7 @@
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
                                 @mouseleave="hideLetterPreview()"
-                                class="min-w-[2rem] h-8 flex items-center justify-center text-xs font-medium text-base-content/60 hover:text-primary hover:bg-base-200 rounded transition-all duration-150 px-2"
+                                class="min-w-[1.5rem] h-7 flex items-center justify-center text-[10px] font-medium text-base-content/60 hover:text-primary hover:bg-base-200 rounded transition-all duration-150 px-1 sm:min-w-[2rem] sm:h-8 sm:text-xs sm:px-2"
                                 :class="{'text-primary font-semibold bg-primary/10': currentLetter === '{{ group.letter }}'}">
                             {{ group.letter }}
                         </button>
