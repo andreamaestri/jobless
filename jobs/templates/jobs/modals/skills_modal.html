@@ -304,7 +304,7 @@
             <div class="flex-1 min-h-0 overscroll-contain">
                 <div class="flex h-full overflow-hidden">
                     <!-- Letter navigation -->
-                    <nav class="fixed bottom-16 inset-x-[4.166667%] z-[70] flex flex-row justify-center items-center gap-1 p-2 bg-base-100 border-t border-base-200 h-16 max-w-5xl mx-auto rounded-t-xl"
+                    <nav class="fixed bottom-[4.5rem] inset-x-0 z-[70] flex flex-row justify-center items-center gap-1 p-2 bg-base-100/95 backdrop-blur border-t border-base-200"
                          @touchstart="startLetterDrag"
                          @touchmove.passive="handleLetterDrag"
                          @touchend="endLetterDrag"
@@ -316,7 +316,7 @@
                         <button @click="jumpToLetter('{{ group.letter }}')"
                                 @mouseenter="previewLetter('{{ group.letter }}')"
                                 @mouseleave="hideLetterPreview()"
-                                class="w-8 h-8 flex items-center justify-center text-xs font-medium text-base-content/60 hover:text-primary hover:bg-base-200 rounded-lg transition-all duration-150"
+                                class="min-w-[2rem] h-8 flex items-center justify-center text-xs font-medium text-base-content/60 hover:text-primary hover:bg-base-200 rounded transition-all duration-150 px-2"
                                 :class="{'text-primary font-semibold bg-primary/10': currentLetter === '{{ group.letter }}'}">
                             {{ group.letter }}
                         </button>
@@ -372,7 +372,7 @@
             </div>
 
             <!-- Footer -->
-            <div class="fixed bottom-0 inset-x-[4.166667%] z-[80] px-6 py-4 bg-base-100 border-t border-base-200 max-w-5xl mx-auto rounded-b-xl">
+            <div class="fixed bottom-0 inset-x-0 z-[80] px-6 py-4 bg-base-100/95 backdrop-blur border-t border-base-200">
                 <div class="flex items-center justify-end gap-3">
                     <span class="text-base-content/60">
                         <span x-text="selectedSkills.length"></span> skills selected
