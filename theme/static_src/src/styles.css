@@ -1340,6 +1340,36 @@ main {
         height: calc(100dvh - 8rem);
         padding-bottom: 6rem;
     }
+
+    .quick-letters-nav {
+        position: fixed;
+        bottom: 4rem;
+        left: 0;
+        right: 0;
+        z-index: 41;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 2px;
+        padding: 0.5rem;
+        margin: 0;
+        overflow-x: auto;
+        border-right: none;
+        border-top: 1px solid hsl(var(--b2));
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .quick-letters-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .letter-nav-button {
+        width: 2rem;
+        height: 2rem;
+        flex-shrink: 0;
+    }
 }
 
 /* Animation Utility */
