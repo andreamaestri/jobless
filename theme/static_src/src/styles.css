@@ -487,6 +487,17 @@ main {
     max-height: 90vh;
 }
 
+.skill-group {
+    position: relative;
+    scroll-margin-top: 4rem;
+}
+
+@media (max-width: 640px) {
+    .skill-group {
+        scroll-margin-top: 5rem;
+    }
+}
+
 /* Quick Letters Navigation */
 .quick-letters-nav {
     width: 1.75rem;
