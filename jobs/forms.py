@@ -185,7 +185,7 @@ Include all requirements, responsibilities, and benefits in the Description sect
 
     class Meta:
         model = JobPosting
-        fields = ['paste', 'title', 'company', 'location', 'url', 'salary_range', 'description', 'status']
+        fields = ['title', 'company', 'location', 'url', 'salary_range', 'description', 'status']
         widgets = {
             'title': forms.TextInput(attrs={
                 'required': True,
