@@ -1,9 +1,49 @@
-// Wait for both DOM and Alpine.js to be ready
 document.addEventListener('alpine:init', () => {
     if (!window.Alpine) {
         console.error('Alpine.js not loaded');
         return;
     }
+
+    // Function to update skills display
+    const updateSkillsDisplay = (skills) => {
+        const display = document.getElementById('skills-display');
+        const emptyState = display.querySelector('.empty-state');
+        
+        if (skills.length === 0) {
+            display.innerHTML = `
+                <div class="empty-state text-base-content/50 flex items-center justify-center w-full h-full">
+                    Click 'Manage Skills' to add required skills
+                </div>`;
+            return;
+        }
+
+        display.innerHTML = skills.map(skill => `
+            <div class="badge badge-lg gap-2 badge-primary">
+                <iconify-icon icon="${skill.icon_dark || skill.icon}" class="text-lg"></iconify-icon>
+                <span>${skill.name}</span>
+            </div>
+        `).join('');
+    };
+
+    // Listen for skills updates
+    document.addEventListener('skills-updated', (event) => {
+        const skills = event.detail;
+        
+        // Update hidden input
+        const skillsInput = document.getElementById('skills-input');
+        if (skillsInput) {
+            skillsInput.value = JSON.stringify(skills);
+        }
+
+        // Update skills count
+        const skillsCount = document.getElementById('skills-count');
+        if (skillsCount) {
+            skillsCount.textContent = `${skills.length} selected`;
+        }
+
+        // Update display
+        updateSkillsDisplay(skills);
+    });
     // Icon loading utility with cache and better error handling
     const iconCache = new Map();
     const loadIcon = (icon, name) => {
