@@ -56,7 +56,8 @@
         }));
         
         this.$dispatch('skills-updated', skillsToUpdate);
-        this.cancel();
+        this.open = false;
+        this.search = '';
     },
 
     isSelected(skillName) {

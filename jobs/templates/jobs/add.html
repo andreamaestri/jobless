@@ -26,7 +26,8 @@
                           id="job-form"
                           action="{% url 'jobs:add' %}"
                           enctype="multipart/form-data"
-                          data-debug="true">
+                          data-debug="true"
+                          novalidate>
                         {% csrf_token %}
                         
                         {% if form.non_field_errors %}
