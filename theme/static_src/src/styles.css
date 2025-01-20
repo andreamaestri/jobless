@@ -705,8 +705,8 @@ main {
 }
 
 .skill-card .icon-wrapper {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -714,6 +714,7 @@ main {
     border-radius: 0.75rem;
     transition: all 200ms ease;
     flex-shrink: 0;
+    padding: 0.5rem;
 }
 
 .skill-card:hover .icon-wrapper {
