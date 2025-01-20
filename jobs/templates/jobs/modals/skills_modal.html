@@ -1,21 +1,9 @@
 {% load job_tags %}
 
-<div x-data="skillsModal" x-cloak @keydown.escape.window="cancel()" @open-skills-modal.window="handleSkillsUpdate($event)">
-    open: false,
-    search: '',
-    selectedSkills: [],
-    currentLetter: null,
-    touchStartY: null,
-    touchStartTime: null,
-    currentPreviewLetter: null,
-    lastTouchY: null,
-    isScrolling: false,
-    mouseX: 0,
-    mouseY: 0,
-    lastMouseX: 0,
-    lastMouseY: 0,
-    
-    init() {
+<div x-data="skillsModal" 
+     x-cloak 
+     @keydown.escape.window="cancel()" 
+     @open-skills-modal.window="handleSkillsUpdate($event)">
         this.$watch('open', value => {
             if (value) {
                 this.search = '';
