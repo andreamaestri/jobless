@@ -61,23 +61,19 @@
                                     {% with skills=job.skills.all %}
                                         {% with visible_skills=skills|slice:":3" %}
                                             {% for skill in visible_skills %}
-                                            <div class="badge badge-lg gap-2 group relative overflow-hidden p-4
-                                                        bg-primary hover:bg-primary/20 
-                                                        border border-primary/30 hover:border-primary
-                                                        text-primary-content/90 hover:text-primary-content
-                                                        transition-all duration-200 ease-in-out
-                                                        transform hover:scale-105 hover:shadow-md">
-                                                <div class="w-8 h-8 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-200">
-                                                    <iconify-icon icon="{{ skill.icon|default:'heroicons:academic-cap' }}"></iconify-icon>
+                                            <div class="tooltip" data-tip="{{ skill.name }}">
+                                                <div class="w-8 h-8 p-2 flex items-center justify-center hover:text-primary
+                                                            transition-all duration-200 ease-in-out
+                                                            transform hover:scale-105">
+                                                    <iconify-icon icon="{{ skill.name|get_skill_icon }}" width="32" height="32"></iconify-icon>
                                                 </div>
-                                                <span class="font-medium">{{ skill.name }}</span>
                                             </div>
                                             {% endfor %}
                                             {% with skill_count=skills.count %}
                                                 {% if skill_count > 3 %}
                                                     {% with remaining=skill_count|add:"-3" %}
                                                         <button type="button"
-                                                            class="badge badge-ghost badge-xs sm:badge-sm hover:badge-primary cursor-pointer"
+                                                            class="text-xs text-base-content/70 hover:text-primary cursor-pointer"
                                                             data-action="open-skills"
                                                             data-skills="{{ skills|skills_to_json }}"
                                                             onclick="event.stopPropagation()">

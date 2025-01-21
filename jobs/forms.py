@@ -41,25 +41,21 @@ class JobPostingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Mark required fields
-        for field in ['title', 'company', 'location']:
+        for field in ['title', 'company', 'location', 'status']:
             self.fields[field].required = True
+            
+        # Set default status if not provided
+        if not self.initial.get('status'):
+            self.initial['status'] = 'draft'
         
-        # Use Tagulous widget for skills field
-        self.fields['skills'] = tagulous.forms.TagField(
+        # Use hidden input for skills - will be managed by modal
+        self.fields['skills'] = forms.CharField(
             required=False,
-            tag_options=tagulous.models.TagOptions(
-                force_lowercase=True,
-                max_count=10,
-                autocomplete_view='jobs:skills_autocomplete'
-            ),
-            widget=CustomTagWidget(
-                attrs={
-                    'id': 'id_skills',
-                    'name': 'skills',
-                    'class': 'input input-bordered w-full',
-                    'placeholder': 'Add skills (e.g., Python, React, AWS)'
-                }
-            )
+            widget=forms.HiddenInput(attrs={
+                'id': 'id_skills',
+                'name': 'skills',
+                'class': 'skills-input'
+            })
         )
 
     def parse_job_with_ai(self, text):
@@ -174,8 +170,25 @@ Include all requirements, responsibilities, and benefits in the Description sect
         cleaned_data = super().clean()
         logger.debug(f"Cleaning form data: {cleaned_data}")
         
-        # Ensure required fields are present
-        required_fields = ['title', 'company', 'location']
+        # Handle skills field specially
+        skills_data = cleaned_data.get('skills', '')
+        if skills_data:
+            try:
+                # Log raw skills data
+                logger.debug(f"Raw skills data: {skills_data}")
+                
+                # Split comma-separated string into list
+                skills = [s.strip().lower() for s in skills_data.split(',') if s.strip()]
+                cleaned_data['skills'] = skills
+                
+                # Log processed skills as JSON
+                logger.debug(f"Processed skills (JSON): {json.dumps(skills, indent=2)}")
+            except Exception as e:
+                logger.error(f"Error processing skills: {e}")
+                self.add_error('skills', 'Invalid skills format')
+        
+        # Check required fields
+        required_fields = ['title', 'company', 'location', 'status']
         missing_fields = []
         for field in required_fields:
             if not cleaned_data.get(field):
@@ -194,12 +207,37 @@ Include all requirements, responsibilities, and benefits in the Description sect
         try:
             if commit:
                 instance.save()
-                # Explicitly save the skills
+                # Handle skills as list of strings
                 if 'skills' in self.cleaned_data:
                     skills = self.cleaned_data['skills']
-                    instance.skills.set(skills)
-                    logger.info(f"Saved skills for job posting: {skills}")
-                # Save the many-to-many data for other fields
+                    if skills:
+                        # Log skills before saving
+                        logger.info(f"Setting skills (JSON): {json.dumps(skills, indent=2)}")
+                        
+                        # Get current skills for comparison
+                        current_skills = list(instance.skills.values_list('name', flat=True))
+                        logger.info(f"Current skills before update (JSON): {json.dumps(current_skills, indent=2)}")
+                        
+                        # Save new skills
+                        instance.skills.set(skills)
+                        
+                        # Get saved skills
+                        saved_skills = list(instance.skills.values_list('name', flat=True))
+                        logger.info(f"Saved skills after update (JSON): {json.dumps(saved_skills, indent=2)}")
+                        
+                        # Log skill changes
+                        added = set(skills) - set(current_skills)
+                        removed = set(current_skills) - set(skills)
+                        if added:
+                            logger.info(f"Added skills: {json.dumps(list(added), indent=2)}")
+                        if removed:
+                            logger.info(f"Removed skills: {json.dumps(list(removed), indent=2)}")
+                    else:
+                        # Log clearing all skills
+                        current_skills = list(instance.skills.values_list('name', flat=True))
+                        logger.info(f"Clearing all skills (JSON): {json.dumps(current_skills, indent=2)}")
+                        instance.skills.clear()
+                        logger.info("All skills cleared successfully")
                 self.save_m2m()
                 logger.info(f"Successfully saved job posting with ID: {instance.id}")
         except Exception as e:

@@ -1,6 +1,6 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required  # Add this import
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,10 +11,10 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 import json
 import logging
-from .models import JobPosting, SKILL_ICONS  # Remove Skill import
+from .models import JobPosting
 from .forms import JobPostingForm
 from django import template, forms
-from .utils.skill_icons import DARK_VARIANTS, ICON_NAME_MAPPING
+from .utils.skills_service import SkillsService
 
 logger = logging.getLogger(__name__)
 
@@ -94,42 +94,8 @@ class JobCreateView(BaseJobView, CreateView):
     def get_context_data(self, **kwargs):
         """Add additional context if needed"""
         context = super().get_context_data(**kwargs)
-        # Group skills by first letter using both SKILL_ICONS and ICON_NAME_MAPPING
-        skill_groups = {}
-        
-        # Add skills from SKILL_ICONS
-        for icon, name in SKILL_ICONS:
-            first_letter = name[0].upper()
-            if first_letter not in skill_groups:
-                skill_groups[first_letter] = []
-                
-            # Get the formatted icon
-            formatted_icon = icon
-            if icon in DARK_VARIANTS:
-                dark_icon = DARK_VARIANTS[icon]
-            else:
-                # Check if the icon exists in the mapping
-                mapped_icon = ICON_NAME_MAPPING.get(name, icon)
-                dark_icon = DARK_VARIANTS.get(mapped_icon, mapped_icon)
-                
-            skill_groups[first_letter].append({
-                'name': name,
-                'icon': formatted_icon,
-                'icon_dark': dark_icon
-            })
-
-        # Convert to sorted list of groups
-        context['skill_icons'] = [
-            {
-                'letter': letter,
-                'skills': sorted(skills, key=lambda x: x['name'])
-            }
-            for letter, skills in sorted(skill_groups.items())
-        ]
-        
-        # Add both mappings to the context
-        context['icon_name_mapping'] = json.dumps(ICON_NAME_MAPPING)
-        context['dark_variants'] = json.dumps(DARK_VARIANTS)
+        # Get skill groups from SkillsService
+        context['skill_icons'] = SkillsService.get_skill_groups()
         return context
 
 class JobPostingUpdateView(BaseJobView, UpdateView):
@@ -138,10 +104,22 @@ class JobPostingUpdateView(BaseJobView, UpdateView):
     template_name = 'jobs/edit.html'
     success_url = reverse_lazy('jobs:list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['job'] = self.object
+        context['initial_skills'] = json.dumps(list(self.object.skills.values('name', 'icon', 'icon_dark')))
+        return context
+
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'Job posting updated successfully.')
         return response
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.object:
+            kwargs['initial']['skills'] = self.object.skills.all()
+        return kwargs
 
 class JobPostingDeleteView(BaseJobView, DeleteView):
     """View for deleting job postings"""
@@ -205,42 +183,8 @@ def skills_autocomplete(request):
         all_skills = request.GET.get('all', 'false').lower() == 'true'
         logger.debug(f"Skills autocomplete request - query: {query}, all: {all_skills}")
         
-        # Use SKILL_ICONS directly
-        skills_data = list(SKILL_ICONS)  # Convert to list to ensure it's mutable
-        
-        # Filter if there's a query and not requesting all
-        if query and not all_skills:
-            skills_data = [
-                (icon, name) for icon, name in skills_data 
-                if query.lower() in name.lower()
-            ]
-        
-        # Group skills by first letter with proper icon handling
-        grouped_skills = {}
-        for icon, name in skills_data:
-            first_letter = name[0].upper()
-            if first_letter not in grouped_skills:
-                grouped_skills[first_letter] = []
-            
-            # Ensure proper icon formatting
-            icon_name = icon.replace('skill-icons:', '')
-            formatted_icon = f"skill-icons:{icon_name}"
-            dark_icon = DARK_VARIANTS.get(formatted_icon, formatted_icon)
-            
-            grouped_skills[first_letter].append({
-                'name': name,
-                'icon': formatted_icon,
-                'icon_dark': dark_icon
-            })
-        
-        # Convert to sorted list of groups
-        results = [
-            {
-                'letter': letter,
-                'skills': sorted(grouped_skills[letter], key=lambda x: x['name'].upper())
-            }
-            for letter in sorted(grouped_skills.keys())
-        ]
+        # Get autocomplete results from SkillsService
+        results = SkillsService.get_autocomplete_results(query, all_skills)
         
         return JsonResponse({
             'results': results
@@ -295,3 +239,12 @@ def parse_job_description(request):
             'status': 'error',
             'message': str(e)
         }, status=500)
+
+def add_job(request):
+    # ...existing code...
+    context = {
+        'form': form,
+        'icon_name_mapping': json.dumps({}),  # Add empty default mapping
+        'dark_variants': json.dumps({}),      # Add empty default mapping
+    }
+    return render(request, 'jobs/add.html', context)

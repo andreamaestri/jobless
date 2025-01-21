@@ -61,7 +61,22 @@ class FormHandler {
 
         try {
             const formData = new FormData(this.jobForm);
-            // Tagulous handles skills input, no need for custom processing
+            
+            // Process skills input
+            const skillsInput = document.getElementById('skills-input');
+            if (skillsInput && skillsInput.value) {
+                try {
+                    const skills = JSON.parse(skillsInput.value);
+                    // Extract just the names and join with commas
+                    const skillNames = skills.map(s => s.name.toLowerCase()).join(',');
+                    console.log('Processing skills:', { raw: skills, formatted: skillNames });
+                    formData.set('skills', skillNames);
+                } catch (e) {
+                    console.error('Error processing skills:', e);
+                    this.showNotification('Error', 'Invalid skills data format', 'error');
+                    return;
+                }
+            }
 
             const response = await this.submitForm(this.jobForm.action, formData);
             
@@ -71,6 +86,7 @@ class FormHandler {
                 this.handleErrors(response);
             }
         } catch (error) {
+            console.error('Form submission error:', error);
             this.showNotification('Error', error.message || 'Failed to save job', 'error');
         } finally {
             this.setButtonState(actionBtn, false, 'Save Job');

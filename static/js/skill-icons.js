@@ -39,6 +39,45 @@ class SkillIconsHelper {
         this.watchThemeChanges();
         this.initialized = true;
         this.initializationAttempts = 0;
+        this.iconMappings = {
+            'JavaScript': 'logos:javascript',
+            'Python': 'logos:python',
+            'Java': 'logos:java',
+            'React': 'logos:react',
+            'Angular': 'logos:angular-icon',
+            'Vue': 'logos:vue',
+            'Node.js': 'logos:nodejs-icon',
+            'TypeScript': 'logos:typescript-icon',
+            'PHP': 'logos:php',
+            'Ruby': 'logos:ruby',
+            'Go': 'logos:go',
+            'Rust': 'logos:rust',
+            'C++': 'logos:c-plusplus',
+            'C#': 'logos:c-sharp',
+            'Swift': 'logos:swift',
+            'Kotlin': 'logos:kotlin-icon',
+            'Docker': 'logos:docker-icon',
+            'Kubernetes': 'logos:kubernetes',
+            'AWS': 'logos:aws',
+            'Azure': 'logos:microsoft-azure',
+            'Git': 'logos:git-icon',
+            'MongoDB': 'logos:mongodb-icon',
+            'PostgreSQL': 'logos:postgresql',
+            'MySQL': 'logos:mysql',
+            'Redis': 'logos:redis',
+            'HTML': 'logos:html-5',
+            'CSS': 'logos:css-3',
+            'Sass': 'logos:sass',
+            'GraphQL': 'logos:graphql',
+            'Django': 'logos:django-icon',
+            'Flask': 'logos:flask',
+            'Spring': 'logos:spring-icon',
+            'Linux': 'logos:linux-tux',
+            'Jenkins': 'logos:jenkins',
+            'Webpack': 'logos:webpack',
+            'npm': 'logos:npm-icon',
+            'yarn': 'logos:yarn'
+        };
     }
 
     async initialize() {
@@ -51,22 +90,19 @@ class SkillIconsHelper {
         }
     }
 
-    async refreshIconElement(element, iconName, darkIconName = null) {
-        if (!element || !iconName) return;
+    async refreshIconElement(element, skillName, darkIconName = null) {
+        if (!element || !skillName) return;
         
         try {
             element.style.display = 'inline-block';
             element.style.visibility = 'visible';
             
-            const isDark = this.darkMode && darkIconName;
-            const icon = isDark ? darkIconName : iconName;
+            // Use skills-icons mapping or fallback to generic icon
+            const icon = this.iconMappings[skillName] || 'octicon:code-16';
             
             element.setAttribute('icon', icon);
-            
-            if (darkIconName) {
-                element.setAttribute('data-icon', iconName);
-                element.setAttribute('data-icon-dark', darkIconName);
-            }
+            element.setAttribute('width', '20');
+            element.setAttribute('height', '20');
 
             // Force a refresh
             const parent = element.parentElement;
@@ -80,7 +116,7 @@ class SkillIconsHelper {
                 }
             }
         } catch (error) {
-            console.warn(`Failed to refresh icon: ${iconName}`);
+            console.warn(`Failed to refresh icon for skill: ${skillName}`);
             element.setAttribute('icon', 'octicon:code-16');
         }
     }
@@ -100,6 +136,10 @@ class SkillIconsHelper {
             const darkIcon = icon.getAttribute('data-icon-dark');
             await this.refreshIconElement(icon, lightIcon, darkIcon);
         }
+    }
+
+    getIconForSkill(skillName) {
+        return this.iconMappings[skillName] || 'octicon:code-16';
     }
 }
 

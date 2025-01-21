@@ -1,6 +1,17 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import JobPosting
+from .models import JobPosting, SkillsTagModel
+
+class SkillsTagModelAdmin(ModelAdmin):
+    list_display = ('name', 'icon', 'icon_dark')
+    search_fields = ('name',)
+    list_filter = ('icon',)
+    fields = ('name', 'icon', 'icon_dark')
+    ordering = ('name',)
+
+@admin.register(SkillsTagModel)
+class SkillsTagModelAdmin(SkillsTagModelAdmin):
+    pass
 
 @admin.register(JobPosting)
 class JobPostingAdmin(ModelAdmin):
