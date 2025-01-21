@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
-                    "favourites",
+                    "favorite",
                     models.ManyToManyField(
                         blank=True,
                         related_name="favourited_jobs",

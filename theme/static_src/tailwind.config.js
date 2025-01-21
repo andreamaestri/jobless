@@ -57,9 +57,9 @@ module.exports = {
                     'primary-focus': '#ea580c',     // Rich orange focus
                     'primary-content': '#ffffff',    // White text
 
-                    'secondary': '#6366f1',         // Modern indigo
-                    'secondary-focus': '#4f46e5',   // Deep indigo focus
-                    'secondary-content': '#ffffff',  // White text
+                    'secondary': '#c4d6ed',         // Modern indigo
+                    'secondary-focus': '#b6c6e2',   // Deep indigo focus
+                    'secondary-content': '#0c1827',  // Black text
 
                     'accent': '#16a085',           // Keeping the teal you like
                     'accent-focus': '#0d9488',     // Slightly adjusted focus

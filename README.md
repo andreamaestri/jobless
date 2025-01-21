@@ -23,7 +23,7 @@
 ## Overview
 
 ### Purpose
-An application to track job searching activities. Logged in users can make a lists of jobs, contacts and events. Jobs can be marked as 'favourites'. Users can update and delete items they have added to their lists to keep an up to date record. 
+An application to track job searching activities. Logged in users can make a lists of jobs, contacts and events. Jobs can be marked as 'favorite'. Users can update and delete items they have added to their lists to keep an up to date record. 
 
 ### Target Audience
 The target audience is all job seekers, both out of work and currently employed. Users will benefit from having an easy to use record of their job seeking activities, contacts and appointments. 
@@ -82,7 +82,7 @@ The following database schema was created from the user stories and used as a ba
 The following changes were made to the original database schema:
 - JobPosting:
   - skills field added to implement tags
-  - favourites field added to allow for future developement of an add to favourites feature
+  - favorite field added to allow for future developement of an add to favorite feature
 - Events:
   - contacts field added to allow for the linking of contacts to an event, not currently in use
 
@@ -138,9 +138,9 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 ![AI Assistant](readme_images/AI1.JPG)
 
 ### Additional Features
-- **Feature 8:** Favourite a job. Users can chose to add a job to a favourites list. 
+- **Feature 8:** Favourite a job. Users can chose to add a job to a favorite list. 
 
-![Favourites](readme_images/favourites1.JPG)
+![favorite](readme_images/favorite1.JPG)
 
 - **Feature 9:** Calendar. Users can views events in a calendar or list mode.
 
@@ -291,6 +291,6 @@ Integration of frameworks, one merge conflict issue.
 - Claude AI for models
 
 ## Future Improvements
-Favourites feature for contacts and events.
+favorite feature for contacts and events.
 Link calendar to personal calendar.
 

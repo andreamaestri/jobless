@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load static tailwind_tags %} {% load account %} {% load static %}
+<!DOCTYPE html>{% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load static %}
 <html lang="en" class="h-screen w-screen" x-data :data-theme="$store.theme.current">
   <head>
     <meta charset="UTF-8" />
@@ -95,6 +95,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Iconify -->
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js" async defer></script>
+
 <!-- Alpine Plugins -->
 <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
  
@@ -106,12 +107,18 @@
     <script src="{% static 'js/sidebar.js' %}"></script>
     <script src="{% static 'js/theme.js' %}"></script>
     <script src="{% static 'js/toast.js' %}"></script>
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    {% django_htmx_script %}
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        });
+    </script>
 
     <!-- Third-party Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    
+        
     <style>
       [x-cloak] {
         display: none !important;
@@ -496,10 +503,10 @@
                   </div>
                 </div>
               </div>
-              <!-- Favourites -->
+              <!-- Favorites link -->
               <div class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-base-100/80 transition-colors duration-200">
                 <iconify-icon icon="octicon:star-24" class="text-base-content/70"></iconify-icon>
-                <a href="{% url 'jobs:favourites' %}" class="flex-1 text-left">Favourites</a>
+                <a href="{% url 'jobs:favorites' %}" class="flex-1 text-left">Favorites</a>
               </div>
               <a
                 href="{% url 'account_logout' %}"
@@ -537,23 +544,18 @@
     <!-- Main content with mobile header spacing -->
     <main
       x-cloak
-      class="h-full content-shift"
+      class="relative min-h-screen w-full bg-base-100"
       :class="{ 
               'pt-16 lg:pt-0': window.innerWidth < 1024,
-              'lg:ml-80': !$store.sidebar.collapsed && window.innerWidth >= 1024,
-              'lg:ml-20': $store.sidebar.collapsed && window.innerWidth >= 1024
+              'lg:pl-80': !$store.sidebar.collapsed && window.innerWidth >= 1024,
+              'lg:pl-20': $store.sidebar.collapsed && window.innerWidth >= 1024
           }"
     >
       <!-- Page Content -->
-      <div class="h-full">
-        <div class="p-4">
-          <div class="max-w-6xl mx-auto w-full">
-            {% block content %} {% endblock %}
-          </div>
-        </div>
+      <div class="w-full h-full">
+        {% block content %} {% endblock %}
       </div>
     </main>
-
 
     {% block extra_js %}
     <script>

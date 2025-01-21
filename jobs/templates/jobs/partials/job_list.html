@@ -1,0 +1,222 @@
+{% load job_tags %}
+
+<div class="w-full rounded-xl border border-base-200"
+     x-init="activeFilter = '{{ request.GET.filter|default:'all' }}'">
+    <!-- Table view (hidden on mobile) -->
+    <div class="hidden sm:block">
+        <table class="table w-full">
+            <!-- Table Header -->
+            <thead>
+                <tr class="bg-base-100 border-b border-base-200">
+                    <th class="font-medium text-base-content/70 bg-inherit">Company</th>
+                    <th class="font-medium text-base-content/70 bg-inherit">Location</th>
+                    <th class="font-medium text-base-content/70 bg-inherit min-w-[200px]">Job Title</th>
+                    <th class="font-medium text-base-content/70 bg-inherit min-w-[160px]">Skills</th>
+                    <th class="font-medium text-base-content/70 bg-inherit">Status</th>
+                    <th class="font-medium text-base-content/70 bg-inherit w-[100px]">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if jobs %}
+                    {% for job in jobs %}
+                    <tr class="hover:bg-base-200/30 border-b border-base-200">
+                        <td class="py-4">
+                            <div class="flex items-center gap-3">
+                                {% if job.company_logo %}
+                                <div class="avatar">
+                                    <div class="w-10 h-10 rounded-lg">
+                                        <img src="{{ job.company_logo.url }}" alt="{{ job.company_name }}" />
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="min-w-0">
+                                    <div class="font-semibold text-base-content truncate">{{ job.company }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-base-content/70">{{ job.location }}</td>
+                        <td class="min-w-[200px]">
+                            <a href="{% url 'jobs:detail' job.id %}" 
+                               class="block p-2 rounded-lg hover:bg-base-200/50 transition-all duration-200 group">
+                                <div class="font-medium text-base-content group-hover:text-primary">
+                                    {{ job.title }}
+                                </div>
+                                {% if job.department %}
+                                <div class="text-sm text-base-content/60 group-hover:text-base-content/70 transition-colors duration-200">
+                                    {{ job.department }}
+                                </div>
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td>
+                            {% if job.skills.all %}
+                            <div class="grid grid-cols-4 sm:grid-cols-6 md:flex md:flex-wrap gap-1.5 items-center min-w-[160px] p-2">
+                                {% for skill in job.skills.all %}
+                                <div class="tooltip tooltip-top before:z-50 before:shadow-lg" data-tip="{{ skill.name }}">
+                                    <iconify-icon icon="{{ skill.name|get_skill_icon }}" 
+                                                 class="text-lg sm:text-xl transition-all duration-200 hover:scale-110">
+                                    </iconify-icon>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge {{ job.status|status_badge }} badge-sm gap-1">
+                                <span class="icon" data-icon="{{ job.status|status_icon }}"></span>
+                                {{ job.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                <button class="btn btn-ghost btn-sm btn-square"
+                                        hx-post="{% url 'jobs:toggle_favorite' job.pk %}"
+                                        hx-swap="none"
+                                        @click="favoriteJobs.has({{ job.pk }}) ? favoriteJobs.delete({{ job.pk }}) : favoriteJobs.add({{ job.pk }})"
+                                        :class="{ 'text-warning': favoriteJobs.has({{ job.pk }}) }">
+                                    <iconify-icon icon="octicon:star-16" 
+                                                  :class="{ 'text-warning': favoriteJobs.has({{ job.pk }}) }"
+                                                  :icon="favoriteJobs.has({{ job.pk }}) ? 'octicon:star-fill-16' : 'octicon:star-16'">
+                                    </iconify-icon>
+                                </button>
+                                <div class="dropdown dropdown-end">
+                                    <button class="btn btn-ghost btn-sm btn-square">
+                                        <iconify-icon icon="octicon:kebab-horizontal-16"></iconify-icon>
+                                    </button>
+                                    <ul class="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-52">
+                                        <li><a href="{% url 'jobs:detail' job.pk %}" class="text-base-content">
+                                            <iconify-icon icon="octicon:eye-16"></iconify-icon>
+                                            View Details
+                                        </a></li>
+                                        <li><a href="{% url 'jobs:edit' job.pk %}" class="text-base-content">
+                                            <iconify-icon icon="octicon:pencil-16"></iconify-icon>
+                                            Edit
+                                        </a></li>
+                                        <li><a href="#" class="text-error" 
+                                            hx-delete="{% url 'jobs:delete' job.pk %}"
+                                            hx-confirm="Are you sure you want to delete this job?"
+                                            hx-target="closest tr"
+                                            hx-swap="outerHTML swap:1s">
+                                            <iconify-icon icon="octicon:trash-16"></iconify-icon>
+                                            Delete
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-8">
+                            <div class="flex flex-col items-center gap-3 text-base-content/60">
+                                <span class="icon text-3xl" data-icon="octicon:inbox-24"></span>
+                                <p>No jobs found matching your criteria</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Card view (visible only on mobile) -->
+    <div class="sm:hidden divide-y divide-base-200">
+        {% if jobs %}
+            {% for job in jobs %}
+            <div class="space-y-3">
+                <!-- Main Content - Make entire area clickable -->
+                <a href="{% url 'jobs:detail' job.id %}" 
+                   class="block p-4 space-y-3 active:bg-base-200/50 transition-colors">
+                    <!-- Company and Logo -->
+                    <div class="flex items-center gap-3">
+                        {% if job.company_logo %}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-xl">
+                                <img src="{{ job.company_logo.url }}" alt="{{ job.company_name }}" />
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <iconify-icon icon="heroicons:building-office" class="text-2xl text-primary"></iconify-icon>
+                        </div>
+                        {% endif %}
+                        <div class="min-w-0">
+                            <div class="font-semibold text-base text-base-content truncate">{{ job.company }}</div>
+                            <div class="text-sm text-base-content/70 flex items-center gap-1.5">
+                                <iconify-icon icon="heroicons:map-pin" class="text-base"></iconify-icon>
+                                {{ job.location }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job Title and Department -->
+                    <div>
+                        <div class="font-medium text-lg text-primary">{{ job.title }}</div>
+                        {% if job.department %}
+                        <div class="text-sm text-base-content/60 mt-0.5">{{ job.department }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Skills -->
+                    {% if job.skills.all %}
+                    <div class="flex flex-wrap gap-1.5 items-center pt-1">
+                        {% for skill in job.skills.all %}
+                        <div class="tooltip tooltip-top before:z-50 before:shadow-lg" data-tip="{{ skill.name }}">
+                            <div class="w-8 h-8 rounded-lg bg-base-200/50 flex items-center justify-center">
+                                <iconify-icon icon="{{ skill.name|get_skill_icon }}" 
+                                             class="text-xl transition-all duration-200">
+                                </iconify-icon>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Status -->
+                    <div class="flex items-center gap-2">
+                        <span class="badge {{ job.status|status_badge }} badge-md gap-1.5">
+                            <iconify-icon icon="{{ job.status|status_icon }}"></iconify-icon>
+                            {{ job.get_status_display }}
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Actions Bar -->
+                <div class="flex items-center justify-between px-4 pb-4">
+                    <button class="btn btn-ghost btn-sm gap-2 px-3"
+                            hx-post="{% url 'jobs:toggle_favorite' job.pk %}"
+                            hx-swap="none"
+                            @click="favoriteJobs.has({{ job.pk }}) ? favoriteJobs.delete({{ job.pk }}) : favoriteJobs.add({{ job.pk }})"
+                            :class="{ 'text-warning': favoriteJobs.has({{ job.pk }}) }">
+                        <iconify-icon :icon="favoriteJobs.has({{ job.pk }}) ? 'octicon:star-fill-16' : 'octicon:star-16'"
+                                    class="text-lg"></iconify-icon>
+                        <span x-text="favoriteJobs.has({{ job.pk }}) ? 'Favorited' : 'Favorite'"></span>
+                    </button>
+                    
+                    <div class="flex items-center gap-2">
+                        <a href="{% url 'jobs:edit' job.pk %}" 
+                           class="btn btn-ghost btn-sm gap-2 px-3">
+                            <iconify-icon icon="octicon:pencil-16"></iconify-icon>
+                            Edit
+                        </a>
+                        <button class="btn btn-ghost btn-sm text-error gap-2 px-3"
+                                hx-delete="{% url 'jobs:delete' job.pk %}"
+                                hx-confirm="Are you sure you want to delete this job?"
+                                hx-target="closest div.space-y-3"
+                                hx-swap="outerHTML swap:1s">
+                            <iconify-icon icon="octicon:trash-16"></iconify-icon>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="p-8 text-center text-base-content/60">
+                <span class="icon text-3xl mb-2 block" data-icon="octicon:inbox-24"></span>
+                <p>No jobs found matching your criteria</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
