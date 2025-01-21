@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',   
     'django_browser_reload',
     'django_extensions',
+    'django_htmx',
     'widget_tweaks',
     'allauth',
     'allauth.account',
@@ -98,6 +99,7 @@ MIDDLEWARE = [
     'django_browser_reload.middleware.BrowserReloadMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 

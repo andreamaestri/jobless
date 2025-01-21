@@ -15,6 +15,8 @@ from .models import JobPosting
 from .forms import JobPostingForm
 from django import template, forms
 from .utils.skills_service import SkillsService
+from django.utils import timezone
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +34,38 @@ class JobListView(BaseJobView, ListView):
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        queryset = JobPosting.objects.filter(user=self.request.user)
+        filter_type = self.request.GET.get('filter', 'all')
+        
+        match filter_type:
+            case 'favorites':
+                queryset = queryset.filter(favorites=self.request.user)
+            case 'recent':
+                one_week_ago = timezone.now() - timedelta(days=7)
+                queryset = queryset.filter(created_at__gte=one_week_ago)
+            case 'active':
+                queryset = queryset.exclude(status__in=['rejected', 'accepted'])
+            case 'interviewing':
+                queryset = queryset.filter(status='interviewing')
+            case 'rejected':
+                queryset = queryset.filter(status='rejected')
+        
+        return queryset.order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Fix: Use the correct reverse relationship to get favorited jobs
+        context['favorite_job_ids'] = list(
+            JobPosting.objects.filter(favorites=self.request.user).values_list('pk', flat=True)
+        )
+        return context
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['jobs/partials/job_list.html']
+        return ['jobs/list.html']
 
 class JobCreateView(BaseJobView, CreateView):
     """View for creating new job postings"""
@@ -137,42 +171,35 @@ class JobPostingDetailView(BaseJobView, DetailView):
     context_object_name = 'job'
 
 class JobFavoritesListView(BaseJobView, ListView):
-    """View for displaying user's favourited jobs"""
-    template_name = 'jobs/favourites.html'
+    """View for displaying user's favorited jobs"""
+    template_name = 'jobs/favorites.html'  # Changed from favorite.html
     context_object_name = 'favorite_jobs'
 
     def get_queryset(self):
-        return JobPosting.objects.filter(favourites=self.request.user)
-
-# Remove or comment out the old function-based view:
-# def favourited_jobs(request):
-#     """Display user's favourited jobs"""
-#     favorite_jobs = JobPosting.objects.filter(favourites=request.user)
-#     return render(request, "jobs/favourites.html", {"favorite_jobs": favorite_jobs})
+        return JobPosting.objects.filter(favorites=self.request.user)  # Make sure this matches your model field name
 
 @login_required
-def toggle_favourite(request, job_id):
-    """Toggle favourite status of a job posting"""
-    if request.method != "POST":
-        return HttpResponseNotAllowed(['POST'])
-        
-    job = get_object_or_404(JobPosting, id=job_id)
-    
-    if request.user in job.favourites.all():
-        job.favourites.remove(request.user)
-        message = "Job removed from favourites"
+@require_http_methods(["POST"])
+def toggle_favorite(request, pk):
+    job = get_object_or_404(JobPosting, pk=pk)
+    if request.user in job.favorites.all():
+        job.favorites.remove(request.user)
+        is_favorite = False
     else:
-        job.favourites.add(request.user)
-        message = "Job added to favourites"
+        job.favorites.add(request.user)
+        is_favorite = True
     
-    if request.headers.get('HX-Request'):
-        return HttpResponse(
-            status=200,
-            headers={'HX-Trigger': json.dumps({'showMessage': {'message': message}})}
-        )
-        
-    messages.success(request, message)
-    return redirect("jobs:list")
+    return HttpResponse(
+        status=200,
+        headers={
+            'HX-Trigger': json.dumps({
+                'favoriteToggled': {
+                    'jobId': pk,
+                    'isFavorite': is_favorite
+                }
+            })
+        }
+    )
 
 def skills_autocomplete(request):
     """
@@ -241,10 +268,21 @@ def parse_job_description(request):
         }, status=500)
 
 def add_job(request):
-    # ...existing code...
+    """Legacy function for adding jobs - Consider using JobCreateView instead"""
+    form = JobPostingForm()
+    if request.method == 'POST':
+        form = JobPostingForm(request.POST)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.user = request.user
+            job.save()
+            messages.success(request, 'Job posting created successfully')
+            return redirect('jobs:list')
+            
     context = {
         'form': form,
-        'icon_name_mapping': json.dumps({}),  # Add empty default mapping
-        'dark_variants': json.dumps({}),      # Add empty default mapping
+        'skill_icons': SkillsService.get_skill_groups(),
+        'icon_name_mapping': json.dumps({}),
+        'dark_variants': json.dumps({}),
     }
     return render(request, 'jobs/add.html', context)

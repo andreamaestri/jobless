@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% load job_tags %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col page-transition-wrapper">
+    <div class="flex-1 overflow-y-auto pb-20 page-enter">
+        <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content mb-8">Favorite Jobs</h1>
+                {% include "jobs/partials/job_list.html" with jobs=favorite_jobs %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

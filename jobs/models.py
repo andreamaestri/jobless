@@ -5,6 +5,7 @@ from tagulous.models import TagField
 from django.contrib.auth.models import User
 import tagulous.models
 from .utils.skill_icons import SKILL_ICONS, DARK_VARIANTS
+from django.contrib.auth import get_user_model
 
 class SkillsTagModel(tagulous.models.TagModel):
     icon = models.CharField(max_length=100, blank=True, null=True)
@@ -68,7 +69,12 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    favourites = models.ManyToManyField(User, related_name="favourited_jobs", blank=True)
+    favorite = models.ManyToManyField(User, related_name="favourited_jobs", blank=True)
+    favorites = models.ManyToManyField(
+        get_user_model(),
+        related_name='favorite_jobs',
+        blank=True,
+    )
 
     class Meta:
         ordering = ['-updated_at']

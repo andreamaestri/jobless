@@ -35,6 +35,9 @@ def get_skill_icon(skill_name, dark=False):
     Returns:
         str: Icon name with preference for dark variants when available
     """
+    if not isinstance(skill_name, str):
+        return 'heroicons:academic-cap-dark'  # Default icon if not a string
+
     # First check specific mappings in ICON_NAME_MAPPING
     icon = ICON_NAME_MAPPING.get(skill_name)
     if icon:
@@ -75,3 +78,25 @@ def get_skill_icon(skill_name, dark=False):
 def get_all_skill_icons():
     """Get all available skill icons and their names"""
     return SKILL_ICONS
+
+@register.filter
+def status_badge(status):
+    badges = {
+        'APPLIED': 'badge-primary',
+        'INTERVIEWING': 'badge-secondary',
+        'OFFER': 'badge-success',
+        'REJECTED': 'badge-error',
+        'WITHDRAWN': 'badge-warning',
+    }
+    return badges.get(status, 'badge-ghost')
+
+@register.filter
+def status_icon(status):
+    icons = {
+        'APPLIED': 'octicon:paper-airplane-16',
+        'INTERVIEWING': 'octicon:people-16',
+        'OFFER': 'octicon:check-circle-16',
+        'REJECTED': 'octicon:x-circle-16',
+        'WITHDRAWN': 'octicon:skip-16',
+    }
+    return icons.get(status, 'octicon:dash-16')

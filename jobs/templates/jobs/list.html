@@ -3,149 +3,155 @@
 {% load job_tags %}
 
 {% block content %}
-<div class="min-h-screen p-2 sm:p-4 md:p-6 lg:p-8 rounded-lg md:rounded-2xl bg-base-200 overflow-hidden">
-    <div class="w-full max-w-7xl mx-auto h-full">
-        <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-base-content">Jobs</h1>
-                <p class="text-sm sm:text-base text-base-content/70 mt-1">Manage your job applications</p>
-            </div>
-            <a href="{% url 'jobs:add' %}"
-                class="btn btn-primary btn-sm sm:btn-md gap-2">
-                <span class="icon" data-icon="octicon:plus-16"></span>
-                Add Job
-            </a>
-        </div>
-
-        {% if jobs %}
-        <div class="card bg-base-100 shadow-xl relative">
-            <div class="overflow-hidden">
-                <div class="overflow-x-auto rounded-xl">
-                    <table class="table table-zebra table-pin-rows table-xs sm:table-sm md:table-md w-full text-sm sm:text-base">
-                    <!-- head -->
-                    <thead>
-                        <tr class="bg-primary text-primary-content">
-                            <th class="min-w-[160px] sm:min-w-[200px]">Job Title</th>
-                            <th class="min-w-[100px] sm:min-w-[120px]">Company</th>
-                            <th class="min-w-[100px] sm:min-w-[120px]">Location</th>
-                            <th class="min-w-[140px] sm:min-w-[180px]">Skills</th>
-                            <th class="min-w-[90px] sm:min-w-[100px]">Status</th>
-                            <th class="min-w-[70px] sm:min-w-[80px]">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-base-100">
-                        {% for job in jobs %}
-                        <tr class="hover cursor-pointer touch-pan-y" 
-                            data-job-url="{% url 'jobs:detail' job.pk %}"
-                            onclick="window.location.href='{% url 'jobs:detail' job.pk %}'">
-                            <td>
-                                <div class="flex flex-col gap-1 py-1">
-                                    <div class="font-bold line-clamp-2 text-sm sm:text-base">{{ job.title }}</div>
-                                    {% if job.url %}
-                                    <a href="{{ job.url }}" target="_blank" onclick="event.stopPropagation()"
-                                        class="link link-primary link-hover text-xs inline-flex items-center gap-1">
-                                        View posting <iconify-icon icon="octicon:link-external-16"></iconify-icon>
-                                    </a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td class="whitespace-normal min-w-[120px]">
-                                <div class="line-clamp-2 text-xs sm:text-sm">{{ job.company }}</div>
-                            </td>
-                            <td class="whitespace-normal">
-                                <div class="line-clamp-2 text-xs sm:text-sm">{{ job.location }}</div>
-                            </td>
-                            <td>
-                                <div class="flex flex-wrap gap-1">
-                                    {% with skills=job.skills.all %}
-                                        {% with visible_skills=skills|slice:":3" %}
-                                            {% for skill in visible_skills %}
-                                            <div class="tooltip" data-tip="{{ skill.name }}">
-                                                <div class="w-8 h-8 p-2 flex items-center justify-center hover:text-primary
-                                                            transition-all duration-200 ease-in-out
-                                                            transform hover:scale-105">
-                                                    <iconify-icon icon="{{ skill.name|get_skill_icon }}" width="32" height="32"></iconify-icon>
-                                                </div>
-                                            </div>
-                                            {% endfor %}
-                                            {% with skill_count=skills.count %}
-                                                {% if skill_count > 3 %}
-                                                    {% with remaining=skill_count|add:"-3" %}
-                                                        <button type="button"
-                                                            class="text-xs text-base-content/70 hover:text-primary cursor-pointer"
-                                                            data-action="open-skills"
-                                                            data-skills="{{ skills|skills_to_json }}"
-                                                            onclick="event.stopPropagation()">
-                                                        +{{ remaining }} more
-                                                        </button>
-                                                    {% endwith %}
-                                                {% endif %}
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endwith %}
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge badge-xs sm:badge-sm
-                                    {% if job.status == 'interested' %}badge-info
-                                    {% elif job.status == 'applied' %}badge-warning
-                                    {% elif job.status == 'interviewing' %}badge-secondary
-                                    {% elif job.status == 'rejected' %}badge-error
-                                    {% else %}badge-success{% endif %}">
-                                    {{ job.status|title }}
-                                </span>
-                            </td>
-                            <td class="relative" data-dropdown-parent>
-                                <div class="flex items-center gap-2">
-                                    <form method="POST" action="{% url 'jobs:toggle_favourite' job.pk %}" class="inline" onclick="event.stopPropagation()">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
-                                            {% if job in request.user.favourite_jobs.all %}
-                                                <iconify-icon icon="octicon:star-fill-24" class="w-5 h-5 text-warning"></iconify-icon>
-                                            {% else %}
-                                                <iconify-icon icon="octicon:star-24" class="w-5 h-5"></iconify-icon>
-                                            {% endif %}
-                                        </button>
-                                    </form>
-                                    <div class="dropdown dropdown-end" onclick="event.stopPropagation()">
-                                        <button tabindex="0" class="btn btn-ghost btn-xs sm:btn-sm btn-square touch-pan-y">
-                                            <iconify-icon icon="octicon:kebab-horizontal-16" class="w-5 h-5"></iconify-icon>
-                                        </button>
-                                        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                                            <li><a class="text-base py-3" href="{% url 'jobs:detail' job.pk %}">View Details</a></li>
-                                            <li><a class="text-base py-3 text-warning" href="{% url 'jobs:edit' job.pk %}">Edit</a></li>
-                                            <li>
-                                                <form method="POST" action="{% url 'jobs:delete' job.pk %}" class="w-full">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="text-base py-3 text-error w-full text-left">Delete</button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    </table>
+<div class="min-h-screen flex flex-col page-transition-wrapper" 
+     x-data="{ 
+         activeFilter: 'all',
+         favoriteJobs: new Set({{ favorite_job_ids|safe }})
+     }">
+    <div class="flex-1 page-enter">
+        <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <!-- Enhanced Header -->
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-6 mb-8 sm:mb-12">
+                    <div class="animate-in slide-in-from-left duration-500">
+                        <div class="flex items-center justify-between sm:block">
+                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">Jobs</h1>
+                            <!-- Mobile-only Add Button -->
+                            <a href="{% url 'jobs:add' %}"
+                               class="btn btn-primary btn-circle sm:hidden shadow-lg hover:shadow-primary/30 transition-all duration-300">
+                                <iconify-icon icon="octicon:plus-16" class="text-xl"></iconify-icon>
+                            </a>
+                        </div>
+                        <p class="text-base-content/70 mt-2 text-sm sm:text-base">Track and manage your job applications</p>
+                    </div>
+                    <!-- Desktop-only Add Button -->
+                    <div class="hidden sm:block animate-in slide-in-from-right duration-500">
+                        <a href="{% url 'jobs:add' %}"
+                           class="btn btn-primary shadow-lg hover:shadow-primary/30 transition-all duration-300">
+                            <iconify-icon icon="octicon:plus-16"></iconify-icon>
+                            Add Job
+                        </a>
+                    </div>
                 </div>
+
+                {% if jobs %}
+                <div class="bg-base-200/50 backdrop-blur-sm rounded-3xl shadow-xl relative overflow-hidden animate-in fade-in duration-700">
+                    <!-- Enhanced Quick Actions Section -->
+                    <div class="p-4 sm:p-8 form-section bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mb-4 sm:mb-8">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 rounded-xl bg-primary/10">
+                                    <iconify-icon icon="octicon:zap-24" class="text-xl sm:text-2xl text-primary"></iconify-icon>
+                                </div>
+                                <div>
+                                    <h2 class="text-base sm:text-lg font-semibold text-base-content">Quick Filters</h2>
+                                    <p class="text-xs sm:text-sm text-base-content/70">Filter your job applications</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scrollable filter buttons on mobile -->
+                        <div class="relative -mx-4 sm:mx-0">
+                            <div class="flex gap-2 overflow-x-auto px-4 sm:px-0 sm:flex-wrap scrollbar-none pb-4 sm:pb-0">
+                                <button hx-get="{% url 'jobs:list' %}?filter=all"
+                                        hx-target="#jobs-table-container"
+                                        hx-indicator="#filter-loading"
+                                        @click="activeFilter = 'all'" 
+                                        :class="{ 'bg-primary/20': activeFilter === 'all' }"
+                                        class="btn btn-sm md:btn-md gap-2 min-w-max bg-base-100 hover:bg-primary/10 border-none 
+                                               transition-all duration-200 first:ml-0">
+                                    <iconify-icon icon="heroicons:squares-2x2" class="text-lg"></iconify-icon>
+                                    <span class="whitespace-nowrap">All Jobs</span>
+                                </button>
+                                <button hx-get="{% url 'jobs:list' %}?filter=favorites"
+                                        hx-target="#jobs-table-container"
+                                        hx-indicator="#filter-loading"
+                                        @click="activeFilter = 'favorites'"
+                                        :class="{ 'bg-warning/20': activeFilter === 'favorites' }"
+                                        class="btn btn-sm md:btn-md gap-2 min-w-max bg-base-100 hover:bg-warning/10 border-none 
+                                               transition-all duration-200">
+                                    <iconify-icon icon="heroicons:star" class="text-lg"></iconify-icon>
+                                    <span class="whitespace-nowrap">Favorites</span>
+                                </button>
+                                <button hx-get="{% url 'jobs:list' %}?filter=recent"
+                                        hx-target="#jobs-table-container"
+                                        hx-indicator="#filter-loading"
+                                        @click="activeFilter = 'recent'"
+                                        :class="{ 'bg-info/20': activeFilter === 'recent' }"
+                                        class="btn btn-sm md:btn-md gap-2 min-w-max bg-base-100 hover:bg-info/10 border-none 
+                                               transition-all duration-200">
+                                    <iconify-icon icon="heroicons:clock" class="text-lg"></iconify-icon>
+                                    <span class="whitespace-nowrap">Recent</span>
+                                </button>
+                                <button hx-get="{% url 'jobs:list' %}?filter=active"
+                                        hx-target="#jobs-table-container"
+                                        hx-indicator="#filter-loading"
+                                        @click="activeFilter = 'active'"
+                                        :class="{ 'bg-success/20': activeFilter === 'active' }"
+                                        class="btn btn-sm md:btn-md gap-2 min-w-max bg-base-100 hover:bg-success/10 border-none 
+                                               transition-all duration-200">
+                                    <iconify-icon icon="heroicons:briefcase" class="text-lg"></iconify-icon>
+                                    <span class="whitespace-nowrap">Active</span>
+                                </button>
+                                <button hx-get="{% url 'jobs:list' %}?filter=interviewing"
+                                        hx-target="#jobs-table-container"
+                                        hx-indicator="#filter-loading"
+                                        @click="activeFilter = 'interviewing'"
+                                        :class="{ 'bg-secondary/20': activeFilter === 'interviewing' }"
+                                        class="btn btn-sm md:btn-md gap-2 min-w-max bg-base-100 hover:bg-secondary/10 border-none 
+                                               transition-all duration-200">
+                                    <iconify-icon icon="heroicons:user-group" class="text-lg"></iconify-icon>
+                                    <span class="whitespace-nowrap">Interviewing</span>
+                                </button>
+                            </div>
+                            <!-- Fade indicators for scroll -->
+                            <div class="absolute left-0 top-0 bottom-4 w-4 bg-gradient-to-r from-base-200/50 to-transparent sm:hidden pointer-events-none"></div>
+                            <div class="absolute right-0 top-0 bottom-4 w-4 bg-gradient-to-l from-base-200/50 to-transparent sm:hidden pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Table Section with ID for HTMX targeting -->
+                    <div id="jobs-table-container" class="p-0 sm:p-6 md:p-8 bg-base-100/80 relative">
+                        <!-- Loading indicator -->
+                        <div id="filter-loading" 
+                             class="htmx-indicator absolute inset-0 bg-base-100/50 backdrop-blur-sm 
+                                    flex items-center justify-center z-50 pointer-events-none
+                                    opacity-0 transition-opacity duration-300">
+                            <div class="flex flex-col items-center gap-2 pointer-events-auto">
+                                <span class="loading loading-spinner loading-lg text-primary"></span>
+                                <span class="text-sm text-base-content/70">Loading...</span>
+                            </div>
+                        </div>
+                        
+                        {% include "jobs/partials/job_list.html" with jobs=jobs favorite_job_ids=favorite_job_ids %}
+                    </div>
+                </div>
+                {% else %}
+                <!-- Enhanced Empty State -->
+                <div class="bg-base-200/50 backdrop-blur-sm rounded-3xl shadow-xl animate-in fade-in duration-700">
+                    <div class="p-8 form-section bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" style="--delay: 0">
+                        <div class="flex items-center justify-center flex-col gap-6 py-16">
+                            <div class="text-center max-w-md">
+                                <div class="p-4 rounded-full bg-primary/10 inline-block mb-4">
+                                    <iconify-icon icon="heroicons:document-plus" class="text-6xl text-primary"></iconify-icon>
+                                </div>
+                                <h3 class="text-2xl font-semibold text-base-content mb-2">No jobs added yet</h3>
+                                <p class="text-base-content/70">Start tracking your job applications and keep everything organized in one place</p>
+                            </div>
+                            <a href="{% url 'jobs:add' %}"
+                                class="btn btn-primary gap-2 shadow-lg hover:shadow-primary/30 transition-all duration-300">
+                                <span class="icon" data-icon="octicon:plus-16"></span>
+                                Add Your First Job
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
-        {% else %}
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body items-center text-center py-12">
-                <h3 class="card-title text-base-content/70 mb-6">No jobs added yet</h3>
-                <a href="{% url 'jobs:add' %}"
-                    class="btn btn-primary gap-2">
-                    <span class="icon" data-icon="octicon:plus-16"></span>
-                    Add Your First Job
-                </a>
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
+
 {% endblock %}
 
 {% block modal %}
@@ -171,6 +177,46 @@ document.addEventListener('DOMContentLoaded', function() {
             }));
         });
     });
+
+    // Handle dropdown menus outside of table
+    const dropdownWrappers = document.querySelectorAll('[data-dropdown-wrapper]');
+    dropdownWrappers.forEach(wrapper => {
+        const dropdownContent = wrapper.querySelector('.dropdown-content');
+        if (dropdownContent) {
+            document.body.appendChild(dropdownContent);
+            const rect = wrapper.getBoundingClientRect();
+            dropdownContent.style.top = `${rect.bottom}px`;
+            dropdownContent.style.left = `${rect.left}px`;
+            dropdownContent.style.minWidth = `${rect.width}px`;
+            dropdownContent.style.display = 'none';
+            wrapper.addEventListener('click', () => {
+                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+    });
+
+});
+
+// CSRF Token setup for HTMX
+document.body.addEventListener('htmx:configRequest', (event) => {
+    const getCookie = (name) => {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    const csrfToken = getCookie('csrftoken');
+    if (csrfToken) {
+        event.detail.headers['X-CSRFToken'] = csrfToken;
+    }
 });
 </script>
 {% endblock %}

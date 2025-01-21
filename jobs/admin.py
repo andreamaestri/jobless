@@ -29,7 +29,7 @@ class JobPostingAdmin(ModelAdmin):
     
     # Fields to show in the edit form
     fields = ['title', 'company', 'location', 'salary_range', 'url', 
-             'description', 'skills', 'status', 'user', 'favourites',
+             'description', 'skills', 'status', 'user', 'favorite',
              'created_at', 'updated_at']
     
     # Enable features
