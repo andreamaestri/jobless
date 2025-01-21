@@ -98,60 +98,89 @@ class FormHandler {
         e.preventDefault();
         e.stopPropagation();
         
-        if (!this.parseForm) {
-            console.error('Parser form not found');
-            this.showNotification('Error', 'Parse form not found', 'error');
+        const descriptionInput = this.parseForm.querySelector('#paste');
+        if (!descriptionInput) {
+            console.error('Description input not found');
+            this.showNotification('Error', 'Form configuration error', 'error');
             return;
         }
 
-        const description = this.parseForm.querySelector('#paste')?.value?.trim();
-        console.log('Description:', description?.substring(0, 100) + '...');
-        
+        const description = descriptionInput.value?.trim();
         if (!description) {
-            console.warn('No description provided');
             this.showNotification('Error', 'Please paste a job description first', 'error');
+            descriptionInput.focus();
             return;
         }
 
-        const formData = new FormData();
-        formData.append('description', this.cleanText(description));
-        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+            this.showNotification('Error', 'Security token missing', 'error');
+            return;
+        }
+
+        const parseUrl = this.parseForm.dataset.url;
+        if (!parseUrl) {
+            console.error('Parse URL not found in data attribute');
+            this.showNotification('Error', 'Configuration error', 'error');
+            return;
+        }
 
         const submitButton = this.parseButton;
-        console.log('Submit button:', submitButton);
+        const errorDiv = document.getElementById('parse-error');
+        
         this.setButtonState(submitButton, true, 'Processing...');
+        if (errorDiv) errorDiv.classList.add('hidden');
 
         try {
-            const parseUrl = this.parseForm.dataset.url;
-            console.log('Sending request to:', parseUrl);
+            const formData = new FormData();
+            formData.append('description', this.cleanText(description));
+            formData.append('csrfmiddlewaretoken', csrfToken);
+
             const response = await fetch(parseUrl, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    'X-CSRFToken': csrfToken
                 }
             });
 
-            console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('Response data:', data);
             
             if (!response.ok) {
-                throw new Error(data.message || data.error || 'Server error occurred');
+                let errorMessage = data.error || 'Failed to parse description';
+                
+                // Handle missing fields specifically
+                if (data.missing_fields && data.missing_fields.length > 0) {
+                    errorMessage = `AI couldn't extract these fields: ${data.missing_fields.join(', ')}. Please fill them manually.`;
+                }
+                
+                // Show error in both notification and error div
+                this.showNotification('Error', errorMessage, 'error');
+                if (errorDiv) {
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.classList.remove('hidden');
+                }
+                return;
             }
 
             if (data.status === 'success' && data.data) {
-                console.log('Successfully parsed job data');
                 this.populateFormFields(data.data);
                 this.showNotification('Success', 'Job details extracted successfully!', 'success');
-                this.parseForm.querySelector('#paste').value = '';
+                descriptionInput.value = '';
+                if (errorDiv) errorDiv.classList.add('hidden');
             } else {
-                throw new Error(data.message || data.error || 'Failed to parse description');
+                throw new Error(data.error || 'No data returned from parser');
             }
         } catch (error) {
             console.error('Parse error:', error);
-            this.showNotification('Error', error.message || 'Failed to process job description', 'error');
+            const errorMessage = error.message || 'Failed to process job description. Please try again.';
+            this.showNotification('Error', errorMessage, 'error');
+            if (errorDiv) {
+                errorDiv.textContent = errorMessage;
+                errorDiv.classList.remove('hidden');
+            }
         } finally {
             this.setButtonState(submitButton, false, 'Process with AI');
         }

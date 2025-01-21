@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load job_tags %}
 
 {% block content %}
 <div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
@@ -12,7 +13,10 @@
                         <h1 class="text-3xl font-bold text-base-content">{{ object.title }}</h1>
                         <p class="text-xl text-primary mt-2">{{ object.company }}</p>
                     </div>
-                    <span class="badge badge-{{ object.status|lower }} badge-lg">{{ object.get_status_display }}</span>
+                    <span class="badge {{ object.status|status_badge }} badge-lg">
+                        <iconify-icon icon="{{ object.status|status_icon }}" class="mr-1"></iconify-icon>
+                        {{ object.get_status_display }}
+                    </span>
                 </div>
             </div>
 
@@ -47,7 +51,10 @@
                     <div class="col-span-2">
                         <div class="flex flex-wrap gap-2">
                             {% for skill in object.skills.all %}
-                            <span class="badge badge-accent">{{ skill }}</span>
+                            <span class="badge badge-accent gap-2">
+                                <iconify-icon icon="{{ skill|get_skill_icon:True }}"></iconify-icon>
+                                {{ skill.name|default:skill }}
+                            </span>
                             {% endfor %}
                         </div>
                     </div>
@@ -56,8 +63,14 @@
                 <div class="grid grid-cols-3 py-4">
                     <div class="text-sm font-semibold text-base-content">Description</div>
                     <div class="col-span-2 text-base-content">
-                        <div class="prose prose-base-content max-w-none">
-                            {{ object.description|linebreaks }}
+                        <div x-data="{ 
+                            formattedDescription: '',
+                            init() {
+                                this.formattedDescription = marked.parse(`{{ object.description|escapejs }}`);
+                            }
+                        }" 
+                        x-html="formattedDescription"
+                        class="prose prose-base-content max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-pre:bg-base-300 prose-pre:p-4 prose-pre:rounded-lg">
                         </div>
                     </div>
                 </div>

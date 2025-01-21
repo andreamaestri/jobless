@@ -1,10 +1,19 @@
 {% load job_tags %}
 
+<script>
+    // Pre-initialize the icon mappings
+    window.MODAL_ICON_MAPPING = {{ icon_name_mapping|safe }};
+    window.MODAL_DARK_VARIANTS = {{ dark_variants|safe }};
+</script>
+
 <div x-data="{
     selectedSkills: [],
+    iconMapping: window.MODAL_ICON_MAPPING || {},
+    darkVariants: window.MODAL_DARK_VARIANTS || {},
+    defaultIcon: 'heroicons:academic-cap',
     open: false,
     search: '',
-    currentLetter: null,
+    currentLetter: '',
     currentPreviewLetter: null,
     lastSelected: null,
     touchStartY: null,
@@ -15,8 +24,36 @@
     mouseY: 0,
     lastMouseX: 0,
     lastMouseY: 0,
+    isMobile: window.innerWidth < 640,
+    isSearchFocused: false,
     init() {
-        window.skillsManager?.resetModalState();
+        // Add resize listener for mobile detection
+        window.addEventListener('resize', () => {
+            this.isMobile = window.innerWidth < 640;
+        });
+
+        // Initialize selectedSkills after icon mappings are ready
+        this.$nextTick(() => {
+            this.selectedSkills = [];
+            if (window.skillSelect?.items) {
+                this.selectedSkills = window.skillSelect.items.map(name => ({
+                    name: name,
+                    icon: this.getIconForSkill(name),
+                    icon_dark: this.getDarkIconForSkill(name)
+                }));
+            }
+        });
+    },
+
+    getIconForSkill(skillName) {
+        if (!this.iconMapping) return this.defaultIcon;
+        return this.iconMapping[skillName] || this.defaultIcon;
+    },
+
+    getDarkIconForSkill(skillName) {
+        const baseIcon = this.getIconForSkill(skillName);
+        if (!this.darkVariants) return baseIcon;
+        return this.darkVariants[baseIcon] || baseIcon;
     },
 
     handleSkillsUpdate(e) {
@@ -166,7 +203,7 @@
     },
 
     handleScroll(e) {
-        if (!this.isScrolling) {
+        if (!this.isScrolling && e.target) {  // Add null check
             this.isScrolling = true;
             
             const container = e.target;
@@ -261,10 +298,12 @@
         return `transform: translate(${this.lastMouseX + 12}px, ${this.lastMouseY}px) translate(-50%, -50%); opacity: 1;`;
     }
 }" 
-     @keydown.escape.window="cancel()"
-     @open-skills-modal.window="handleSkillsUpdate($event)">
+    x-init="init()"
+    x-cloak
+    @keydown.escape.prevent.stop="cancel()"
+    @open-skills-modal.window="handleSkillsUpdate($event)">
     
-    <!-- Backdrop -->
+    <!-- Backdrop with blur effect -->
     <div x-show="open" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
@@ -272,73 +311,76 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 bg-black/25 backdrop-blur-sm" 
+         class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" 
          aria-hidden="true"></div>
 
-    <!-- Modal -->
-    <div x-show="open" 
-         class="modal modal-open">
-        <div class="relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col h-[90vh]">
-            <!-- Header with search -->
-            <div class="sticky top-0 z-[90] px-6 py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200">
-                <div class="flex items-center justify-between gap-6">
-                    <h3 class="text-xl font-bold whitespace-nowrap flex items-center gap-2">
-                        <iconify-icon icon="heroicons:academic-cap" class="text-primary text-2xl"></iconify-icon>
-                        Manage Skills
+    <!-- Modal with improved mobile layout -->
+    <div x-show="open" class="modal modal-open">
+        <div class="relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
+             :class="isMobile ? 'h-[100vh]' : 'h-[90vh]'">
+            
+            <!-- Header with improved search -->
+            <div class="sticky top-0 z-[90] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200"
+                 :class="{'shadow-lg': isSearchFocused || search}">
+                <div class="flex items-center gap-3 sm:gap-6">
+                    <!-- Mobile back button -->
+                    <button @click="cancel()" 
+                            class="btn btn-ghost btn-sm sm:hidden">
+                        <iconify-icon icon="heroicons:arrow-left" class="text-xl"></iconify-icon>
+                    </button>
+                    
+                    <!-- Title - Hide on mobile when search focused -->
+                    <h3 class="text-lg sm:text-xl font-bold whitespace-nowrap items-center gap-2"
+                        :class="{'hidden': isMobile && isSearchFocused}">
+                        <span class="hidden sm:inline-flex items-center gap-2">
+                            <iconify-icon icon="heroicons:academic-cap" class="text-primary text-2xl"></iconify-icon>
+                            Manage Skills
+                        </span>
+                        <span class="sm:hidden">Skills</span>
                     </h3>
+
+                    <!-- Improved search input -->
                     <div class="relative flex-1 max-w-lg mx-auto">
                         <div class="relative">
                             <input type="text" 
                                    x-model="search"
+                                   @focus="isSearchFocused = true"
+                                   @blur="isSearchFocused = false"
                                    @input="handleSearch($event)"
                                    placeholder="Search skills..."
-                                   class="input input-bordered w-full pl-11 pr-4 h-12 bg-base-200/50 focus:bg-base-200 transition-colors">
+                                   class="input input-bordered w-full pl-11 pr-4 h-10 sm:h-12 bg-base-200/50 focus:bg-base-200 transition-colors">
                             <iconify-icon icon="heroicons:magnifying-glass" 
-                                        class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
+                                         class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
                             </iconify-icon>
+                            <!-- Clear search button -->
+                            <button x-show="search"
+                                    @click="search = ''; handleSearch({target: {value: ''}})"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle">
+                                <iconify-icon icon="heroicons:x-mark" class="text-base"></iconify-icon>
+                            </button>
                         </div>
                     </div>
-                    <div class="w-[120px]"></div> <!-- Spacer for balance -->
                 </div>
             </div>
-            
-            <!-- Main content -->
+
+            <!-- Main content with improved scrolling -->
             <div class="flex-1 min-h-0 overscroll-contain">
                 <div class="flex h-full overflow-hidden">
-                    <!-- Letter navigation -->
-                    <nav class="hidden sm:flex fixed bottom-[4.5rem] inset-x-0 z-[70] flex-row justify-center items-center gap-[2px] p-1 bg-base-100/95 backdrop-blur border-t border-base-200 sm:gap-1 sm:p-2"
-                         @touchstart="startLetterDrag"
-                         @touchmove.passive="handleLetterDrag"
-                         @touchend="endLetterDrag"
-                         @mousemove.throttle.100ms="handleMouseMove($event)"
-                         @mouseleave="hideLetterPreview()"
-                         @mouseenter="startLetterNavigation"
-                         @mouseleave="stopLetterNavigation">
-                        {% for group in skill_icons %}
-                        <button @click="jumpToLetter('{{ group.letter }}')"
-                                @mouseenter="previewLetter('{{ group.letter }}')"
-                                @mouseleave="hideLetterPreview()"
-                                class="min-w-[1.25rem] h-6 flex items-center justify-center text-[9px] font-medium text-base-content/60 hover:text-primary hover:bg-base-200 rounded transition-all duration-150 px-0.5 sm:min-w-[2rem] sm:h-8 sm:text-xs sm:px-2"
-                                :class="{'text-primary font-semibold bg-primary/10': currentLetter === '{{ group.letter }}'}">
-                            {{ group.letter }}
-                        </button>
-                        {% endfor %}
-                        
-                        <!-- Letter preview bubble -->
-                        <div class="fixed z-50 pointer-events-none opacity-0 transition-opacity duration-150 hidden sm:block" 
-                             :style="previewPosition"
-                             :class="{'opacity-100': currentPreviewLetter}">
-                            <div class="bg-primary text-primary-content px-6 py-4 rounded-xl shadow-lg">
-                                <span x-text="currentPreviewLetter" class="text-4xl font-black"></span>
-                            </div>
-                            <div class="absolute -left-1.5 top-1/2 -translate-y-1/2 border-8 border-transparent border-r-primary"></div>
-                        </div>
-                    </nav>
-
-                    <!-- Skills grid -->
-                    <div class="flex-1 overflow-y-auto bg-base-300 px-6 pb-16 sm:pb-32 scroll-smooth" 
+                    <!-- Skills grid with better touch handling -->
+                    <div class="flex-1 overflow-y-auto bg-base-300 px-4 sm:px-6 pb-32 scroll-smooth overscroll-contain" 
                          x-ref="skillsContainer"
-                         @scroll.throttle.50ms="handleScroll">
+                         @scroll.throttle.50ms="$el && handleScroll($event)">
+                        
+                        <!-- Empty state with fixed visibility logic -->
+                        <div x-show="search && !$refs.skillsContainer.querySelectorAll('.skill-card[style*=\'display: \']:not([style*=\'display: none\'])').length"
+                             class="py-12 text-center text-base-content/60"
+                             x-cloak
+                             x-transition>
+                            <iconify-icon icon="heroicons:magnifying-glass" class="text-4xl mb-4"></iconify-icon>
+                            <p class="text-sm">No skills found matching "<span x-text="search"></span>"</p>
+                        </div>
+
+                        <!-- Skill groups with improved layout -->
                         {% for group in skill_icons %}
                         <div class="skill-group" data-letter="{{ group.letter }}">
                             <div class="sticky bg-base-200 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
@@ -347,18 +389,28 @@
                                     <div class="h-px flex-1 bg-gradient-to-r from-base-300 to-transparent"></div>
                                 </div>
                             </div>
-                            <div class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                            <div class="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                 {% for skill in group.skills %}
                                 <button type="button"
-                                        class="skill-card group bg-base-100 hover:bg-base-200 transition-colors duration-200 rounded-xl p-4 flex items-center gap-4 relative shadow-sm hover:shadow-md"
+                                        class="skill-card group bg-base-100 hover:bg-base-200 active:bg-base-300 
+                                               transition-all duration-200 rounded-xl p-3 sm:p-4 flex items-center 
+                                               gap-3 sm:gap-4 relative shadow-sm hover:shadow-md 
+                                               focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        :class="{
+                                            'selected': isSelected('{{ skill.name }}'),
+                                            'transform active:scale-95': isMobile
+                                        }"
                                         data-skill="{{ skill|json|escapejs }}"
-                                        :class="{'selected': isSelected('{{ skill.name }}')}"
-                                        @click="handleQuickSelect($event, JSON.parse('{{ skill|json|escapejs }}'))">
+                                        @click="handleQuickSelect($event, {
+                                            name: '{{ skill.name }}',
+                                            icon: getIconForSkill('{{ skill.name }}'),
+                                            icon_dark: getDarkIconForSkill('{{ skill.name }}')
+                                        })">
                                     <div class="icon-wrapper">
-                                        <iconify-icon icon="{{ skill.icon_dark|default:skill.icon }}" 
+                                        <iconify-icon :icon="getDarkIconForSkill('{{ skill.name }}')"
                                                       width="45" 
-                                                      height="45"
-                                                      ></iconify-icon>
+                                                      height="45">
+                                        </iconify-icon>
                                     </div>
                                     <span class="skill-name p-2">{{ skill.name }}</span>
                                     <div class="check-indicator">
@@ -373,26 +425,80 @@
                 </div>
             </div>
 
-            <!-- Footer -->
-            <div class="fixed bottom-0 inset-x-0 z-[80] px-6 py-4 bg-base-100/95 backdrop-blur border-t border-base-200">
-                <div class="flex items-center justify-end gap-3">
-                    <span class="text-base-content/60">
-                        <span x-text="selectedSkills.length"></span> skills selected
+            <!-- Footer with improved mobile layout -->
+            <div class="fixed bottom-0 inset-x-0 z-[80] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-lg border-t border-base-200 shadow-lg">
+                <div class="flex items-center justify-between sm:justify-end gap-3">
+                    <span class="text-base-content/60 text-sm whitespace-nowrap">
+                        <span x-text="selectedSkills.length"></span> selected
                     </span>
-                    <div class="divider divider-horizontal"></div>
-                    <div class="flex gap-3">
+                    <div class="flex gap-2 sm:gap-3">
                         <button @click="cancel()" 
-                                class="btn btn-ghost hover:bg-error/10 hover:text-error">
+                                class="btn btn-sm sm:btn-md btn-ghost hover:bg-error/10 hover:text-error">
                             Cancel
                         </button>
-                        <button @click="save()" 
-                                class="btn btn-primary">
-                            Apply Changes
+                        <button type="button" 
+                                @click="save()" 
+                                class="btn btn-sm sm:btn-md btn-primary min-w-[100px]">
+                            Apply
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal-backdrop" @click="cancel()"></div>
     </div>
 </div>
+
+<!-- Add error handling for icon mappings -->
+<script>
+document.addEventListener('alpine:init', () => {
+    if (typeof {{ icon_name_mapping|safe }} === 'undefined') {
+        console.error('Icon mappings not properly initialized');
+    }
+});
+</script>
+
+<style>
+/* Hide Alpine elements before initialization */
+[x-cloak] { display: none !important; }
+
+/* Improved mobile touch handling */
+@media (max-width: 640px) {
+    .skill-card {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    .skill-card:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Improved scrolling */
+.overscroll-contain {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Improved transitions */
+.modal-enter {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.modal-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.modal-exit {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modal-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 200ms, transform 200ms;
+}
+</style>

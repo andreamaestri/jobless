@@ -69,11 +69,10 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    favorite = models.ManyToManyField(User, related_name="favourited_jobs", blank=True)
-    favorites = models.ManyToManyField(
-        get_user_model(),
-        related_name='favorite_jobs',
-        blank=True,
+    favorite_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='favorited_postings',
+        blank=True
     )
 
     class Meta:
