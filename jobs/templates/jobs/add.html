@@ -143,53 +143,40 @@
                             </div>
 
                             <!-- Skills -->
-                            <div class="p-8 form-section" style="--delay: 2">
+                            <div class="p-8 form-section" 
+                                 x-data="{ 
+                                     selectedSkills: [],
+                                     updateSkills(skills) {
+                                         this.selectedSkills = skills;
+                                         document.getElementById('skills-input').value = JSON.stringify(skills);
+                                     },
+                                     init() {
+                                         this.$watch('selectedSkills', value => {
+                                             if (value && Array.isArray(value)) {
+                                                 this.selectedSkills = value;
+                                             }
+                                         });
+                                     }
+                                 }" 
+                                 style="--delay: 2">
                                 <div class="flex items-center justify-between mb-6">
                                     <div class="flex items-center gap-2">
                                         <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
                                         <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
                                     </div>
                                     <button type="button" 
-                                            @click="$dispatch('open-skills-modal')"
+                                            @click="$dispatch('open-skills-modal', { selectedSkills: selectedSkills })"
                                             class="btn btn-ghost btn-sm gap-2">
                                         <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
                                         Manage Skills
                                     </button>
                                 </div>
                                 
-                                <div class="relative" 
-                                     x-data="{ 
-                                         selectedSkills: [],
-                                         init() {
-                                             this.$watch('selectedSkills', value => {
-                                                 if (value && Array.isArray(value)) {
-                                                     this.selectedSkills = value;
-                                                 }
-                                             });
-                                             
-                                             this.$el.addEventListener('toggle-skill', (event) => {
-                                                 const skill = event.detail;
-                                                 const index = this.selectedSkills.findIndex(s => s.name === skill.name);
-                                                 if (index === -1) {
-                                                     this.selectedSkills.push(skill);
-                                                 } else {
-                                                     this.selectedSkills.splice(index, 1);
-                                                 }
-                                                 this.$dispatch('skills-updated', this.selectedSkills);
-                                             });
-                                         }
-                                     }" 
-                                     @skills-updated.window="selectedSkills = Array.isArray($event.detail) ? $event.detail : []">
-                                    <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100 selected-skills-container">
+                                <div class="relative" @skills-updated.window="updateSkills($event.detail)">
+                                    <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
                                         <div x-show="selectedSkills.length === 0" class="text-base-content/60 text-sm">
                                             Click 'Manage Skills' to add required skills
                                         </div>
-                                        <select id="skills-select" 
-                                                name="skills"
-                                                multiple
-                                                class="hidden"
-                                                autocomplete="off">
-                                        </select>
                                         <div class="flex flex-wrap gap-2" 
                                              x-show="selectedSkills.length > 0"
                                              x-transition:enter="transition ease-out duration-200"
@@ -219,6 +206,8 @@
                                             </template>
                                         </div>
                                     </div>
+                                    <!-- Hidden input for form submission -->
+                                    <input type="hidden" name="skills" id="skills-input">
                                 </div>
                             </div>
 
@@ -263,9 +252,9 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Skills input inside form -->
+                        <input type="hidden" name="skills" id="skills-input">
                     </form>
-                    <!-- Skills input outside form -->
-                    <input type="hidden" name="skills" id="skills-input" form="job-form">
                 </div>
             </div>
         </div>
@@ -311,8 +300,8 @@
 
 <!-- Icon mappings -->
 <script>
-    window.ICON_NAME_MAPPING = {{ icon_name_mapping|safe }};
-    window.DARK_VARIANTS = {{ dark_variants|safe }};
+    window.ICON_NAME_MAPPING = {{ icon_name_mapping|default:'{}' }};
+    window.DARK_VARIANTS = {{ dark_variants|default:'{}' }};
 </script>
 
 <!-- Add defer attribute to ensure mappings are available -->

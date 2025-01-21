@@ -4946,10 +4946,6 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
-.h-3\.5 {
-  height: 0.875rem;
-}
-
 .max-h-48 {
   max-height: 12rem;
 }
@@ -5071,8 +5067,8 @@ details.collapse summary::-webkit-details-marker {
   width: 100vw;
 }
 
-.w-3\.5 {
-  width: 0.875rem;
+.w-6 {
+  width: 1.5rem;
 }
 
 .min-w-\[1\.25rem\] {
@@ -6033,11 +6029,6 @@ details.collapse summary::-webkit-details-marker {
 .text-info-content {
   --tw-text-opacity: 1;
   color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity, 1)));
-}
-
-.text-neutral {
-  --tw-text-opacity: 1;
-  color: var(--fallback-n,oklch(var(--n)/var(--tw-text-opacity, 1)));
 }
 
 .text-neutral-content {
@@ -7758,6 +7749,20 @@ main {
   }
 }
 
+.hover\:badge-primary:hover {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-p,oklch(var(--p)/var(--tw-border-opacity)));
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-p,oklch(var(--p)/var(--tw-bg-opacity)));
+  --tw-text-opacity: 1;
+  color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
+}
+
+.hover\:badge-primary:hover.badge-outline {
+  --tw-text-opacity: 1;
+  color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
+}
+
 @media (min-width: 640px) {
   .sm\:badge-sm {
     height: 1rem;
@@ -7899,6 +7904,12 @@ main {
 .hover\:scale-105:hover {
   --tw-scale-x: 1.05;
   --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.hover\:scale-110:hover {
+  --tw-scale-x: 1.1;
+  --tw-scale-y: 1.1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -8160,10 +8171,6 @@ main {
     height: 2rem;
   }
 
-  .sm\:h-4 {
-    height: 1rem;
-  }
-
   .sm\:w-10 {
     width: 2.5rem;
   }
@@ -8174,10 +8181,6 @@ main {
 
   .sm\:w-auto {
     width: auto;
-  }
-
-  .sm\:w-4 {
-    width: 1rem;
   }
 
   .sm\:min-w-\[100px\] {
