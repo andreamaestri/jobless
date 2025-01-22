@@ -1,142 +1,81 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from .models import JobPosting
-
-# ...existing code...
-
-def toggle_favorite(request, pk):
-    job = get_object_or_404(JobPosting, pk=pk)
-    user = request.user
-    if user in job.favorite_users.all():
-        job.favorite_users.remove(user)
-        favorited = False
-    else:
-        job.favorite_users.add(user)
-        favorited = True
-    return JsonResponse({'favorited': favorited})
-
-# ...existing code...
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import JobPosting
-
-class ToggleFavoriteView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        job = get_object_or_404(JobPosting, pk=pk, user=request.user)
-        if request.user in job.favorite_users.all():
-            job.favorite_users.remove(request.user)
-        else:
-            job.favorite_users.add(request.user)
-        return HttpResponse(status=200)
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
-from .models import JobPosting
-
-class JobListView(LoginRequiredMixin, ListView):
-    model = JobPosting
-    template_name = 'jobs/list.html'
-    context_object_name = 'jobs'
-
-    def get_queryset(self):
-        queryset = JobPosting.objects.filter(user=self.request.user)
-        filter_param = self.request.GET.get('filter')
-        
-        if filter_param == 'favorites':
-            queryset = queryset.filter(favorite_users=self.request.user)
-        elif filter_param == 'recent':
-            queryset = queryset.order_by('-created_at')[:5]
-        elif filter_param == 'active':
-            queryset = queryset.exclude(status__in=['rejected', 'accepted'])
-        elif filter_param == 'interviewing':
-            queryset = queryset.filter(status='interviewing')
-            
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Get IDs of jobs favorited by current user
-        context['favorite_job_ids'] = list(
-            self.request.user.favorited_postings.values_list('id', flat=True)
-        )
-        return context
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
-from django.contrib import messages
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed
-from django.views.decorators.http import require_http_methods, require_POST  # Add require_POST here
-from django.template.response import TemplateResponse
-from django.template.loader import render_to_string
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
-import json
 import logging
-from .models import JobPosting
-from .forms import JobPostingForm
-from django import template, forms
-from .utils.skills_service import SkillsService
-from django.utils import timezone
+import json
 from datetime import timedelta
-from .utils.skill_icons import SKILL_ICONS, DARK_VARIANTS, ICON_NAME_MAPPING, get_icon_variant
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.core.exceptions import ValidationError
+
+from .forms import JobPostingForm
+from .models import JobPosting
+from .utils.skills_service import SkillsService
+from .utils.skill_icons import (
+    SKILL_ICONS,
+    DARK_VARIANTS,
+    ICON_NAME_MAPPING,
+    get_icon_variant,
+)
 from django.utils.safestring import mark_safe
 
 logger = logging.getLogger(__name__)
 
-register = template.Library()
 
 class BaseJobView(LoginRequiredMixin):
     """Base view for job-related operations"""
+
     model = JobPosting
-    
+
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user).prefetch_related('skills')
+        return (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user)
+            .prefetch_related("skills")
+        )
+
 
 class JobListView(BaseJobView, ListView):
     """View for listing job postings"""
-    template_name = 'jobs/list.html'
-    context_object_name = 'jobs'
-    ordering = ['-created_at']
+
+    template_name = "jobs/list.html"
+    context_object_name = "jobs"
+    ordering = ["-created_at"]
 
     def get_queryset(self):
         queryset = JobPosting.objects.filter(user=self.request.user)
-        filter_type = self.request.GET.get('filter', 'all')
-        
+        filter_type = self.request.GET.get("filter", "all")
+
         match filter_type:
-            case 'favorites':
-                queryset = queryset.filter(favorites=self.request.user)
-            case 'recent':
+            case "recent":
                 one_week_ago = timezone.now() - timedelta(days=7)
                 queryset = queryset.filter(created_at__gte=one_week_ago)
-            case 'active':
-                queryset = queryset.exclude(status__in=['rejected', 'accepted'])
-            case 'interviewing':
-                queryset = queryset.filter(status='interviewing')
-            case 'rejected':
-                queryset = queryset.filter(status='rejected')
-        
-        return queryset.order_by('-created_at')
+            case "active":
+                queryset = queryset.exclude(status__in=["rejected", "accepted"])
+            case "interviewing":
+                queryset = queryset.filter(status="interviewing")
+            case "rejected":
+                queryset = queryset.filter(status="rejected")
+
+        return queryset.order_by("-created_at").select_related('user')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Fix: Use the correct reverse relationship to get favorited jobs
-        context['favorite_job_ids'] = list(
-            JobPosting.objects.filter(favorites=self.request.user).values_list('pk', flat=True)
-        )
         return context
 
-    def get_template_names(self):
-        if self.request.htmx:
-            return ['jobs/partials/job_list.html']
-        return ['jobs/list.html']
 
 class JobCreateView(BaseJobView, CreateView):
     """View for creating new job postings"""
+
     form_class = JobPostingForm
-    template_name = 'jobs/add.html'
-    success_url = reverse_lazy('jobs:list')
+    template_name = "jobs/add.html"
+    success_url = reverse_lazy("jobs:list")
 
     def get(self, request, *args, **kwargs):
         """Handle GET request"""
@@ -154,261 +93,253 @@ class JobCreateView(BaseJobView, CreateView):
             # Set the user before saving
             form.instance.user = self.request.user
             self.object = form.save()
-            
+
             # Skills are now handled by Tagulous, no need for manual processing
 
             # Handle AJAX requests
-            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Job posting created successfully',
-                    'redirect_url': self.get_success_url()
-                })
-            
-            messages.success(self.request, 'Job posting created successfully')
+            if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {
+                        "status": "success",
+                        "message": "Job posting created successfully",
+                        "redirect_url": self.get_success_url(),
+                    }
+                )
+
+            messages.success(self.request, "Job posting created successfully")
             return super().form_valid(form)
-            
+
         except Exception as e:
             logger.error(f"Error saving job: {str(e)}")
-            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'status': 'error',
-                    'message': str(e)
-                }, status=500)
+            if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse({"status": "error", "message": str(e)}, status=500)
             raise
 
     def form_invalid(self, form):
         """Handle invalid form submission"""
         logger.error(f"Form validation failed: {form.errors}")
-        
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Please correct the errors below',
-                'errors': form.errors
-            }, status=400)
-            
+
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Please correct the errors below",
+                    "errors": form.errors,
+                },
+                status=400,
+            )
+
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         """Add additional context if needed"""
         context = super().get_context_data(**kwargs)
-        context.update({
-            'skill_icons': SkillsService.get_skill_groups(),
-            'icon_name_mapping': mark_safe(json.dumps(ICON_NAME_MAPPING)),
-            'dark_variants': mark_safe(json.dumps(DARK_VARIANTS)),
-            'default_icon': 'heroicons:academic-cap'
-        })
+        context.update(
+            {
+                "skill_icons": SkillsService.get_skill_groups(),
+                "icon_name_mapping": mark_safe(json.dumps(ICON_NAME_MAPPING)),
+                "dark_variants": mark_safe(json.dumps(DARK_VARIANTS)),
+                "default_icon": "heroicons:academic-cap",
+            }
+        )
         return context
+
 
 class JobPostingUpdateView(BaseJobView, UpdateView):
     """View for updating existing job postings"""
+
     form_class = JobPostingForm
-    template_name = 'jobs/edit.html'
-    success_url = reverse_lazy('jobs:list')
+    template_name = "jobs/edit.html"
+    success_url = reverse_lazy("jobs:list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['job'] = self.object
-        context['initial_skills'] = json.dumps(list(self.object.skills.values('name', 'icon', 'icon_dark')))
+        context["job"] = self.object
+        context["initial_skills"] = json.dumps(
+            list(self.object.skills.values("name", "icon", "icon_dark"))
+        )
         return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Job posting updated successfully.')
+        messages.success(self.request, "Job posting updated successfully.")
         return response
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         if self.object:
-            kwargs['initial']['skills'] = self.object.skills.all()
+            kwargs["initial"]["skills"] = self.object.skills.all()
         return kwargs
+
 
 class JobPostingDeleteView(BaseJobView, DeleteView):
     """View for deleting job postings"""
-    template_name = 'jobs/delete.html'
-    success_url = reverse_lazy('jobs:list')
+
+    template_name = "jobs/delete.html"
+    success_url = reverse_lazy("jobs:list")
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, 'Job posting deleted successfully.')
+        messages.success(self.request, "Job posting deleted successfully.")
         return response
+
 
 class JobPostingDetailView(BaseJobView, DetailView):
     """View for displaying job details"""
-    template_name = 'jobs/detail.html'
-    context_object_name = 'job'
 
-class JobFavoritesListView(BaseJobView, ListView):
-    """View for displaying user's favorited jobs"""
-    template_name = 'jobs/favorites.html'  # Changed from favorite.html
-    context_object_name = 'favorite_jobs'
+    template_name = "jobs/detail.html"
+    context_object_name = "job"
 
-    def get_queryset(self):
-        return JobPosting.objects.filter(favorites=self.request.user)  # Make sure this matches your model field name
 
 @login_required
-@require_http_methods(["POST"])
+@require_POST
 def toggle_favorite(request, pk):
     job = get_object_or_404(JobPosting, pk=pk)
-    if request.user in job.favorites.all():
-        job.favorites.remove(request.user)
+    if request.user in job.favorite_users.all():
+        job.favorite_users.remove(request.user)
         is_favorite = False
     else:
-        job.favorites.add(request.user)
+        job.favorite_users.add(request.user)
         is_favorite = True
-    
-    return HttpResponse(
-        status=200,
-        headers={
-            'HX-Trigger': json.dumps({
-                'favoriteToggled': {
-                    'jobId': pk,
-                    'isFavorite': is_favorite
-                }
-            })
+
+    return JsonResponse(
+        {
+            'is_favorite': is_favorite,
+            'job_id': pk
         }
     )
+
 
 def skills_autocomplete(request):
     """
     Endpoint for skills autocomplete functionality using SKILL_ICONS
     """
     try:
-        query = request.GET.get('q', '').lower()
-        all_skills = request.GET.get('all', 'false').lower() == 'true'
+        query = request.GET.get("q", "").lower()
+        all_skills = request.GET.get("all", "false").lower() == "true"
         logger.debug(f"Skills autocomplete request - query: {query}, all: {all_skills}")
-        
+
         # Get autocomplete results from SkillsService
         results = SkillsService.get_autocomplete_results(query, all_skills)
-        
-        return JsonResponse({
-            'results': results
-        })
-        
+
+        return JsonResponse({"results": results})
+
     except Exception as e:
         logger.exception("Error in skills_autocomplete")
-        return JsonResponse({
-            'error': str(e),
-            'details': 'Server error occurred'
-        }, status=500)
+        return JsonResponse(
+            {"error": str(e), "details": "Server error occurred"}, status=500
+        )
+
 
 @require_POST
 @login_required
 def parse_job_description(request):
     """Parse job description using AI and return structured data."""
     try:
-        description = request.POST.get('description', '').strip()
+        description = request.POST.get("description", "").strip()
         if not description:
-            return JsonResponse({
-                'status': 'error',
-                'error': 'No description provided'
-            }, status=400)
+            return JsonResponse(
+                {"status": "error", "error": "No description provided"}, status=400
+            )
 
         # Get form instance for parsing
         form = JobPostingForm()
         result = form.parse_job_with_ai(description)
 
         # If parsing failed
-        if 'error' in result:
+        if "error" in result:
             logger.error(f"AI parsing error: {result['error']}")
-            return JsonResponse({
-                'status': 'error',
-                'error': result['error']
-            }, status=400)
+            return JsonResponse({"status": "error", "error": result["error"]}, status=400)
 
         # Validate required fields
-        required_fields = ['title', 'company', 'location']
+        required_fields = ["title", "company", "location"]
         missing_fields = [
-            field for field in required_fields 
-            if not result.get('data', {}).get(field)
+            field
+            for field in required_fields
+            if not result.get("data", {}).get(field)
         ]
 
         if missing_fields:
             error_msg = f"AI couldn't extract these required fields: {', '.join(missing_fields)}"
             logger.error(f"Missing required fields: {missing_fields}")
-            return JsonResponse({
-                'status': 'error',
-                'error': error_msg,
-                'missing_fields': missing_fields
-            }, status=400)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "error": error_msg,
+                    "missing_fields": missing_fields,
+                },
+                status=400,
+            )
 
         # All required fields present, return success
-        return JsonResponse({
-            'status': 'success',
-            'data': result['data']
-        })
+        return JsonResponse({"status": "success", "data": result["data"]})
 
     except ValidationError as e:
         logger.error(f"Validation error: {str(e)}")
-        return JsonResponse({
-            'status': 'error',
-            'error': str(e)
-        }, status=400)
+        return JsonResponse({"status": "error", "error": str(e)}, status=400)
 
     except Exception as e:
         logger.exception("Unexpected error in parse_job_description")
-        return JsonResponse({
-            'status': 'error',
-            'error': 'An unexpected error occurred while processing the job description'
-        }, status=500)
+        return JsonResponse(
+            {
+                "status": "error",
+                "error": "An unexpected error occurred while processing the job description",
+            },
+            status=500,
+        )
+
 
 def add_job(request):
     """Legacy function for adding jobs - Consider using JobCreateView instead"""
     form = JobPostingForm()
-    if request.method == 'POST':
+    if request.method == "POST":
         form = JobPostingForm(request.POST)
         if form.is_valid():
             job = form.save(commit=False)
             job.user = request.user
             job.save()
-            messages.success(request, 'Job posting created successfully')
-            return redirect('jobs:list')
-            
+            messages.success(request, "Job posting created successfully")
+            return redirect("jobs:list")
+
     context = {
-        'form': form,
-        'skill_icons': SkillsService.get_skill_groups(),
-        'icon_name_mapping': json.dumps({}),
-        'dark_variants': json.dumps({}),
+        "form": form,
+        "skill_icons": SkillsService.get_skill_groups(),
+        "icon_name_mapping": json.dumps({}),
+        "dark_variants": json.dumps({}),
     }
-    return render(request, 'jobs/add.html', context)
+    return render(request, "jobs/add.html", context)
+
 
 from .utils.skill_icons import ICON_NAME_MAPPING, DARK_VARIANTS
+
 
 def get_skills_data(request):
     # Convert tuple of (icon, name) pairs into a dictionary structure
     all_skills = [
-        {
-            'name': name,
-            'icon': icon,
-            'icon_dark': DARK_VARIANTS.get(icon, icon)
-        }
+        {"name": name, "icon": icon, "icon_dark": DARK_VARIANTS.get(icon, icon)}
         for icon, name in SKILL_ICONS
     ]
-    
+
     # Sort skills by name and group them alphabetically
-    sorted_skills = sorted(all_skills, key=lambda x: x['name'])
+    sorted_skills = sorted(all_skills, key=lambda x: x["name"])
     grouped_skills = {}
-    
+
     for skill in sorted_skills:
-        first_letter = skill['name'][0].upper()
-        if (first_letter not in grouped_skills):
+        first_letter = skill["name"][0].upper()
+        if first_letter not in grouped_skills:
             grouped_skills[first_letter] = []
         grouped_skills[first_letter].append(skill)
-    
+
     # Convert to list of groups for template
     skill_icons = [
-        {
-            'letter': letter,
-            'skills': skills
-        }
+        {"letter": letter, "skills": skills}
         for letter, skills in sorted(grouped_skills.items())
     ]
-    
+
     context = {
-        'skill_icons': skill_icons,
-        'icon_name_mapping': json.dumps(ICON_NAME_MAPPING),
-        'dark_variants': json.dumps(DARK_VARIANTS)
+        "skill_icons": skill_icons,
+        "icon_name_mapping": json.dumps(ICON_NAME_MAPPING),
+        "dark_variants": json.dumps(DARK_VARIANTS),
     }
-    
+
     return context
