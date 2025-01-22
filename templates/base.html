@@ -110,8 +110,10 @@
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
     {% django_htmx_script %}
     <script>
-        document.body.addEventListener('htmx:configRequest', (event) => {
-            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('htmx:configRequest', (event) => {
+                event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            });
         });
     </script>
 

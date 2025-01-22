@@ -1,17 +1,29 @@
 class FormHandler {
     constructor() {
         this.init();
-        this.debug = true; // Enable debugging
+        this.debug = true;
     }
 
     init() {
         console.log('FormHandler initializing...');
+        
+        // Wait for DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.initializeElements());
+        } else {
+            this.initializeElements();
+        }
+    }
+
+    initializeElements() {
+        // Get form elements
         this.jobForm = document.getElementById('job-form');
         this.parseForm = document.getElementById('description-parser');
         this.parseButton = document.getElementById('parse-button');
         this.descriptionField = document.getElementById('id_description');
         this.charCounter = document.getElementById('char-counter');
         
+        // Log element availability
         console.log('Forms found:', {
             jobForm: !!this.jobForm,
             parseForm: !!this.parseForm,
@@ -20,11 +32,12 @@ class FormHandler {
             charCounter: !!this.charCounter
         });
 
+        // Initialize event listeners only if elements exist
         if (this.jobForm) {
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));
         }
 
-        if (this.parseForm) {
+        if (this.parseForm && this.parseButton) {
             console.log('Adding parser form submit handler');
             this.parseButton.addEventListener('click', (e) => {
                 console.log('Parse button clicked');
@@ -35,14 +48,18 @@ class FormHandler {
         }
 
         if (this.descriptionField && this.charCounter) {
-            this.descriptionField.addEventListener('input', () => {
-                const count = this.descriptionField.value.length;
-                this.charCounter.textContent = `${count}/4000`;
-                this.charCounter.classList.toggle('text-error', count > 4000);
-            });
-            // Initialize counter
-            this.descriptionField.dispatchEvent(new Event('input'));
+            this.initCharCounter();
         }
+    }
+
+    initCharCounter() {
+        const updateCounter = () => {
+            const count = this.descriptionField.value.length;
+            this.charCounter.textContent = `${count}/4000`;
+            this.charCounter.classList.toggle('text-error', count > 4000);
+        };
+        this.descriptionField.addEventListener('input', updateCounter);
+        updateCounter(); // Initialize counter
     }
 
     async handleJobSubmit(e) {
@@ -148,34 +165,29 @@ class FormHandler {
 
             const data = await response.json();
             
-            if (!response.ok) {
-                let errorMessage = data.error || 'Failed to parse description';
+            // Handle both success and partial data cases
+            if (data.partial_data || (data.status === 'success' && data.data)) {
+                const formData = data.partial_data || data.data;
+                this.populateFormFields(formData);
                 
-                // Handle missing fields specifically
-                if (data.missing_fields && data.missing_fields.length > 0) {
-                    errorMessage = `AI couldn't extract these fields: ${data.missing_fields.join(', ')}. Please fill them manually.`;
+                if (data.missing_fields?.length > 0) {
+                    const message = `Please fill in these fields manually: ${data.missing_fields.join(', ')}`;
+                    this.showNotification('Warning', message, 'warning');
+                    if (errorDiv) {
+                        errorDiv.textContent = message;
+                        errorDiv.classList.remove('hidden');
+                    }
+                } else {
+                    this.showNotification('Success', 'Job details extracted successfully!', 'success');
+                    descriptionInput.value = '';
+                    if (errorDiv) errorDiv.classList.add('hidden');
                 }
-                
-                // Show error in both notification and error div
-                this.showNotification('Error', errorMessage, 'error');
-                if (errorDiv) {
-                    errorDiv.textContent = errorMessage;
-                    errorDiv.classList.remove('hidden');
-                }
-                return;
-            }
-
-            if (data.status === 'success' && data.data) {
-                this.populateFormFields(data.data);
-                this.showNotification('Success', 'Job details extracted successfully!', 'success');
-                descriptionInput.value = '';
-                if (errorDiv) errorDiv.classList.add('hidden');
             } else {
-                throw new Error(data.error || 'No data returned from parser');
+                throw new Error(data.error || 'Failed to parse description');
             }
         } catch (error) {
             console.error('Parse error:', error);
-            const errorMessage = error.message || 'Failed to process job description. Please try again.';
+            const errorMessage = error.message || 'Failed to process job description';
             this.showNotification('Error', errorMessage, 'error');
             if (errorDiv) {
                 errorDiv.textContent = errorMessage;
@@ -290,27 +302,31 @@ class FormHandler {
             if (!value) return; // Skip empty values
             
             const fieldId = fieldMap[key];
+            if (!fieldId) return; // Skip unmapped fields
+            
             console.log(`Setting ${key} (${fieldId}) to:`, value.substring(0, 50) + '...');
             
-            const field = document.getElementById(fieldId) || 
-                         document.querySelector(`[data-field="${key}"]`);
+            const field = document.getElementById(fieldId);
             if (!field) {
-                console.warn(`Field not found: ${fieldId} or data-field="${key}"`);
+                console.warn(`Field not found: ${fieldId}`);
                 return;
             }
             
-            field.value = value;
+            // Clean and set the value
+            field.value = this.cleanFieldValue(value);
+            field.classList.remove('input-error');
             
-            if (field.tagName === 'TEXTAREA') {
-                field.style.height = 'auto';
-                field.style.height = field.scrollHeight + 'px';
-            }
-            
+            // Trigger events
             field.dispatchEvent(new Event('input', { bubbles: true }));
             field.dispatchEvent(new Event('change', { bubbles: true }));
         });
-        
-        this.jobForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    cleanFieldValue(value) {
+        return value.trim()
+            .replace(/^[:\-\s]+/, '')  // Remove leading colons, dashes, spaces
+            .replace(/[:\-\s]+$/, '')  // Remove trailing colons, dashes, spaces
+            .replace(/\s+/g, ' ');     // Normalize spaces
     }
 
     cleanText(text) {
@@ -338,12 +354,8 @@ class FormHandler {
     }
 }
 
-// Add this outside the class to debug form availability
+// Initialize form handler when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, checking form elements...');
-    const descriptionParser = document.getElementById('description-parser');
-    console.log('Description parser form found:', !!descriptionParser);
-    
-    // Initialize form handler
     window.formHandler = new FormHandler();
 });

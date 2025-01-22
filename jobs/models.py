@@ -69,6 +69,12 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    favorited_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='favorited_jobs',
+        blank=True,
+        verbose_name="Favorited by users"
+    )
 
     class Meta:
         ordering = ['-updated_at']

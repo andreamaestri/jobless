@@ -5469,6 +5469,11 @@ details.collapse summary::-webkit-details-marker{
   border-radius: 0.75rem;
 }
 
+.rounded-t-3xl{
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
+
 .border{
   border-width: 1px;
 }
@@ -6034,6 +6039,10 @@ details.collapse summary::-webkit-details-marker{
 
 .text-base-content\/20{
   color: var(--fallback-bc,oklch(var(--bc)/0.2));
+}
+
+.text-base-content\/30{
+  color: var(--fallback-bc,oklch(var(--bc)/0.3));
 }
 
 .text-base-content\/50{

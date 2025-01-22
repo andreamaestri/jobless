@@ -86,7 +86,7 @@
                 <form method="POST" action="{% url 'jobs:toggle_favorite' object.pk %}" class="inline">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-ghost flex items-center gap-2">
-                        {% if request.user in object.favorite.all %}
+                        {% if request.user in object.favorited_by.all %}
                             <iconify-icon icon="octicon:star-fill-24" class="text-primary"></iconify-icon>
                             <span>Remove from favorite</span>
                         {% else %}
