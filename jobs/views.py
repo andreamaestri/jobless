@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.core.exceptions import ValidationError
+from django.views import View
 
 from .forms import JobPostingForm
 from .models import JobPosting
@@ -191,15 +192,29 @@ class JobPostingDetailView(BaseJobView, DetailView):
     context_object_name = "job"
 
 
+class JobFavoritesView(BaseJobView, ListView):
+    """View for listing favorite job postings"""
+    template_name = "jobs/favorites.html"
+    context_object_name = "jobs"
+
+    def get_queryset(self):
+        return JobPosting.objects.filter(favorited_by=self.request.user).order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_favorites_page'] = True
+        return context
+
+
 @login_required
 @require_POST
 def toggle_favorite(request, pk):
     job = get_object_or_404(JobPosting, pk=pk)
-    if request.user in job.favorite_users.all():
-        job.favorite_users.remove(request.user)
+    if request.user in job.favorited_by.all():
+        job.favorited_by.remove(request.user)
         is_favorite = False
     else:
-        job.favorite_users.add(request.user)
+        job.favorited_by.add(request.user)
         is_favorite = True
 
     return JsonResponse(
@@ -343,3 +358,30 @@ def get_skills_data(request):
     }
 
     return context
+
+
+class ToggleFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            job = JobPosting.objects.get(pk=pk)
+            if request.user in job.favorited_by.all():
+                job.favorited_by.remove(request.user)
+                is_favorite = False
+            else:
+                job.favorited_by.add(request.user)
+                is_favorite = True
+            
+            return JsonResponse({
+                'status': 'success',
+                'is_favorite': is_favorite
+            })
+        except JobPosting.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Job not found'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)

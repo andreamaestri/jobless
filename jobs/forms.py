@@ -59,224 +59,128 @@ class JobPostingForm(forms.ModelForm):
         )
 
     def parse_job_with_ai(self, text):
-        """Extract job details from any copy-pasted content format"""
+        """Extract job details using AI-first approach"""
         if not text or not text.strip():
             return {'error': 'Empty job description provided'}
 
-        logger.debug(f"Processing job description:\n{text[:500]}...")
-
-        # Enhanced field patterns for better recognition
-        FIELD_PATTERNS = {
-            'title': [
-                r'(?i)^.*?(position|job title|role):\s*(.+?)(?=\n|$)',
-                r'(?i)^.*?hiring.*?(for|a)\s+(.+?)(?=\n|$)',
-                r'(?i)^.*?seeking.*?(a)\s+(.+?)(?=\n|$)',
-                r'(?i)^((?!location|company|salary).+?)(?=\n|$)'  # Fallback to first line
-            ],
-            'company': [
-                r'(?i)(?:^|\n).*?company:\s*(.+?)(?=\n|$)',
-                r'(?i)(?:^|\n).*?employer:\s*(.+?)(?=\n|$)',
-                r'(?i)(?:^|\n).*?at\s+([^|,\n]+)(?:\||,|\n|$)',
-                r'(?i)(?:^|\n)([^|,\n]+?)\s+is\s+(?:hiring|seeking|looking)'
-            ],
-            'location': [
-                r'(?i)(?:^|\n).*?location:\s*(.+?)(?=\n|$)',
-                r'(?i)(?:^|\n).*?\b(?:in|at)\s+(remote|[^,\n]+(?:,\s*[^,\n]+){0,2})(?=\n|$)',
-                r'(?i)(?:^|\n).*?(?:position|job)\s+(?:in|at)\s+([^,\n]+(?:,\s*[^,\n]+){0,2})(?=\n|$)',
-                r'(?i)(?:hybrid|remote|on-?site)\s*(?:in\s+)?([^,\n]+(?:,\s*[^,\n]+){0,2})'
-            ],
-            'salary_range': [
-                r'(?i)(?:^|\n).*?salary:\s*(.+?)(?=\n|$)',
-                r'(?i)(?:^|\n).*?compensation:\s*(.+?)(?=\n|$)',
-                r'(?i)(?:^|\n).*?\$[\d,.]+\s*[-–]\s*\$[\d,.]+\s*(?:k|K|,000)?(?:/(?:year|yr|annual|annually))?',
-                r'(?i)(?:^|\n).*?(?:\$[\d,.]+\s*(?:k|K|,000)?(?:/(?:year|yr|annual|annually))?)'
-            ]
-        }
-
+        # Basic text cleanup
+        text = self._basic_cleanup(text)
+        
         try:
-            # Initialize OpenAI client and get initial response
+            # Let GPT do the heavy lifting
+            parsed_data = self._parse_with_gpt(text)
+            
+            if not parsed_data:
+                return {
+                    'error': 'Failed to parse job description',
+                    'details': 'AI parsing failed'
+                }
+
+            # Format the response
+            form_data = {
+                'title': parsed_data.get('title', ''),
+                'company': parsed_data.get('company', ''),
+                'location': parsed_data.get('location', ''),
+                'salary_range': parsed_data.get('salary', ''),
+                'description': self._format_description(text, parsed_data.get('sections', {})),
+                'status': 'NEW'
+            }
+
+            # Validation
+            missing = [f for f in ['title', 'company', 'location'] if not form_data[f]]
+            if missing:
+                return {
+                    'error': f"Missing required fields: {', '.join(missing)}",
+                    'partial_data': form_data,
+                    'missing_fields': missing
+                }
+
+            return {'status': 'success', 'data': form_data}
+
+        except Exception as e:
+            logger.exception("Error in parse_job_with_ai")
+            return {'error': str(e), 'details': "Failed to process job description"}
+
+    def _basic_cleanup(self, text):
+        """Minimal text cleanup to preserve structure"""
+        return (text.replace('\r\n', '\n')
+                   .replace('\r', '\n')
+                   .strip())
+
+    def _parse_with_gpt(self, text):
+        """Use GPT to extract all relevant information"""
+        try:
             client = openai.OpenAI(
                 base_url="https://api.groq.com/openai/v1",
                 api_key=settings.GROQ_API_KEY
             )
 
-            # Updated prompt to avoid redundant labels
-            prompt = """Extract and format the job posting details with only the description in markdown:
+            prompt = """
+            Parse this job posting and extract the following information in JSON format:
+            {
+                "title": "exact job title without dates/salary",
+                "company": "company name only",
+                "location": "location with work model (Remote/Hybrid/On-site)",
+                "salary": "normalized salary in K format if available",
+                "sections": {
+                    "about": "about the role/position text",
+                    "responsibilities": "key responsibilities text",
+                    "requirements": "requirements/qualifications text",
+                    "benefits": "benefits/perks text"
+                }
+            }
 
-[Job Title as plain text]
+            Rules:
+            1. Keep title, company, location short and precise
+            2. Format salary as "£50K" or "£50K-60K/year" if available
+            3. Preserve proper formatting in section texts
+            4. Return strict JSON format
+            5. Strip company name of legal suffixes (Ltd, Inc, etc)
+            6. Format location as "City, Country" or "City-based, Remote/Hybrid"
+            7. Include currency symbol in salary
+            8. Organize description into clear sections
 
-[Company Name as plain text]
+            Job posting:
+            """
 
-[Location as plain text]
-
-[Salary if specified as plain text]
-
-# About the Role
-[Overview of the position in markdown]
-
-## Key Responsibilities
-* [List main duties]
-
-## Requirements
-* [List required skills/experience]
-
-## Nice to Have
-* [List preferred qualifications]
-
-## Benefits & Perks
-* [List benefits/perks]
-
-Format the first 4 lines without labels or markdown, and use markdown only for the description."""
-
-            # Get AI response
             response = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[
-                    {"role": "system", "content": "You are a precise job details extractor. Extract and format job posting details exactly as requested."},
-                    {"role": "user", "content": f"{prompt}\n\nJob Posting:\n{text}"}
+                    {"role": "system", "content": "You are a precise job posting parser that returns only valid JSON."},
+                    {"role": "user", "content": prompt + "\n\n" + text}
                 ],
-                temperature=0.1,  # Slightly higher temperature for better extraction
-                max_tokens=2000
+                temperature=0.1
             )
 
-            # Get response text and split into lines
-            extracted = response.choices[0].message.content.strip()
-            logger.debug(f"AI Response:\n{extracted}")
-            lines = extracted.split('\n')
-
-            # Initialize form data
-            form_data = {
-                'title': '',
-                'company': '',
-                'location': '',
-                'salary_range': '',
-                'description': '',
-                'status': 'NEW'
-            }
-
-            section_count = 0
-            description_started = False
-            description_lines = []
-            
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    if description_started:
-                        description_lines.append('')
-                    continue
-
-                # Detect if we've reached the description (starts with # or ## or "About")
-                if line.startswith('#') or line.lower().startswith('about'):
-                    description_started = True
-                    description_lines.append(line)
-                    continue
-
-                if description_started:
-                    description_lines.append(line)
-                    continue
-
-                # Process header fields (first 4 non-empty lines)
-                if section_count == 0:
-                    form_data['title'] = line
-                    section_count += 1
-                elif section_count == 1:
-                    form_data['company'] = line
-                    section_count += 1
-                elif section_count == 2:
-                    form_data['location'] = line
-                    section_count += 1
-                elif section_count == 3 and ('$' in line or 'salary' in line.lower() or 'compensation' in line.lower()):
-                    form_data['salary_range'] = line
-                    section_count += 1
-                elif not description_started and line:
-                    # If we haven't started description but have all fields, this must be description
-                    description_started = True
-                    description_lines.append(line)
-
-            # Add improved salary patterns
-            SALARY_PATTERNS = [
-                r'(?:^|\n).*?(?:salary|compensation):\s*((?:£|\$|€)?[,\d]+(?:[kK])?(?:\s*-\s*(?:£|\$|€)?[,\d]+(?:[kK])?)?(?:/\w+)?)',
-                r'(?:^|\n)\s*((?:£|\$|€)?[,\d]+(?:[kK])?(?:\s*-\s*(?:£|\$|€)?[,\d]+(?:[kK])?)?(?:/\w+)?)\s*(?:\n|$)',
-                r'(?:^|\n).*?(?:salary|compensation|pay).*?((?:£|\$|€)?[,\d]+(?:[kK])?(?:\s*-\s*(?:£|\$|€)?[,\d]+(?:[kK])?)?(?:/\w+)?)',
-                r'(?:^|\n).*?(?:£|\$|€)?[,\d]+(?:[kK])?(?:\s*-\s*(?:£|\$|€)?[,\d]+(?:[kK])?)?(?:/\w+)?'
-            ]
-
-            # Extract salary from description if not found in header
-            if not form_data['salary_range'] and description_lines:
-                description_text = '\n'.join(description_lines[:10])  # Check first 10 lines
-                for pattern in SALARY_PATTERNS:
-                    salary_match = re.search(pattern, description_text, re.IGNORECASE)
-                    if salary_match:
-                        salary = salary_match.group(1) if len(salary_match.groups()) > 0 else salary_match.group(0)
-                        form_data['salary_range'] = salary.strip()
-                        
-                        # Remove the salary from the beginning of description if found there
-                        if description_lines and salary in description_lines[0:3]:
-                            description_lines = [line for line in description_lines 
-                                              if not any(s in line for s in [salary, 'salary:', 'compensation:'])]
-                        break
-
-            # Process description after salary extraction
-            if description_lines:
-                description = '\n'.join(description_lines)
-                
-                # Ensure description starts with proper header if missing
-                if not description.startswith('# ') and not description.startswith('## '):
-                    description = '# About the Role\n\n' + description
-                
-                # Clean up markdown formatting
-                description = re.sub(r'\n{3,}', '\n\n', description)  # Remove extra newlines
-                description = re.sub(r'(?m)^[-•*]\s*', '* ', description)  # Standardize bullet points
-                description = re.sub(r'(?m)^(\d+\.|\w+\.)\s+', '* ', description)  # Convert numbered lists
-                
-                form_data['description'] = description.strip()
-                logger.debug(f"Processed description:\n{description[:500]}...")
-
-            # Clean up fields
-            for field in ['title', 'company', 'location', 'salary_range']:
-                if form_data[field]:
-                    # Remove common prefixes and clean up
-                    form_data[field] = re.sub(r'^(?:title|company|location|salary):\s*', '', 
-                                            form_data[field], flags=re.IGNORECASE)
-                    form_data[field] = form_data[field].strip()
-
-            # Clean up salary format
-            if form_data['salary_range']:
-                salary = form_data['salary_range']
-                # Standardize format
-                salary = re.sub(r'\s+', ' ', salary)  # Normalize whitespace
-                salary = re.sub(r'(?<=\d)[kK](?=\s|$)', ',000', salary)  # Convert k/K to ,000
-                salary = salary.strip('., ')  # Clean up edges
-                
-                # Add default currency if missing (assuming GBP)
-                if not re.match(r'^(?:£|\$|€)', salary):
-                    salary = f'£{salary}'
-                
-                form_data['salary_range'] = salary
-
-            # Validate required fields
-            required_fields = ['title', 'company', 'location']
-            missing_fields = [f for f in required_fields if not form_data.get(f)]
-            
-            if missing_fields:
-                return {
-                    'error': f"Could not extract these required fields: {', '.join(missing_fields)}",
-                    'partial_data': form_data,
-                    'missing_fields': missing_fields
-                }
-
-            logger.info("Successfully extracted all required fields")
-            return {
-                'status': 'success',
-                'data': form_data
-            }
+            # Parse JSON response
+            try:
+                parsed = json.loads(response.choices[0].message.content)
+                logger.debug("GPT parsed result: %s", json.dumps(parsed, indent=2))
+                return parsed
+            except json.JSONDecodeError:
+                logger.error("Failed to parse GPT response as JSON")
+                return None
 
         except Exception as e:
-            logger.exception("Error in parse_job_with_ai")
-            return {
-                'error': str(e),
-                'details': "Failed to process job description"
-            }
+            logger.exception("GPT parsing failed")
+            return None
+
+    def _format_description(self, original_text, sections):
+        """Format the description with sections"""
+        formatted = []
+
+        # Add structured sections
+        for section_name in ['about', 'responsibilities', 'requirements', 'benefits']:
+            content = sections.get(section_name, '').strip()
+            if content:
+                title = section_name.replace('_', ' ').title()
+                formatted.append(f"• {title}:\n{content}")
+
+        # If no sections parsed, use original text
+        if not formatted:
+            return original_text.strip()
+
+        return "\n\n".join(formatted)
 
     def clean(self):
         cleaned_data = super().clean()

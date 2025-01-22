@@ -179,7 +179,7 @@
                             hx-post="{% url 'jobs:toggle_favorite' job.pk %}"
                             hx-swap="none"
                             @click="favoriteJobs.has({{ job.pk }}) ? favoriteJobs.delete({{ job.pk }}) : favoriteJobs.add({{ job.pk }})"
-                            :class="{ 'text-warning': favoriteJobs.has({{ job.pk }}) }">
+                            :class="{ 'text-warning': job.favorited_by.filter(id=request.user.id).exists }">
                         <iconify-icon :icon="favoriteJobs.has({{ job.pk }}) ? 'octicon:star-fill-16' : 'octicon:star-16'"
                                     class="text-lg"></iconify-icon>
                         <span x-text="favoriteJobs.has({{ job.pk }}) ? 'Favorited' : 'Favorite'"></span>
