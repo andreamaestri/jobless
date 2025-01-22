@@ -69,14 +69,14 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    favorite_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='favorited_postings',
-        blank=True
-    )
 
     class Meta:
         ordering = ['-updated_at']
+        indexes = [
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['status']),
+            models.Index(fields=['user']),
+        ]
 
     def __str__(self):
         return f"{self.title} at {self.company}"

@@ -1,7 +1,7 @@
 {% load job_tags %}
 
 <div class="w-full rounded-xl border border-base-200"
-     x-init="activeFilter = '{{ request.GET.filter|default:'all' }}'">
+     x-data="{ activeFilter: '{{ request.GET.filter|default:'all' }}' }">
     <!-- Table view (hidden on mobile) -->
     <div class="hidden sm:block">
         <table class="table w-full">
@@ -69,16 +69,7 @@
                         </td>
                         <td>
                             <div class="flex items-center gap-2">
-                                <button class="btn btn-ghost btn-sm btn-square"
-                                        hx-post="{% url 'jobs:toggle_favorite' job.pk %}"
-                                        hx-swap="none"
-                                        @click="favoriteJobs.has({{ job.pk }}) ? favoriteJobs.delete({{ job.pk }}) : favoriteJobs.add({{ job.pk }})"
-                                        :class="{ 'text-warning': favoriteJobs.has({{ job.pk }}) }">
-                                    <iconify-icon icon="octicon:star-16" 
-                                                  :class="{ 'text-warning': favoriteJobs.has({{ job.pk }}) }"
-                                                  :icon="favoriteJobs.has({{ job.pk }}) ? 'octicon:star-fill-16' : 'octicon:star-16'">
-                                    </iconify-icon>
-                                </button>
+                                <!-- Temporarily remove favorite button -->
                                 <div class="dropdown dropdown-end">
                                     <button class="btn btn-ghost btn-sm btn-square">
                                         <iconify-icon icon="octicon:kebab-horizontal-16"></iconify-icon>
