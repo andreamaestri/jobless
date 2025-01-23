@@ -199,19 +199,20 @@ class JobFavoritesView(BaseJobView, ListView):
 
     def get_queryset(self):
         return (
-            JobPosting.objects.filter(favorites__user=self.request.user)
+            JobPosting.objects.filter(favorites=self.request.user)
+            .select_related('user')
+            .prefetch_related('skills', 'favorites_set')
             .distinct()
             .order_by('-created_at')
-            .select_related('user')
-            .prefetch_related('skills')
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_favorites_page'] = True
         context['favorite_job_ids'] = list(
-            JobFavorite.objects.filter(user=self.request.user)
-            .values_list('job_id', flat=True)
+            JobPosting.objects.filter(
+                favorites=self.request.user
+            ).values_list('id', flat=True)
         )
         return context
 
@@ -332,7 +333,7 @@ def get_skills_data(request):
 
     for skill in sorted_skills:
         first_letter = skill["name"][0].upper()
-        if first_letter not in grouped_skills:
+        if (first_letter not in grouped_skills):
             grouped_skills[first_letter] = []
         grouped_skills[first_letter].append(skill)
 
