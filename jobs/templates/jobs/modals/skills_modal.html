@@ -93,6 +93,13 @@
             icon_dark: skill.icon_dark
         }));
         
+        // Update the hidden input
+        const skillsInput = document.getElementById('skills-input');
+        if (skillsInput) {
+            skillsInput.value = JSON.stringify(skillsToUpdate);
+        }
+        
+        // Dispatch event for form update
         this.$dispatch('skills-updated', skillsToUpdate);
         this.open = false;
         this.search = '';

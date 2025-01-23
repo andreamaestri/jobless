@@ -47,6 +47,25 @@ class JobPostingForm(forms.ModelForm):
         # Set default status if not provided
         if not self.initial.get('status'):
             self.initial['status'] = 'draft'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        logger.debug(f"Cleaning form data: {cleaned_data}")
+        
+        # Handle skills field specially
+        skills_data = cleaned_data.get('skills', '')
+        if skills_data:
+            try:
+                # Parse JSON skills data
+                skills_list = json.loads(skills_data)
+                # Extract just the names for the model
+                cleaned_data['skills'] = [skill['name'] for skill in skills_list]
+                logger.debug(f"Processed skills: {cleaned_data['skills']}")
+            except Exception as e:
+                logger.error(f"Error processing skills: {e}")
+                self.add_error('skills', 'Invalid skills format')
+        
+        return cleaned_data
         
         # Use hidden input for skills - will be managed by modal
         self.fields['skills'] = forms.CharField(
