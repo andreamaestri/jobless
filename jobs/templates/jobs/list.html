@@ -5,8 +5,8 @@
 {% block content %}
 <div class="min-h-screen flex flex-col page-transition-wrapper" 
      x-data="{ 
-         activeFilter: 'all',
-         favoriteJobs: new Set({{ favorite_job_ids|safe }})
+         activeFilter: '{{ request.GET.filter|default:'all' }}',
+         favoriteJobs: new Set([{% for id in favorite_job_ids %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}])
      }">
     <div class="flex-1 page-enter">
         <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
