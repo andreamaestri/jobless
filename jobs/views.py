@@ -198,31 +198,19 @@ class JobFavoritesView(BaseJobView, ListView):
     context_object_name = "jobs"
 
     def get_queryset(self):
-        return JobPosting.objects.filter(favorited_by=self.request.user).order_by('-created_at')
+        return JobPosting.objects.filter(
+            jobfavorite__user=self.request.user
+        ).distinct().order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_favorites_page'] = True
+        context['favorite_job_ids'] = list(
+            JobFavorite.objects.filter(
+                user=self.request.user
+            ).values_list('job_id', flat=True)
+        )
         return context
-
-
-@login_required
-@require_POST
-def toggle_favorite(request, pk):
-    job = get_object_or_404(JobPosting, pk=pk)
-    if request.user in job.favorited_by.all():
-        job.favorited_by.remove(request.user)
-        is_favorite = False
-    else:
-        job.favorited_by.add(request.user)
-        is_favorite = True
-
-    return JsonResponse(
-        {
-            'is_favorite': is_favorite,
-            'job_id': pk
-        }
-    )
 
 
 def skills_autocomplete(request):
@@ -363,36 +351,17 @@ def get_skills_data(request):
 class ToggleFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         try:
-            job = JobPosting.objects.get(pk=pk)
-            if request.user in job.favorited_by.all():
-                job.favorited_by.remove(request.user)
-                is_favorite = False
-            else:
-                job.favorited_by.add(request.user)
-                is_favorite = True
+            job = get_object_or_404(JobPosting, pk=pk)
+            is_favorite = job.toggle_favorite(request.user)
             
             return JsonResponse({
                 'status': 'success',
                 'is_favorite': is_favorite
             })
-        except JobPosting.DoesNotExist:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Job not found'
-            }, status=404)
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
                 'message': str(e)
             }, status=500)
 
-def job_list(request):
-    jobs = Job.objects.all()
-    # Get jobs favorited by current user through reverse relationship
-    favorited_job_ids = list(Job.objects.filter(favorited_by=request.user).values_list('id', flat=True))
-    
-    context = {
-        'jobs': jobs,
-        'favorited_job_ids': json.dumps(favorited_job_ids),
-    }
-    return render(request, 'jobs/job_list.html', context)
+# ...remove or comment out the old toggle_favorite function and job_list view...
