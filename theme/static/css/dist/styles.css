@@ -4758,6 +4758,10 @@ details.collapse summary::-webkit-details-marker{
   grid-column: span 2 / span 2;
 }
 
+.m-1{
+  margin: 0.25rem;
+}
+
 .-mx-4{
   margin-left: -1rem;
   margin-right: -1rem;
@@ -4988,6 +4992,10 @@ details.collapse summary::-webkit-details-marker{
 
 .min-h-screen{
   min-height: 100vh;
+}
+
+.min-h-\[50px\]{
+  min-height: 50px;
 }
 
 .w-10{
