@@ -194,7 +194,10 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownContent.style.position = 'fixed';
             dropdownContent.style.left = `${rect.left}px`;
             dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`;
-            dropdownContent.style.zIndex = '100';
+            dropdownContent.style.zIndex = '9999';
+            dropdownContent.style.backgroundColor = 'var(--b1)';
+            dropdownContent.style.borderRadius = '0.5rem';
+            dropdownContent.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
 
             // Temporarily set display to block to calculate height
             const prevDisplay = dropdownContent.style.display;
@@ -210,11 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (openUpward) {
                 dropdownContent.style.bottom = `${viewportHeight - rect.top}px`;
                 dropdownContent.style.top = 'auto';
+                dropdownContent.style.transform = 'translateY(-0.5rem)';
             } else {
-                dropdownContent.style.top = `${rect.bottom + window.scrollY}px`;
+                dropdownContent.style.top = `${rect.bottom}px`;
                 dropdownContent.style.bottom = 'auto';
+                dropdownContent.style.transform = 'translateY(0.5rem)';
                 if (spaceBelow < dropdownHeight) {
-                    dropdownContent.style.maxHeight = `${spaceBelow - 10}px`;
+                    dropdownContent.style.maxHeight = `${spaceBelow - 20}px`;
                     dropdownContent.style.overflowY = 'auto';
                 }
             }
@@ -222,12 +227,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ensure horizontal containment
             const dropdownRight = rect.left + dropdownContent.offsetWidth;
             if (dropdownRight > viewportWidth) {
-                dropdownContent.style.left = 'auto';
-                dropdownContent.style.right = '10px';
+                const overflow = dropdownRight - viewportWidth;
+                dropdownContent.style.left = `${rect.left - overflow - 10}px`;
             }
         },
         show(wrapper, dropdownContent) {
             this.hideAll();
+            if (!document.body.contains(dropdownContent)) {
+                document.body.appendChild(dropdownContent);
+            }
             this.activeDropdown = dropdownContent;
             this.updatePosition(wrapper, dropdownContent);
             dropdownContent.style.display = 'block';
@@ -276,14 +284,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Global click handler
+    // Global click handler with error handling
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('[data-dropdown-wrapper]')) {
-            dropdownManager.hideAll();
+        try {
+            if (!e.target.closest('[data-dropdown-wrapper]')) {
+                dropdownManager.hideAll();
+            }
+        } catch (error) {
+            console.warn('Error in dropdown click handler:', error);
         }
     });
-        }
-    });
+
+    // Initialize Alpine.js data if needed
+    if (window.Alpine) {
+        Alpine.start();
+    }
+}});
 
 });
 
