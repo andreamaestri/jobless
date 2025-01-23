@@ -178,19 +178,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle dropdown menus outside of table
+    // Enhanced dropdown handler
     const dropdownWrappers = document.querySelectorAll('[data-dropdown-wrapper]');
     dropdownWrappers.forEach(wrapper => {
         const dropdownContent = wrapper.querySelector('.dropdown-content');
         if (dropdownContent) {
+            // Move to body but maintain reference
             document.body.appendChild(dropdownContent);
-            const rect = wrapper.getBoundingClientRect();
-            dropdownContent.style.top = `${rect.bottom}px`;
-            dropdownContent.style.left = `${rect.left}px`;
-            dropdownContent.style.minWidth = `${rect.width}px`;
-            dropdownContent.style.display = 'none';
-            wrapper.addEventListener('click', () => {
-                dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+            
+            // Position handler
+            const updatePosition = () => {
+                const rect = wrapper.getBoundingClientRect();
+                dropdownContent.style.position = 'fixed';
+                dropdownContent.style.top = `${rect.bottom + window.scrollY}px`;
+                dropdownContent.style.left = `${rect.left}px`;
+                dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`; // Minimum width of 200px
+                dropdownContent.style.zIndex = '100';
+            };
+
+            // Toggle handler
+            wrapper.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isVisible = dropdownContent.style.display === 'block';
+                
+                // Hide all other dropdowns first
+                document.querySelectorAll('.dropdown-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+
+                if (!isVisible) {
+                    updatePosition();
+                    dropdownContent.style.display = 'block';
+                }
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', () => {
+                dropdownContent.style.display = 'none';
+            });
+
+            // Update position on scroll and resize
+            ['scroll', 'resize'].forEach(event => {
+                window.addEventListener(event, () => {
+                    if (dropdownContent.style.display === 'block') {
+                        updatePosition();
+                    }
+                });
             });
         }
     });
