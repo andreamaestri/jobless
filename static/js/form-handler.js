@@ -2,17 +2,24 @@ class FormHandler {
     constructor() {
         this.init();
         this.debug = true;
+        this.skillsInput = null;
     }
 
     init() {
-        console.log('FormHandler initializing...');
-        
         // Wait for DOM to be fully loaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.initializeElements());
         } else {
             this.initializeElements();
         }
+
+        // Add skills modal event listener
+        document.addEventListener('skills-updated', (e) => {
+            if (this.skillsInput) {
+                this.skillsInput.value = JSON.stringify(e.detail);
+                this.validateForm();
+            }
+        });
     }
 
     initializeElements() {
@@ -22,25 +29,15 @@ class FormHandler {
         this.parseButton = document.getElementById('parse-button');
         this.descriptionField = document.getElementById('id_description');
         this.charCounter = document.getElementById('char-counter');
+        this.skillsInput = document.getElementById('skills-input');
         
-        // Log element availability
-        console.log('Forms found:', {
-            jobForm: !!this.jobForm,
-            parseForm: !!this.parseForm,
-            parseButton: !!this.parseButton,
-            descriptionField: !!this.descriptionField,
-            charCounter: !!this.charCounter
-        });
-
         // Initialize event listeners only if elements exist
         if (this.jobForm) {
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));
         }
 
         if (this.parseForm && this.parseButton) {
-            console.log('Adding parser form submit handler');
             this.parseButton.addEventListener('click', (e) => {
-                console.log('Parse button clicked');
                 e.preventDefault();
                 e.stopPropagation();
                 this.handleParse(e);
@@ -49,6 +46,17 @@ class FormHandler {
 
         if (this.descriptionField && this.charCounter) {
             this.initCharCounter();
+        }
+
+        // Add input validation listeners
+        if (this.jobForm) {
+            this.jobForm.querySelectorAll('input, textarea, select').forEach(input => {
+                input.addEventListener('input', () => {
+                    if (input.checkValidity()) {
+                        input.classList.remove('input-error');
+                    }
+                });
+            });
         }
     }
 
@@ -66,27 +74,28 @@ class FormHandler {
         e.preventDefault();
         e.stopPropagation();
         
-        if (!this.validateForm()) return;
+        // Validate form before submission
+        if (!this.validateForm()) {
+            return;
+        }
 
-        const actionBtn = document.querySelector('button[type="submit"][form="job-form"]');
+        const actionBtn = document.getElementById('save-job-button');
         if (!actionBtn) {
             console.error('Submit button not found');
             return;
         }
 
+        // Set loading state
         this.setButtonState(actionBtn, true, 'Saving...');
 
         try {
             const formData = new FormData(this.jobForm);
             
             // Process skills input
-            const skillsInput = document.getElementById('skills-input');
-            if (skillsInput && skillsInput.value) {
+            if (this.skillsInput && this.skillsInput.value) {
                 try {
-                    const skills = JSON.parse(skillsInput.value);
-                    // Extract just the names and join with commas
+                    const skills = JSON.parse(this.skillsInput.value);
                     const skillNames = skills.map(s => s.name.toLowerCase()).join(',');
-                    console.log('Processing skills:', { raw: skills, formatted: skillNames });
                     formData.set('skills', skillNames);
                 } catch (e) {
                     console.error('Error processing skills:', e);
@@ -95,6 +104,7 @@ class FormHandler {
                 }
             }
 
+            // Submit form
             const response = await this.submitForm(this.jobForm.action, formData);
             
             if (response.status === 'success') {
@@ -199,30 +209,53 @@ class FormHandler {
     }
 
     validateForm() {
-        const requiredFields = this.jobForm.querySelectorAll('[required]');
-        let firstInvalidField = null;
-        let missingFields = [];
+        if (!this.jobForm) return false;
 
+        let isValid = true;
+        const requiredFields = this.jobForm.querySelectorAll('[required]');
+        const missingFields = [];
+        const firstInvalidField = null;
+
+        // Validate regular fields
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
                 field.classList.add('input-error');
-                if (!firstInvalidField) firstInvalidField = field;
+                isValid = false;
                 const label = document.querySelector(`label[for="${field.id}"]`);
                 if (label) {
                     missingFields.push(label.textContent.replace(' *', '').trim());
                 }
-            } else {
-                field.classList.remove('input-error');
             }
         });
 
-        if (missingFields.length > 0) {
+        // Validate skills if required
+        if (this.skillsInput && this.skillsInput.required) {
+            try {
+                const skills = JSON.parse(this.skillsInput.value);
+                if (!skills || !Array.isArray(skills) || skills.length === 0) {
+                    isValid = false;
+                    const skillsSection = document.querySelector('[x-data]');
+                    if (skillsSection) {
+                        skillsSection.classList.add('border', 'border-error');
+                        setTimeout(() => {
+                            skillsSection.classList.remove('border', 'border-error');
+                        }, 2000);
+                    }
+                    missingFields.push('Skills');
+                }
+            } catch (e) {
+                isValid = false;
+                missingFields.push('Skills');
+            }
+        }
+
+        if (!isValid && missingFields.length > 0) {
             this.showNotification('Error', `Please fill in required fields: ${missingFields.join(', ')}`, 'error');
             firstInvalidField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             firstInvalidField?.focus();
-            return false;
         }
-        return true;
+
+        return isValid;
     }
 
     async submitForm(url, formData) {
