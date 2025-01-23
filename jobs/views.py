@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.views import View
 
 from .forms import JobPostingForm
-from .models import JobPosting
+from .models import JobPosting, JobFavorite  # Added JobFavorite import
 from .utils.skills_service import SkillsService
 from .utils.skill_icons import (
     SKILL_ICONS,
@@ -198,17 +198,20 @@ class JobFavoritesView(BaseJobView, ListView):
     context_object_name = "jobs"
 
     def get_queryset(self):
-        return JobPosting.objects.filter(
-            jobfavorite__user=self.request.user
-        ).distinct().order_by('-created_at')
+        return (
+            JobPosting.objects.filter(favorites__user=self.request.user)
+            .distinct()
+            .order_by('-created_at')
+            .select_related('user')
+            .prefetch_related('skills')
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_favorites_page'] = True
         context['favorite_job_ids'] = list(
-            JobFavorite.objects.filter(
-                user=self.request.user
-            ).values_list('job_id', flat=True)
+            JobFavorite.objects.filter(user=self.request.user)
+            .values_list('job_id', flat=True)
         )
         return context
 
