@@ -1,6 +1,5 @@
 class FormHandler {
     constructor() {
-        // Wait for Alpine.js to be ready
         if (window.Alpine) {
             this.init();
         } else {
@@ -11,28 +10,60 @@ class FormHandler {
 
     init() {
         this.setupFormHandling();
-        this.setupSkillsHandling();
+        this.initializeSkillsModal();
+    }
+
+    initializeSkillsModal() {
+        if (!window.Alpine) return;
+
+        Alpine.data('skillsModal', () => ({
+            open: false,
+            selectedSkills: [],
+            searchQuery: '',
+            filteredSkills: [],
+
+            init() {
+                // Get initial skills if any
+                const skillsInput = document.getElementById('id_skills');
+                if (skillsInput && skillsInput.value) {
+                    this.selectedSkills = skillsInput.value.split(',')
+                        .map(s => s.trim())
+                        .filter(Boolean);
+                }
+
+                // Listen for skill updates
+                window.addEventListener('skills-updated', (e) => {
+                    this.updateSkills(e.detail);
+                });
+            },
+
+            updateSkills(skills) {
+                const skillsInput = document.getElementById('id_skills');
+                if (skillsInput) {
+                    skillsInput.value = skills.join(',');
+                    this.selectedSkills = skills;
+                }
+            },
+
+            handleSkillSelect(skill) {
+                if (!this.selectedSkills.includes(skill)) {
+                    this.selectedSkills.push(skill);
+                    this.updateSkills(this.selectedSkills);
+                }
+                this.searchQuery = '';
+            },
+
+            removeSkill(skill) {
+                this.selectedSkills = this.selectedSkills.filter(s => s !== skill);
+                this.updateSkills(this.selectedSkills);
+            }
+        }));
     }
 
     setupFormHandling() {
         document.querySelectorAll('form[data-debug]').forEach(form => {
             form.addEventListener('submit', this.handleFormSubmit.bind(this));
         });
-    }
-
-    setupSkillsHandling() {
-        // Initialize Alpine.js data for skills
-        if (window.Alpine) {
-            Alpine.data('skillsData', () => ({
-                selectedSkills: [],
-                updateSkills(skills) {
-                    this.selectedSkills = skills;
-                    document.dispatchEvent(new CustomEvent('skills-updated', {
-                        detail: skills
-                    }));
-                }
-            }));
-        }
     }
 
     handleFormSubmit(event) {
