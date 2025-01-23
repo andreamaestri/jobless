@@ -1,6 +1,5 @@
-from .skill_icons import DARK_VARIANTS, ICON_NAME_MAPPING
+from .skill_icons import DARK_VARIANTS, ICON_NAME_MAPPING, SKILL_ICONS
 from django.db.models import Q
-from ..models import SKILL_ICONS  # Update this import to get from main models.py
 import logging
 
 logger = logging.getLogger(__name__)

@@ -361,6 +361,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Reinitialize icons after HTMX content updates
+document.body.addEventListener('htmx:afterSwap', () => {
+    // Check if iconify is loaded
+    if (customElements.get('iconify-icon')) {
+        // Force refresh all icons
+        document.querySelectorAll('iconify-icon').forEach(icon => {
+            const currentIcon = icon.getAttribute('icon');
+            icon.removeAttribute('icon');
+            setTimeout(() => {
+                icon.setAttribute('icon', currentIcon);
+            }, 0);
+        });
+    }
+});
+
 // CSRF Token setup for HTMX
 document.body.addEventListener('htmx:configRequest', (event) => {
     const getCookie = (name) => {

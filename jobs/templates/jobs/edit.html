@@ -127,8 +127,17 @@
                                 
                                 <div class="relative" 
                                      x-data="{ 
-                                         selectedSkills: {{ initial_skills|safe }},
+                                         selectedSkills: [],
                                          init() {
+                                             const skillsInput = document.getElementById('id_skills');
+                                             if (skillsInput && skillsInput.value) {
+                                                 const skillNames = skillsInput.value.split(',');
+                                                 this.selectedSkills = skillNames.map(name => ({
+                                                     name: name.trim(),
+                                                     icon: this.getIconForSkill ? this.getIconForSkill(name) : 'heroicons:academic-cap',
+                                                     icon_dark: this.getDarkIconForSkill ? this.getDarkIconForSkill(name) : 'heroicons:academic-cap'
+                                                 }));
+                                             }
                                              this.$watch('selectedSkills', value => {
                                                  if (value && Array.isArray(value)) {
                                                      this.selectedSkills = value;
@@ -146,10 +155,11 @@
                                                  this.$dispatch('skills-updated', this.selectedSkills);
                                              });
 
-                                             // Initialize skills input
-                                             const skillsInput = document.getElementById('skills-input');
+                                             // Update the form's skills field with comma-separated skill names
+                                             const skillNames = this.selectedSkills.map(skill => skill.name).join(',');
+                                             const skillsInput = document.getElementById('id_skills');
                                              if (skillsInput) {
-                                                 skillsInput.value = JSON.stringify(this.selectedSkills);
+                                                 skillsInput.value = skillNames;
                                              }
                                          }
                                      }" 
@@ -237,8 +247,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Skills input inside form -->
-                        <input type="hidden" name="skills" id="skills-input">
+                        <!-- Skills input handled by Django form -->
                     </form>
                 </div>
             </div>
