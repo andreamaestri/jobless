@@ -327,8 +327,12 @@
     window.DARK_VARIANTS = JSON.parse('{{ dark_variants|escapejs }}');
 </script>
 
-<!-- Add defer attribute to ensure mappings are available -->
+<!-- Load scripts in correct order -->
+<script>
+    window.MODAL_ICON_MAPPING = window.ICON_NAME_MAPPING;
+    window.MODAL_DARK_VARIANTS = window.DARK_VARIANTS;
+</script>
+<script src="{% static 'js/skills-modal.js' %}" defer></script>
 <script src="{% static 'js/skills-manager.js' %}" defer></script>
-<script src="{% static 'js/skills-select.js' %}" defer></script>
 <script src="{% static 'js/form-handler.js' %}" defer></script>
 {% endblock extra_js %}
