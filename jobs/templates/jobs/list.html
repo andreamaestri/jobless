@@ -178,53 +178,110 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Enhanced dropdown handler
+    // Enhanced dropdown handler with improved positioning and cleanup
     const dropdownWrappers = document.querySelectorAll('[data-dropdown-wrapper]');
+    const dropdownManager = {
+        activeDropdown: null,
+        updatePosition(wrapper, dropdownContent) {
+            const rect = wrapper.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+
+            // Reset any previous styles
+            dropdownContent.style.maxHeight = '';
+            
+            // Set initial position
+            dropdownContent.style.position = 'fixed';
+            dropdownContent.style.left = `${rect.left}px`;
+            dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`;
+            dropdownContent.style.zIndex = '100';
+
+            // Temporarily set display to block to calculate height
+            const prevDisplay = dropdownContent.style.display;
+            dropdownContent.style.display = 'block';
+            const dropdownHeight = dropdownContent.offsetHeight;
+            dropdownContent.style.display = prevDisplay;
+
+            // Check if dropdown would go below viewport
+            const spaceBelow = viewportHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const openUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+
+            if (openUpward) {
+                dropdownContent.style.bottom = `${viewportHeight - rect.top}px`;
+                dropdownContent.style.top = 'auto';
+            } else {
+                dropdownContent.style.top = `${rect.bottom + window.scrollY}px`;
+                dropdownContent.style.bottom = 'auto';
+                if (spaceBelow < dropdownHeight) {
+                    dropdownContent.style.maxHeight = `${spaceBelow - 10}px`;
+                    dropdownContent.style.overflowY = 'auto';
+                }
+            }
+
+            // Ensure horizontal containment
+            const dropdownRight = rect.left + dropdownContent.offsetWidth;
+            if (dropdownRight > viewportWidth) {
+                dropdownContent.style.left = 'auto';
+                dropdownContent.style.right = '10px';
+            }
+        },
+        show(wrapper, dropdownContent) {
+            this.hideAll();
+            this.activeDropdown = dropdownContent;
+            this.updatePosition(wrapper, dropdownContent);
+            dropdownContent.style.display = 'block';
+        },
+        hideAll() {
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            this.activeDropdown = null;
+        }
+    };
+
     dropdownWrappers.forEach(wrapper => {
         const dropdownContent = wrapper.querySelector('.dropdown-content');
         if (dropdownContent) {
             // Move to body but maintain reference
             document.body.appendChild(dropdownContent);
-            
-            // Position handler
-            const updatePosition = () => {
-                const rect = wrapper.getBoundingClientRect();
-                dropdownContent.style.position = 'fixed';
-                dropdownContent.style.top = `${rect.bottom + window.scrollY}px`;
-                dropdownContent.style.left = `${rect.left}px`;
-                dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`; // Minimum width of 200px
-                dropdownContent.style.zIndex = '100';
-            };
 
-            // Toggle handler
-            wrapper.addEventListener('click', (e) => {
+            // Toggle handler with improved event management
+            const toggleHandler = (e) => {
                 e.stopPropagation();
                 const isVisible = dropdownContent.style.display === 'block';
-                
-                // Hide all other dropdowns first
-                document.querySelectorAll('.dropdown-content').forEach(content => {
-                    content.style.display = 'none';
-                });
-
                 if (!isVisible) {
-                    updatePosition();
-                    dropdownContent.style.display = 'block';
+                    dropdownManager.show(wrapper, dropdownContent);
+                } else {
+                    dropdownManager.hideAll();
                 }
-            });
+            };
 
-            // Hide dropdown when clicking outside
-            document.addEventListener('click', () => {
-                dropdownContent.style.display = 'none';
-            });
+            wrapper.addEventListener('click', toggleHandler);
 
-            // Update position on scroll and resize
+            // Update position on scroll and resize with debouncing
+            let resizeTimeout;
+            const handleResize = () => {
+                if (dropdownContent.style.display === 'block') {
+                    dropdownManager.updatePosition(wrapper, dropdownContent);
+                }
+            };
+
             ['scroll', 'resize'].forEach(event => {
                 window.addEventListener(event, () => {
-                    if (dropdownContent.style.display === 'block') {
-                        updatePosition();
-                    }
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(handleResize, 100);
                 });
             });
+        }
+    });
+
+    // Global click handler
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('[data-dropdown-wrapper]')) {
+            dropdownManager.hideAll();
+        }
+    });
         }
     });
 
