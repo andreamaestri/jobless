@@ -82,23 +82,22 @@ class JobPosting(models.Model):
     def get_absolute_url(self):
         return reverse('jobs:detail', kwargs={'pk': self.pk})
 
+    @property
+    def favorite_count(self):
+        """Get the number of users who favorited this job"""
+        return self.favorites.count()
+
     def is_favorited_by(self, user):
         """Check if job is favorited by user"""
         if not user.is_authenticated:
             return False
-        return JobFavorite.objects.filter(
-            user=user,
-            job=self
-        ).exists()
+        return self.favorites.filter(user=user).exists()
 
     def toggle_favorite(self, user):
         """Toggle favorite status for user"""
         if not user.is_authenticated:
             return False
-        favorite, created = JobFavorite.objects.get_or_create(
-            user=user,
-            job=self
-        )
+        favorite, created = self.favorites.get_or_create(user=user)
         if not created:
             favorite.delete()
         return created
@@ -119,6 +118,10 @@ class JobFavorite(models.Model):
     class Meta:
         unique_together = ('user', 'job')
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'job']),
+            models.Index(fields=['created_at']),
+        ]
 
     def __str__(self):
         return f"{self.user.username}'s favorite: {self.job.title}"
