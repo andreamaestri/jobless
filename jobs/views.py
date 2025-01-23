@@ -385,3 +385,14 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
                 'status': 'error',
                 'message': str(e)
             }, status=500)
+
+def job_list(request):
+    jobs = Job.objects.all()
+    # Get jobs favorited by current user through reverse relationship
+    favorited_job_ids = list(Job.objects.filter(favorited_by=request.user).values_list('id', flat=True))
+    
+    context = {
+        'jobs': jobs,
+        'favorited_job_ids': json.dumps(favorited_job_ids),
+    }
+    return render(request, 'jobs/job_list.html', context)
