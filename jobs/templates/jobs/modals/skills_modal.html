@@ -1,28 +1,37 @@
 {% load job_tags %}
 
+<!-- Modal wrapper with proper initialization -->
 <div x-data="skillsModal()"
-     x-show="open"
-     @open-skills-modal.window="handleSkillsUpdate($event)"
-     @keydown.escape.window="cancel()"
-     class="modal"
-     :class="{ 'modal-open': open }"
+     x-cloak
      x-init="init()"
-     x-cloak>
+     @keydown.escape.window="cancel()"
+     @open-skills-modal.window="handleSkillsUpdate($event)"
+     class="modal"
+     :class="{ 'modal-open': open }">
     
-    <!-- Backdrop with blur effect -->
-    <div x-show="open" 
+    <!-- Backdrop -->
+    <div x-show="open"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" 
+         class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+         @click="cancel()"
          aria-hidden="true"></div>
 
-    <!-- Modal -->
-    <div class="modal-box relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
-         :class="{'h-[100vh]': isMobile, 'h-[90vh]': !isMobile}">
+    <!-- Modal content -->
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="modal-box relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
+         :class="{'h-[100vh]': isMobile, 'h-[90vh]': !isMobile}"
+         @click.stop>
         
         <!-- Header -->
         <div class="sticky top-0 z-[90] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200"
