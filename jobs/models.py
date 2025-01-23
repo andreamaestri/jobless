@@ -1,8 +1,6 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-from tagulous.models import TagField
-from django.contrib.auth.models import User
 import tagulous.models
 from .utils.skill_icons import SKILL_ICONS, DARK_VARIANTS
 from django.contrib.auth import get_user_model
@@ -69,13 +67,6 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    favorited_by = models.ManyToManyField(
-        get_user_model(),
-        related_name='favorite_jobs', 
-        through='JobFavorite',
-        blank=True,
-        verbose_name="Favorited by users"
-    )
 
     class Meta:
         ordering = ['-updated_at']
@@ -85,7 +76,33 @@ class JobPosting(models.Model):
             models.Index(fields=['user']),
         ]
 
-# Add new through model
+    def __str__(self):
+        return f"{self.title} at {self.company}"
+
+    def get_absolute_url(self):
+        return reverse('jobs:detail', kwargs={'pk': self.pk})
+
+    def is_favorited_by(self, user):
+        """Check if job is favorited by user"""
+        if not user.is_authenticated:
+            return False
+        return JobFavorite.objects.filter(
+            user=user,
+            job=self
+        ).exists()
+
+    def toggle_favorite(self, user):
+        """Toggle favorite status for user"""
+        if not user.is_authenticated:
+            return False
+        favorite, created = JobFavorite.objects.get_or_create(
+            user=user,
+            job=self
+        )
+        if not created:
+            favorite.delete()
+        return created
+
 class JobFavorite(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
@@ -96,7 +113,7 @@ class JobFavorite(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.title} at {self.company}"
+        return f"{self.user.username}'s favorite: {self.job.title}"
 
     def get_absolute_url(self):
-        return reverse('jobs:detail', kwargs={'pk': self.pk})
+        return reverse('jobs:detail', kwargs={'pk': self.job.pk})
