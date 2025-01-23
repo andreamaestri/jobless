@@ -70,8 +70,9 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     favorited_by = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name='favorited_jobs',
+        get_user_model(),
+        related_name='favorite_jobs', 
+        through='JobFavorite',
         blank=True,
         verbose_name="Favorited by users"
     )
@@ -83,6 +84,16 @@ class JobPosting(models.Model):
             models.Index(fields=['status']),
             models.Index(fields=['user']),
         ]
+
+# Add new through model
+class JobFavorite(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'job')
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.title} at {self.company}"
