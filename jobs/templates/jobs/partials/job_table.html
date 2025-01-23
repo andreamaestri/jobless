@@ -50,7 +50,7 @@
                         <div class="grid grid-cols-4 sm:grid-cols-6 md:flex md:flex-wrap gap-1.5 items-center min-w-[160px] p-2">
                             {% for skill in job.skills.all %}
                             <div class="tooltip tooltip-top before:z-50 before:shadow-lg" data-tip="{{ skill.name }}">
-                                <iconify-icon icon="{{ skill.name|get_skill_icon }}" 
+                                <iconify-icon icon="{{ skill.get_icon }}" 
                                              class="text-lg sm:text-xl transition-all duration-200 hover:scale-110"
                                              width="20"
                                              height="20"
