@@ -3,12 +3,36 @@
 {% load job_tags %}
 
 {% block content %}
-<div class="min-h-screen flex flex-col page-transition-wrapper">
+<div class="min-h-screen flex flex-col page-transition-wrapper" 
+     x-data="{ favoriteJobs: new Set([{% for id in favorite_job_ids %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}]) }">
     <div class="flex-1 overflow-y-auto pb-20 page-enter">
         <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
             <div class="max-w-6xl mx-auto">
-                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content mb-8">Favorite Jobs</h1>
-                {% include "jobs/partials/job_list.html" with jobs=favorite_jobs %}
+                <div class="flex items-center justify-between mb-8">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">Favorite Jobs</h1>
+                    <a href="{% url 'jobs:list' %}" class="btn btn-ghost btn-sm gap-2">
+                        <iconify-icon icon="octicon:arrow-left-16"></iconify-icon>
+                        Back to All Jobs
+                    </a>
+                </div>
+
+                {% if jobs %}
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for job in jobs %}
+                            {% include "jobs/partials/job_card.html" with job=job %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="flex flex-col items-center justify-center p-8 text-center">
+                        <iconify-icon icon="octicon:star-24" class="text-6xl text-base-content/30 mb-4"></iconify-icon>
+                        <h3 class="text-lg font-bold mb-2">No Favorite Jobs Yet</h3>
+                        <p class="text-base-content/70 mb-4">Start marking jobs as favorites to keep track of the ones you're most interested in.</p>
+                        <a href="{% url 'jobs:list' %}" class="btn btn-primary gap-2">
+                            <iconify-icon icon="octicon:arrow-left-16"></iconify-icon>
+                            Browse Jobs
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

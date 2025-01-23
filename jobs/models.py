@@ -104,8 +104,16 @@ class JobPosting(models.Model):
         return created
 
 class JobFavorite(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='job_favorites'
+    )
+    job = models.ForeignKey(
+        'JobPosting',
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

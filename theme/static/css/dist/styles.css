@@ -4734,10 +4734,6 @@ details.collapse summary::-webkit-details-marker{
   z-index: 50;
 }
 
-.z-\[1\]{
-  z-index: 1;
-}
-
 .z-\[40\]{
   z-index: 40;
 }
@@ -5036,10 +5032,6 @@ details.collapse summary::-webkit-details-marker{
 
 .w-5{
   width: 1.25rem;
-}
-
-.w-52{
-  width: 13rem;
 }
 
 .w-8{
@@ -5635,6 +5627,10 @@ details.collapse summary::-webkit-details-marker{
   background-color: rgb(0 0 0 / 0.4);
 }
 
+.bg-black\/50{
+  background-color: rgb(0 0 0 / 0.5);
+}
+
 .bg-current{
   background-color: currentColor;
 }
@@ -5725,10 +5721,6 @@ details.collapse summary::-webkit-details-marker{
 
 .bg-white\/50{
   background-color: rgb(255 255 255 / 0.5);
-}
-
-.bg-black\/50{
-  background-color: rgb(0 0 0 / 0.5);
 }
 
 .bg-opacity-90{
@@ -8407,6 +8399,10 @@ main {
     gap: 1.5rem;
   }
 
+  .sm\:p-2{
+    padding: 0.5rem;
+  }
+
   .sm\:p-4{
     padding: 1rem;
   }
@@ -8417,10 +8413,6 @@ main {
 
   .sm\:p-8{
     padding: 2rem;
-  }
-
-  .sm\:p-2{
-    padding: 0.5rem;
   }
 
   .sm\:px-0{
@@ -8438,6 +8430,11 @@ main {
     padding-bottom: 4rem;
   }
 
+  .sm\:py-2{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
   .sm\:py-4{
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -8446,11 +8443,6 @@ main {
   .sm\:py-6{
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
-  }
-
-  .sm\:py-2{
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
   }
 
   .sm\:pb-0{
