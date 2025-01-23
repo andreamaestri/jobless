@@ -67,6 +67,12 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    favorites = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='JobFavorite',
+        related_name='favorite_jobs',
+        blank=True
+    )
 
     class Meta:
         ordering = ['-updated_at']
@@ -91,13 +97,13 @@ class JobPosting(models.Model):
         """Check if job is favorited by user"""
         if not user.is_authenticated:
             return False
-        return self.favorites.filter(user=user).exists()
+        return self.job_favorites.filter(user=user).exists()
 
     def toggle_favorite(self, user):
         """Toggle favorite status for user"""
         if not user.is_authenticated:
             return False
-        favorite, created = self.favorites.get_or_create(user=user)
+        favorite, created = self.job_favorites.get_or_create(user=user)
         if not created:
             favorite.delete()
         return created
@@ -111,7 +117,7 @@ class JobFavorite(models.Model):
     job = models.ForeignKey(
         'JobPosting',
         on_delete=models.CASCADE,
-        related_name='favorites'
+        related_name='job_favorites'
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
