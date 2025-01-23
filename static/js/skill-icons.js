@@ -533,10 +533,24 @@ class SkillsModalManager {
     }
 
     initializeModal() {
-        // Load previously selected skills
-        if (this.skillsInput.value) {
-            this.selectedSkills = new Set(JSON.parse(this.skillsInput.value));
-            this.renderSelectedSkills();
+        // Check if elements exist before initializing
+        this.skillsInput = document.getElementById('skills-input');
+        this.skillsContainer = document.getElementById('selected-skills');
+        this.skillSearch = document.getElementById('skill-search');
+        this.modal = document.getElementById('skills-modal');
+        this.placeholder = document.getElementById('skills-placeholder');
+        
+        // Only proceed if required elements exist
+        if (this.skillsInput && this.skillsContainer) {
+            if (this.skillsInput.value) {
+                try {
+                    this.selectedSkills = new Set(JSON.parse(this.skillsInput.value));
+                    this.renderSelectedSkills();
+                } catch (error) {
+                    console.warn('Error parsing skills input:', error);
+                    this.selectedSkills = new Set();
+                }
+            }
         }
 
         // Setup search functionality

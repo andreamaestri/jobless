@@ -4,6 +4,7 @@ from . import views
 app_name = 'jobs'
 
 urlpatterns = [
+    path('api/skills/', views.api_skills, name='api_skills'),
     path('', views.JobListView.as_view(), name='list'),
     path('add/', views.JobCreateView.as_view(), name='add'),
     path('<int:pk>/', views.JobPostingDetailView.as_view(), name='detail'),

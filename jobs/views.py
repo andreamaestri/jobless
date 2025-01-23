@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.views import View
 
 from .forms import JobPostingForm
-from .models import JobPosting, JobFavorite  # Added JobFavorite import
+from .models import JobPosting, JobFavorite, SkillsTagModel  # Added JobFavorite and SkillsTagModel imports
 from .utils.skills_service import SkillsService
 from .utils.skill_icons import (
     SKILL_ICONS,
@@ -372,5 +372,23 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
                 'status': 'error',
                 'message': str(e)
             }, status=500)
+
+@login_required
+def api_skills(request):
+    """API endpoint for skills data"""
+    try:
+        # Get all skills from the Tagulous model
+        skills = []
+        for skill in SkillsTagModel.objects.all():
+            skills.append({
+                'text': skill.name,
+                'icon': skill.get_icon(),
+                'icon_dark': skill.get_icon_dark() if hasattr(skill, 'get_icon_dark') else None,
+                'name': skill.name
+            })
+        return JsonResponse(skills, safe=False)
+    except Exception as e:
+        logger.error(f"Error in api_skills: {str(e)}")
+        return JsonResponse({'error': str(e)}, status=500)
 
 # ...remove or comment out the old toggle_favorite function and job_list view...
