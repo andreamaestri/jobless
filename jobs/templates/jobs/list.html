@@ -178,108 +178,173 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Enhanced dropdown handler with improved positioning and cleanup
+    // Get all dropdown wrappers
     const dropdownWrappers = document.querySelectorAll('[data-dropdown-wrapper]');
+
+    // Enhanced dropdown handler with improved state management
     const dropdownManager = {
+        dropdownMap: new WeakMap(),
         activeDropdown: null,
+        
         updatePosition(wrapper, dropdownContent) {
             const rect = wrapper.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
             const viewportWidth = window.innerWidth;
+            const isMobile = window.innerWidth < 640; // sm breakpoint
 
-            // Reset any previous styles
+            // Reset styles
             dropdownContent.style.maxHeight = '';
+            dropdownContent.style.width = '';
+            dropdownContent.style.left = '';
+            dropdownContent.style.right = '';
             
-            // Set initial position
-            dropdownContent.style.position = 'fixed';
-            dropdownContent.style.left = `${rect.left}px`;
-            dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`;
-            dropdownContent.style.zIndex = '9999';
-            dropdownContent.style.backgroundColor = 'var(--b1)';
-            dropdownContent.style.borderRadius = '0.5rem';
-            dropdownContent.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-
-            // Temporarily set display to block to calculate height
-            const prevDisplay = dropdownContent.style.display;
-            dropdownContent.style.display = 'block';
-            const dropdownHeight = dropdownContent.offsetHeight;
-            dropdownContent.style.display = prevDisplay;
-
-            // Check if dropdown would go below viewport
-            const spaceBelow = viewportHeight - rect.bottom;
-            const spaceAbove = rect.top;
-            const openUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
-
-            if (openUpward) {
-                dropdownContent.style.bottom = `${viewportHeight - rect.top}px`;
-                dropdownContent.style.top = 'auto';
-                dropdownContent.style.transform = 'translateY(-0.5rem)';
+            if (isMobile) {
+                // Mobile: Bottom sheet style
+                dropdownContent.style.position = 'fixed';
+                dropdownContent.style.bottom = '0';
+                dropdownContent.style.left = '0';
+                dropdownContent.style.width = '100%';
+                dropdownContent.style.maxHeight = '80vh';
+                dropdownContent.style.overflowY = 'auto';
+                dropdownContent.style.borderRadius = '1.5rem 1.5rem 0 0';
+                dropdownContent.style.padding = '0'; // Remove padding
+                dropdownContent.style.transform = 'translateY(0)';
+                dropdownContent.style.transition = 'transform 0.2s ease-out';
+                dropdownContent.style.backgroundColor = 'var(--b1)'; // Ensure solid background
+                dropdownContent.style.backdropFilter = 'none'; // Remove any backdrop filter
             } else {
-                dropdownContent.style.top = `${rect.bottom}px`;
-                dropdownContent.style.bottom = 'auto';
-                dropdownContent.style.transform = 'translateY(0.5rem)';
-                if (spaceBelow < dropdownHeight) {
-                    dropdownContent.style.maxHeight = `${spaceBelow - 20}px`;
-                    dropdownContent.style.overflowY = 'auto';
+                // Desktop: Regular dropdown
+                dropdownContent.style.position = 'fixed';
+                dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`;
+                dropdownContent.style.maxWidth = '320px';
+                dropdownContent.style.borderRadius = '0.5rem';
+                dropdownContent.style.zIndex = '9999';
+                dropdownContent.style.backgroundColor = 'var(--b1)'; // Ensure solid background
+                dropdownContent.style.backdropFilter = 'none'; // Remove any backdrop filter
+                dropdownContent.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            }
+            
+            if (isMobile) {
+                // Mobile: Bottom sheet style
+                dropdownContent.style.position = 'fixed';
+                dropdownContent.style.bottom = '0';
+                dropdownContent.style.left = '0';
+                dropdownContent.style.width = '100%';
+                dropdownContent.style.maxHeight = '80vh';
+                dropdownContent.style.overflowY = 'auto';
+                dropdownContent.style.borderRadius = '1.5rem 1.5rem 0 0';
+                dropdownContent.style.padding = '1rem';
+                dropdownContent.style.transform = 'translateY(0)';
+                dropdownContent.style.transition = 'transform 0.2s ease-out';
+                
+                // Add mobile-specific classes
+                dropdownContent.classList.add('bg-base-100', 'shadow-xl');
+            } else {
+                // Desktop: Regular dropdown
+                dropdownContent.style.position = 'fixed';
+                dropdownContent.style.minWidth = `${Math.max(rect.width, 200)}px`;
+                dropdownContent.style.maxWidth = '320px';
+                dropdownContent.style.borderRadius = '0.5rem';
+                dropdownContent.style.zIndex = '9999';
+                dropdownContent.style.backgroundColor = 'var(--b1)';
+                dropdownContent.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+
+                // Position dropdown
+                const spaceBelow = viewportHeight - rect.bottom;
+                const spaceAbove = rect.top;
+                const openUpward = spaceBelow < dropdownContent.offsetHeight && spaceAbove > spaceBelow;
+
+                if (openUpward) {
+                    dropdownContent.style.bottom = `${viewportHeight - rect.top}px`;
+                    dropdownContent.style.top = 'auto';
+                    dropdownContent.style.transform = 'translateY(-0.5rem)';
+                } else {
+                    dropdownContent.style.top = `${rect.bottom}px`;
+                    dropdownContent.style.bottom = 'auto';
+                    dropdownContent.style.transform = 'translateY(0.5rem)';
+                }
+
+                // Horizontal positioning
+                const rightAligned = rect.left + dropdownContent.offsetWidth > viewportWidth;
+                if (rightAligned) {
+                    dropdownContent.style.right = '1rem';
+                } else {
+                    dropdownContent.style.left = `${rect.left}px`;
                 }
             }
-
-            // Ensure horizontal containment
-            const dropdownRight = rect.left + dropdownContent.offsetWidth;
-            if (dropdownRight > viewportWidth) {
-                const overflow = dropdownRight - viewportWidth;
-                dropdownContent.style.left = `${rect.left - overflow - 10}px`;
-            }
         },
+        
         show(wrapper, dropdownContent) {
             this.hideAll();
             if (!document.body.contains(dropdownContent)) {
                 document.body.appendChild(dropdownContent);
             }
+            
+            // Add backdrop for mobile
+            if (window.innerWidth < 640) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'fixed inset-0 bg-black/50 z-40';
+                backdrop.addEventListener('click', () => this.hide(wrapper, dropdownContent));
+                document.body.appendChild(backdrop);
+                dropdownContent.dataset.backdrop = true;
+            }
+
             this.activeDropdown = dropdownContent;
-            this.updatePosition(wrapper, dropdownContent);
+            wrapper.setAttribute('data-active', 'true');
             dropdownContent.style.display = 'block';
+            dropdownContent.style.zIndex = '50';
+            
+            // Force reflow for animation
+            dropdownContent.offsetHeight;
+            this.updatePosition(wrapper, dropdownContent);
+            this.dropdownMap.set(wrapper, dropdownContent);
         },
+        
+        hide(wrapper, dropdownContent) {
+            wrapper.removeAttribute('data-active');
+            dropdownContent.style.display = 'none';
+            
+            // Remove backdrop if it exists
+            if (dropdownContent.dataset.backdrop) {
+                const backdrop = document.querySelector('.bg-black/50');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+                delete dropdownContent.dataset.backdrop;
+            }
+            
+            if (this.activeDropdown === dropdownContent) {
+                this.activeDropdown = null;
+            }
+        },
+        
         hideAll() {
-            document.querySelectorAll('.dropdown-content').forEach(content => {
-                content.style.display = 'none';
+            document.querySelectorAll('[data-dropdown-wrapper]').forEach(wrapper => {
+                const content = this.dropdownMap.get(wrapper);
+                if (content) {
+                    this.hide(wrapper, content);
+                }
             });
-            this.activeDropdown = null;
+        },
+        
+        isVisible(wrapper) {
+            return wrapper.hasAttribute('data-active');
         }
     };
 
     dropdownWrappers.forEach(wrapper => {
         const dropdownContent = wrapper.querySelector('.dropdown-content');
         if (dropdownContent) {
-            // Move to body but maintain reference
             document.body.appendChild(dropdownContent);
+            dropdownManager.dropdownMap.set(wrapper, dropdownContent);
 
-            // Toggle handler with improved event management
-            const toggleHandler = (e) => {
+            wrapper.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const isVisible = dropdownContent.style.display === 'block';
-                if (!isVisible) {
-                    dropdownManager.show(wrapper, dropdownContent);
+                if (dropdownManager.isVisible(wrapper)) {
+                    dropdownManager.hide(wrapper, dropdownContent);
                 } else {
-                    dropdownManager.hideAll();
+                    dropdownManager.show(wrapper, dropdownContent);
                 }
-            };
-
-            wrapper.addEventListener('click', toggleHandler);
-
-            // Update position on scroll and resize with debouncing
-            let resizeTimeout;
-            const handleResize = () => {
-                if (dropdownContent.style.display === 'block') {
-                    dropdownManager.updatePosition(wrapper, dropdownContent);
-                }
-            };
-
-            ['scroll', 'resize'].forEach(event => {
-                window.addEventListener(event, () => {
-                    clearTimeout(resizeTimeout);
-                    resizeTimeout = setTimeout(handleResize, 100);
-                });
             });
         }
     });
