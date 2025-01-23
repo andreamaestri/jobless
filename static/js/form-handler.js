@@ -2,7 +2,6 @@ class FormHandler {
     constructor() {
         this.init();
         this.debug = true;
-        this.skillsInput = null;
     }
 
     init() {
@@ -15,8 +14,11 @@ class FormHandler {
 
         // Add skills modal event listener
         document.addEventListener('skills-updated', (e) => {
-            if (this.skillsInput) {
-                this.skillsInput.value = JSON.stringify(e.detail);
+            const skillsInput = document.getElementById('id_skills');
+            if (skillsInput) {
+                // Convert skill objects to comma-separated string of skill names
+                const skillNames = e.detail.map(skill => skill.name).join(',');
+                skillsInput.value = skillNames;
                 this.validateForm();
             }
         });
@@ -29,18 +31,6 @@ class FormHandler {
         this.parseButton = document.getElementById('parse-button');
         this.descriptionField = document.getElementById('id_description');
         this.charCounter = document.getElementById('char-counter');
-        this.skillsInput = document.getElementById('skills-input');
-        
-        // Initialize skills data if available
-        const initialSkillsElement = document.getElementById('initial-skills');
-        if (initialSkillsElement && this.skillsInput) {
-            try {
-                const initialSkills = JSON.parse(initialSkillsElement.textContent);
-                this.skillsInput.value = JSON.stringify(initialSkills);
-            } catch (e) {
-                console.error('Error initializing skills:', e);
-            }
-        }
         
         // Initialize event listeners only if elements exist
         if (this.jobForm) {
@@ -101,19 +91,7 @@ class FormHandler {
 
         try {
             const formData = new FormData(this.jobForm);
-            
-            // Process skills input
-            if (this.skillsInput && this.skillsInput.value) {
-                try {
-                    const skills = JSON.parse(this.skillsInput.value);
-                    const skillNames = skills.map(s => s.name.toLowerCase()).join(',');
-                    formData.set('skills', skillNames);
-                } catch (e) {
-                    console.error('Error processing skills:', e);
-                    this.showNotification('Error', 'Invalid skills data format', 'error');
-                    return;
-                }
-            }
+            // The skills field is handled by Django's form processing, no need to modify it
 
             // Submit form
             const response = await this.submitForm(this.jobForm.action, formData);

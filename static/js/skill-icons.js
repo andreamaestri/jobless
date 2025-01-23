@@ -39,50 +39,22 @@ class SkillIconsHelper {
         this.watchThemeChanges();
         this.initialized = true;
         this.initializationAttempts = 0;
-        this.iconMappings = {
-            'JavaScript': 'logos:javascript',
-            'Python': 'logos:python',
-            'Java': 'logos:java',
-            'React': 'logos:react',
-            'Angular': 'logos:angular-icon',
-            'Vue': 'logos:vue',
-            'Node.js': 'logos:nodejs-icon',
-            'TypeScript': 'logos:typescript-icon',
-            'PHP': 'logos:php',
-            'Ruby': 'logos:ruby',
-            'Go': 'logos:go',
-            'Rust': 'logos:rust',
-            'C++': 'logos:c-plusplus',
-            'C#': 'logos:c-sharp',
-            'Swift': 'logos:swift',
-            'Kotlin': 'logos:kotlin-icon',
-            'Docker': 'logos:docker-icon',
-            'Kubernetes': 'logos:kubernetes',
-            'AWS': 'logos:aws',
-            'Azure': 'logos:microsoft-azure',
-            'Git': 'logos:git-icon',
-            'MongoDB': 'logos:mongodb-icon',
-            'PostgreSQL': 'logos:postgresql',
-            'MySQL': 'logos:mysql',
-            'Redis': 'logos:redis',
-            'HTML': 'logos:html-5',
-            'CSS': 'logos:css-3',
-            'Sass': 'logos:sass',
-            'GraphQL': 'logos:graphql',
-            'Django': 'logos:django-icon',
-            'Flask': 'logos:flask',
-            'Spring': 'logos:spring-icon',
-            'Linux': 'logos:linux-tux',
-            'Jenkins': 'logos:jenkins',
-            'Webpack': 'logos:webpack',
-            'npm': 'logos:npm-icon',
-            'yarn': 'logos:yarn'
-        };
+        this.iconMappings = {};
     }
 
     async initialize() {
         try {
-            // Skip waiting and just try to update icons
+            // Fetch icon mappings from server
+            const response = await fetch('/jobs/api/skills/');
+            if (!response.ok) throw new Error('Failed to load skills data');
+            const skills = await response.json();
+            
+            // Create mapping from skills data
+            skills.forEach(skill => {
+                this.iconMappings[skill.name.toLowerCase()] = skill.icon;
+            });
+            
+            // Update icons
             await this.updateIcons();
             console.log('Icons initialized successfully');
         } catch (error) {
@@ -98,7 +70,7 @@ class SkillIconsHelper {
             element.style.visibility = 'visible';
             
             // Use skills-icons mapping or fallback to generic icon
-            const icon = this.iconMappings[skillName] || 'octicon:code-16';
+            const icon = this.iconMappings[skillName.toLowerCase()] || 'heroicons:academic-cap';
             
             element.setAttribute('icon', icon);
             element.setAttribute('width', '20');

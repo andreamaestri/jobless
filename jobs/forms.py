@@ -48,44 +48,6 @@ class JobPostingForm(forms.ModelForm):
         if not self.initial.get('status'):
             self.initial['status'] = 'draft'
 
-        # Initialize skills field
-        self.fields['skills'] = forms.CharField(
-            required=False,
-            widget=forms.HiddenInput(attrs={
-                'id': 'skills-input',
-                'name': 'skills',
-                'class': 'skills-input'
-            })
-        )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        logger.debug(f"Cleaning form data: {cleaned_data}")
-        
-        # Handle skills field specially
-        skills_data = cleaned_data.get('skills', '')
-        if skills_data:
-            try:
-                # Parse JSON skills data
-                skills_list = json.loads(skills_data)
-                # Extract just the names for the model
-                cleaned_data['skills'] = [skill['name'] for skill in skills_list]
-                logger.debug(f"Processed skills: {cleaned_data['skills']}")
-            except Exception as e:
-                logger.error(f"Error processing skills: {e}")
-                self.add_error('skills', 'Invalid skills format')
-        
-        return cleaned_data
-        
-        # Use hidden input for skills - will be managed by modal
-        self.fields['skills'] = forms.CharField(
-            required=False,
-            widget=forms.HiddenInput(attrs={
-                'id': 'id_skills',
-                'name': 'skills',
-                'class': 'skills-input'
-            })
-        )
 
     def parse_job_with_ai(self, text):
         """Extract job details using AI-first approach"""

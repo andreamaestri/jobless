@@ -10,24 +10,38 @@ def json(obj):
     """Convert a Python object to JSON string"""
     return mark_safe(json_lib.dumps(obj))
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 @register.filter
 def get_skill_icon(skill):
     """Get the icon for a skill"""
-    if hasattr(skill, 'get_icon'):
-        return skill.get_icon()
-    
-    # Handle string input
-    if isinstance(skill, str):
-        skill_name = skill.lower()
-        # First check ICON_NAME_MAPPING
-        if skill_name in ICON_NAME_MAPPING:
-            return ICON_NAME_MAPPING[skill_name]
-        # Then check SKILL_ICONS
-        for icon, name in SKILL_ICONS:
-            if name.lower() == skill_name:
+    try:
+        if hasattr(skill, 'get_icon'):
+            icon = skill.get_icon()
+            logger.debug(f"Got icon from skill object: {icon}")
+            return icon
+        
+        # Handle string input
+        if isinstance(skill, str):
+            skill_name = skill.lower()
+            # First check ICON_NAME_MAPPING
+            if skill_name in ICON_NAME_MAPPING:
+                icon = ICON_NAME_MAPPING[skill_name]
+                logger.debug(f"Got icon from mapping for {skill_name}: {icon}")
                 return icon
-    
-    return 'skill-icons:code-dark'  # Better default icon
+            # Then check SKILL_ICONS
+            for icon, name in SKILL_ICONS:
+                if name.lower() == skill_name:
+                    logger.debug(f"Got icon from SKILL_ICONS for {skill_name}: {icon}")
+                    return icon
+        
+        logger.warning(f"No icon found for skill: {skill}, using default")
+        return 'heroicons:academic-cap'  # Default icon matching the format of other icons
+    except Exception as e:
+        logger.error(f"Error getting icon for skill {skill}: {str(e)}")
+        return 'heroicons:academic-cap'
 
 @register.filter
 def status_badge(status):

@@ -144,21 +144,46 @@
                             </div>
 
                             <!-- Skills -->
-                            <div class="p-8 form-section" 
-                                 x-data="{ 
+                            <div class="p-8 form-section"
+                                 x-data="{
                                      selectedSkills: [],
                                      updateSkills(skills) {
                                          this.selectedSkills = skills;
-                                         document.getElementById('skills-input').value = JSON.stringify(skills);
+                                         // Convert skill objects to comma-separated string of skill names
+                                         const skillNames = skills.map(skill => skill.name).join(',');
+                                         const skillsInput = document.getElementById('id_skills');
+                                         if (skillsInput) {
+                                             skillsInput.value = skillNames;
+                                             // Trigger change event for form validation
+                                             skillsInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                         }
                                      },
                                      init() {
-                                         this.$watch('selectedSkills', value => {
-                                             if (value && Array.isArray(value)) {
-                                                 this.selectedSkills = value;
-                                             }
+                                         // Initialize selectedSkills from the form field on page load
+                                         const skillsInput = document.getElementById('id_skills');
+                                         if (skillsInput && skillsInput.value) {
+                                             const skillNames = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+                                             // Use MODAL_ prefixed variables
+                                             this.selectedSkills = skillNames.map(name => ({
+                                                 name: name,
+                                                 icon: window.MODAL_ICON_MAPPING[name.toLowerCase()] || 'heroicons:academic-cap',
+                                                 icon_dark: window.MODAL_DARK_VARIANTS[window.MODAL_ICON_MAPPING[name.toLowerCase()] || 'heroicons:academic-cap'] || window.MODAL_ICON_MAPPING[name.toLowerCase()] || 'heroicons:academic-cap'
+                                             }));
+                                         }
+
+                                         // Listen for 'skills-updated' events from the modal
+                                         window.addEventListener('skills-updated', event => {
+                                             this.updateSkills(event.detail);
+                                         });
+
+                                         // Listen for toggle-skill events
+                                         window.addEventListener('toggle-skill', event => {
+                                             const skillToRemove = event.detail;
+                                             this.selectedSkills = this.selectedSkills.filter(s => s.name !== skillToRemove.name);
+                                             this.updateSkills(this.selectedSkills);
                                          });
                                      }
-                                 }" 
+                                 }"
                                  style="--delay: 2">
                                 <div class="flex items-center justify-between mb-6">
                                     <div class="flex items-center gap-2">
@@ -207,8 +232,7 @@
                                             </template>
                                         </div>
                                     </div>
-                                    <!-- Hidden input for form submission -->
-                                    <input type="hidden" name="skills" id="skills-input">
+                                    {{ form.skills }}
                                 </div>
                             </div>
 
@@ -253,8 +277,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Skills input inside form -->
-                        <input type="hidden" name="skills" id="skills-input">
                     </form>
                 </div>
             </div>

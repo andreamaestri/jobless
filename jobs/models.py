@@ -21,10 +21,21 @@ class SkillsTagModel(tagulous.models.TagModel):
         """Get the icon for this skill"""
         if self.icon:
             return self.icon
-        # Fallback to default mapping
+        # First try ICON_NAME_MAPPING
+        skill_name = str(self).lower()
+        from .utils.skill_icons import ICON_NAME_MAPPING
+        if skill_name in ICON_NAME_MAPPING:
+            return ICON_NAME_MAPPING[skill_name]
+            
+        # Then try SKILL_ICONS
         for icon, name in SKILL_ICONS:
-            if name.lower() == str(self).lower():
+            if name.lower() == skill_name:
                 return icon
+                
+        # Log the missing icon mapping
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"No icon found for skill: {str(self)}")
         return 'heroicons:academic-cap'  # Default icon
 
     def get_icon_dark(self):
@@ -36,7 +47,7 @@ class SkillsTagModel(tagulous.models.TagModel):
         return DARK_VARIANTS.get(icon, icon)
 
     def __str__(self):
-        return f"{self.name} ({self.icon})"
+        return self.name
 
     class Meta:
         verbose_name = "Skill"

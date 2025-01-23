@@ -32,16 +32,10 @@
             this.isMobile = window.innerWidth < 640;
         });
 
-        // Initialize selectedSkills after icon mappings are ready
+        // Initialize empty arrays
         this.$nextTick(() => {
             this.selectedSkills = [];
-            if (window.skillSelect?.items) {
-                this.selectedSkills = window.skillSelect.items.map(name => ({
-                    name: name,
-                    icon: this.getIconForSkill(name),
-                    icon_dark: this.getDarkIconForSkill(name)
-                }));
-            }
+            this._initialSkills = [];
         });
     },
 
@@ -58,15 +52,32 @@
 
     handleSkillsUpdate(e) {
         if (e?.detail?.selectedSkills) {
-            this.selectedSkills = e.detail.selectedSkills;
+            // Store initial skills for cancel functionality
+            this._initialSkills = [...e.detail.selectedSkills];
+            this.selectedSkills = [...e.detail.selectedSkills];
+        } else {
+            this._initialSkills = [];
+            this.selectedSkills = [];
         }
         this.open = true;
+        // Make sure skills are properly converted to lowercase for comparison
+        this.selectedSkills = this.selectedSkills.map(skill => ({
+            ...skill,
+            name: skill.name,
+            icon: this.getIconForSkill(skill.name.toLowerCase()),
+            icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
+        }));
     },
 
     toggleSkill(skill) {
         const index = this.selectedSkills.findIndex(s => s.name === skill.name);
         if (index === -1) {
-            this.selectedSkills.push(skill);
+            // Add new skill with proper icon mappings
+            this.selectedSkills.push({
+                name: skill.name,
+                icon: this.getIconForSkill(skill.name.toLowerCase()),
+                icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
+            });
         } else {
             this.selectedSkills.splice(index, 1);
         }
@@ -76,31 +87,24 @@
         this.open = false;
         this.search = '';
         this.handleSearch({ target: { value: '' } }); // Reset search results
-        // Restore original selections
-        if (window.skillSelect) {
-            this.selectedSkills = window.skillSelect.items.map(name => ({
-                name: name,
-                ...window.skillSelect.options[name]
-            }));
-        }
+        // Restore to initial selected skills with proper icon mappings
+        this.selectedSkills = (this._initialSkills || []).map(skill => ({
+            name: skill.name,
+            icon: this.getIconForSkill(skill.name.toLowerCase()),
+            icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
+        }));
+        // Dispatch event to update parent
+        this.$dispatch('skills-updated', this.selectedSkills);
     },
 
     save() {
-        // Ensure we're sending the complete skill objects
-        const skillsToUpdate = this.selectedSkills.map(skill => ({
+        // Return complete skill objects to parent component
+        const finalSkills = this.selectedSkills.map(skill => ({
             name: skill.name,
-            icon: skill.icon,
-            icon_dark: skill.icon_dark
+            icon: this.getIconForSkill(skill.name.toLowerCase()),
+            icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
         }));
-        
-        // Update the hidden input
-        const skillsInput = document.getElementById('skills-input');
-        if (skillsInput) {
-            skillsInput.value = JSON.stringify(skillsToUpdate);
-        }
-        
-        // Dispatch event for form update
-        this.$dispatch('skills-updated', skillsToUpdate);
+        this.$dispatch('skills-updated', finalSkills);
         this.open = false;
         this.search = '';
     },
