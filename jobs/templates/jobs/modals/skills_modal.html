@@ -1,304 +1,13 @@
 {% load job_tags %}
 
-<script>
-    // Pre-initialize the icon mappings
-    window.MODAL_ICON_MAPPING = {{ icon_name_mapping|safe }};
-    window.MODAL_DARK_VARIANTS = {{ dark_variants|safe }};
-</script>
-
-<div x-data="skillsHandler"
-    x-init="initSkills([])"
-    x-bind:class="{'modal-open': open}"
-    init() {
-        // Add resize listener for mobile detection
-        window.addEventListener('resize', () => {
-            this.isMobile = window.innerWidth < 640;
-        });
-
-        // Initialize empty arrays
-        this.$nextTick(() => {
-            this.selectedSkills = [];
-            this._initialSkills = [];
-        });
-    },
-
-    getIconForSkill(skillName) {
-        if (!this.iconMapping) return this.defaultIcon;
-        return this.iconMapping[skillName] || this.defaultIcon;
-    },
-
-    getDarkIconForSkill(skillName) {
-        const baseIcon = this.getIconForSkill(skillName);
-        if (!this.darkVariants) return baseIcon;
-        return this.darkVariants[baseIcon] || baseIcon;
-    },
-
-    handleSkillsUpdate(e) {
-        const skills = e?.detail?.selectedSkills || [];
-        initSkills(skills);
-        open = true;
-    },
-
-    toggleSkill(skill) {
-        if (isSelected(skill.name)) {
-            removeSkill(skill.name);
-        } else {
-            addSkill(skill);
-        }
-    },
-
-    cancel() {
-        this.open = false;
-        this.search = '';
-        this.handleSearch({ target: { value: '' } }); // Reset search results
-        // Restore to initial selected skills with proper icon mappings
-        this.selectedSkills = (this._initialSkills || []).map(skill => ({
-            name: skill.name,
-            icon: this.getIconForSkill(skill.name.toLowerCase()),
-            icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
-        }));
-        // Dispatch event to update parent
-        this.$dispatch('skills-updated', this.selectedSkills);
-    },
-
-    save() {
-        // Return complete skill objects to parent component
-        const finalSkills = this.selectedSkills.map(skill => ({
-            name: skill.name,
-            icon: this.getIconForSkill(skill.name.toLowerCase()),
-            icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
-        }));
-        this.$dispatch('skills-updated', finalSkills);
-        this.open = false;
-        this.search = '';
-    },
-
-    isSelected(skillName) {
-        return this.selectedSkills.some(s => s.name === skillName);
-    },
-
-    jumpToLetter(letter) {
-        const group = this.$refs.skillsContainer.querySelector(`[data-letter='${letter}']`);
-        if (group) {
-            this.currentLetter = letter;
-            group.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    },
-
-    save() {
-        this.$dispatch('skills-updated', getSelectedSkills());
-        open = false;
-        search = '';
-    },
-
-    cancel() {
-        open = false;
-        search = '';
-        // Reset search UI
-        this.$refs.skillsContainer.querySelectorAll('.skill-card').forEach(card => {
-            card.style.display = '';
-        });
-        this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
-            group.style.display = '';
-        });
-        // Dispatch unchanged skills
-        this.$dispatch('skills-updated', getSelectedSkills());
-    },
-
-    handleQuickSelect(event, skill) {
-        if (event.shiftKey && lastSelected) {
-            // Get all skills between last selected and current
-            const skills = Array.from(this.$refs.skillsContainer.querySelectorAll('[data-skill]'));
-            const start = skills.findIndex(s => s.dataset.name === lastSelected.name);
-            const end = skills.findIndex(s => s.dataset.name === skill.name);
-            const range = skills.slice(Math.min(start, end), Math.max(start, end) + 1);
-            
-            range.forEach(skillEl => {
-                const skillData = JSON.parse(skillEl.dataset.skill);
-                if (!isSelected(skillData.name)) {
-                    addSkill(skillData);
-                }
-            });
-        } else {
-            toggleSkill(skill);
-            lastSelected = skill;
-        }
-    },
-
-    handleTouchStart(event) {
-        this.touchStartY = event.touches[0].clientY;
-        this.touchStartTime = Date.now();
-    },
-
-    handleTouchMove(event) {
-        if (!this.touchStartY) return;
-        
-        const deltaY = event.touches[0].clientY - this.touchStartY;
-        const deltaTime = Date.now() - this.touchStartTime;
-        
-        // Only prevent default if it's a quick horizontal swipe
-        if (Math.abs(deltaY) < 10 && deltaTime < 200) {
-            event.preventDefault();
-        }
-    },
-
-    handleTouchEnd() {
-        this.touchStartY = null;
-        this.touchStartTime = null;
-    },
-
-    handleSearch(e) {
-        search = e.target.value;
-        const results = searchSkills(search);
-        
-        this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
-            let hasVisible = false;
-            group.querySelectorAll('.skill-card').forEach(card => {
-                const name = card.querySelector('.skill-name').textContent;
-                const visible = !search || results.includes(name.toLowerCase());
-                card.style.display = visible ? '' : 'none';
-                if (visible) hasVisible = true;
-            });
-            group.style.display = hasVisible ? '' : 'none';
-        });
-    },
-
-    startLetterDrag(e) {
-        this.lastTouchY = e.touches[0].clientY;
-        this.isScrolling = false;
-    },
-
-    handleLetterDrag(e) {
-        if (!this.lastTouchY) return;
-        
-        const touch = e.touches[0];
-        const nav = e.currentTarget;
-        const rect = nav.getBoundingClientRect();
-        const percentage = (touch.clientY - rect.top) / rect.height;
-        const index = Math.floor(percentage * nav.children.length);
-        const button = nav.children[index];
-        
-        if (button && !this.isScrolling) {
-            e.preventDefault();
-            const letter = button.textContent.trim();
-            this.previewLetter(letter);
-            this.jumpToLetter(letter);
-        }
-    },
-
-    endLetterDrag() {
-        this.lastTouchY = null;
-        setTimeout(() => this.hideLetterPreview(), 1000);
-    },
-
-    previewLetter(letter) {
-        this.currentPreviewLetter = letter;
-    },
-
-    hideLetterPreview() {
-        this.currentPreviewLetter = null;
-    },
-
-    handleScroll(e) {
-        if (!this.isScrolling && e.target) {  // Add null check
-            this.isScrolling = true;
-            
-            const container = e.target;
-            const groups = container.querySelectorAll('.skill-group');
-            let mostVisible = null;
-            let maxVisibleHeight = 0;
-            
-            groups.forEach(group => {
-                const rect = group.getBoundingClientRect();
-                const visibleHeight = Math.min(rect.bottom, window.innerHeight) - 
-                                    Math.max(rect.top, 0);
-                
-                if (visibleHeight > maxVisibleHeight) {
-                    maxVisibleHeight = visibleHeight;
-                    mostVisible = group;
-                }
-            });
-            
-            if (mostVisible) {
-                const letter = mostVisible.dataset.letter;
-                this.currentLetter = letter;
-                document.querySelectorAll('.skill-group').forEach(g => {
-                    g.classList.toggle('active', g === mostVisible);
-                });
-            }
-            
-            setTimeout(() => this.isScrolling = false, 100);
-        }
-    },
-
-    letterNavigationActive: false,
-    letterHoverTimeout: null,
-
-    startLetterNavigation() {
-        this.letterNavigationActive = true;
-    },
-
-    stopLetterNavigation() {
-        this.letterNavigationActive = false;
-        if (this.letterHoverTimeout) {
-            clearTimeout(this.letterHoverTimeout);
-            this.letterHoverTimeout = null;
-        }
-    },
-
-    handleMouseMove(event) {
-        if (!this.isScrolling && this.letterNavigationActive) {
-            this.mouseX = this.lastMouseX = event.clientX;
-            this.mouseY = this.lastMouseY = event.clientY;
-            
-            const nav = event.currentTarget;
-            const rect = nav.getBoundingClientRect();
-            
-            // Don't trigger near the bottom where the Apply button is
-            const bottomThreshold = rect.bottom - 60;
-            if (event.clientY > bottomThreshold) {
-                return;
-            }
-            
-            const letters = nav.querySelectorAll('button');
-            const letterHeight = rect.height / letters.length;
-            const relativeY = event.clientY - rect.top;
-            const index = Math.min(
-                Math.floor(relativeY / letterHeight),
-                letters.length - 1
-            );
-            
-            if (index >= 0 && index < letters.length) {
-                const letter = letters[index].textContent.trim();
-                this.previewLetter(letter);
-                
-                // Clear any existing timeout
-                if (this.letterHoverTimeout) {
-                    clearTimeout(this.letterHoverTimeout);
-                }
-                
-                // Set new timeout for jumping to letter
-                this.letterHoverTimeout = setTimeout(() => {
-                    if (this.letterNavigationActive) {
-                        this.jumpToLetter(letter);
-                    }
-                }, 150); // 150ms delay before jumping
-            }
-        }
-    },
-
-    get previewPosition() {
-        if (!this.currentPreviewLetter) {
-            // Keep last position but hide it
-            return `transform: translate(${this.lastMouseX + 12}px, ${this.lastMouseY}px) translate(-50%, -50%); opacity: 0;`;
-        }
-        return `transform: translate(${this.lastMouseX + 12}px, ${this.lastMouseY}px) translate(-50%, -50%); opacity: 1;`;
-    }
-}" 
-    x-init="init()"
-    x-cloak
-    @keydown.escape.prevent.stop="cancel()"
-    @open-skills-modal.window="handleSkillsUpdate($event)">
+<div x-data="skillsModal()"
+     x-show="open"
+     @open-skills-modal.window="handleSkillsUpdate($event)"
+     @keydown.escape.window="cancel()"
+     class="modal"
+     :class="{ 'modal-open': open }"
+     x-init="init()"
+     x-cloak>
     
     <!-- Backdrop with blur effect -->
     <div x-show="open" 
@@ -311,152 +20,136 @@
          class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" 
          aria-hidden="true"></div>
 
-    <!-- Modal with improved mobile layout -->
-    <div x-show="open" class="modal" :class="{'modal-open': open}">
-        <div class="relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
-             :class="{'h-[100vh]': window.innerWidth < 640, 'h-[90vh]': window.innerWidth >= 640}">
-            
-            <!-- Header with improved search -->
-            <div class="sticky top-0 z-[90] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200"
-                 :class="{'shadow-lg': search}">
-                <div class="flex items-center gap-3 sm:gap-6">
-                    <!-- Mobile back button -->
-                    <button @click="cancel()" 
-                            class="btn btn-ghost btn-sm sm:hidden">
-                        <iconify-icon icon="heroicons:arrow-left" class="text-xl"></iconify-icon>
-                    </button>
-                    
-                    <!-- Title - Hide on mobile when search focused -->
-                    <h3 class="text-lg sm:text-xl font-bold whitespace-nowrap items-center gap-2"
-                        :class="{'hidden': isMobile && isSearchFocused}">
-                        <span class="hidden sm:inline-flex items-center gap-2">
-                            <iconify-icon icon="heroicons:academic-cap" class="text-primary text-2xl"></iconify-icon>
-                            Manage Skills
-                        </span>
-                        <span class="sm:hidden">Skills</span>
-                    </h3>
-
-                    <!-- Improved search input -->
-                    <div class="relative flex-1 max-w-lg mx-auto">
-                        <div class="relative">
-                            <input type="text" 
-                                   x-model="search"
-                                   @focus="isSearchFocused = true"
-                                   @blur="isSearchFocused = false"
-                                   @input="handleSearch($event)"
-                                   placeholder="Search skills..."
-                                   class="input input-bordered w-full pl-11 pr-4 h-10 sm:h-12 bg-base-200/50 focus:bg-base-200 transition-colors">
-                            <iconify-icon icon="heroicons:magnifying-glass" 
-                                         class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
-                            </iconify-icon>
-                            <!-- Clear search button -->
-                            <button x-show="search"
-                                    @click="search = ''; handleSearch({target: {value: ''}})"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle">
-                                <iconify-icon icon="heroicons:x-mark" class="text-base"></iconify-icon>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main content with improved scrolling -->
-            <div class="flex-1 min-h-0 overscroll-contain">
-                <div class="flex h-full overflow-hidden">
-                    <!-- Skills grid with better touch handling -->
-                    <div class="flex-1 overflow-y-auto bg-base-300 px-4 sm:px-6 pb-32 scroll-smooth overscroll-contain" 
-                         x-ref="skillsContainer"
-                         @scroll.throttle.50ms="$el && handleScroll($event)">
-                        
-                        <!-- Empty state with fixed visibility logic -->
-                        <div x-show="search && !$refs.skillsContainer.querySelectorAll('.skill-card[style*=\'display: \']:not([style*=\'display: none\'])').length"
-                             class="py-12 text-center text-base-content/60"
-                             x-cloak
-                             x-transition>
-                            <iconify-icon icon="heroicons:magnifying-glass" class="text-4xl mb-4"></iconify-icon>
-                            <p class="text-sm">No skills found matching "<span x-text="search"></span>"</p>
-                        </div>
-
-                        <!-- Skill groups with improved layout -->
-                        {% for group in skill_icons %}
-                        <div class="skill-group" data-letter="{{ group.letter }}">
-                            <div class="sticky bg-base-200 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-4xl font-black text-primary">{{ group.letter }}</span>
-                                    <div class="h-px flex-1 bg-gradient-to-r from-base-300 to-transparent"></div>
-                                </div>
-                            </div>
-                            <div class="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                                {% for skill in group.skills %}
-                                <button type="button"
-                                        class="skill-card group bg-base-100 hover:bg-base-200 active:bg-base-300
-                                               transition-all duration-200 rounded-xl p-3 sm:p-4 flex items-center
-                                               gap-3 sm:gap-4 relative shadow-sm hover:shadow-md
-                                               focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                        :class="{
-                                            'selected': isSelected('{{ skill.name }}'),
-                                            'transform active:scale-95': window.innerWidth < 640
-                                        }"
-                                        data-skill="{{ skill|json|escapejs }}"
-                                        @click="handleQuickSelect($event, {{ skill|json|safe }})">
-                                    <div class="icon-wrapper">
-                                        <iconify-icon :icon="getDarkIconForSkill('{{ skill.name }}')"
-                                                      width="45" 
-                                                      height="45">
-                                        </iconify-icon>
-                                    </div>
-                                    <span class="skill-name p-2">{{ skill.name }}</span>
-                                    <div class="check-indicator">
-                                        <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
-                                    </div>
-                                </button>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer with improved mobile layout -->
-            <div class="fixed bottom-0 inset-x-0 z-[80] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-lg border-t border-base-200 shadow-lg">
-                <div class="flex items-center justify-between sm:justify-end gap-3">
-                    <span class="text-base-content/60 text-sm whitespace-nowrap">
-                        <span x-text="getSelectedSkills().length"></span> selected
+    <!-- Modal -->
+    <div class="modal-box relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
+         :class="{'h-[100vh]': isMobile, 'h-[90vh]': !isMobile}">
+        
+        <!-- Header -->
+        <div class="sticky top-0 z-[90] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200"
+             :class="{'shadow-lg': search}">
+            <div class="flex items-center gap-3 sm:gap-6">
+                <!-- Mobile back button -->
+                <button @click="cancel()" 
+                        class="btn btn-ghost btn-sm sm:hidden">
+                    <iconify-icon icon="heroicons:arrow-left" class="text-xl"></iconify-icon>
+                </button>
+                
+                <!-- Title -->
+                <h3 class="text-lg sm:text-xl font-bold whitespace-nowrap items-center gap-2"
+                    :class="{'hidden': isMobile && isSearchFocused}">
+                    <span class="hidden sm:inline-flex items-center gap-2">
+                        <iconify-icon icon="heroicons:academic-cap" class="text-primary text-2xl"></iconify-icon>
+                        Manage Skills
                     </span>
-                    <div class="flex gap-2 sm:gap-3">
-                        <button @click="cancel()"
-                                type="button"
-                                class="btn btn-sm sm:btn-md btn-ghost hover:bg-error/10 hover:text-error">
-                            Cancel
-                        </button>
-                        <button @click="save()"
-                                type="button"
-                                class="btn btn-sm sm:btn-md btn-primary min-w-[100px]"
-                                :disabled="!getSelectedSkills().length">
-                            Apply
+                    <span class="sm:hidden">Skills</span>
+                </h3>
+
+                <!-- Search -->
+                <div class="relative flex-1 max-w-lg mx-auto">
+                    <div class="relative">
+                        <input type="text" 
+                               x-model="search"
+                               @focus="isSearchFocused = true"
+                               @blur="isSearchFocused = false"
+                               @input="handleSearch($event)"
+                               placeholder="Search skills..."
+                               class="input input-bordered w-full pl-11 pr-4 h-10 sm:h-12 bg-base-200/50 focus:bg-base-200 transition-colors">
+                        <iconify-icon icon="heroicons:magnifying-glass" 
+                                     class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
+                        </iconify-icon>
+                        <button x-show="search"
+                                @click="search = ''; handleSearch({target: {value: ''}})"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle">
+                            <iconify-icon icon="heroicons:x-mark" class="text-base"></iconify-icon>
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex-1 min-h-0">
+            <div class="flex h-full overflow-hidden">
+                <!-- Skills grid -->
+                <div class="flex-1 overflow-y-auto bg-base-300 px-4 sm:px-6 pb-32 scroll-smooth overscroll-contain" 
+                     x-ref="skillsContainer"
+                     @scroll.throttle.50ms="handleScroll($event)">
+                    
+                    <!-- Empty state -->
+                    <div x-show="search && !getVisibleSkillCount()"
+                         class="py-12 text-center text-base-content/60">
+                        <iconify-icon icon="heroicons:magnifying-glass" class="text-4xl mb-4"></iconify-icon>
+                        <p class="text-sm">No skills found matching "<span x-text="search"></span>"</p>
+                    </div>
+
+                    <!-- Skill groups -->
+                    {% for group in skill_icons %}
+                    <div class="skill-group" data-letter="{{ group.letter }}">
+                        <div class="sticky bg-base-200 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
+                            <div class="flex items-center gap-3">
+                                <span class="text-4xl font-black text-primary">{{ group.letter }}</span>
+                                <div class="h-px flex-1 bg-gradient-to-r from-base-300 to-transparent"></div>
+                            </div>
+                        </div>
+                        <div class="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                            {% for skill in group.skills %}
+                            <button type="button"
+                                    class="skill-card group bg-base-100 hover:bg-base-200 active:bg-base-300
+                                           transition-all duration-200 rounded-xl p-3 sm:p-4 flex items-center
+                                           gap-3 sm:gap-4 relative shadow-sm hover:shadow-md
+                                           focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    :class="{
+                                        'selected': isSelected('{{ skill.name }}'),
+                                        'transform active:scale-95': isMobile
+                                    }"
+                                    data-skill="{{ skill|json|escapejs }}"
+                                    @click="handleQuickSelect($event, {{ skill|json|safe }})">
+                                <div class="icon-wrapper">
+                                    <iconify-icon :icon="getDarkIconForSkill('{{ skill.name }}')"
+                                                 width="45" 
+                                                 height="45">
+                                    </iconify-icon>
+                                </div>
+                                <span class="skill-name p-2">{{ skill.name }}</span>
+                                <div class="check-indicator">
+                                    <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
+                                </div>
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="fixed bottom-0 inset-x-0 z-[80] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-lg border-t border-base-200 shadow-lg">
+            <div class="flex items-center justify-between sm:justify-end gap-3">
+                <span class="text-base-content/60 text-sm whitespace-nowrap">
+                    <span x-text="selectedSkills.length"></span> selected
+                </span>
+                <div class="flex gap-2 sm:gap-3">
+                    <button @click="cancel()"
+                            type="button"
+                            class="btn btn-sm sm:btn-md btn-ghost hover:bg-error/10 hover:text-error">
+                        Cancel
+                    </button>
+                    <button @click="save()"
+                            type="button"
+                            class="btn btn-sm sm:btn-md btn-primary min-w-[100px]"
+                            :disabled="!selectedSkills.length">
+                        Apply
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Add error handling for icon mappings -->
-<script>
-document.addEventListener('alpine:init', () => {
-    if (typeof {{ icon_name_mapping|safe }} === 'undefined') {
-        console.error('Icon mappings not properly initialized');
-    }
-});
-</script>
-
 <style>
-/* Hide Alpine elements before initialization */
 [x-cloak] { display: none !important; }
 
-/* Improved mobile touch handling */
 @media (max-width: 640px) {
     .skill-card {
         -webkit-tap-highlight-color: transparent;
@@ -468,32 +161,8 @@ document.addEventListener('alpine:init', () => {
     }
 }
 
-/* Improved scrolling */
 .overscroll-contain {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-}
-
-/* Improved transitions */
-.modal-enter {
-    opacity: 0;
-    transform: scale(0.95);
-}
-
-.modal-enter-active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 300ms, transform 300ms;
-}
-
-.modal-exit {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.modal-exit-active {
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 200ms, transform 200ms;
 }
 </style>
