@@ -64,7 +64,12 @@ class JobListView(BaseJobView, ListView):
             case "rejected":
                 queryset = queryset.filter(status="rejected")
 
-        return queryset.order_by("-created_at").select_related('user')
+        return (
+            queryset
+            .select_related('user')
+            .prefetch_related('skills')
+            .order_by("-created_at")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -201,7 +206,7 @@ class JobFavoritesView(BaseJobView, ListView):
         return (
             JobPosting.objects.filter(favorites=self.request.user)
             .select_related('user')
-            .prefetch_related('skills', 'favorites_set')
+            .prefetch_related('skills')
             .distinct()
             .order_by('-created_at')
         )
