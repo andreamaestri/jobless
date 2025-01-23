@@ -4,13 +4,45 @@
         title="Required Skills"
         extra_content='<button type="button" @click="$dispatch(\'open-skills-modal\')" class="btn btn-ghost btn-sm gap-2"><iconify-icon icon="heroicons:squares-plus"></iconify-icon>Manage Skills</button>' %}
     
-    <div class="relative">
-        <select id="skills-select" multiple placeholder="Search and select skills...">
-            <!-- Options will be populated via JavaScript -->
-        </select>
+    <div class="relative" 
+         x-data="{ 
+            selectedSkills: [],
+            init() {
+                this.$watch('selectedSkills', value => {
+                    const input = document.getElementById('skills-input');
+                    if (input) {
+                        input.value = JSON.stringify(value);
+                    }
+                });
+                
+                this.$el.addEventListener('skills-updated', (event) => {
+                    this.selectedSkills = event.detail;
+                    this.updateDisplay();
+                });
+            },
+            updateDisplay() {
+                const container = this.$refs.skillsContainer;
+                container.innerHTML = '';
+                
+                if (this.selectedSkills.length === 0) {
+                    container.innerHTML = '<div class="text-base-content/60 text-sm">No skills selected</div>';
+                    return;
+                }
+                
+                this.selectedSkills.forEach(skill => {
+                    const badge = document.createElement('div');
+                    badge.className = 'badge badge-primary gap-2 m-1';
+                    badge.innerHTML = `
+                        <iconify-icon icon="${skill.icon}"></iconify-icon>
+                        ${skill.name}
+                    `;
+                    container.appendChild(badge);
+                });
+            }
+         }">
+        <div x-ref="skillsContainer" class="min-h-[50px] flex flex-wrap gap-2 p-2 border border-base-300 rounded-lg">
+            <!-- Skills will be displayed here -->
+        </div>
         <input type="hidden" name="skills" id="skills-input">
-        <p class="text-xs text-base-content/60 mt-2">
-            Quick search and select skills, or use the Manage Skills button for more options
-        </p>
     </div>
 </div>
