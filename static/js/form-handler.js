@@ -31,6 +31,17 @@ class FormHandler {
         this.charCounter = document.getElementById('char-counter');
         this.skillsInput = document.getElementById('skills-input');
         
+        // Initialize skills data if available
+        const initialSkillsElement = document.getElementById('initial-skills');
+        if (initialSkillsElement && this.skillsInput) {
+            try {
+                const initialSkills = JSON.parse(initialSkillsElement.textContent);
+                this.skillsInput.value = JSON.stringify(initialSkills);
+            } catch (e) {
+                console.error('Error initializing skills:', e);
+            }
+        }
+        
         // Initialize event listeners only if elements exist
         if (this.jobForm) {
             this.jobForm.addEventListener('submit', this.handleJobSubmit.bind(this));

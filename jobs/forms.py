@@ -48,6 +48,16 @@ class JobPostingForm(forms.ModelForm):
         if not self.initial.get('status'):
             self.initial['status'] = 'draft'
 
+        # Initialize skills field
+        self.fields['skills'] = forms.CharField(
+            required=False,
+            widget=forms.HiddenInput(attrs={
+                'id': 'skills-input',
+                'name': 'skills',
+                'class': 'skills-input'
+            })
+        )
+
     def clean(self):
         cleaned_data = super().clean()
         logger.debug(f"Cleaning form data: {cleaned_data}")
