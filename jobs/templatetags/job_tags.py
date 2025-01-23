@@ -37,23 +37,28 @@ def get_skill_icon(skill_name, dark=False):
         skill_name = str(skill_name)
 
     if not isinstance(skill_name, str):
-        return 'heroicons:academic-cap-dark'
+        return 'heroicons:academic-cap'
 
     # Clean the skill name
-    clean_name = skill_name.strip().lower().replace(' ', '').replace('(none)', '')
+    clean_name = skill_name.strip().lower()
     
-    # Try to find the icon in our SKILL_ICONS mapping first
-    if clean_name in SKILL_ICONS:
-        return SKILL_ICONS[clean_name]
+    # First try to get icon from the skill object if it exists
+    if hasattr(skill_name, 'get_icon'):
+        return skill_name.get_icon()
+    
+    # Try to find the icon in our SKILL_ICONS mapping
+    for icon, name in SKILL_ICONS:
+        if name.lower() == clean_name:
+            return icon
 
     # Try different icon set prefixes
     prefixes = ['skill-icons:', 'logos:', 'devicon:']
     for prefix in prefixes:
         icon = f'{prefix}{clean_name}'
-        if icon in ICON_NAME_MAPPING or icon in DARK_VARIANTS:
-            return f'{icon}-dark' if prefix == 'skill-icons:' else icon
+        if icon in ICON_NAME_MAPPING:
+            return icon
 
-    return 'heroicons:academic-cap-dark'
+    return 'heroicons:academic-cap'  # Default icon
 
 @register.simple_tag
 def get_all_skill_icons():
