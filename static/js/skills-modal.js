@@ -1,12 +1,5 @@
-// Wait for Alpine and icon mappings to be available
-function initSkillsModal() {
-    if (typeof Alpine === 'undefined') {
-        setTimeout(initSkillsModal, 100);
-        return;
-    }
-
+document.addEventListener('alpine:init', () => {
     Alpine.data('skillsModal', () => ({
-        // Start with modal closed
         open: false,
         search: '',
         isSearchFocused: false,
@@ -14,17 +7,37 @@ function initSkillsModal() {
         selectedSkills: [],
         lastSelected: null,
         currentLetter: null,
-        iconMapping: window.MODAL_ICON_MAPPING || {},
-        darkVariants: window.MODAL_DARK_VARIANTS || {},
+        iconMapping: {},
+        darkVariants: {},
         defaultIcon: 'heroicons:academic-cap',
 
-        // Ensure open state is properly bound
         init() {
+            // Ensure modal starts closed
             this.open = false;
+            
+            // Initialize icon mappings after they're available
+            this.iconMapping = window.MODAL_ICON_MAPPING || {};
+            this.darkVariants = window.MODAL_DARK_VARIANTS || {};
+            
+            // Handle mobile detection
+            this.isMobile = window.innerWidth < 640;
             window.addEventListener('resize', () => {
                 this.isMobile = window.innerWidth < 640;
             });
-            this.selectedSkills = [];
+
+            // Initialize selected skills from input if it exists
+            const skillsInput = document.getElementById('id_skills');
+            if (skillsInput && skillsInput.value) {
+                const skillNames = skillsInput.value.split(',')
+                    .map(s => s.trim())
+                    .filter(Boolean);
+                    
+                this.selectedSkills = skillNames.map(name => ({
+                    name: name,
+                    icon: this.getIconForSkill(name),
+                    icon_dark: this.getDarkIconForSkill(name)
+                }));
+            }
         },
 
         getIconForSkill(skillName) {
@@ -37,9 +50,12 @@ function initSkillsModal() {
         },
 
         handleSkillsUpdate(e) {
-            const skills = e?.detail?.selectedSkills || [];
-            this.selectedSkills = skills;
-            this.open = true;
+            if (!e?.detail?.selectedSkills) return;
+            this.selectedSkills = e.detail.selectedSkills;
+            // Only open modal if triggered by user action
+            if (e.isTrusted) {
+                this.open = true;
+            }
         },
 
         isSelected(skillName) {
@@ -136,7 +152,4 @@ function initSkillsModal() {
             return this.$refs.skillsContainer.querySelectorAll('.skill-card[style*="display: block"], .skill-card:not([style*="display"])').length;
         }
     }));
-}
-
-// Initialize when document is ready
-document.addEventListener('DOMContentLoaded', initSkillsModal);
+});
