@@ -64,12 +64,14 @@ class JobListView(BaseJobView, ListView):
             case "rejected":
                 queryset = queryset.filter(status="rejected")
 
-        return (
-            queryset
-            .select_related('user')
-            .prefetch_related('skills')
-            .order_by("-created_at")
-        )
+        queryset = queryset.select_related('user').prefetch_related('skills')
+        
+        # Debug log the skills for each job
+        for job in queryset:
+            logger.debug(f"Job {job.id} skills: {[skill.name for skill in job.skills.all()]}")
+            logger.debug(f"Job {job.id} skill icons: {[skill.get_icon() for skill in job.skills.all()]}")
+
+        return queryset.order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
