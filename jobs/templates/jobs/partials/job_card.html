@@ -1,0 +1,11 @@
+{% if job.skills.all %}
+<div class="flex flex-wrap gap-1.5 mt-3">
+    {% for skill in job.skills.all %}
+    <div class="tooltip tooltip-top" data-tip="{{ skill.name }}">
+        <iconify-icon icon="{{ skill.get_icon }}" 
+                      class="text-lg transition-all duration-200 hover:scale-110">
+        </iconify-icon>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
