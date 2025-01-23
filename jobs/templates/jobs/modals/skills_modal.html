@@ -6,26 +6,9 @@
     window.MODAL_DARK_VARIANTS = {{ dark_variants|safe }};
 </script>
 
-<div x-data="{
-    selectedSkills: [],
-    iconMapping: window.MODAL_ICON_MAPPING || {},
-    darkVariants: window.MODAL_DARK_VARIANTS || {},
-    defaultIcon: 'heroicons:academic-cap',
-    open: false,
-    search: '',
-    currentLetter: '',
-    currentPreviewLetter: null,
-    lastSelected: null,
-    touchStartY: null,
-    touchStartTime: null,
-    lastTouchY: null,
-    isScrolling: false,
-    mouseX: 0,
-    mouseY: 0,
-    lastMouseX: 0,
-    lastMouseY: 0,
-    isMobile: window.innerWidth < 640,
-    isSearchFocused: false,
+<div x-data="skillsHandler"
+    x-init="initSkills([])"
+    x-bind:class="{'modal-open': open}"
     init() {
         // Add resize listener for mobile detection
         window.addEventListener('resize', () => {
@@ -51,35 +34,16 @@
     },
 
     handleSkillsUpdate(e) {
-        if (e?.detail?.selectedSkills) {
-            // Store initial skills for cancel functionality
-            this._initialSkills = [...e.detail.selectedSkills];
-            this.selectedSkills = [...e.detail.selectedSkills];
-        } else {
-            this._initialSkills = [];
-            this.selectedSkills = [];
-        }
-        this.open = true;
-        // Make sure skills are properly converted to lowercase for comparison
-        this.selectedSkills = this.selectedSkills.map(skill => ({
-            ...skill,
-            name: skill.name,
-            icon: this.getIconForSkill(skill.name.toLowerCase()),
-            icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
-        }));
+        const skills = e?.detail?.selectedSkills || [];
+        initSkills(skills);
+        open = true;
     },
 
     toggleSkill(skill) {
-        const index = this.selectedSkills.findIndex(s => s.name === skill.name);
-        if (index === -1) {
-            // Add new skill with proper icon mappings
-            this.selectedSkills.push({
-                name: skill.name,
-                icon: this.getIconForSkill(skill.name.toLowerCase()),
-                icon_dark: this.getDarkIconForSkill(skill.name.toLowerCase())
-            });
+        if (isSelected(skill.name)) {
+            removeSkill(skill.name);
         } else {
-            this.selectedSkills.splice(index, 1);
+            addSkill(skill);
         }
     },
 
@@ -121,23 +85,43 @@
         }
     },
 
+    save() {
+        this.$dispatch('skills-updated', getSelectedSkills());
+        open = false;
+        search = '';
+    },
+
+    cancel() {
+        open = false;
+        search = '';
+        // Reset search UI
+        this.$refs.skillsContainer.querySelectorAll('.skill-card').forEach(card => {
+            card.style.display = '';
+        });
+        this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
+            group.style.display = '';
+        });
+        // Dispatch unchanged skills
+        this.$dispatch('skills-updated', getSelectedSkills());
+    },
+
     handleQuickSelect(event, skill) {
-        if (event.shiftKey && this.lastSelected) {
+        if (event.shiftKey && lastSelected) {
             // Get all skills between last selected and current
             const skills = Array.from(this.$refs.skillsContainer.querySelectorAll('[data-skill]'));
-            const start = skills.findIndex(s => s.dataset.name === this.lastSelected.name);
+            const start = skills.findIndex(s => s.dataset.name === lastSelected.name);
             const end = skills.findIndex(s => s.dataset.name === skill.name);
             const range = skills.slice(Math.min(start, end), Math.max(start, end) + 1);
             
             range.forEach(skillEl => {
                 const skillData = JSON.parse(skillEl.dataset.skill);
-                if (!this.isSelected(skillData.name)) {
-                    this.toggleSkill(skillData);
+                if (!isSelected(skillData.name)) {
+                    addSkill(skillData);
                 }
             });
         } else {
-            this.toggleSkill(skill);
-            this.lastSelected = skill;
+            toggleSkill(skill);
+            lastSelected = skill;
         }
     },
 
@@ -164,12 +148,14 @@
     },
 
     handleSearch(e) {
-        this.search = e.target.value;
+        search = e.target.value;
+        const results = searchSkills(search);
+        
         this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
             let hasVisible = false;
             group.querySelectorAll('.skill-card').forEach(card => {
                 const name = card.querySelector('.skill-name').textContent;
-                const visible = !this.search || name.toLowerCase().includes(this.search.toLowerCase());
+                const visible = !search || results.includes(name.toLowerCase());
                 card.style.display = visible ? '' : 'none';
                 if (visible) hasVisible = true;
             });
@@ -326,13 +312,13 @@
          aria-hidden="true"></div>
 
     <!-- Modal with improved mobile layout -->
-    <div x-show="open" class="modal modal-open">
+    <div x-show="open" class="modal" :class="{'modal-open': open}">
         <div class="relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
-             :class="isMobile ? 'h-[100vh]' : 'h-[90vh]'">
+             :class="{'h-[100vh]': window.innerWidth < 640, 'h-[90vh]': window.innerWidth >= 640}">
             
             <!-- Header with improved search -->
             <div class="sticky top-0 z-[90] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200"
-                 :class="{'shadow-lg': isSearchFocused || search}">
+                 :class="{'shadow-lg': search}">
                 <div class="flex items-center gap-3 sm:gap-6">
                     <!-- Mobile back button -->
                     <button @click="cancel()" 
@@ -403,20 +389,16 @@
                             <div class="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                 {% for skill in group.skills %}
                                 <button type="button"
-                                        class="skill-card group bg-base-100 hover:bg-base-200 active:bg-base-300 
-                                               transition-all duration-200 rounded-xl p-3 sm:p-4 flex items-center 
-                                               gap-3 sm:gap-4 relative shadow-sm hover:shadow-md 
+                                        class="skill-card group bg-base-100 hover:bg-base-200 active:bg-base-300
+                                               transition-all duration-200 rounded-xl p-3 sm:p-4 flex items-center
+                                               gap-3 sm:gap-4 relative shadow-sm hover:shadow-md
                                                focus:outline-none focus:ring-2 focus:ring-primary/50"
                                         :class="{
                                             'selected': isSelected('{{ skill.name }}'),
-                                            'transform active:scale-95': isMobile
+                                            'transform active:scale-95': window.innerWidth < 640
                                         }"
                                         data-skill="{{ skill|json|escapejs }}"
-                                        @click="handleQuickSelect($event, {
-                                            name: '{{ skill.name }}',
-                                            icon: getIconForSkill('{{ skill.name }}'),
-                                            icon_dark: getDarkIconForSkill('{{ skill.name }}')
-                                        })">
+                                        @click="handleQuickSelect($event, {{ skill|json|safe }})">
                                     <div class="icon-wrapper">
                                         <iconify-icon :icon="getDarkIconForSkill('{{ skill.name }}')"
                                                       width="45" 
@@ -440,16 +422,18 @@
             <div class="fixed bottom-0 inset-x-0 z-[80] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-lg border-t border-base-200 shadow-lg">
                 <div class="flex items-center justify-between sm:justify-end gap-3">
                     <span class="text-base-content/60 text-sm whitespace-nowrap">
-                        <span x-text="selectedSkills.length"></span> selected
+                        <span x-text="getSelectedSkills().length"></span> selected
                     </span>
                     <div class="flex gap-2 sm:gap-3">
-                        <button @click="cancel()" 
+                        <button @click="cancel()"
+                                type="button"
                                 class="btn btn-sm sm:btn-md btn-ghost hover:bg-error/10 hover:text-error">
                             Cancel
                         </button>
-                        <button type="button" 
-                                @click="save()" 
-                                class="btn btn-sm sm:btn-md btn-primary min-w-[100px]">
+                        <button @click="save()"
+                                type="button"
+                                class="btn btn-sm sm:btn-md btn-primary min-w-[100px]"
+                                :disabled="!getSelectedSkills().length">
                             Apply
                         </button>
                     </div>
