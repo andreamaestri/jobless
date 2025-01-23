@@ -70,7 +70,7 @@ class JobPosting(models.Model):
     favorites = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through='JobFavorite',
-        related_name='favorite_jobs',
+        related_name='favorited_jobs',
         blank=True
     )
 
@@ -97,13 +97,13 @@ class JobPosting(models.Model):
         """Check if job is favorited by user"""
         if not user.is_authenticated:
             return False
-        return self.job_favorites.filter(user=user).exists()
+        return self.jobfavorite_set.filter(user=user).exists()
 
     def toggle_favorite(self, user):
         """Toggle favorite status for user"""
         if not user.is_authenticated:
             return False
-        favorite, created = self.job_favorites.get_or_create(user=user)
+        favorite, created = self.jobfavorite_set.get_or_create(user=user)
         if not created:
             favorite.delete()
         return created
@@ -117,7 +117,7 @@ class JobFavorite(models.Model):
     job = models.ForeignKey(
         'JobPosting',
         on_delete=models.CASCADE,
-        related_name='job_favorites'
+        related_name='favorites_set'
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
