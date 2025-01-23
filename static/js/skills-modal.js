@@ -1,5 +1,12 @@
-document.addEventListener('alpine:init', () => {
+// Wait for Alpine and icon mappings to be available
+function initSkillsModal() {
+    if (typeof Alpine === 'undefined') {
+        setTimeout(initSkillsModal, 100);
+        return;
+    }
+
     Alpine.data('skillsModal', () => ({
+        // Start with modal closed
         open: false,
         search: '',
         isSearchFocused: false,
@@ -11,7 +18,9 @@ document.addEventListener('alpine:init', () => {
         darkVariants: window.MODAL_DARK_VARIANTS || {},
         defaultIcon: 'heroicons:academic-cap',
 
+        // Ensure open state is properly bound
         init() {
+            this.open = false;
             window.addEventListener('resize', () => {
                 this.isMobile = window.innerWidth < 640;
             });
@@ -127,4 +136,7 @@ document.addEventListener('alpine:init', () => {
             return this.$refs.skillsContainer.querySelectorAll('.skill-card[style*="display: block"], .skill-card:not([style*="display"])').length;
         }
     }));
-});
+}
+
+// Initialize when document is ready
+document.addEventListener('DOMContentLoaded', initSkillsModal);
