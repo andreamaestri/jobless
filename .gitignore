@@ -1,3 +1,4 @@
+# Python related
 core.Microsoft*
 core.mongo*
 core.python*
@@ -5,7 +6,6 @@ core.python*
 env.py
 __pycache__/
 *.py[cod]
-node_modules/
 .github/
 cloudinary_python.txt
 heroku.txt
@@ -14,3 +14,29 @@ db.sqlite3
 .ssh/id_rsa
 .ssh/config
 .aider*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies and builds
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
