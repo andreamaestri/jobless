@@ -1,4 +1,37 @@
-document.addEventListener('alpine:init', () => {
+import Alpine from 'alpinejs'
+import { persist } from '@alpinejs/persist'
+
+// Page state methods (stored separately to avoid persistence issues)
+const pageStateMethods = {
+    init() {
+        // Remove the hasOwnProperty check as it's causing issues
+        // Initial loading state
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 100);
+
+        // Initialize after Alpine is ready
+        document.addEventListener("alpine:initialized", () => {
+            this.setupEventListeners();
+        });
+    },
+    setupEventListeners() {
+        // Handle page visibility changes
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                this.isLoading = false;
+            }
+        });
+        
+        // Handle page transitions
+        window.addEventListener("beforeunload", () => {
+            this.isLoading = true;
+        });
+    }
+};
+
+// Global Store initialization
+export function initializeStore() {
     // Global Store
     Alpine.store('app', {
         theme: {
@@ -22,48 +55,33 @@ document.addEventListener('alpine:init', () => {
         pageState: {
             isLoading: false,
             init() {
-                // Initial loading state
-                setTimeout(() => {
-                    this.isLoading = false;
-                }, 100);
-
-                // Initialize after Alpine is ready
-                document.addEventListener("alpine:initialized", () => {
-                    this.setupEventListeners();
-                });
+                pageStateMethods.init.call(this);
             },
             setupEventListeners() {
-                // Handle page visibility changes
-                document.addEventListener("visibilitychange", () => {
-                    if (document.visibilityState === "visible") {
-                        this.isLoading = false;
-                    }
-                });
-                
-                // Handle page transitions
-                window.addEventListener("beforeunload", () => {
-                    this.isLoading = true;
-                });
+                pageStateMethods.setupEventListeners.call(this);
             }
         }
     });
 
-    // Initialize persisted values after defining the store
+    // Initialize persisted values
     Alpine.effect(() => {
         // Access and persist theme
         const persistedTheme = Alpine.$persist(Alpine.store('app').theme).as('app_theme');
-        // Update individual properties of the theme object
         Alpine.store('app').theme.current = persistedTheme.current;
 
         // Access and persist sidebar state
         const persistedSidebar = Alpine.$persist(Alpine.store('app').sidebar).as('app_sidebar');
-        // Update individual properties of the sidebar object
         Alpine.store('app').sidebar.open = persistedSidebar.open;
         Alpine.store('app').sidebar.collapsed = persistedSidebar.collapsed;
-
-        // Access and persist page state
-        const persistedPageState = Alpine.$persist(Alpine.store('app').pageState).as('app_pageState');
-        // Update individual properties of the pageState object
-        Alpine.store('app').pageState.isLoading = persistedPageState.isLoading;
     });
-});
+
+    // Initialize page state
+    Alpine.store('app').pageState.init();
+}
+
+// Initialize when Alpine loads
+document.addEventListener('alpine:init', initializeStore);
+
+export default {
+    initializeStore
+};

@@ -1,4 +1,6 @@
-document.addEventListener('alpine:init', () => {
+import Alpine from 'alpinejs'
+
+export function initializeToastManager() {
     Alpine.store('toastManager', {
         toasts: [],
         position: 'bottom-right',
@@ -36,4 +38,11 @@ document.addEventListener('alpine:init', () => {
             this.toasts = [];
         }
     });
-});
+}
+
+// Initialize when Alpine loads
+document.addEventListener('alpine:init', initializeToastManager);
+
+export default {
+    initializeToastManager
+};
