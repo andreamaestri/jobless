@@ -1,4 +1,12 @@
 document.addEventListener("alpine:init", () => {
+  // Wait for SKILL_ICONS to be available
+  const waitForSkillIcons = async () => {
+    while (!window.skillIconsHelper?.initialized) {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return true;
+  };
+
   // Initialize stores first
   if (!Alpine.store('theme')) {
     Alpine.store('theme', {
@@ -27,66 +35,81 @@ document.addEventListener("alpine:init", () => {
     isMobile: window.innerWidth < 640,
     isSearchFocused: false,
 
-    // Search and filtering state
+    // Search state with initialization
     search: '',
     searchQuery: '',
     showSuggestions: false,
     filteredSkills: [],
     browserSearch: '',
-    
-    // Category management
+
+    // Category state with initialization
     selectedCategory: null,
     categories: [],
     filteredBrowserSkills: [],
     selectedSkills: [],
 
-    init() {
+    async init() {
+      // Wait for SkillIconsHelper to be ready
+      await waitForSkillIcons();
+      
       // Mobile detection
       this.isMobile = window.innerWidth < 640;
       window.addEventListener('resize', () => {
         this.isMobile = window.innerWidth < 640;
       });
 
-      // Initialize variables
-      this.initializeState();
+      // Initialize skills state
+      await this.initSkills();
 
       // Watch modal state
       this.$watch('open', value => {
         if (value) {
-          this.search = '';
-          this.searchQuery = '';
-          this.showSuggestions = false;
-          this.filteredSkills = [];
-          this.browserSearch = '';
-          this.selectedCategory = null;
-          this.resetSearch();
+          this.resetSearchState();
         }
       });
 
       // Listen for toggle-skill events
       this.$el.addEventListener('toggle-skill', (e) => {
         if (e.detail) {
-          this.handleQuickSelect(null, e.detail);
+          this.handleQuickSelect(e.detail);
         }
       });
+
+      this.loading = false;
+      this.ready = true;
     },
 
-    initializeState() {
-      // Wait for icon mappings to be available
-      this.waitForDependencies().then(() => {
-        this.categories = this.getUniqueCategories();
+    async initSkills() {
+      try {
+        // Initialize from SkillIconsHelper
+        this.categories = window.skillIconsHelper?.getCategories() || [];
         this.filteredSkills = [];
         this.filteredBrowserSkills = [];
-        this.loading = false;
-        this.ready = true;
-      });
+        
+        // Load initial selected skills
+        const skillsInput = document.getElementById('id_skills');
+        if (skillsInput?.value) {
+          const skillNames = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+          this.selectedSkills = skillNames.map(name => ({
+            name,
+            icon: window.skillIconsHelper.getIconForSkill(name),
+            icon_dark: window.skillIconsHelper.getIconForSkill(name, true)
+          }));
+        }
+      } catch (error) {
+        console.error('Error initializing skills:', error);
+      }
     },
 
-    async waitForDependencies() {
-      while (!window.MODAL_ICON_MAPPING || !window.MODAL_DARK_VARIANTS) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      }
-      return true;
+    resetSearchState() {
+      this.search = '';
+      this.searchQuery = '';
+      this.showSuggestions = false;
+      this.browserSearch = '';
+      this.selectedCategory = null;
+      this.filteredSkills = [];
+      this.filteredBrowserSkills = [];
+      this.resetSearch();
     },
 
     resetSearch() {
@@ -106,22 +129,8 @@ document.addEventListener("alpine:init", () => {
       }
     },
 
-    isSelected(skillName) {
-      return this.selectedSkills.some(skill => 
-        skill.name.toLowerCase() === skillName.toLowerCase()
-      );
-    },
-
-    getDarkIconForSkill(skillName) {
-      const icon = window.MODAL_ICON_MAPPING?.[skillName.toLowerCase()];
-      if (icon) {
-        return window.MODAL_DARK_VARIANTS?.[icon] || icon;
-      }
-      return 'heroicons:academic-cap';
-    },
-
-    handleQuickSelect(event, skill) {
-      if (!skill?.name) return;
+    handleQuickSelect(skill) {
+      if (!skill?.name || !this.ready) return;
 
       const index = this.selectedSkills.findIndex(s => 
         s.name.toLowerCase() === skill.name.toLowerCase()
@@ -130,8 +139,8 @@ document.addEventListener("alpine:init", () => {
       if (index === -1) {
         this.selectedSkills.push({
           name: skill.name,
-          icon: window.MODAL_ICON_MAPPING?.[skill.name.toLowerCase()] || 'heroicons:academic-cap',
-          icon_dark: this.getDarkIconForSkill(skill.name)
+          icon: window.skillIconsHelper.getIconForSkill(skill.name),
+          icon_dark: window.skillIconsHelper.getIconForSkill(skill.name, true)
         });
       } else {
         this.selectedSkills.splice(index, 1);
@@ -140,19 +149,17 @@ document.addEventListener("alpine:init", () => {
       this.$dispatch('skills-updated', this.selectedSkills);
     },
 
+    // Rest of the methods remain the same...
     handleSearch(e) {
       if (!this.ready || !this.$refs.skillsContainer) {
         this.filteredSkills = [];
         return;
       }
-      
+
       const query = e.target.value.toLowerCase();
       this.searchQuery = query;
       this.browserSearch = query;
       this.showSuggestions = query.length > 0;
-      
-      // Reset filtered skills
-      this.filteredSkills = [];
 
       this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
         let hasVisible = false;
@@ -163,32 +170,7 @@ document.addEventListener("alpine:init", () => {
           if (visible) hasVisible = true;
         });
         group.style.display = hasVisible ? '' : 'none';
-        
-        // Add visible skills to filtered list
-        if (hasVisible) {
-          const visibleCards = Array.from(group.querySelectorAll('.skill-card'))
-            .filter(card => card.style.display !== 'none')
-            .map(card => JSON.parse(card.dataset.skill));
-          this.filteredSkills.push(...visibleCards);
-        }
       });
-
-      // Update browser-filtered skills
-      this.filteredBrowserSkills = [...this.filteredSkills];
-    },
-    
-    getUniqueCategories() {  
-      if (!this.$refs.skillsContainer) return [];
-      
-      const cards = this.$refs.skillsContainer.querySelectorAll('.skill-card');
-      const categories = new Set();
-      
-      cards.forEach(card => {
-        const skill = JSON.parse(card.dataset.skill);
-        if (skill.category) categories.add(skill.category);
-      });
-      
-      return Array.from(categories);
     },
 
     save() {
@@ -205,17 +187,7 @@ document.addEventListener("alpine:init", () => {
 
     close() {
       this.open = false;
-      this.search = '';
-      this.isSearchFocused = false;
-      this.resetSearch();
-    },
-
-    getVisibleSkillCount() {
-      if (!this.ready || !this.$refs.skillsContainer) return 0;
-      
-      return this.$refs.skillsContainer?.querySelectorAll(
-        '.skill-card[style*="display: block"], .skill-card:not([style*="display"])'
-      )?.length || 0;
+      this.resetSearchState();
     }
   }));
 });
