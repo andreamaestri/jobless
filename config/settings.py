@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 import os
+import re
 
 
 load_dotenv()
@@ -89,6 +90,13 @@ SERIALIZATION_MODULES = {
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Whitenoise settings for Vite compatibility
+def immutable_file_test(path, url):
+    # Match vite (rollup)-generated hashes, à la, `some_file-CSliV9zW.js`
+    return re.match(r"^.+[.-][0-9a-zA-Z_-]{8,12}\..+$", url)
+
+WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -299,6 +307,12 @@ else:
     SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+DJANGO_VITE = {
+  "default": {
+    "dev_mode": True
+  }
+}
 
 LOGGING = {
     'version': 1,

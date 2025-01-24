@@ -1,6 +1,6 @@
-<!DOCTYPE html>{% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load static %}
+<!DOCTYPE html>{% load django_vite %} {% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load static %}
 <html lang="en" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current">
-  <head>
+  <head>{% vite_hmr_client %}
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -86,26 +86,8 @@
 
     <!-- Tailwind -->
     {% tailwind_css %}
-    <!-- Full Calendar -->
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/index.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/index.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/index.global.min.js"></script>
-    
-    <!-- Marked library -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-
-    <!-- Alpine.js Plugins (Must load BEFORE Alpine core) -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/morph@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/resize@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
-    <!-- Alpine.js Store (Must load BEFORE Alpine core) -->
-    <script defer src="{% static 'js/store.js' %}"></script>
-    <!-- Alpine.js Core -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
+    <!-- Core JS -->
+    {% vite_asset 'static/js/main.js' %}
     <!-- Tag Input Component -->
     <script>
       document.addEventListener('alpine:init', function() {
@@ -131,23 +113,10 @@
       });
     </script>
 
-    <!-- Third-party Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
-    <script src="{% static 'js/htmx.min.js' %}"></script>
     {% django_htmx_script %}
 
     <!-- Early Scripts Block for Component Dependencies -->
     {% block early_js %}{% endblock %}
-
-    <!-- Third-party Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-
-    <!-- Core JavaScript -->
-    <script defer src="{% static 'js/script.js' %}"></script>
-    <script defer src="{% static 'js/toast.js' %}"></script>
-
     <!-- CSRF Setup -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
