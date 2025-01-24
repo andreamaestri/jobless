@@ -115,66 +115,60 @@ class SkillIconsHelper {
     }
 }
 
-// ... rest of the existing code ...
-
-// Initialize skills helper when page loads
-window.skillsHelper = {
-    _skills: [],
-    _initialized: false,
-
-    async initialize() {
-        if (this._initialized) {
-            // Always refresh icons if we've already initialized before
-            this.updateIcons();
-            return;
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Initialize skill icons helper
+        if (!window.skillIconsHelper) {
+            window.skillIconsHelper = new SkillIconsHelper();
+            await window.skillIconsHelper.initialize();
         }
-        try {
-            const response = await fetch('/jobs/api/skills/');
-            if (!response.ok) throw new Error('Failed to load skills data');
-            this._skills = await response.json();
-            this._initialized = true;
-            this.updateIcons();
-        } catch (error) {
-            console.error('Failed to initialize skills:', error);
+ 
+        // Initialize manager instances
+        window.skillSelectManager = new SkillSelectManager();
+        window.skillsManager = new SkillsModalManager();
+        
+        // Initialize skill select if element exists
+        const skillSelect = document.getElementById('skills-select');
+        if (skillSelect) {
+            const tomSelect = window.skillSelectManager.initializeSelect('#skills-select');
+            
+            // Handle theme changes
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addEventListener('change', (e) => {
+                window.skillSelectManager.handleThemeChange(tomSelect, e.matches);
+            });
         }
-    },
-
-    updateIcons() {
+        
         // Update all skill icons in the document
-        document.querySelectorAll('[data-skill-icon]').forEach(element => {
-            const iconData = JSON.parse(element.getAttribute('data-skill-icon'));
-            const iconify = element.querySelector('.iconify');
-            if (iconify) {
-                const icon = this.getIconByName(iconData.name);
-                iconify.setAttribute('data-icon', icon);
-            }
+        const updateIcons = () => {
+            document.querySelectorAll('iconify-icon').forEach(async (icon) => {
+                const skillName = icon.closest('[data-tip]')?.getAttribute('data-tip');
+                if (skillName) {
+                    await window.skillIconsHelper.refreshIconElement(icon, skillName);
+                }
+            });
+        };
+
+        // Update icons initially
+        updateIcons();
+
+        // Watch for theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            updateIcons();
         });
-    },
 
-    getIconByName(skillName) {
-        const skill = this._skills.find(s => s.text === skillName);
-        if (!skill) return 'octicon:code-16';
-        return skill.icon;
-    },
+        // Initialize skills helper without API dependency if needed
+        if (!window.skillsHelper) {
+            window.skillsHelper = {
+                updateIcons,
+                _initialized: true
+            };
+        }
 
-    getCategories() {
-        return [...new Set(this._skills.map(skill => skill.icon.split(':')[0]))];
-    },
-
-    filterByCategory(category) {
-        return category 
-            ? this._skills.filter(skill => skill.icon.startsWith(category + ':'))
-            : this._skills;
-    },
-
-    searchSkills(query) {
-        if (!query) return this._skills;
-        const lowerQuery = query.toLowerCase();
-        return this._skills.filter(skill => 
-            skill.text.toLowerCase().includes(lowerQuery)
-        );
+    } catch (error) {
+        console.warn('Skills initialization error:', error);
     }
-};
+});
 
 class SkillSelectManager {
     constructor() {
@@ -203,14 +197,6 @@ class SkillSelectManager {
             'Python': ['py', 'python'],
             'React': ['reactjs', 'react.js'],
             // Add more mappings as needed
-        };
-
-        this.skillPriorities = {
-            'JavaScript': 100,
-            'Python': 95,
-            'React': 90,
-            'TypeScript': 85,
-            // Add more priorities as needed
         };
     }
 
@@ -367,8 +353,7 @@ class SkillSelectManager {
                 icon: skillData.icon,
                 icon_dark: skillData.icon_dark,
                 keywords: this.getSkillKeywords(skillData.name),
-                group: this.getSkillGroup(skillData.name),
-                priority: this.getSkillPriority(skillData.name)
+                group: this.getSkillGroup(skillData.name)
             };
         });
     }
@@ -613,14 +598,24 @@ class SkillsModalManager {
     }
 
     applySelectedSkills() {
-        const checkboxes = document.querySelectorAll('#skills-modal input[type="checkbox"]');
-        this.selectedSkills.clear();
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                this.selectedSkills.add(cb.value);
-            }
-        });
-        this.renderSelectedSkills();
+        // Get all checked skills
+        const skills = Array.from(document.querySelectorAll('#skills-modal input[type="checkbox"]:checked'))
+            .map(cb => {
+                const data = JSON.parse(cb.dataset.skill || '{}');
+                return {
+                    name: data.name,
+                    icon: data.icon,
+                    icon_dark: data.icon_dark
+                };
+            });
+        
+        // Dispatch event for Alpine component
+        window.dispatchEvent(new CustomEvent('skills-updated', {
+            detail: skills
+        }));
+        
+        // Close modal
+        this.modal?.close();
     }
 
     removeSkill(skillName) {
@@ -979,61 +974,12 @@ class SkillsModalManager {
         window.location.href = e.target.href;
         return false;
     }
-}
 
-// Modify the initialization code
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Initialize helpers
-        window.skillIconsHelper = new SkillIconsHelper();
-        await window.skillIconsHelper.initialize();
-        
-        // Initialize other components
-        await window.skillsHelper.initialize();
-        
-        // Initialize skill select after helpers are ready
-        window.skillSelectManager = new SkillSelectManager();
-        const skillSelect = document.getElementById('skills-select');
-        if (skillSelect) {
-            const tomSelect = window.skillSelectManager.initializeSelect('#skills-select');
-            
-            // Force refresh icons after initialization
-            requestAnimationFrame(async () => {
-                const dropdown = document.querySelector('.ts-dropdown');
-                if (dropdown) {
-                    await window.skillIconsHelper.updateIcons();
-                }
-            });
-
-            // Watch for theme changes
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            mediaQuery.addEventListener('change', (e) => {
-                window.skillSelectManager.handleThemeChange(tomSelect, e.matches);
-            });
-        }
-
-        // Initialize skills modal
-        window.skillsManager = new SkillsModalManager();
-
-        // Make functions globally available
-        window.jumpToLetter = (letter) => window.skillsManager.jumpToLetter(letter, true);
-        window.applySelectedSkills = () => window.skillsManager.applySelectedSkills();
-        window.showLetterPreview = showLetterPreview;
-        window.hideLetterPreview = hideLetterPreview;
-
-    } catch (error) {
-        console.error('Failed to initialize application:', error);
+    openModal(currentSkills = []) {
+        this.selectedSkills = new Set(currentSkills.map(s => s.name));
+        this.modal?.showModal();
+        this.handleModalShow();
     }
-});
-
-function showLetterPreview(letter) {
-    if (!window.skillsManager?.magnifier) return;
-    window.skillsManager.magnifier.showPreview(letter);
-}
-
-function hideLetterPreview() {
-    if (!window.skillsManager?.magnifier) return;
-    window.skillsManager.magnifier.hidePreview();
 }
 
 function renderSelectedSkills() {
@@ -1122,3 +1068,44 @@ function handleCancel(e) {
 
 // Add to global scope
 window.handleCancel = handleCancel;
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Initialize skills helper
+        window.skillsHelper = {
+            _skills: [],
+            _initialized: false,
+            
+            async initialize() {
+                if (this._initialized) return;
+                
+                // Load skills data from window.SKILL_MAPPINGS if available
+                if (window.SKILL_MAPPINGS) {
+                    this._skills = Object.entries(window.SKILL_MAPPINGS.icons).map(([name, icon]) => ({
+                        text: name,
+                        icon: icon,
+                        icon_dark: window.SKILL_MAPPINGS.darkVariants[icon]
+                    }));
+                    this._initialized = true;
+                    return;
+                }
+                
+                // Fallback to API
+                const response = await fetch('/jobs/api/skills/');
+                if (!response.ok) throw new Error('Failed to load skills');
+                
+                this._skills = await response.json();
+                this._initialized = true;
+            },
+            
+            // ...rest of skillsHelper methods...
+        };
+
+        await window.skillsHelper.initialize();
+        window.skillsManager = new SkillsModalManager();
+
+    } catch (error) {
+        console.warn('Skills initialization error:', error);
+    }
+});
