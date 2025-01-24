@@ -1,3 +1,5 @@
+{% include "jobs/includes/skill_base.html" %}
+
 <div x-data="skillSelector" class="relative" x-init="initSkills('{{ widget.value|default:"" }}')">
     <!-- Hidden input for form submission -->
     <input type="hidden" name="{{ widget.name }}" x-ref="hiddenInput" :value="selectedSkills.join(',')">
@@ -115,8 +117,8 @@ document.addEventListener('alpine:init', () => {
         selectedIndex: -1,
         browserSearch: '',
         selectedCategory: '',
-        skillsList: SKILL_ICONS.map(([icon, name]) => ({ icon, name })),
-        categories: [...new Set(SKILL_ICONS.map(([icon]) => icon.split(':')[0]))],
+        skillsList: window.SKILL_ICONS.map(([icon, name]) => ({ icon, name })),
+        categories: [...new Set(window.SKILL_ICONS.map(([icon]) => icon.split(':')[0]))],
 
         initSkills(initialValue) {
             if (initialValue) {

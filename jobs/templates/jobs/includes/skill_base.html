@@ -1,0 +1,9 @@
+{% load job_tags %}
+
+{{ skill_icons|json_script:"skill-icons-data" }}
+{{ dark_variants|json_script:"dark-variants-data" }}
+
+<script type="text/javascript">
+    window.SKILL_ICONS = JSON.parse(document.getElementById('skill-icons-data').textContent);
+    window.SKILL_MAPPINGS = JSON.parse(document.getElementById('dark-variants-data').textContent);
+</script>

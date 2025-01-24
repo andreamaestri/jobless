@@ -27,6 +27,8 @@ urlpatterns = [
     path('contacts/', include('contacts.urls')),
     path('events/', include('events.urls')),
     path('jobs/', include(('jobs.urls', 'jobs'), namespace='jobs')),
+    path('', include('django_components.urls')),
     path('', include ('home.urls')),
+    
     
 ]

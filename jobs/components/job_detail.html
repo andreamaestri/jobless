@@ -1,0 +1,100 @@
+{% load job_tags %}
+<div class="bg-base-100 rounded-2xl shadow-lg p-8">
+    <!-- Header Section -->
+    <div class="border-b border-base-300 pb-6 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-base-content">{{ job.title }}</h1>
+                <p class="text-xl text-primary mt-2">{{ job.company }}</p>
+            </div>
+            <span class="badge {{ job.status|status_badge }} badge-lg">
+                <iconify-icon icon="{{ job.status|status_icon }}" class="mr-1"></iconify-icon>
+                {{ job.get_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Details Table -->
+    <div class="divide-y divide-base-300">
+        <div class="grid grid-cols-3 py-4">
+            <div class="text-sm font-semibold text-base-content">Location</div>
+            <div class="col-span-2 text-base-content">{{ job.location }}</div>
+        </div>
+
+        {% if job.salary_range %}
+        <div class="grid grid-cols-3 py-4">
+            <div class="text-sm font-semibold text-base-content">Salary Range</div>
+            <div class="col-span-2 text-base-content">{{ job.salary_range }}</div>
+        </div>
+        {% endif %}
+
+        {% if job.url %}
+        <div class="grid grid-cols-3 py-4">
+            <div class="text-sm font-semibold text-base-content">Job URL</div>
+            <div class="col-span-2">
+                <a href="{{ job.url }}" target="_blank" class="text-primary hover:text-primary-focus">
+                    View Original Posting
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if job.skills.count > 0 %}
+        <div class="grid grid-cols-3 py-4">
+            <div class="text-sm font-semibold text-base-content">Skills</div>
+            <div class="col-span-2">
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in job.skills.all %}
+                    <span class="badge badge-accent gap-2">
+                        <iconify-icon icon="{{ skill|get_skill_icon:True }}"></iconify-icon>
+                        {{ skill.name|default:skill }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-3 py-4">
+            <div class="text-sm font-semibold text-base-content">Description</div>
+            <div class="col-span-2 text-base-content">
+                <div x-data="{ 
+                    formattedDescription: '',
+                    init() {
+                        this.formattedDescription = marked.parse(`{{ job.description|escapejs }}`);
+                    }
+                }" 
+                x-html="formattedDescription"
+                class="prose prose-base-content max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-pre:bg-base-300 prose-pre:p-4 prose-pre:rounded-lg">
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 py-4">
+            <div class="text-sm font-semibold text-base-content">Last Updated</div>
+            <div class="col-span-2 text-base-content">{{ job.updated_at|date:"F j, Y" }}</div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-base-300">
+        <form method="POST" action="{% url 'jobs:toggle_favorite' job.pk %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost flex items-center gap-2">
+                {% if is_favorite %}
+                    <iconify-icon icon="octicon:star-fill-24" class="text-primary"></iconify-icon>
+                    <span>Remove from favorite</span>
+                {% else %}
+                    <iconify-icon icon="octicon:star-24"></iconify-icon>
+                    <span>Add to favorite</span>
+                {% endif %}
+            </button>
+        </form>
+        <a href="{% url 'jobs:list' %}" class="btn btn-ghost">
+            Back to List
+        </a>
+        <a href="{% url 'jobs:edit' job.pk %}" class="btn btn-primary">
+            Edit Job
+        </a>
+    </div>
+</div>
