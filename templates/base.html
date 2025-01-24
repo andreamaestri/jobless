@@ -93,26 +93,13 @@
 
     <!-- Marked library -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Iconify -->
+    
+    <!-- Third-party Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js"></script>
-    <script>
-      // Wait for iconify to load
-      document.addEventListener('DOMContentLoaded', () => {
-        // Check if iconify is loaded
-        if (customElements.get('iconify-icon')) {
-          // Load our scripts
-          const skillIcons = document.createElement('script');
-          skillIcons.src = "{% static 'js/skill-icons.js' %}";
-          document.head.appendChild(skillIcons);
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
 
-          skillIcons.onload = () => {
-            const skillIconsInit = document.createElement('script');
-            skillIconsInit.src = "{% static 'js/skill-icons-init.js' %}";
-            document.head.appendChild(skillIconsInit);
-          };
-        }
-      });
-    </script>
+    <!-- Early Scripts Block for Component Dependencies -->
+    {% block early_js %}{% endblock %}
 
     <!-- Alpine.js and Plugins -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -120,18 +107,12 @@
 
     <!-- Third-party Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js"></script>
 
     <!-- Core JavaScript -->
     <script defer src="{% static 'js/script.js' %}"></script>
     <script defer src="{% static 'js/sidebar.js' %}"></script>
     <script defer src="{% static 'js/theme.js' %}"></script>
     <script defer src="{% static 'js/toast.js' %}"></script>
-
-    <!-- Skills Related Scripts -->
-    <script defer src="{% static 'js/skill-icons.js' %}"></script>
-    <script defer src="{% static 'js/skill-handler.js' %}"></script>
-    <script defer src="{% static 'js/skills-modal.js' %}"></script>
 
     <!-- HTMX -->
     <script defer src="{% static 'js/htmx.min.js' %}"></script>
