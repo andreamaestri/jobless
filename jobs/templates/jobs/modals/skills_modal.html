@@ -1,12 +1,12 @@
 {% load job_tags %}
 {% load json_tags %}
 
-<!-- Modal wrapper with proper initialization -->
-<div x-data="skillsModal()"
+<!-- Modal wrapper -->
+<div x-data="skillsModal"
+     x-show="open"
      x-cloak
-     x-init="init()"
-     @keydown.escape.window="cancel()"
      @open-skills-modal.window="handleSkillsUpdate($event)"
+     @keydown.escape.window="cancel()"
      class="modal"
      :class="{ 'modal-open': open }">
     

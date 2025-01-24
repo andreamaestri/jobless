@@ -3,15 +3,15 @@
 {% load job_tags %}
 
 {% block early_js %}
-<!-- Initialize icon mappings for skills -->
+<!-- Initialize skills system -->
 <script>
-    window.ICON_NAME_MAPPING = JSON.parse('{{ icon_name_mapping|escapejs }}');
-    window.DARK_VARIANTS = JSON.parse('{{ dark_variants|escapejs }}');
-    window.MODAL_ICON_MAPPING = window.ICON_NAME_MAPPING;
-    window.MODAL_DARK_VARIANTS = window.DARK_VARIANTS;
+    window.SKILL_MAPPINGS = {
+        icons: JSON.parse('{{ icon_name_mapping|escapejs }}'),
+        darkVariants: JSON.parse('{{ dark_variants|escapejs }}')
+    };
 </script>
 
-<!-- Skills Related Scripts -->
+<!-- Load skill management scripts -->
 <script defer src="{% static 'js/skill-icons.js' %}"></script>
 <script defer src="{% static 'js/skills-modal.js' %}"></script>
 
@@ -200,102 +200,53 @@
 
                             <!-- Skills Section -->
                             <div class="p-8 form-section"
-                                 x-data="{
-                                     selectedSkills: [],
-                                     loading: true,
-                                     ready: false,
-
-                                     updateSkills(skills) {
-                                         this.selectedSkills = skills;
-                                         const skillNames = skills.map(skill => skill.name).join(',');
-                                         const skillsInput = document.getElementById('id_skills');
-                                         if (skillsInput) {
-                                             skillsInput.value = skillNames;
-                                             skillsInput.dispatchEvent(new Event('change', { bubbles: true }));
-                                         }
-                                     },
-
-                                     async initializeComponents() {
-                                         // Wait for dependencies
-                                         while (!window.MODAL_ICON_MAPPING || !window.MODAL_DARK_VARIANTS || !window.skillIconsHelper) {
-                                             await new Promise(resolve => setTimeout(resolve, 50));
-                                         }
-                                         this.loading = false;
-                                         this.ready = true;
-
-                                         const skillsInput = document.getElementById('id_skills');
-                                         if (skillsInput && skillsInput.value) {
-                                             const skillNames = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
-                                             this.selectedSkills = skillNames.map(name => ({
-                                                 name: name,
-                                                 icon: window.MODAL_ICON_MAPPING[name.toLowerCase()] || 'heroicons:academic-cap',
-                                                 icon_dark: window.MODAL_DARK_VARIANTS[window.MODAL_ICON_MAPPING[name.toLowerCase()] || 'heroicons:academic-cap'] || window.MODAL_ICON_MAPPING[name.toLowerCase()] || 'heroicons:academic-cap'
-                                             }));
-                                         }
-                                         
-                                         window.addEventListener('skills-updated', event => {
-                                             this.updateSkills(event.detail);
-                                         });
-                                     }
-                                 }"
-                                 style="--delay: 5"
-                                 x-init="initializeComponents()">
-                                <!-- Content (only shown when ready) -->
+                                 x-data="skillsManager"
+                                 x-init="await initializeSkills()"
+                                 style="--delay: 5">
                                 <div x-show="!loading" x-cloak>
                                     <div class="flex items-center justify-between mb-6">
-                                    <div class="flex items-center gap-2">
-                                        <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
-                                        <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
-                                    </div>
-                                    <button type="button" 
-                                            @click="$dispatch('open-skills-modal', { selectedSkills: selectedSkills })"
-                                            class="btn btn-ghost btn-sm gap-2">
-                                        <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
-                                        Manage Skills
-                                    </button>
-                                </div>
-                                
-                                <div class="relative" @skills-updated.window="updateSkills($event.detail)">
-                                    <!-- Skills list -->
-                                    <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
-                                        <div x-show="selectedSkills.length === 0" class="text-base-content/60 text-sm">
-                                            Click 'Manage Skills' to add required skills
+                                        <div class="flex items-center gap-2">
+                                            <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
+                                            <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
                                         </div>
-                                        <div class="flex flex-wrap gap-2" 
-                                             x-show="selectedSkills.length > 0"
-                                             x-transition:enter="transition ease-out duration-200"
-                                             x-transition:enter-start="opacity-0 transform scale-95"
-                                             x-transition:enter-end="opacity-100 transform scale-100">
-                                            <template x-for="skill in selectedSkills" :key="skill.name">
-                                                <div class="badge badge-lg gap-2 group relative overflow-hidden p-4
-                                                            bg-primary hover:bg-primary/20 
-                                                            border border-primary/30 hover:border-primary
-                                                            text-primary-content/90 hover:text-primary-content
-                                                            transition-all duration-200 ease-in-out
-                                                            transform hover:scale-105 hover:shadow-md">
-                                                    <div class="w-8 h-8 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-200">
-                                                        <iconify-icon x-bind:icon="skill.icon_dark || skill.icon || 'heroicons:academic-cap'"></iconify-icon>
-                                                    </div>
-                                                    <span x-text="skill.name" class="font-medium"></span>
-                                                    <button type="button" 
-                                                            @click="$dispatch('toggle-skill', skill)"
-                                                            class="ml-1 rounded-full p-1.5
-                                                                   hover:bg-primary/20 active:bg-primary/30
-                                                                   transition-all duration-200
-                                                                   opacity-60 hover:opacity-100"
-                                                            title="Remove skill">
-                                                        <iconify-icon icon="heroicons:x-mark" class="text-sm"></iconify-icon>
-                                                    </button>
+                                        <button type="button" 
+                                                @click="$dispatch('open-skills-modal')"
+                                                class="btn btn-ghost btn-sm gap-2">
+                                            <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
+                                            Manage Skills
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="relative">
+                                        <!-- Skills list -->
+                                        <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100"
+                                             @skills-updated.window="
+                                                selectedSkills = $event.detail;
+                                                updateSkillsInput();">
+                                            <template x-if="selectedSkills.length === 0">
+                                                <div class="text-base-content/60 text-sm">
+                                                    Click 'Manage Skills' to add required skills
                                                 </div>
                                             </template>
+                                            <div class="flex flex-wrap gap-2" 
+                                                 x-show="selectedSkills.length > 0">
+                                                <template x-for="skill in selectedSkills" :key="skill.name">
+                                                    <div class="badge badge-lg gap-2">
+                                                        <iconify-icon :icon="getSkillIcon(skill)"></iconify-icon>
+                                                        <span x-text="skill.name"></span>
+                                                        <button @click="removeSkill(skill)" 
+                                                                type="button"
+                                                                class="btn btn-ghost btn-xs btn-circle">
+                                                            <iconify-icon icon="heroicons:x-mark-20-solid"></iconify-icon>
+                                                        </button>
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </div>
+                                        {{ form.skills }}
                                     </div>
-                                    {{ form.skills }}
                                 </div>
                             </div>
-
-                            <!-- Skills Modal -->
-                            {% include "jobs/modals/skills_modal.html" %}
                         </div>
                     </form>
                 </div>
@@ -303,6 +254,11 @@
         </div>
     </div>
 </div>
+
+<!-- Teleport the modal outside the form -->
+<template x-teleport="body">
+    {% include "jobs/modals/skills_modal.html" %}
+</template>
 
 <!-- Form Actions (outside form but controls it) -->
 <div class="fixed bottom-0 left-0 right-0 z-10 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 transition-[left] duration-300"
@@ -415,6 +371,55 @@
                 }
             });
         }
+    });
+
+    // Initialize Alpine.js skills management
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('skillsManager', () => ({
+            selectedSkills: [],
+            loading: true,
+
+            async initializeSkills() {
+                await window.skillsHelper.initialize();
+                this.loading = false;
+                
+                // Load initial skills if any
+                const skillsInput = document.getElementById('id_skills');
+                if (skillsInput?.value) {
+                    const skillNames = skillsInput.value.split(',').filter(Boolean);
+                    this.selectedSkills = skillNames.map(name => ({
+                        name: name.trim(),
+                        icon: window.skillsHelper.getIconByName(name)
+                    }));
+                }
+            },
+
+            getSkillIcon(skill) {
+                return this.isDarkMode() && skill.icon_dark 
+                    ? skill.icon_dark 
+                    : skill.icon;
+            },
+
+            isDarkMode() {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches;
+            },
+
+            openSkillsModal() {
+                window.skillsManager?.openModal(this.selectedSkills);
+            },
+
+            removeSkill(skill) {
+                this.selectedSkills = this.selectedSkills.filter(s => s.name !== skill.name);
+                this.updateSkillsInput();
+            },
+
+            updateSkillsInput() {
+                const input = document.getElementById('id_skills');
+                if (input) {
+                    input.value = this.selectedSkills.map(s => s.name).join(',');
+                }
+            }
+        }));
     });
 </script>
 {% endblock extra_js %}

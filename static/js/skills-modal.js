@@ -29,9 +29,18 @@ document.addEventListener('alpine:init', () => {
     }
   });
 
-  // Add shared store for skills
+  // Add global skills store with persistence
   Alpine.store('skills', {
-    selected: [],
+    // Persist the selected skills
+    selected: Alpine.$persist([]).as('selected_skills'),
+    
+    init() {
+      // Initialize from any existing hidden input
+      const skillsInput = document.getElementById('id_skills');
+      if (skillsInput?.value) {
+        this.selected = skillsInput.value.split(',').map(s => s.trim());
+      }
+    },
     
     isSelected(skillName) {
       return this.selected.includes(skillName);
@@ -43,37 +52,61 @@ document.addEventListener('alpine:init', () => {
       } else {
         this.selected.push(skillName);
       }
+      this.updateHiddenInput();
     },
     
     setSelected(skills) {
       this.selected = Array.isArray(skills) ? skills : [];
+      this.updateHiddenInput();
+    },
+
+    updateHiddenInput() {
+      const hiddenInput = document.getElementById('id_skills');
+      if (hiddenInput) {
+        hiddenInput.value = this.selected.join(',');
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
     }
   });
 
   // Skill selector component
   Alpine.data('skillSelector', () => ({
-    selectedSkills: [],
     searchQuery: '',
     showSuggestions: false,
     selectedIndex: -1,
     browserSearch: '',
     selectedCategory: '',
     categories: [],
-    filteredSkills: [],
     skillsList: [],
 
     init() {
-      // Initialize with any existing skills
-      const skillsInput = document.getElementById('id_skills');
-      if (skillsInput?.value) {
-        this.selectedSkills = skillsInput.value.split(',').map(s => s.trim());
-      }
-
       // Initialize skills list from SKILL_ICONS global
       if (window.SKILL_ICONS) {
         this.skillsList = window.SKILL_ICONS.map(([icon, name]) => ({ icon, name }));
         this.categories = [...new Set(this.skillsList.map(skill => skill.icon.split(':')[0]))];
       }
+    },
+
+    // Replace local selectedSkills with store access
+    get selectedSkills() {
+      return Alpine.store('skills').selected;
+    },
+
+    // Update existing methods to use store
+    isSelected(skillName) {
+      return Alpine.store('skills').isSelected(skillName);
+    },
+
+    addSkill(skillName) {
+      if (!this.isSelected(skillName)) {
+        Alpine.store('skills').toggle(skillName);
+      }
+      this.searchQuery = '';
+      this.showSuggestions = false;
+    },
+
+    removeSkill(skillName) {
+      Alpine.store('skills').toggle(skillName);
     },
 
     get computedFilteredSkills() {
@@ -101,32 +134,6 @@ document.addEventListener('alpine:init', () => {
         this.removeSkill(skill.name);
       } else {
         this.addSkill(skill.name);
-      }
-    },
-
-    isSelected(skillName) {
-      return this.selectedSkills.includes(skillName);
-    },
-
-    addSkill(skillName) {
-      if (!this.selectedSkills.includes(skillName)) {
-        this.selectedSkills.push(skillName);
-        this.updateHiddenInput();
-      }
-      this.searchQuery = '';
-      this.showSuggestions = false;
-    },
-
-    removeSkill(skillName) {
-      this.selectedSkills = this.selectedSkills.filter(s => s !== skillName);
-      this.updateHiddenInput();
-    },
-
-    updateHiddenInput() {
-      const hiddenInput = document.getElementById('id_skills');
-      if (hiddenInput) {
-        hiddenInput.value = this.selectedSkills.join(',');
-        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
       }
     },
 
