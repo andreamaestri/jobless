@@ -9,6 +9,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^6.0.5"
-  }
+    "vite": "^6.0.11"
+  },
+  "description": "- [Overview](#overview)   - [Purpose](#purpose)   - [Target Audience](#target-audience) - [User Stories](#user-stories) - [UX Design and Planning](#ux-design-and-planning)   - [Wireframes](#wireframes)   - [Accessibility Considerations](#accessibility-considerations)   - [Database Design](#database-design) - [Features Implementation](#features-implementation)   - [Core Features](#core-features)   - [Advanced Features](#advanced-features)   - [Additional Features](#additional-features) - [Technologies Used](#technologies-used) - [Testing and Validation](#testing-and-validation)   - [Testing Results](#testing-results)   - [Validation](#validation) - [Deployment Process](#deployment-process) - [Reflection](#reflection) - [Code Attribution](#code-attribution) - [Future Improvements](#future-improvements) ## Overview",
+  "main": "tailwind.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
