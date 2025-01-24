@@ -31,6 +31,7 @@ django-widget-tweaks>=1.4.11
 django-extensions>=3.2.3
 django-htmx>=1.21.0
 django-vite>=3.0.6
+django-components>=0.125
 PyJWT>=2.3.0
 
 # AI Integration

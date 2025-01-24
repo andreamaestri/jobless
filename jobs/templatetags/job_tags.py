@@ -76,6 +76,18 @@ def skills_to_json(skills):
         'icon_dark': skill.get_icon_dark() if hasattr(skill, 'get_icon_dark') else None
     } for skill in skills]))
 
+@register.simple_tag(name='skill_icons')
+def get_skill_icons_json():
+    """Get all skill icons as JSON for JavaScript"""
+    return mark_safe(json_lib.dumps([{
+        'name': name,
+        'icon': icon
+    } for icon, name in SKILL_ICONS]))
+
+@register.filter(name='dark_variants')
+def get_dark_variants():
+    return mark_safe(json_lib.dumps(DARK_VARIANTS))
+
 @register.simple_tag
 def get_all_skill_icons():
     """Get all available skill icons"""
