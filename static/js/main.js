@@ -4,22 +4,43 @@ import 'vite/modulepreload-polyfill'
 import Alpine from 'alpinejs'
 import persist from '@alpinejs/persist'
 import focus from '@alpinejs/focus'
-
-// Import your other JS modules
-import './store'
-import './skills-modal'
-import './skill-icons'
-import './skills-select'
-import './skills-manager'
-import './form-handler'
-import './script'
-import './toast'
-
-// Import external libraries
-import 'iconify-icon'
+import { animate } from "motion"
 
 // Initialize Alpine
 window.Alpine = Alpine
 Alpine.plugin(persist)
 Alpine.plugin(focus)
 Alpine.start()
+
+// Core initialization - base store and features
+import './store'
+
+// Initialize motion globally
+window.Motion = { animate }
+
+// On-demand imports for specific features
+const featureModules = {
+    'script': () => import('./script'),
+    'toast': () => import('./toast'),
+    'tag-input': () => import('./tag-input'),
+    'skills-modal': () => import('./skills-modal'),
+    'skill-icons': () => import('./skill-icons'),
+    'skills-select': () => import('./skills-select'),
+    'skills-manager': () => import('./skills-manager'),
+    'events': () => import('./events')
+}
+
+// Initialize feature modules based on data attributes
+document.addEventListener('DOMContentLoaded', () => {
+    // Get required features from data attribute
+    const features = document.documentElement.dataset.features?.split(' ') || []
+    
+    // Load required feature modules
+    features.forEach(feature => {
+        if (featureModules[feature]) {
+            featureModules[feature]()
+                .then(() => console.log(`Loaded ${feature} module`))
+                .catch(err => console.warn(`Failed to load ${feature} module:`, err))
+        }
+    })
+})

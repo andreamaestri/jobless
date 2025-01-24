@@ -15,5 +15,12 @@
   "main": "tailwind.config.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@alpinejs/focus": "^3.14.8",
+    "@alpinejs/persist": "^3.14.8",
+    "alpinejs": "^3.14.8",
+    "iconify-icon": "^2.3.0",
+    "motion": "^12.0.5"
+  }
 }
