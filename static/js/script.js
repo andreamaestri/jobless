@@ -128,6 +128,3 @@ document.addEventListener("alpine:init", () => {
         });
     }
 });
-
-// Export animations for other modules
-export { animations };

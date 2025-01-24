@@ -288,10 +288,6 @@
 {% block extra_js %}
 {{ block.super }}
 
-<!-- Load Iconify -->
-<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.3.0/dist/iconify-icon.min.js"></script>
-
 <!-- Icon mappings -->
 <script>
     window.ICON_NAME_MAPPING = {{ icon_name_mapping|safe }};
@@ -301,5 +297,5 @@
 <!-- Add defer attribute to ensure mappings are available -->
 <script src="{% static 'js/skills-manager.js' %}" defer></script>
 <script src="{% static 'js/skills-select.js' %}" defer></script>
-<script src="{% static 'js/form-handler.js' %}" defer></script>
+
 {% endblock extra_js %}

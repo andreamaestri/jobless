@@ -1,0 +1,108 @@
+{
+  "_module.esm-BQdiiSWd.js": {
+    "file": "js/module.esm-BQdiiSWd.js",
+    "name": "module.esm"
+  },
+  "_module.esm-CLWRBzRS.js": {
+    "file": "js/module.esm-CLWRBzRS.js",
+    "name": "module.esm"
+  },
+  "static/js/events.js": {
+    "file": "js/events-B4flbIWS.js",
+    "name": "events",
+    "src": "static/js/events.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_module.esm-CLWRBzRS.js"
+    ]
+  },
+  "static/js/main.js": {
+    "file": "js/main-Cow9Y7lO.js",
+    "name": "main",
+    "src": "static/js/main.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-CLWRBzRS.js",
+      "_module.esm-BQdiiSWd.js",
+      "static/js/store.js"
+    ],
+    "dynamicImports": [
+      "static/js/script.js",
+      "static/js/toast.js",
+      "static/js/tag-input.js",
+      "static/js/skills-modal.js",
+      "static/js/skill-icons.js",
+      "static/js/skills-select.js",
+      "static/js/skills-manager.js",
+      "static/js/events.js"
+    ]
+  },
+  "static/js/script.js": {
+    "file": "js/script-DXPMqK39.js",
+    "name": "script",
+    "src": "static/js/script.js",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
+  "static/js/skill-icons.js": {
+    "file": "js/skillIcons-C9oJdqO8.js",
+    "name": "skillIcons",
+    "src": "static/js/skill-icons.js",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
+  "static/js/skills-manager.js": {
+    "file": "js/skillsManager-DaP3ZMOm.js",
+    "name": "skillsManager",
+    "src": "static/js/skills-manager.js",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
+  "static/js/skills-modal.js": {
+    "file": "js/skills-B6EC6Yck.js",
+    "name": "skills",
+    "src": "static/js/skills-modal.js",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_module.esm-CLWRBzRS.js",
+      "_module.esm-BQdiiSWd.js"
+    ]
+  },
+  "static/js/skills-select.js": {
+    "file": "js/skillsSelect-hvik6nKV.js",
+    "name": "skillsSelect",
+    "src": "static/js/skills-select.js",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
+  "static/js/store.js": {
+    "file": "js/store-LFfY1JsL.js",
+    "name": "store",
+    "src": "static/js/store.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-CLWRBzRS.js"
+    ]
+  },
+  "static/js/tag-input.js": {
+    "file": "js/tag-input-BujDkp0o.js",
+    "name": "tag-input",
+    "src": "static/js/tag-input.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_module.esm-CLWRBzRS.js",
+      "_module.esm-BQdiiSWd.js"
+    ]
+  },
+  "static/js/toast.js": {
+    "file": "js/toast-DqZRwFzL.js",
+    "name": "toast",
+    "src": "static/js/toast.js",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_module.esm-CLWRBzRS.js"
+    ]
+  }
+}

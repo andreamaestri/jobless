@@ -5,7 +5,7 @@ export default defineConfig({
     base: '/static/',
     build: {
         manifest: true,
-        outDir: resolve('./static'),
+        outDir: resolve('./assets'),
         rollupOptions: {
             input: {
                 // Main application bundle
@@ -16,10 +16,7 @@ export default defineConfig({
                 skillIcons: resolve('./static/js/skill-icons.js'),
                 skillsSelect: resolve('./static/js/skills-select.js'),
                 skillsManager: resolve('./static/js/skills-manager.js'),
-                
-                // Form handling
-                formHandler: resolve('./static/js/form-handler.js'),
-                
+                               
                 // Core functionality
                 store: resolve('./static/js/store.js'),
                 script: resolve('./static/js/script.js'),
