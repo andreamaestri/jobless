@@ -171,6 +171,7 @@ document.addEventListener('alpine:init', () => {
     init() {
       this.setupEventListeners();
       this.ready = true;
+      this.open = false; // Ensure modal starts closed
     },
 
     setupEventListeners() {
@@ -182,11 +183,10 @@ document.addEventListener('alpine:init', () => {
     handleSkillsUpdate(event) {
       if (!this.ready) return;
       
-      this.open = true;
+      // Only handle selected skills, don't automatically open the modal
       if (event?.detail?.selectedSkills) {
         Alpine.store('skills').setSelected(event.detail.selectedSkills);
       }
-      this.resetSearchState();
     },
 
     handleSearch(event) {

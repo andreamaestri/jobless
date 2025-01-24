@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'django_extensions',
     'django_htmx',
+    'django_vite',
     'widget_tweaks',
     'allauth',
     'allauth.account',

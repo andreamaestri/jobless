@@ -30,6 +30,7 @@ django-tagulous>=2.1.0
 django-widget-tweaks>=1.4.11
 django-extensions>=3.2.3
 django-htmx>=1.21.0
+django-vite>=3.0.6
 PyJWT>=2.3.0
 
 # AI Integration

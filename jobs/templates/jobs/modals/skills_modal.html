@@ -3,9 +3,10 @@
 
 <!-- Modal wrapper -->
 <div x-data="skillsModal"
+     x-init="init()"
      x-show="open"
      x-cloak
-     @open-skills-modal.window="handleSkillsUpdate($event)"
+     @open-skills-modal.window="open = true"
      @keydown.escape.window="cancel()"
      class="modal"
      :class="{ 'modal-open': open }">
