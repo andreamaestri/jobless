@@ -77,7 +77,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.openid_connect',
     'django_components',
-    'django_components.safer_template_loader',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -123,7 +122,6 @@ TEMPLATES = [
             TEMPLATES_DIR,
             BASE_DIR / 'jobs' / 'components',  # Add components directory
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
