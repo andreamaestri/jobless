@@ -1,181 +1,229 @@
-document.addEventListener("alpine:init", () => {
-  // Wait for SKILL_ICONS to be available
-  const waitForSkillIcons = async () => {
-    while (!window.skillIconsHelper?.initialized) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    return true;
-  };
-
+document.addEventListener('alpine:init', () => {
   // Initialize stores first
-  if (!Alpine.store('theme')) {
-    Alpine.store('theme', {
-      themes: ["Jobless", "Dark", "lofi", "pastel"],
-      current: localStorage.getItem("theme") || "Jobless"
-    });
-  }
+  Alpine.store('theme', {
+    themes: ["Jobless", "Dark", "lofi", "pastel"],
+    current: localStorage.getItem("theme") || "Jobless",
+    toggle() {
+      this.current = this.current === "Jobless" ? "Dark" : "Jobless";
+      localStorage.setItem("theme", this.current);
+      document.documentElement.setAttribute("data-theme", this.current);
+    }
+  });
 
-  if (!Alpine.store('sidebar')) {
-    Alpine.store('sidebar', {
-      collapsed: JSON.parse(localStorage.getItem("sidebarCollapsed") || "false")
-    });
-  }
+  Alpine.store('sidebar', {
+    open: window.innerWidth >= 1024,
+    collapsed: JSON.parse(localStorage.getItem("sidebarCollapsed") || "false"),
+    toggle() {
+      this.open = !this.open;
+    },
+    collapse() {
+      this.collapsed = !this.collapsed;
+      localStorage.setItem("sidebarCollapsed", this.collapsed);
+    }
+  });
 
-  if (!Alpine.store('pageState')) {
-    Alpine.store('pageState', {
-      isLoading: false
-    });
-  }
+  Alpine.store('pageState', {
+    isLoading: false,
+    setLoading(state) {
+      this.isLoading = state;
+    }
+  });
 
+  // Add shared store for skills
+  Alpine.store('skills', {
+    selected: [],
+    
+    isSelected(skillName) {
+      return this.selected.includes(skillName);
+    },
+    
+    toggle(skillName) {
+      if (this.isSelected(skillName)) {
+        this.selected = this.selected.filter(s => s !== skillName);
+      } else {
+        this.selected.push(skillName);
+      }
+    },
+    
+    setSelected(skills) {
+      this.selected = Array.isArray(skills) ? skills : [];
+    }
+  });
+
+  // Skill selector component
+  Alpine.data('skillSelector', () => ({
+    selectedSkills: [],
+    searchQuery: '',
+    showSuggestions: false,
+    selectedIndex: -1,
+    browserSearch: '',
+    selectedCategory: '',
+    categories: [],
+    filteredSkills: [],
+    skillsList: [],
+
+    init() {
+      // Initialize with any existing skills
+      const skillsInput = document.getElementById('id_skills');
+      if (skillsInput?.value) {
+        this.selectedSkills = skillsInput.value.split(',').map(s => s.trim());
+      }
+
+      // Initialize skills list from SKILL_ICONS global
+      if (window.SKILL_ICONS) {
+        this.skillsList = window.SKILL_ICONS.map(([icon, name]) => ({ icon, name }));
+        this.categories = [...new Set(this.skillsList.map(skill => skill.icon.split(':')[0]))];
+      }
+    },
+
+    get computedFilteredSkills() {
+      if (!this.searchQuery) return [];
+      return this.skillsList
+        .filter(skill => !this.selectedSkills.includes(skill.name))
+        .filter(skill => skill.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        .slice(0, 10);
+    },
+
+    get filteredBrowserSkills() {
+      return this.skillsList.filter(skill => {
+        const matchesSearch = !this.browserSearch || 
+          skill.name.toLowerCase().includes(this.browserSearch.toLowerCase());
+        const matchesCategory = !this.selectedCategory || 
+          skill.icon.startsWith(this.selectedCategory + ':');
+        return matchesSearch && matchesCategory;
+      });
+    },
+
+    handleQuickSelect(event, skill) {
+      if (!skill?.name) return;
+      
+      if (this.isSelected(skill.name)) {
+        this.removeSkill(skill.name);
+      } else {
+        this.addSkill(skill.name);
+      }
+    },
+
+    isSelected(skillName) {
+      return this.selectedSkills.includes(skillName);
+    },
+
+    addSkill(skillName) {
+      if (!this.selectedSkills.includes(skillName)) {
+        this.selectedSkills.push(skillName);
+        this.updateHiddenInput();
+      }
+      this.searchQuery = '';
+      this.showSuggestions = false;
+    },
+
+    removeSkill(skillName) {
+      this.selectedSkills = this.selectedSkills.filter(s => s !== skillName);
+      this.updateHiddenInput();
+    },
+
+    updateHiddenInput() {
+      const hiddenInput = document.getElementById('id_skills');
+      if (hiddenInput) {
+        hiddenInput.value = this.selectedSkills.join(',');
+        hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    },
+
+    handleEnter() {
+      if (this.selectedIndex >= 0 && this.computedFilteredSkills[this.selectedIndex]) {
+        this.addSkill(this.computedFilteredSkills[this.selectedIndex].name);
+      }
+      this.closeSuggestions();
+    },
+
+    navigateSuggestion(direction) {
+      const max = this.computedFilteredSkills.length - 1;
+      this.selectedIndex = Math.max(-1, Math.min(max, this.selectedIndex + direction));
+    },
+
+    closeSuggestions() {
+      this.showSuggestions = false;
+      this.selectedIndex = -1;
+    },
+
+    getSkillIcon(skillName) {
+      const skill = this.skillsList.find(s => s.name === skillName);
+      return skill?.icon || 'heroicons:academic-cap';
+    }
+  }));
+
+  // Modal component
   Alpine.data('skillsModal', () => ({
-    // Core state
     open: false,
-    loading: true,
     ready: false,
     isMobile: window.innerWidth < 640,
     isSearchFocused: false,
-
-    // Search state with initialization
     search: '',
-    searchQuery: '',
-    showSuggestions: false,
-    filteredSkills: [],
-    browserSearch: '',
 
-    // Category state with initialization
-    selectedCategory: null,
-    categories: [],
-    filteredBrowserSkills: [],
-    selectedSkills: [],
-
-    async init() {
-      // Wait for SkillIconsHelper to be ready
-      await waitForSkillIcons();
-      
-      // Mobile detection
-      this.isMobile = window.innerWidth < 640;
-      window.addEventListener('resize', () => {
-        this.isMobile = window.innerWidth < 640;
-      });
-
-      // Initialize skills state
-      await this.initSkills();
-
-      // Watch modal state
-      this.$watch('open', value => {
-        if (value) {
-          this.resetSearchState();
-        }
-      });
-
-      // Listen for toggle-skill events
-      this.$el.addEventListener('toggle-skill', (e) => {
-        if (e.detail) {
-          this.handleQuickSelect(e.detail);
-        }
-      });
-
-      this.loading = false;
+    init() {
+      this.setupEventListeners();
       this.ready = true;
     },
 
-    async initSkills() {
-      try {
-        // Initialize from SkillIconsHelper
-        this.categories = window.skillIconsHelper?.getCategories() || [];
-        this.filteredSkills = [];
-        this.filteredBrowserSkills = [];
-        
-        // Load initial selected skills
-        const skillsInput = document.getElementById('id_skills');
-        if (skillsInput?.value) {
-          const skillNames = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
-          this.selectedSkills = skillNames.map(name => ({
-            name,
-            icon: window.skillIconsHelper.getIconForSkill(name),
-            icon_dark: window.skillIconsHelper.getIconForSkill(name, true)
-          }));
-        }
-      } catch (error) {
-        console.error('Error initializing skills:', error);
-      }
-    },
-
-    resetSearchState() {
-      this.search = '';
-      this.searchQuery = '';
-      this.showSuggestions = false;
-      this.browserSearch = '';
-      this.selectedCategory = null;
-      this.filteredSkills = [];
-      this.filteredBrowserSkills = [];
-      this.resetSearch();
-    },
-
-    resetSearch() {
-      if (this.ready && this.$refs.skillsContainer) {
-        this.handleSearch({ target: { value: '' } });
-      }
-    },
-
-    handleSkillsUpdate(e) {
-      if (!this.ready || !e?.detail?.selectedSkills) return;
-      
-      this.selectedSkills = Array.isArray(e.detail.selectedSkills) ? 
-        e.detail.selectedSkills : [];
-        
-      if (e.isTrusted) {
-        this.open = true;
-      }
-    },
-
-    handleQuickSelect(skill) {
-      if (!skill?.name || !this.ready) return;
-
-      const index = this.selectedSkills.findIndex(s => 
-        s.name.toLowerCase() === skill.name.toLowerCase()
-      );
-
-      if (index === -1) {
-        this.selectedSkills.push({
-          name: skill.name,
-          icon: window.skillIconsHelper.getIconForSkill(skill.name),
-          icon_dark: window.skillIconsHelper.getIconForSkill(skill.name, true)
-        });
-      } else {
-        this.selectedSkills.splice(index, 1);
-      }
-
-      this.$dispatch('skills-updated', this.selectedSkills);
-    },
-
-    // Rest of the methods remain the same...
-    handleSearch(e) {
-      if (!this.ready || !this.$refs.skillsContainer) {
-        this.filteredSkills = [];
-        return;
-      }
-
-      const query = e.target.value.toLowerCase();
-      this.searchQuery = query;
-      this.browserSearch = query;
-      this.showSuggestions = query.length > 0;
-
-      this.$refs.skillsContainer.querySelectorAll('.skill-group').forEach(group => {
-        let hasVisible = false;
-        group.querySelectorAll('.skill-card').forEach(card => {
-          const name = card.querySelector('.skill-name').textContent.toLowerCase();
-          const visible = !query || name.includes(query);
-          card.style.display = visible ? '' : 'none';
-          if (visible) hasVisible = true;
-        });
-        group.style.display = hasVisible ? '' : 'none';
+    setupEventListeners() {
+      window.addEventListener('resize', () => {
+        this.isMobile = window.innerWidth < 640;
       });
+    },
+
+    handleSkillsUpdate(event) {
+      if (!this.ready) return;
+      
+      this.open = true;
+      if (event?.detail?.selectedSkills) {
+        Alpine.store('skills').setSelected(event.detail.selectedSkills);
+      }
+      this.resetSearchState();
+    },
+
+    handleSearch(event) {
+      this.search = event.target.value;
+      this.filterSkills();
+    },
+
+    filterSkills() {
+      if (!window.SKILL_ICONS) return;
+      const searchTerm = this.search.toLowerCase();
+      this.filteredSkills = window.SKILL_ICONS
+        .filter(([_, name]) => !searchTerm || name.toLowerCase().includes(searchTerm));
+    },
+
+    handleSkillSelect(skill) {
+      if (!skill?.name) return;
+      
+      if (this.isSelected(skill.name)) {
+        this.selectedSkills = this.selectedSkills.filter(s => s !== skill.name);
+      } else {
+        this.selectedSkills.push(skill.name);
+      }
+    },
+
+    isSelected(skillName) {
+      return this.selectedSkills.includes(skillName);
+    },
+
+    getVisibleSkillCount() {
+      return this.filteredSkills.length;
+    },
+
+    handleScroll(event) {
+      // Add scroll handling if needed
+    },
+
+    getDarkIconForSkill(skillName) {
+      const icon = window.ICON_NAME_MAPPING?.[skillName.toLowerCase()];
+      return window.DARK_VARIANTS?.[icon] || icon || 'heroicons:academic-cap';
     },
 
     save() {
       if (this.ready) {
-        this.$dispatch('skills-updated', this.selectedSkills);
+        this.$dispatch('skills-updated', Alpine.store('skills').selected);
         this.close();
       }
     },
@@ -188,6 +236,22 @@ document.addEventListener("alpine:init", () => {
     close() {
       this.open = false;
       this.resetSearchState();
+    },
+
+    resetSearchState() {
+      this.search = '';
+      this.filteredSkills = [];
+    }
+  }));
+
+  // Add component for individual skill cards
+  Alpine.data('skillCard', () => ({
+    isSelected(skillName) {
+      return Alpine.store('skills').isSelected(skillName);
+    },
+    
+    toggleSkill(skill) {
+      Alpine.store('skills').toggle(skill.name);
     }
   }));
 });
