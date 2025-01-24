@@ -2,10 +2,28 @@
 {% load static %}
 {% load job_tags %}
 
-{% block extra_css %}
-{{ block.super }}
-<link href="{% static 'css/letter-bubble.css' %}" rel="stylesheet">
-{% endblock extra_css %}
+{% block early_js %}
+<!-- Initialize icon mappings for skills -->
+<script>
+    window.ICON_NAME_MAPPING = JSON.parse('{{ icon_name_mapping|escapejs }}');
+    window.DARK_VARIANTS = JSON.parse('{{ dark_variants|escapejs }}');
+    window.MODAL_ICON_MAPPING = window.ICON_NAME_MAPPING;
+    window.MODAL_DARK_VARIANTS = window.DARK_VARIANTS;
+</script>
+
+<!-- Skills Related Scripts -->
+<script defer src="{% static 'js/skill-icons.js' %}"></script>
+<script defer src="{% static 'js/skills-modal.js' %}"></script>
+
+<!-- Initialize skill icons -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.skillIconsHelper) {
+            window.skillIconsHelper = new SkillIconsHelper();
+        }
+    });
+</script>
+{% endblock early_js %}
 
 {% block content %}
 <div class="min-h-screen flex flex-col page-transition-wrapper">
@@ -36,10 +54,157 @@
                         {% endif %}
 
                         <div class="divide-y divide-base-200">
+                            <!-- AI Paste Section -->
+                            <div class="p-8 form-section bg-gradient-to-br from-primary/5 to-transparent" style="--delay: 0">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:sparkles" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
+                                </div>
+                                <div class="space-y-4 relative">
+                                    <div id="description-parser" data-url="{% url 'jobs:parse_description' %}">
+                                        {% csrf_token %}
+                                        <div>
+                                            <label for="paste" class="block text-sm font-medium text-base-content mb-2">
+                                                Paste Job Description
+                                                <span class="ml-1 text-xs text-base-content/60">(AI will extract details)</span>
+                                            </label>
+                                            <textarea id="paste" 
+                                                      name="paste_description"
+                                                      class="textarea textarea-bordered w-full min-h-[120px]"
+                                                      placeholder="Paste the job description here..."></textarea>
+                                        </div>
+                                        <div class="flex flex-col gap-2 mt-4">
+                                            <button type="button"
+                                                    id="parse-button"
+                                                    class="btn btn-primary btn-sm gap-2 self-end">
+                                                <span class="loading loading-spinner loading-sm hidden"></span>
+                                                <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+                                                <span class="button-text">Process with AI</span>
+                                            </button>
+                                            <div id="parse-error" class="text-error text-sm hidden"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Basic Information -->
+                            <div class="p-8 form-section bg-base-100/50 transition-colors duration-200 hover:bg-base-100" style="--delay: 1">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:information-circle" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Basic Information</h2>
+                                </div>
+                                <div class="grid grid-cols-1 gap-6">
+                                    <!-- Title -->
+                                    <div>
+                                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                            Job Title <span class="text-error">*</span>
+                                        </label>
+                                        {{ form.title }}
+                                        <p class="text-xs text-base-content/60 mt-1">Enter the official job title as listed in the posting</p>
+                                        {% if form.title.errors %}
+                                        <p class="text-error text-xs mt-1">{{ form.title.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Company and Location -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                                Company <span class="text-error">*</span>
+                                            </label>
+                                            {{ form.company }}
+                                            {% if form.company.errors %}
+                                            <p class="text-error text-xs mt-1">{{ form.company.errors.0 }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                                Location <span class="text-error">*</span>
+                                            </label>
+                                            {{ form.location }}
+                                            <p class="text-xs text-base-content/60 mt-1">City, State or Remote</p>
+                                            {% if form.location.errors %}
+                                            <p class="text-error text-xs mt-1">{{ form.location.errors.0 }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Details -->
+                            <div class="p-8 form-section" style="--delay: 2">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:clipboard-document-list" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Additional Details</h2>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Application URL and Salary -->
+                                    <div>
+                                        <label for="{{ form.url.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                            Job URL
+                                        </label>
+                                        {{ form.url }}
+                                        {% if form.url.errors %}
+                                        <p class="text-error text-xs mt-1">{{ form.url.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                            Salary Range
+                                        </label>
+                                        {{ form.salary_range }}
+                                        {% if form.salary_range.errors %}
+                                        <p class="text-error text-xs mt-1">{{ form.salary_range.errors.0 }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="p-8 form-section" style="--delay: 3">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:flag" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Application Status</h2>
+                                </div>
+                                <div>
+                                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-base-content mb-2">
+                                        Status
+                                    </label>
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                    <p class="text-error text-xs mt-1">{{ form.status.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="p-8 form-section" style="--delay: 4">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <iconify-icon icon="heroicons:document-text" class="text-2xl text-primary"></iconify-icon>
+                                    <h2 class="text-lg font-semibold text-base-content">Job Description</h2>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-base-content">
+                                            Job Description
+                                            <span class="ml-1 text-xs text-base-content/60">(Markdown supported)</span>
+                                        </label>
+                                        <span class="text-xs text-base-content/60" id="char-counter">0/4000</span>
+                                    </div>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                    <p class="text-error text-xs mt-1">{{ form.description.errors.0 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
                             <!-- Skills Section -->
                             <div class="p-8 form-section"
                                  x-data="{
                                      selectedSkills: [],
+                                     loading: true,
+                                     ready: false,
+
                                      updateSkills(skills) {
                                          this.selectedSkills = skills;
                                          const skillNames = skills.map(skill => skill.name).join(',');
@@ -49,7 +214,15 @@
                                              skillsInput.dispatchEvent(new Event('change', { bubbles: true }));
                                          }
                                      },
-                                     init() {
+
+                                     async initializeComponents() {
+                                         // Wait for dependencies
+                                         while (!window.MODAL_ICON_MAPPING || !window.MODAL_DARK_VARIANTS || !window.skillIconsHelper) {
+                                             await new Promise(resolve => setTimeout(resolve, 50));
+                                         }
+                                         this.loading = false;
+                                         this.ready = true;
+
                                          const skillsInput = document.getElementById('id_skills');
                                          if (skillsInput && skillsInput.value) {
                                              const skillNames = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
@@ -65,8 +238,11 @@
                                          });
                                      }
                                  }"
-                                 style="--delay: 2">
-                                <div class="flex items-center justify-between mb-6">
+                                 style="--delay: 5"
+                                 x-init="initializeComponents()">
+                                <!-- Content (only shown when ready) -->
+                                <div x-show="!loading" x-cloak>
+                                    <div class="flex items-center justify-between mb-6">
                                     <div class="flex items-center gap-2">
                                         <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
                                         <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
@@ -80,6 +256,7 @@
                                 </div>
                                 
                                 <div class="relative" @skills-updated.window="updateSkills($event.detail)">
+                                    <!-- Skills list -->
                                     <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
                                         <div x-show="selectedSkills.length === 0" class="text-base-content/60 text-sm">
                                             Click 'Manage Skills' to add required skills
@@ -129,10 +306,8 @@
 
 <!-- Form Actions (outside form but controls it) -->
 <div class="fixed bottom-0 left-0 right-0 z-10 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 transition-[left] duration-300"
-     :class="{
-         'lg:left-80': !$store.sidebar.collapsed,
-         'lg:left-20': $store.sidebar.collapsed
-     }">
+     :class="$store?.sidebar?.collapsed ? 'lg:left-20' : 'lg:left-80'"
+     x-data="{ getStoreValue: (store, prop, fallback = false) => Alpine.store(store)?.[prop] ?? fallback }">
     <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="text-sm text-base-content/60 order-2 sm:order-1">
@@ -159,12 +334,87 @@
 
 {% block extra_js %}
 {{ block.super }}
-<!-- Initialize icon mappings for skills -->
 <script>
-    // Make icon mappings available globally
-    window.ICON_NAME_MAPPING = JSON.parse('{{ icon_name_mapping|escapejs }}');
-    window.DARK_VARIANTS = JSON.parse('{{ dark_variants|escapejs }}');
-    window.MODAL_ICON_MAPPING = window.ICON_NAME_MAPPING;
-    window.MODAL_DARK_VARIANTS = window.DARK_VARIANTS;
+    document.addEventListener('DOMContentLoaded', () => {
+        const descriptionInput = document.getElementById('id_description');
+        if (descriptionInput) {
+            // Character counter
+            const charCounter = document.getElementById('char-counter');
+            if (charCounter) {
+                const updateCounter = () => {
+                    const length = descriptionInput.value.length;
+                    charCounter.textContent = `${length}/4000`;
+                };
+                descriptionInput.addEventListener('input', updateCounter);
+                // Initial count
+                updateCounter();
+            }
+        }
+        
+        // Initialize AI Parser
+        const parser = document.getElementById('description-parser');
+        const pasteArea = document.getElementById('paste');
+        const parseButton = document.getElementById('parse-button');
+        const parseError = document.getElementById('parse-error');
+        
+        if (parser && parseButton) {
+            parseButton.addEventListener('click', async () => {
+                const spinner = parseButton.querySelector('.loading');
+                const buttonText = parseButton.querySelector('.button-text');
+                const description = pasteArea.value.trim();
+                
+                if (!description) {
+                    parseError.textContent = 'Please paste a job description first';
+                    parseError.classList.remove('hidden');
+                    return;
+                }
+
+                try {
+                    spinner.classList.remove('hidden');
+                    buttonText.textContent = 'Processing...';
+                    parseButton.disabled = true;
+                    parseError.classList.add('hidden');
+
+                    const response = await fetch(parser.dataset.url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: new URLSearchParams({
+                            'description': description
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to parse job description');
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        // Update form fields
+                        const data = result.data;
+                        Object.keys(data).forEach(field => {
+                            const input = document.getElementById(`id_${field}`);
+                            if (input && data[field]) {
+                                input.value = data[field];
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        });
+                    } else {
+                        throw new Error(result.error || 'Failed to parse job description');
+                    }
+                } catch (error) {
+                    parseError.textContent = error.message;
+                    parseError.classList.remove('hidden');
+                } finally {
+                    spinner.classList.add('hidden');
+                    buttonText.textContent = 'Process with AI';
+                    parseButton.disabled = false;
+                }
+            });
+        }
+    });
 </script>
 {% endblock extra_js %}
