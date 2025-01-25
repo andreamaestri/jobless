@@ -1,45 +1,139 @@
-{% if parsed %}
-<div id="parse-results">
-    <div class="alert alert-success mb-4">
-        <iconify-icon icon="heroicons:check-circle"></iconify-icon>
-        <span>Job details extracted successfully!</span>
-    </div>
+<form id="job-form" method="post" class="space-y-6">
+    {% csrf_token %}
     
-    <script>
-        (function() {
-            // Helper function to safely set form field values
-            function setFieldValue(fieldId, value) {
-                const field = document.getElementById(fieldId);
-                if (field && !field.value) {
-                    field.value = value;
-                    field.dispatchEvent(new Event('change', { bubbles: true }));
-                    field.setAttribute('data-ai-filled', 'true');
-                }
-            }
+    <!-- AI Parser Section -->
+    <div class="mb-8 bg-secondary/10 rounded-xl p-6">
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+            <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+            Quick Fill with AI
+        </h2>
+        <div class="space-y-4">
+            {{ form.paste_description }}
+            <div id="description-parser" data-url="{% url 'jobs:parse_description' %}" class="flex flex-wrap gap-4 items-start">
+                <button id="parse-button" type="button" class="btn btn-secondary gap-2">
+                    <span class="loading loading-spinner loading-sm hidden"></span>
+                    <span class="button-text">Process with AI</span>
+                    <iconify-icon icon="heroicons:sparkles"></iconify-icon>
+                </button>
+                <div id="parse-error" class="alert alert-error hidden">
+                    <iconify-icon icon="heroicons:x-circle"></iconify-icon>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // Set form fields
-            setFieldValue('id_title', '{{ parsed.title|escapejs }}');
-            setFieldValue('id_company', '{{ parsed.company|escapejs }}');
-            setFieldValue('id_location', '{{ parsed.location|escapejs }}');
-            setFieldValue('id_salary_range', '{{ parsed.salary_range|escapejs }}');
-            
-            // Handle description with proper line breaks
-            const description = `{{ parsed.description|escapejs }}`.replace(/\\n/g, '\n');
-            setFieldValue('id_description', description);
-            
-            // Update character counter
-            const charCounter = document.getElementById('char-counter');
-            const descField = document.getElementById('id_description');
-            if (charCounter && descField) {
-                const descLength = descField.value.length;
-                charCounter.textContent = `${descLength}/4000`;
-            }
-        })();
-    </script>
-</div>
-{% else %}
-<div class="alert alert-error mt-4">
-    <iconify-icon icon="heroicons:x-circle"></iconify-icon>
-    <span>Could not parse job description - please check the text and try again</span>
-</div>
-{% endif %}
+    <!-- Parse Results -->
+    {% if parsed %}
+    <div id="parse-results">
+        <div class="alert alert-success mb-4">
+            <iconify-icon icon="heroicons:check-circle"></iconify-icon>
+            <span>Job details extracted successfully!</span>
+        </div>
+        
+        <script>
+            (function() {
+                function setFieldValue(fieldId, value) {
+                    const field = document.getElementById(fieldId);
+                    if (field && !field.value) {
+                        field.value = value;
+                        field.dispatchEvent(new Event('change', { bubbles: true }));
+                        field.setAttribute('data-ai-filled', 'true');
+                    }
+                }
+                
+                setFieldValue('id_title', '{{ parsed.title|escapejs }}');
+                setFieldValue('id_company', '{{ parsed.company|escapejs }}');
+                setFieldValue('id_location', '{{ parsed.location|escapejs }}');
+                setFieldValue('id_salary_range', '{{ parsed.salary_range|escapejs }}');
+                
+                const description = `{{ parsed.description|escapejs }}`.replace(/\\n/g, '\n');
+                setFieldValue('id_description', description);
+                
+                const charCounter = document.getElementById('char-counter');
+                const descField = document.getElementById('id_description');
+                if (charCounter && descField) {
+                    const descLength = descField.value.length;
+                    charCounter.textContent = `${descLength}/4000`;
+                }
+            })();
+        </script>
+    </div>
+    {% endif %}
+
+    <!-- Basic Information -->
+    <div class="space-y-6">
+        <h2 class="text-xl font-semibold">Basic Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Title -->
+            <div class="form-control">
+                <label for="id_title" class="label">
+                    <span class="label-text">Job Title<span class="text-error">*</span></span>
+                </label>
+                {{ form.title }}
+            </div>
+
+            <!-- Company -->
+            <div class="form-control">
+                <label for="id_company" class="label">
+                    <span class="label-text">Company<span class="text-error">*</span></span>
+                </label>
+                {{ form.company }}
+            </div>
+
+            <!-- Location -->
+            <div class="form-control">
+                <label for="id_location" class="label">
+                    <span class="label-text">Location<span class="text-error">*</span></span>
+                </label>
+                {{ form.location }}
+            </div>
+
+            <!-- URL -->
+            <div class="form-control">
+                <label for="id_url" class="label">
+                    <span class="label-text">Job Posting URL</span>
+                </label>
+                {{ form.url }}
+            </div>
+
+            <!-- Salary Range -->
+            <div class="form-control">
+                <label for="id_salary_range" class="label">
+                    <span class="label-text">Salary Range</span>
+                </label>
+                {{ form.salary_range }}
+            </div>
+
+            <!-- Status -->
+            <div class="form-control">
+                <label for="id_status" class="label">
+                    <span class="label-text">Status<span class="text-error">*</span></span>
+                </label>
+                {{ form.status }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="space-y-6">
+        <h2 class="text-xl font-semibold">Skills</h2>
+        <div class="form-control">
+            <label for="id_skills" class="label">
+                <span class="label-text">Required Skills</span>
+            </label>
+            {{ form.skills }}
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="space-y-6">
+        <h2 class="text-xl font-semibold flex items-center justify-between">
+            <span>Job Description</span>
+            <span id="char-counter" class="text-sm text-base-content/60">0/4000</span>
+        </h2>
+        <div class="form-control">
+            {{ form.description }}
+        </div>
+    </div>
+</form>

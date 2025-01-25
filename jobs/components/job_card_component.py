@@ -1,6 +1,5 @@
 from django_components import component
 
-
 @component.register("job_card")
 class JobCardComponent(component.Component):
     template = """
@@ -51,7 +50,7 @@ class JobCardComponent(component.Component):
                     <div class="flex flex-wrap gap-2 mt-2">
                         {% for skill in job.skills.all|slice:":3" %}
                         <span class="badge badge-accent badge-xs gap-1">
-                            <iconify-icon icon="{{ skill|get_skill_icon:True }}" class="text-xs"></iconify-icon>
+                            <iconify-icon icon="{{ skill|get_skill_icon }}" class="text-xs"></iconify-icon>
                             {{ skill.name }}
                         </span>
                         {% endfor %}

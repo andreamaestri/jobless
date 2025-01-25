@@ -120,3 +120,14 @@ def in_list(value, list_obj):
         return value in list_obj
     except (TypeError, ValueError):
         return False
+
+
+@register.simple_tag
+def get_skill_suggestions():
+    """Get list of skill suggestions from ICON_NAME_MAPPING"""
+    # Filter out special cases and get unique skill names
+    suggestions = {
+        name for name in ICON_NAME_MAPPING.keys()
+        if len(name) > 1 and not name.startswith('.')
+    }
+    return mark_safe(json_lib.dumps(sorted(suggestions)))

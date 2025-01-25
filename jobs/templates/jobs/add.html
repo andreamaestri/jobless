@@ -3,17 +3,13 @@
 {% load job_tags %}
 {% load component_tags %}
 
-{% block extra_js %}
+{% block early_js %}
 <script>
     window.SKILL_MAPPINGS = {
-        icons: JSON.parse('{{ icon_name_mapping|escapejs }}'),
-        darkVariants: JSON.parse('{{ dark_variants|escapejs }}')
+        icons: JSON.parse('{{ icon_name_mapping|default:"{}"|escapejs }}'),
+        darkVariants: JSON.parse('{{ dark_variants|default:"{}"|escapejs }}')
     };
 </script>
-
-<!-- Load skill management scripts -->
-<script defer src="{% static 'js/skill-icons.js' %}"></script>
-<script defer src="{% static 'js/skills-modal.js' %}"></script>
 
 <!-- Initialize skill icons -->
 <script>
@@ -26,8 +22,8 @@
 {% endblock early_js %}
 
 {% block content %}
-<div class="min-h-screen flex flex-col page-transition-wrapper">
-    <div class="flex-1 overflow-y-auto pb-20 page-enter">
+<div class="min-h-screen flex flex-col">
+    <div class="flex-1 overflow-y-auto pb-20">
         <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
             <div class="max-w-4xl mx-auto">
                 <!-- Header -->
@@ -38,9 +34,10 @@
                     </div>
                 </div>
 
-                <div class="bg-base-100/80 backdrop-blur-sm rounded-3xl shadow-xl animate-in fade-in duration-700">
-                    <div class="p-8 form-section bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl">
+                <div class="bg-base-100/80 backdrop-blur-sm shadow-xl rounded-2xl relative overflow-hidden">
+                    <div class="p-8 form-section">
                         {% component "job_form" form=form %}
+                        {% endcomponent %}
                     </div>
                 </div>
             </div>
