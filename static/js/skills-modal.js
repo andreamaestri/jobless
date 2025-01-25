@@ -6,6 +6,10 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('skillsModal', () => ({
         isMobile: window.innerWidth < 640,
         isSearchFocused: false,
+        searchQuery: '',
+        suggestions: [],
+        showSuggestions: false,
+        selectedIndex: -1,
 
         init() {
             this.setupEventListeners();
@@ -34,7 +38,60 @@ document.addEventListener('alpine:init', () => {
             return this.store.modal;
         },
 
-        // Handle skill search
+        // Tagulous autocomplete integration
+        async handleTagSearch(query) {
+            if (!query || query.length < 2) {
+                this.suggestions = [];
+                return;
+            }
+
+            try {
+                const response = await fetch(`/jobs/skills/autocomplete/?q=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Failed to fetch suggestions');
+                
+                const data = await response.json();
+                this.suggestions = data.results;
+                this.showSuggestions = true;
+                this.selectedIndex = -1;
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+                this.suggestions = [];
+            }
+        },
+
+        navigateSuggestion(direction) {
+            const newIndex = this.selectedIndex + direction;
+            if (newIndex >= -1 && newIndex < this.suggestions.length) {
+                this.selectedIndex = newIndex;
+            }
+        },
+
+        handleEnter() {
+            const suggestion = this.suggestions[this.selectedIndex];
+            if (suggestion) {
+                this.addSkill(suggestion);
+            } else if (this.searchQuery.trim()) {
+                // Allow custom skills if no suggestion selected
+                this.addSkill({ name: this.searchQuery.trim() });
+            }
+        },
+
+        addSkill(skill) {
+            if (this.store.add(skill)) {
+                this.searchQuery = '';
+                this.suggestions = [];
+                this.showSuggestions = false;
+            }
+        },
+
+        closeSuggestions() {
+            setTimeout(() => {
+                this.showSuggestions = false;
+                this.selectedIndex = -1;
+            }, 200);
+        },
+
+        // Handle skill search (for filtering existing skills)
         handleSearch(query) {
             this.store.filterSkills(query);
         },
