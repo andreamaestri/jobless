@@ -10,15 +10,6 @@
         darkVariants: JSON.parse('{{ dark_variants|default:"{}"|escapejs }}')
     };
 </script>
-
-<!-- Initialize skill icons -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!window.skillIconsHelper) {
-            window.skillIconsHelper = new SkillIconsHelper();
-        }
-    });
-</script>
 {% endblock early_js %}
 
 {% block content %}
