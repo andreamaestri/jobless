@@ -1,9 +1,24 @@
 {% load job_tags %}
+{% load django_vite %}
 
 {{ skill_icons|json_script:"skill-icons-data" }}
 {{ dark_variants|json_script:"dark-variants-data" }}
+{{ icon_name_mapping|json_script:"icon-mapping-data" }}
 
 <script type="text/javascript">
-    window.SKILL_ICONS = JSON.parse(document.getElementById('skill-icons-data').textContent);
-    window.SKILL_MAPPINGS = JSON.parse(document.getElementById('dark-variants-data').textContent);
+    // Initialize globals with safe defaults
+    window.SKILL_ICONS = [];
+    window.MODAL_DARK_VARIANTS = {};
+    window.MODAL_ICON_MAPPING = {};
+
+    // Safely parse and assign data
+    try {
+        window.SKILL_ICONS = JSON.parse(document.getElementById('skill-icons-data').textContent) || [];
+        window.MODAL_DARK_VARIANTS = JSON.parse(document.getElementById('dark-variants-data').textContent) || {};
+        window.MODAL_ICON_MAPPING = JSON.parse(document.getElementById('icon-mapping-data').textContent) || {};
+    } catch (e) {
+        console.error('Error initializing skill data:', e);
+    }
 </script>
+
+{% vite_hmr_client %}

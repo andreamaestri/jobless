@@ -1,7 +1,7 @@
 {% load static %}
 {% load job_tags %}
 
-<div class="bg-base-100 shadow-xl rounded-2xl relative overflow-hidden">
+<div>
     <form method="POST" 
           id="job-form"
           action="{{ request.path }}"
@@ -18,7 +18,7 @@
 
         <div class="divide-y divide-base-200">
             <!-- AI Paste Section -->
-            <div class="p-8 form-section bg-gradient-to-br from-primary/5 to-transparent" style="--delay: 0">
+            <div class="p-8 form-section" style="--delay: 0">
                 <div class="flex items-center gap-2 mb-6">
                     <iconify-icon icon="heroicons:sparkles" class="text-2xl text-primary"></iconify-icon>
                     <h2 class="text-lg font-semibold text-base-content">Quick Fill with AI</h2>
@@ -51,7 +51,7 @@
             </div>
 
             <!-- Basic Information -->
-            <div class="p-8 form-section bg-base-100/50 transition-colors duration-200 hover:bg-base-100" style="--delay: 1">
+            <div class="p-8 form-section" style="--delay: 1">
                 <div class="flex items-center gap-2 mb-6">
                     <iconify-icon icon="heroicons:information-circle" class="text-2xl text-primary"></iconify-icon>
                     <h2 class="text-lg font-semibold text-base-content">Basic Information</h2>
@@ -162,52 +162,33 @@
             </div>
 
             <!-- Skills Section -->
-            <div class="p-8 form-section"
-                 x-data="skillsManager"
-                 x-init="await initializeSkills()"
-                 style="--delay: 5">
-                <div x-show="!loading" x-cloak>
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center gap-2">
-                            <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
-                            <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
-                        </div>
-                        <button type="button" 
-                                @click="$dispatch('open-skills-modal')"
-                                class="btn btn-ghost btn-sm gap-2">
-                            <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
-                            Manage Skills
-                        </button>
+            <div class="p-8 form-section" style="--delay: 5">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-2">
+                        <iconify-icon icon="heroicons:academic-cap" class="text-2xl text-primary"></iconify-icon>
+                        <h2 class="text-lg font-semibold text-base-content">Required Skills</h2>
                     </div>
-                    
-                    <div class="relative">
-                        <!-- Skills list -->
-                        <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100"
-                             @skills-updated.window="
-                                selectedSkills = $event.detail;
-                                updateSkillsInput();">
-                            <template x-if="selectedSkills.length === 0">
-                                <div class="text-base-content/60 text-sm">
-                                    Click 'Manage Skills' to add required skills
-                                </div>
-                            </template>
-                            <div class="flex flex-wrap gap-2" 
-                                 x-show="selectedSkills.length > 0">
-                                <template x-for="skill in selectedSkills" :key="skill.name">
-                                    <div class="badge badge-lg gap-2">
-                                        <iconify-icon :icon="getSkillIcon(skill)"></iconify-icon>
-                                        <span x-text="skill.name"></span>
-                                        <button @click="removeSkill(skill)" 
-                                                type="button"
-                                                class="btn btn-ghost btn-xs btn-circle">
-                                            <iconify-icon icon="heroicons:x-mark-20-solid"></iconify-icon>
-                                        </button>
-                                    </div>
-                                </template>
+                    <button type="button" 
+                            class="btn btn-ghost btn-sm gap-2"
+                            data-action="open-skills-modal">
+                        <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
+                        Manage Skills
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
+                        <div class="selected-skills flex flex-wrap gap-2">
+                            <div class="text-base-content/60 text-sm">
+                                Click 'Manage Skills' to add required skills
                             </div>
                         </div>
-                        {{ form.skills }}
                     </div>
+                    <input type="hidden" 
+                           id="id_skills" 
+                           name="skills" 
+                           value="{{ form.initial.skills|default:''|join:',' }}" 
+                           data-skills="{{ form.initial.skills|default:'[]'|safe }}">
                 </div>
             </div>
         </div>
