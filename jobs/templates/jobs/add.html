@@ -3,15 +3,6 @@
 {% load job_tags %}
 {% load component_tags %}
 
-{% block early_js %}
-<script>
-    window.SKILL_MAPPINGS = {
-        icons: JSON.parse('{{ icon_name_mapping|default:"{}"|escapejs }}'),
-        darkVariants: JSON.parse('{{ dark_variants|default:"{}"|escapejs }}')
-    };
-</script>
-{% endblock early_js %}
-
 {% include "jobs/includes/skill_base.html" %}
 
 {% block content %}
@@ -30,6 +21,7 @@
                 <div class="bg-base-100/80 backdrop-blur-sm shadow-xl rounded-2xl relative overflow-hidden">
                     <div class="p-8 form-section">
                         {% component "job_form" form=form %}
+
                         {% endcomponent %}
                     </div>
                 </div>
@@ -38,7 +30,7 @@
     </div>
 </div>
 
-<!-- Form Actions (outside form but controls it) -->
+<!-- Form Actions -->
 <div class="fixed bottom-0 left-0 right-0 z-10 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 transition-[left] duration-300"
      :class="$store?.sidebar?.collapsed ? 'lg:left-20' : 'lg:left-80'"
      x-data="{ getStoreValue: (store, prop, fallback = false) => Alpine.store(store)?.[prop] ?? fallback }">
@@ -68,87 +60,4 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const descriptionInput = document.getElementById('id_description');
-        if (descriptionInput) {
-            // Character counter
-            const charCounter = document.getElementById('char-counter');
-            if (charCounter) {
-                const updateCounter = () => {
-                    const length = descriptionInput.value.length;
-                    charCounter.textContent = `${length}/4000`;
-                };
-                descriptionInput.addEventListener('input', updateCounter);
-                // Initial count
-                updateCounter();
-            }
-        }
-        
-        // Initialize AI Parser
-        const parser = document.getElementById('description-parser');
-        const pasteArea = document.getElementById('paste');
-        const parseButton = document.getElementById('parse-button');
-        const parseError = document.getElementById('parse-error');
-        
-        if (parser && parseButton) {
-            parseButton.addEventListener('click', async () => {
-                const spinner = parseButton.querySelector('.loading');
-                const buttonText = parseButton.querySelector('.button-text');
-                const description = pasteArea.value.trim();
-                
-                if (!description) {
-                    parseError.textContent = 'Please paste a job description first';
-                    parseError.classList.remove('hidden');
-                    return;
-                }
-
-                try {
-                    spinner.classList.remove('hidden');
-                    buttonText.textContent = 'Processing...';
-                    parseButton.disabled = true;
-                    parseError.classList.add('hidden');
-
-                    const response = await fetch(parser.dataset.url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                        },
-                        body: new URLSearchParams({
-                            'description': description
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to parse job description');
-                    }
-
-                    const result = await response.json();
-                    
-                    if (result.status === 'success') {
-                        // Update form fields
-                        const data = result.data;
-                        Object.keys(data).forEach(field => {
-                            const input = document.getElementById(`id_${field}`);
-                            if (input && data[field]) {
-                                input.value = data[field];
-                                input.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
-                        });
-                    } else {
-                        throw new Error(result.error || 'Failed to parse job description');
-                    }
-                } catch (error) {
-                    parseError.textContent = error.message;
-                    parseError.classList.remove('hidden');
-                } finally {
-                    spinner.classList.add('hidden');
-                    buttonText.textContent = 'Process with AI';
-                    parseButton.disabled = false;
-                }
-            });
-        }
-    });
-</script>
 {% endblock %}

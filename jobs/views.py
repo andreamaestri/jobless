@@ -1,23 +1,29 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db.models import Q
-from django.core.paginator import Paginator
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    DetailView
+)
 from django.views import View
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 
-from .models import JobPosting, JobFavorite, SkillsTagModel
+from .models import JobPosting, SkillTreeModel
 from .forms import JobPostingForm
 from .components.job_list_component import JobListComponent
 from .components.job_detail_component import JobDetailComponent
 
+
 def api_skills(request):
     """API endpoint to get all skills"""
-    skills = SkillsTagModel.objects.values('name', 'icon', 'icon_dark')
+    skills = SkillTreeModel.objects.values('name', 'label', 'icon')
     return JsonResponse({'skills': list(skills)})
+
 
 def skills_autocomplete(request):
     """Endpoint for skill autocomplete suggestions"""
@@ -25,9 +31,16 @@ def skills_autocomplete(request):
     if not query or len(query) < 2:
         return JsonResponse({'results': []})
     
-    skills = SkillsTagModel.objects.filter(name__icontains=query)[:10]
-    results = [{'name': skill.name, 'icon': skill.get_icon()} for skill in skills]
+    skills = SkillTreeModel.objects.filter(
+        Q(name__icontains=query) | Q(label__icontains=query)
+    )[:10]
+    results = [{
+        'name': skill.name,
+        'label': skill.label,
+        'icon': skill.get_icon()
+    } for skill in skills]
     return JsonResponse({'results': results})
+
 
 def parse_job_description(request):
     """Endpoint to parse job descriptions"""
@@ -42,13 +55,16 @@ def parse_job_description(request):
     parsed = form.parse_job_with_ai(description)
     return JsonResponse(parsed)
 
+
 class JobListView(LoginRequiredMixin, ListView):
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
     
     def get_queryset(self):
         filter_param = self.request.GET.get('filter', 'all')
-        jobs = JobPosting.objects.filter(user=self.request.user).order_by('-created_at')
+        jobs = JobPosting.objects.filter(
+            user=self.request.user
+        ).order_by('-created_at')
         
         if filter_param == 'favorites':
             jobs = jobs.filter(favorited_by=self.request.user)
@@ -65,7 +81,9 @@ class JobListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         favorite_job_ids = []
         if self.request.user.is_authenticated:
-            favorite_job_ids = list(self.request.user.favorited_jobs.values_list('id', flat=True))
+            favorite_job_ids = list(
+                self.request.user.favorited_jobs.values_list('id', flat=True)
+            )
         
         job_list_component = JobListComponent()
         component_context = job_list_component.get_context_data(
@@ -74,6 +92,7 @@ class JobListView(LoginRequiredMixin, ListView):
         )
         context.update(component_context)
         return context
+
 
 class JobPostingDetailView(LoginRequiredMixin, DetailView):
     model = JobPosting
@@ -95,6 +114,7 @@ class JobPostingDetailView(LoginRequiredMixin, DetailView):
         context.update(component_context)
         return context
 
+
 class JobCreateView(LoginRequiredMixin, CreateView):
     model = JobPosting
     form_class = JobPostingForm
@@ -106,6 +126,7 @@ class JobCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Job added successfully.')
         return response
+
 
 class JobPostingUpdateView(LoginRequiredMixin, UpdateView):
     model = JobPosting
@@ -123,6 +144,7 @@ class JobPostingUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Job updated successfully.')
         return response
 
+
 class JobPostingDeleteView(LoginRequiredMixin, DeleteView):
     model = JobPosting
     success_url = reverse_lazy('jobs:list')
@@ -134,12 +156,14 @@ class JobPostingDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(request, 'Job deleted successfully.')
         return super().delete(request, *args, **kwargs)
 
+
 class JobFavoritesView(LoginRequiredMixin, ListView):
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
     
     def get_queryset(self):
         return JobPosting.objects.filter(favorited_by=self.request.user)
+
 
 class ToggleFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk):
@@ -148,4 +172,6 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
             messages.success(request, 'Job added to favorites.')
         else:
             messages.success(request, 'Job removed from favorites.')
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('jobs:list')))
+        return HttpResponseRedirect(
+            request.META.get('HTTP_REFERER', reverse('jobs:list'))
+        )

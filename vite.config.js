@@ -16,6 +16,7 @@ export default defineConfig({
                 skillIcons: resolve('./static/js/skill-icons.js'),
                 skillsSelect: resolve('./static/js/skills-select.js'),
                 skillsManager: resolve('./static/js/skills-manager.js'),
+                skillTreeWidget: resolve('./assets/js/skill-tree-widget.js'),
                                
                 // Core functionality
                 store: resolve('./static/js/store.js'),

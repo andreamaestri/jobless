@@ -1,0 +1,87 @@
+{% load static %}
+
+<div class="skill-tree-widget" x-data="skillSelector">
+    <!-- Search/Tree Mode Toggle -->
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center space-x-4">
+            <div class="tabs tabs-boxed bg-base-200">
+                <button class="tab" 
+                        :class="{ 'tab-active': viewMode === 'search' }"
+                        @click="viewMode = 'search'">
+                    <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
+                    <span class="ml-2">Search</span>
+                </button>
+                <button class="tab" 
+                        :class="{ 'tab-active': viewMode === 'tree' }"
+                        @click="viewMode = 'tree'">
+                    <iconify-icon icon="heroicons:squares-2x2" class="text-lg"></iconify-icon>
+                    <span class="ml-2">Categories</span>
+                </button>
+            </div>
+        </div>
+        <div class="text-sm text-base-content/70"
+             x-text="selectedSkills.length + ' selected'">
+        </div>
+    </div>
+
+    <!-- Search View -->
+    <div x-show="viewMode === 'search'" class="space-y-4">
+        <div class="form-control">
+            <div class="input-group">
+                <input type="text"
+                       placeholder="Search skills..."
+                       class="input input-bordered w-full"
+                       x-model="searchQuery">
+                <button class="btn btn-square">
+                    <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"
+             x-show="filteredSkills.length > 0">
+            <template x-for="skill in filteredSkills" :key="skill.id">
+                <button class="btn btn-sm justify-start gap-2 normal-case"
+                        :class="isSelected(skill.id) ? 'btn-primary' : 'btn-ghost'"
+                        @click="toggleSkill(skill)">
+                    <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
+                    <span x-text="skill.label"></span>
+                </button>
+            </template>
+        </div>
+        <div x-show="filteredSkills.length === 0"
+             class="text-center py-8 text-base-content/70">
+            No skills found matching your search
+        </div>
+    </div>
+
+    <!-- Tree View -->
+    <div x-show="viewMode === 'tree'" class="space-y-4">
+        <template x-for="category in categories" :key="category.path">
+            <div class="card bg-base-200">
+                <div class="card-body p-4">
+                    <div class="flex items-center gap-2 cursor-pointer"
+                         @click="toggleCategory(category)">
+                        <iconify-icon :icon="category.expanded ? 'heroicons:chevron-down' : 'heroicons:chevron-right'"
+                                    class="text-lg"></iconify-icon>
+                        <h3 class="card-title text-base" x-text="category.label"></h3>
+                    </div>
+                    <div x-show="category.expanded" x-collapse>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+                            <template x-for="skill in category.skills" :key="skill.id">
+                                <button class="btn btn-sm justify-start gap-2 normal-case"
+                                        :class="isSelected(skill.id) ? 'btn-primary' : 'btn-ghost'"
+                                        @click="toggleSkill(skill)">
+                                    <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
+                                    <span x-text="skill.label"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Hidden Input for Form Submission -->
+    <input type="hidden" name="skills" :value="skillsJson">
+</div>

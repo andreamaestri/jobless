@@ -170,7 +170,7 @@
                     </div>
                     <button type="button" 
                             class="btn btn-ghost btn-sm gap-2"
-                            data-action="open-skills-modal">
+                            @click="$store.modals.skills.show()">
                         <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
                         Manage Skills
                     </button>
@@ -178,7 +178,7 @@
 
                 <div class="relative">
                     <div class="min-h-[120px] border border-base-300 rounded-lg p-4 bg-base-100">
-                        <div class="selected-skills flex flex-wrap gap-2">
+                        <div class="selected-skills flex flex-wrap gap-2" x-data x-init="$nextTick(() => $store.skills.updateFormDisplay())">
                             <div class="text-base-content/60 text-sm">
                                 Click 'Manage Skills' to add required skills
                             </div>
@@ -187,7 +187,7 @@
                     <input type="hidden" 
                            id="id_skills" 
                            name="skills" 
-                           value="{{ form.initial.skills|default:''|join:',' }}" 
+                           :value="$store.skills.skillsJson"
                            data-skills="{{ form.initial.skills|default:'[]'|safe }}">
                 </div>
             </div>

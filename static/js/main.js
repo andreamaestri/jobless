@@ -5,6 +5,7 @@ import Alpine from 'alpinejs'
 import persist from '@alpinejs/persist'
 import focus from '@alpinejs/focus'
 import { animate } from "motion"
+import 'iconify-icon' 
 
 // Initialize Alpine
 window.Alpine = Alpine
@@ -27,6 +28,7 @@ const featureModules = {
     'skill-icons': () => import('./skill-icons'),
     'skills-select': () => import('./skills-select'),
     'skills-manager': () => import('./skills-manager'),
+    'skill-tree-widget': () => import('../../assets/js/skill-tree-widget'),
     'events': () => import('./events')
 }
 

@@ -1,0 +1,678 @@
+# Programming Skills Initial Data
+
+# Programming
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming"
+    path: "programming"
+    label: "Programming"
+    level: 1
+    icon: "heroicons:code-bracket"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages"
+    path: "programming/languages"
+    label: "Languages"
+    level: 2
+    icon: "heroicons:command-line"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/python"
+    path: "programming/languages/python"
+    label: "Python"
+    level: 3
+    icon: "skill-icons:python-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/javascript"
+    path: "programming/languages/javascript"
+    label: "JavaScript"
+    level: 3
+    icon: "skill-icons:javascript"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/typescript"
+    path: "programming/languages/typescript"
+    label: "TypeScript"
+    level: 3
+    icon: "skill-icons:typescript"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/java"
+    path: "programming/languages/java"
+    label: "Java"
+    level: 3
+    icon: "skill-icons:java-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/rust"
+    path: "programming/languages/rust"
+    label: "Rust"
+    level: 3
+    icon: "skill-icons:rust"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/cpp"
+    path: "programming/languages/cpp"
+    label: "C++"
+    level: 3
+    icon: "skill-icons:cpp"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/csharp"
+    path: "programming/languages/csharp"
+    label: "C#"
+    level: 3
+    icon: "skill-icons:cs"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/go"
+    path: "programming/languages/go"
+    label: "Go"
+    level: 3
+    icon: "skill-icons:golang"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/ruby"
+    path: "programming/languages/ruby"
+    label: "Ruby"
+    level: 3
+    icon: "skill-icons:ruby"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/php"
+    path: "programming/languages/php"
+    label: "PHP"
+    level: 3
+    icon: "skill-icons:php-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/languages/swift"
+    path: "programming/languages/swift"
+    label: "Swift"
+    level: 3
+    icon: "skill-icons:swift"
+
+# Additional Programming Frameworks
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/frameworks"
+    path: "programming/frameworks"
+    label: "Frameworks"
+    level: 2
+    icon: "heroicons:cube"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/frameworks/expressjs"
+    path: "programming/frameworks/expressjs"
+    label: "Express.js"
+    level: 3
+    icon: "skill-icons:expressjs-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/frameworks/laravel"
+    path: "programming/frameworks/laravel"
+    label: "Laravel"
+    level: 3
+    icon: "skill-icons:laravel-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "programming/frameworks/rails"
+    path: "programming/frameworks/rails"
+    label: "Rails"
+    level: 3
+    icon: "skill-icons:rails"
+
+# Frontend Development
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend"
+    path: "frontend"
+    label: "Frontend"
+    level: 1
+    icon: "heroicons:computer-desktop"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/core"
+    path: "frontend/core"
+    label: "Core Technologies"
+    level: 2
+    icon: "heroicons:code-bracket"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/core/html"
+    path: "frontend/core/html"
+    label: "HTML"
+    level: 3
+    icon: "skill-icons:html"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/core/css"
+    path: "frontend/core/css"
+    label: "CSS"
+    level: 3
+    icon: "skill-icons:css"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks"
+    path: "frontend/frameworks"
+    label: "Frameworks"
+    level: 2
+    icon: "heroicons:cube"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks/react"
+    path: "frontend/frameworks/react"
+    label: "React"
+    level: 3
+    icon: "skill-icons:react-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks/vue"
+    path: "frontend/frameworks/vue"
+    label: "Vue"
+    level: 3
+    icon: "skill-icons:vuejs-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks/angular"
+    path: "frontend/frameworks/angular"
+    label: "Angular"
+    level: 3
+    icon: "skill-icons:angular-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks/svelte"
+    path: "frontend/frameworks/svelte"
+    label: "Svelte"
+    level: 3
+    icon: "skill-icons:svelte"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks/nextjs"
+    path: "frontend/frameworks/nextjs"
+    label: "Next.js"
+    level: 3
+    icon: "skill-icons:nextjs-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "frontend/frameworks/nuxtjs"
+    path: "frontend/frameworks/nuxtjs"
+    label: "Nuxt.js"
+    level: 3
+    icon: "skill-icons:nuxtjs-dark"
+
+# Backend Development
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend"
+    path: "backend"
+    label: "Backend"
+    level: 1
+    icon: "heroicons:server"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend/frameworks/django"
+    path: "backend/frameworks/django"
+    label: "Django"
+    level: 3
+    icon: "skill-icons:django"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend/frameworks/nodejs"
+    path: "backend/frameworks/nodejs"
+    label: "Node.js"
+    level: 3
+    icon: "skill-icons:nodejs-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend/frameworks/spring"
+    path: "backend/frameworks/spring"
+    label: "Spring"
+    level: 3
+    icon: "skill-icons:spring-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend/databases"
+    path: "backend/databases"
+    label: "Databases"
+    level: 2
+    icon: "heroicons:database"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend/databases/redis"
+    path: "backend/databases/redis"
+    label: "Redis"
+    level: 3
+    icon: "skill-icons:redis-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "backend/databases/sqlite"
+    path: "backend/databases/sqlite"
+    label: "SQLite"
+    level: 3
+    icon: "skill-icons:sqlite"
+
+# DevOps
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/containerization"
+    path: "devops/containerization"
+    label: "Containerization"
+    level: 2
+    icon: "heroicons:cube-transparent"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/containerization/docker"
+    path: "devops/containerization/docker"
+    label: "Docker"
+    level: 3
+    icon: "skill-icons:docker"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/containerization/kubernetes"
+    path: "devops/containerization/kubernetes"
+    label: "Kubernetes"
+    level: 3
+    icon: "skill-icons:kubernetes"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/cloud"
+    path: "devops/cloud"
+    label: "Cloud Platforms"
+    level: 2
+    icon: "heroicons:cloud"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/cloud/aws"
+    path: "devops/cloud/aws"
+    label: "AWS"
+    level: 3
+    icon: "skill-icons:aws-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/cloud/azure"
+    path: "devops/cloud/azure"
+    label: "Azure"
+    level: 3
+    icon: "skill-icons:azure-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/ci-cd"
+    path: "devops/ci-cd"
+    label: "CI/CD"
+    level: 2
+    icon: "heroicons:arrows-right-left"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/ci-cd/jenkins"
+    path: "devops/ci-cd/jenkins"
+    label: "Jenkins"
+    level: 3
+    icon: "skill-icons:jenkins-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/ci-cd/githubactions"
+    path: "devops/ci-cd/githubactions"
+    label: "GitHub Actions"
+    level: 3
+    icon: "skill-icons:githubactions-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/cloud/gcp"
+    path: "devops/cloud/gcp"
+    label: "Google Cloud Platform"
+    level: 3
+    icon: "skill-icons:gcp-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/cloud/netlify"
+    path: "devops/cloud/netlify"
+    label: "Netlify"
+    level: 3
+    icon: "skill-icons:netlify-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "devops/cloud/vercel"
+    path: "devops/cloud/vercel"
+    label: "Vercel"
+    level: 3
+    icon: "skill-icons:vercel-dark"
+
+# Design Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "design/ui/figma"
+    path: "design/ui/figma"
+    label: "Figma"
+    level: 3
+    icon: "skill-icons:figma-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "design/ui/sketch"
+    path: "design/ui/sketch"
+    label: "Sketch"
+    level: 3
+    icon: "skill-icons:sketchup-light"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "design/ui/photoshop"
+    path: "design/ui/photoshop"
+    label: "Photoshop"
+    level: 3
+    icon: "skill-icons:photoshop"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "design/ui/illustrator"
+    path: "design/ui/illustrator"
+    label: "Illustrator"
+    level: 3
+    icon: "skill-icons:illustrator"
+
+# Tools & Version Control
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/vcs/git"
+    path: "tools/vcs/git"
+    label: "Git"
+    level: 3
+    icon: "skill-icons:git"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/vcs/github"
+    path: "tools/vcs/github"
+    label: "GitHub"
+    level: 3
+    icon: "skill-icons:github-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/vcs/gitlab"
+    path: "tools/vcs/gitlab"
+    label: "GitLab"
+    level: 3
+    icon: "skill-icons:gitlab-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/code-editors"
+    path: "tools/code-editors"
+    label: "Code Editors"
+    level: 2
+    icon: "heroicons:pencil"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/code-editors/vscode"
+    path: "tools/code-editors/vscode"
+    label: "VS Code"
+    level: 3
+    icon: "skill-icons:vscode-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/code-editors/vim"
+    path: "tools/code-editors/vim"
+    label: "Vim"
+    level: 3
+    icon: "skill-icons:vim-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/code-editors/jetbrains"
+    path: "tools/code-editors/jetbrains"
+    label: "JetBrains"
+    level: 3
+    icon: "skill-icons:idea-dark"
+
+# Additional Tools & Utilities
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/build-tools"
+    path: "tools/build-tools"
+    label: "Build Tools"
+    level: 2
+    icon: "heroicons:terminal"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/build-tools/webpack"
+    path: "tools/build-tools/webpack"
+    label: "Webpack"
+    level: 3
+    icon: "skill-icons:webpack-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/build-tools/vite"
+    path: "tools/build-tools/vite"
+    label: "Vite"
+    level: 3
+    icon: "skill-icons:vite-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools/build-tools/rollup"
+    path: "tools/build-tools/rollup"
+    label: "Rollup.js"
+    level: 3
+    icon: "skill-icons:rollupjs-dark"
+
+# Testing Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "testing"
+    path: "testing"
+    label: "Testing"
+    level: 1
+    icon: "heroicons:check-circle"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "testing/frameworks"
+    path: "testing/frameworks"
+    label: "Testing Frameworks"
+    level: 2
+    icon: "heroicons:chip"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "testing/frameworks/jest"
+    path: "testing/frameworks/jest"
+    label: "Jest"
+    level: 3
+    icon: "skill-icons:jest"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "testing/frameworks/selenium"
+    path: "testing/frameworks/selenium"
+    label: "Selenium"
+    level: 3
+    icon: "skill-icons:selenium"
+
+# Mobile Development
+- model: jobs.skilltreemodel
+  fields:
+    name: "mobile"
+    path: "mobile"
+    label: "Mobile Development"
+    level: 1
+    icon: "heroicons:device-mobile"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mobile/frameworks"
+    path: "mobile/frameworks"
+    label: "Frameworks"
+    level: 2
+    icon: "heroicons:cube-transparent"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mobile/frameworks/flutter"
+    path: "mobile/frameworks/flutter"
+    label: "Flutter"
+    level: 3
+    icon: "skill-icons:flutter-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mobile/frameworks/react-native"
+    path: "mobile/frameworks/react-native"
+    label: "React Native"
+    level: 3
+    icon: "skill-icons:react-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mobile/frameworks/swift"
+    path: "mobile/frameworks/swift"
+    label: "Swift"
+    level: 3
+    icon: "skill-icons:swift"
+
+# Machine Learning Section
+- model: jobs.skilltreemodel
+  fields:
+    name: "ml"
+    path: "ml"
+    label: "Machine Learning"
+    level: 1
+    icon: "heroicons:light-bulb"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "ml/frameworks"
+    path: "ml/frameworks"
+    label: "Frameworks"
+    level: 2
+    icon: "heroicons:chip"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "ml/frameworks/tensorflow"
+    path: "ml/frameworks/tensorflow"
+    label: "TensorFlow"
+    level: 3
+    icon: "skill-icons:tensorflow-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "ml/frameworks/pytorch"
+    path: "ml/frameworks/pytorch"
+    label: "PyTorch"
+    level: 3
+    icon: "skill-icons:pytorch-dark"
+
+# Additional AI & Cybersecurity
+- model: jobs.skilltreemodel
+  fields:
+    name: "cybersecurity"
+    path: "cybersecurity"
+    label: "Cybersecurity"
+    level: 1
+    icon: "heroicons:shield-check"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "cybersecurity/tools"
+    path: "cybersecurity/tools"
+    label: "Tools"
+    level: 2
+    icon: "heroicons:key"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "cybersecurity/tools/aws-shield"
+    path: "cybersecurity/tools/aws-shield"
+    label: "AWS Shield"
+    level: 3
+    icon: "skill-icons:aws-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "cybersecurity/tools/fortinet"
+    path: "cybersecurity/tools/fortinet"
+    label: "Fortinet"
+    level: 3
+    icon: "skill-icons:fortinet"
+
+# Data Visualization
+- model: jobs.skilltreemodel
+  fields:
+    name: "data-visualization"
+    path: "data-visualization"
+    label: "Data Visualization"
+    level: 1
+    icon: "heroicons:chart-bar"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "data-visualization/libraries"
+    path: "data-visualization/libraries"
+    label: "Libraries"
+    level: 2
+    icon: "heroicons:chart-pie"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "data-visualization/libraries/d3"
+    path: "data-visualization/libraries/d3"
+    label: "D3.js"
+    level: 3
+    icon: "skill-icons:d3-dark"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "data-visualization/libraries/chartjs"
+    path: "data-visualization/libraries/chartjs"
+    label: "Chart.js"
+    level: 3
+    icon: "skill-icons:chartjs"

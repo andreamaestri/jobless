@@ -2,56 +2,77 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 import tagulous.models
-from .utils.skill_icons import SKILL_ICONS, DARK_VARIANTS
-from django.contrib.auth import get_user_model
 
-class SkillsTagModel(tagulous.models.TagModel):
-    icon = models.CharField(max_length=100, blank=True, null=True)
-    icon_dark = models.CharField(max_length=100, blank=True, null=True)
-    
-    class TagMeta:
-        initial = SKILL_ICONS
-        force_lowercase = True
-        autocomplete_view = 'jobs:skills_autocomplete'
-        space_delimiter = False
-        max_count = 10
-        case_sensitive = False
+
+class SkillTreeModel(tagulous.models.TagTreeModel):
+    icon = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Icon code (e.g., skill-icons:python)"
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Detailed description of the skill"
+    )
+
+    class Meta:
+        verbose_name = "Skill"
+        verbose_name_plural = "Skills"
 
     def get_icon(self):
         """Get the icon for this skill"""
         if self.icon:
             return self.icon
-        # First try ICON_NAME_MAPPING
-        skill_name = str(self).lower()
+        
+        # Try ICON_NAME_MAPPING
         from .utils.skill_icons import ICON_NAME_MAPPING
-        if skill_name in ICON_NAME_MAPPING:
-            return ICON_NAME_MAPPING[skill_name]
+        if self.name in ICON_NAME_MAPPING:
+            return ICON_NAME_MAPPING[self.name]
             
-        # Then try SKILL_ICONS
-        for icon, name in SKILL_ICONS:
-            if name.lower() == skill_name:
-                return icon
-                
         # Log the missing icon mapping
         import logging
         logger = logging.getLogger(__name__)
-        logger.warning(f"No icon found for skill: {str(self)}")
+        logger.warning(f"No icon found for skill: {self.name}")
         return 'heroicons:academic-cap'  # Default icon
 
-    def get_icon_dark(self):
-        """Get the dark mode icon for this skill"""
-        if self.icon_dark:
-            return self.icon_dark
-        # Fallback to default mapping
-        icon = self.get_icon()
-        return DARK_VARIANTS.get(icon, icon)
 
-    def __str__(self):
-        return self.name
+class JobSkill(models.Model):
+    PROFICIENCY_LEVELS = [
+        ('required', 'Required'),
+        ('preferred', 'Preferred'),
+        ('bonus', 'Nice to Have')
+    ]
+
+    job = models.ForeignKey(
+        'JobPosting',
+        on_delete=models.CASCADE,
+        related_name="job_skills"
+    )
+    skill = models.ForeignKey(
+        SkillTreeModel,
+        on_delete=models.CASCADE,
+        related_name="job_skills"
+    )
+    proficiency = models.CharField(
+        max_length=20,
+        choices=PROFICIENCY_LEVELS,
+        default='required'
+    )
 
     class Meta:
-        verbose_name = "Skill"
-        verbose_name_plural = "Skills"
+        unique_together = ['job', 'skill']
+        verbose_name_plural = "Job Skills"
+        indexes = [
+            models.Index(fields=['job', 'skill']),
+            models.Index(fields=['proficiency']),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.job.title} - {self.skill.name} "
+            f"({self.get_proficiency_display()})"
+        )
+
 
 class JobPosting(models.Model):
     STATUS_CHOICES = [
@@ -69,13 +90,17 @@ class JobPosting(models.Model):
     salary_range = models.CharField(max_length=100, blank=True)
     url = models.URLField(blank=True)
     description = models.TextField()
-    skills = tagulous.models.TagField(
-        to=SkillsTagModel,
-        help_text="Select skills from the predefined list",
-        blank=True,
-        related_name="job_skills"
+    skills = models.ManyToManyField(
+        SkillTreeModel,
+        through='JobSkill',
+        related_name='jobs',
+        help_text="Skills associated with this job posting"
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='interested')
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='interested'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     favorites = models.ManyToManyField(
@@ -119,6 +144,7 @@ class JobPosting(models.Model):
             favorite.delete()
         return created
 
+
 class JobFavorite(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -141,6 +167,7 @@ class JobFavorite(models.Model):
         ]
 
     def __str__(self):
+        return f"{self.user.username}'s favorite: {self.job.title}"
         return f"{self.user.username}'s favorite: {self.job.title}"
 
     def get_absolute_url(self):
