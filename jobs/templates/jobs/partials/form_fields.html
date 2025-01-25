@@ -1,21 +1,3 @@
-{% autoescape off %}
-{% if parsed %}
-<div class="alert alert-success">
-    <iconify-icon icon="heroicons:check-circle"></iconify-icon>
-    <span>Job details extracted successfully!</span>
-</div>
-<script>
-    // Update form fields with parsed data
-    const fields = {{ parsed|safe }};
-    Object.entries(fields).forEach(([field, value]) => {
-        const input = document.querySelector(`[name="${field}"]`);
-        if (input) {
-            input.value = value;
-            input.setAttribute('data-ai-filled', 'true');
-        }
-    });
-</script>
-{% endif %}
 {% if parsed %}
 <div id="parse-results">
     <div class="alert alert-success mb-4">
@@ -31,6 +13,7 @@
                 if (field && !field.value) {
                     field.value = value;
                     field.dispatchEvent(new Event('change', { bubbles: true }));
+                    field.setAttribute('data-ai-filled', 'true');
                 }
             }
 
@@ -60,4 +43,3 @@
     <span>Could not parse job description - please check the text and try again</span>
 </div>
 {% endif %}
-{% endautoescape %}

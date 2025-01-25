@@ -1,99 +1,151 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views import View
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 
-from .models import Job
-from .forms import JobForm
+from .models import JobPosting, JobFavorite, SkillsTagModel
+from .forms import JobPostingForm
 from .components.job_list_component import JobListComponent
 from .components.job_detail_component import JobDetailComponent
-from .components.job_form_component import JobFormComponent
 
-@login_required
-def job_list(request):
-    # Existing filtering logic
-    filter_param = request.GET.get('filter', 'all')
-    
-    # Base queryset
-    jobs = Job.objects.filter(user=request.user).order_by('-created_at')
-    
-    # Apply filters
-    if filter_param == 'favorites':
-        jobs = jobs.filter(favorited_by=request.user)
-    elif filter_param == 'recent':
-        jobs = jobs.order_by('-updated_at')[:10]
-    elif filter_param == 'active':
-        jobs = jobs.filter(status__in=['APPLIED', 'INTERVIEWING'])
-    elif filter_param == 'interviewing':
-        jobs = jobs.filter(status='INTERVIEWING')
-    
-    # Get favorite job IDs
-    favorite_job_ids = list(request.user.favorite_jobs.values_list('id', flat=True))
-    
-    # Use the JobListComponent
-    job_list_component = JobListComponent()
-    context = job_list_component.get_context_data(
-        jobs=jobs, 
-        favorite_job_ids=favorite_job_ids
-    )
-    
-    return render(request, 'jobs/list.html', context)
+def api_skills(request):
+    """API endpoint to get all skills"""
+    skills = SkillsTagModel.objects.values('name', 'icon', 'icon_dark')
+    return JsonResponse({'skills': list(skills)})
 
-@login_required
-def job_detail(request, pk):
-    job = get_object_or_404(Job, pk=pk, user=request.user)
+def skills_autocomplete(request):
+    """Endpoint for skill autocomplete suggestions"""
+    query = request.GET.get('q', '')
+    if not query or len(query) < 2:
+        return JsonResponse({'results': []})
     
-    # Check if the job is a favorite
-    is_favorite = request.user in job.favorited_by.all()
-    
-    # Use the JobDetailComponent
-    job_detail_component = JobDetailComponent()
-    context = job_detail_component.get_context_data(
-        job=job,
-        is_favorite=is_favorite
-    )
-    
-    return render(request, 'jobs/detail.html', context)
+    skills = SkillsTagModel.objects.filter(name__icontains=query)[:10]
+    results = [{'name': skill.name, 'icon': skill.get_icon()} for skill in skills]
+    return JsonResponse({'results': results})
 
-@login_required
-def job_add(request):
-    if request.method == 'POST':
-        form = JobForm(request.POST, request.FILES)
-        if form.is_valid():
-            job = form.save(commit=False)
-            job.user = request.user
-            job.save()
-            form.save_m2m()  # Save many-to-many relationships
-            messages.success(request, 'Job added successfully.')
-            return redirect('jobs:list')
-    else:
-        form = JobForm()
-    
-    # Use the JobFormComponent
-    job_form_component = JobFormComponent()
-    context = job_form_component.get_context_data(form=form)
-    
-    return render(request, 'jobs/add.html', context)
+def parse_job_description(request):
+    """Endpoint to parse job descriptions"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        
+    description = request.POST.get('description', '')
+    if not description:
+        return JsonResponse({'error': 'No description provided'}, status=400)
+        
+    form = JobPostingForm()
+    parsed = form.parse_job_with_ai(description)
+    return JsonResponse(parsed)
 
-@login_required
-def job_edit(request, pk):
-    job = get_object_or_404(Job, pk=pk, user=request.user)
+class JobListView(LoginRequiredMixin, ListView):
+    template_name = 'jobs/list.html'
+    context_object_name = 'jobs'
     
-    if request.method == 'POST':
-        form = JobForm(request.POST, request.FILES, instance=job)
-        if form.is_valid():
-            job = form.save()
-            messages.success(request, 'Job updated successfully.')
-            return redirect('jobs:detail', pk=job.pk)
-    else:
-        form = JobForm(instance=job)
+    def get_queryset(self):
+        filter_param = self.request.GET.get('filter', 'all')
+        jobs = JobPosting.objects.filter(user=self.request.user).order_by('-created_at')
+        
+        if filter_param == 'favorites':
+            jobs = jobs.filter(favorited_by=self.request.user)
+        elif filter_param == 'recent':
+            jobs = jobs.order_by('-updated_at')[:10]
+        elif filter_param == 'active':
+            jobs = jobs.filter(status__in=['APPLIED', 'INTERVIEWING'])
+        elif filter_param == 'interviewing':
+            jobs = jobs.filter(status='INTERVIEWING')
+            
+        return jobs
     
-    # Use the JobFormComponent
-    job_form_component = JobFormComponent()
-    context = job_form_component.get_context_data(
-        form=form, 
-        job=job
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        favorite_job_ids = []
+        if self.request.user.is_authenticated:
+            favorite_job_ids = list(self.request.user.favorited_jobs.values_list('id', flat=True))
+        
+        job_list_component = JobListComponent()
+        component_context = job_list_component.get_context_data(
+            jobs=context['jobs'],
+            favorite_job_ids=favorite_job_ids
+        )
+        context.update(component_context)
+        return context
+
+class JobPostingDetailView(LoginRequiredMixin, DetailView):
+    model = JobPosting
+    template_name = 'jobs/detail.html'
+    context_object_name = 'job'
     
-    return render(request, 'jobs/edit.html', context)
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        is_favorite = self.request.user in context['job'].favorited_by.all()
+        
+        job_detail_component = JobDetailComponent()
+        component_context = job_detail_component.get_context_data(
+            job=context['job'],
+            is_favorite=is_favorite
+        )
+        context.update(component_context)
+        return context
+
+class JobCreateView(LoginRequiredMixin, CreateView):
+    model = JobPosting
+    form_class = JobPostingForm
+    template_name = 'jobs/add.html'
+    success_url = reverse_lazy('jobs:list')
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, 'Job added successfully.')
+        return response
+
+class JobPostingUpdateView(LoginRequiredMixin, UpdateView):
+    model = JobPosting
+    form_class = JobPostingForm
+    template_name = 'jobs/edit.html'
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
+    def get_success_url(self):
+        return reverse('jobs:detail', kwargs={'pk': self.object.pk})
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Job updated successfully.')
+        return response
+
+class JobPostingDeleteView(LoginRequiredMixin, DeleteView):
+    model = JobPosting
+    success_url = reverse_lazy('jobs:list')
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Job deleted successfully.')
+        return super().delete(request, *args, **kwargs)
+
+class JobFavoritesView(LoginRequiredMixin, ListView):
+    template_name = 'jobs/list.html'
+    context_object_name = 'jobs'
+    
+    def get_queryset(self):
+        return JobPosting.objects.filter(favorited_by=self.request.user)
+
+class ToggleFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        job = get_object_or_404(JobPosting, pk=pk)
+        if job.toggle_favorite(request.user):
+            messages.success(request, 'Job added to favorites.')
+        else:
+            messages.success(request, 'Job removed from favorites.')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('jobs:list')))

@@ -38,16 +38,15 @@
                     </div>
                 </div>
 
-                {% component "job_form" form=form %}
+                <div class="bg-base-100/80 backdrop-blur-sm rounded-3xl shadow-xl animate-in fade-in duration-700">
+                    <div class="p-8 form-section bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl">
+                        {% component "job_form" form=form %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Teleport the modal outside the form -->
-<template x-teleport="body">
-    {% include "jobs/modals/skills_modal.html" %}
-</template>
 
 <!-- Form Actions (outside form but controls it) -->
 <div class="fixed bottom-0 left-0 right-0 z-10 bg-base-100 border-t border-base-200 shadow-lg backdrop-blur-sm bg-opacity-90 transition-[left] duration-300"

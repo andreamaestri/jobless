@@ -122,6 +122,7 @@ TEMPLATES = [
             TEMPLATES_DIR,
             BASE_DIR / 'jobs' / 'components',  # Add components directory
         ],
+        'APP_DIRS': True,  # Enable app template discovery
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -130,10 +131,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.navigation',
             ],
-            'loaders': [
-                'django_components.template_loader.ComponentLoader',
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
+            'builtins': [
+                'django_components.templatetags.component_tags',
             ],
         },
     },
@@ -327,6 +326,10 @@ DJANGO_VITE = {
 DJANGO_COMPONENTS = {
     'AUTODISCOVER': True,
     'AUTODISCOVER_DIRS': ['components'],
+    'COMPONENTS_TEMPLATE_LOADERS': [
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    ],
 }
 
 LOGGING = {
