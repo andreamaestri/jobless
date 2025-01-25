@@ -1,0 +1,111 @@
+/* Tagulous Base Styles */
+.tagulous-widget {
+    position: relative;
+    width: 100%;
+}
+
+.tagulous-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0;
+    background: transparent;
+}
+
+.tagulous-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    min-height: 2.5rem;
+    border-radius: 0.5rem;
+}
+
+.tagulous-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    background: hsl(var(--p) / 0.1);
+    color: hsl(var(--p));
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: all 0.2s;
+}
+
+.tagulous-tag:hover {
+    background: hsl(var(--p) / 0.2);
+}
+
+.tagulous-tag-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s;
+}
+
+.tagulous-tag-remove:hover {
+    opacity: 1;
+    color: hsl(var(--er));
+    background: hsl(var(--er) / 0.1);
+}
+
+/* Autocomplete Styles */
+.tagulous-ac {
+    position: absolute;
+    z-index: 50;
+    width: 100%;
+    margin-top: 0.25rem;
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--b3));
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+}
+
+.tagulous-ac-results {
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
+.tagulous-ac-result {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tagulous-ac-result:hover {
+    background: hsl(var(--p) / 0.1);
+}
+
+.tagulous-ac-result.selected {
+    background: hsl(var(--p) / 0.2);
+    color: hsl(var(--p));
+}
+
+/* Loading State */
+.tagulous-loading::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid hsl(var(--bc) / 0.2);
+    border-top-color: hsl(var(--bc));
+    border-radius: 50%;
+    animation: tagulous-spin 0.6s linear infinite;
+}
+
+@keyframes tagulous-spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}

@@ -1,5 +1,12 @@
 {% load job_tags %}
 {% load django_vite %}
+{% load static %}
+
+<!-- Tagulous CSS -->
+<link rel="stylesheet" href="{% static 'tagulous/css/tagulous.css' %}">
+<!-- Tagulous JS -->
+<script src="{% static 'tagulous/js/tagulous.js' %}"></script>
+
 
 {# Skill Data Initialization #}
 {{ skill_icons|json_script:"skill-icons-data" }}
@@ -10,6 +17,25 @@
 {% if form %}
     {{ form.skills.tag_options.autocomplete_settings|json_script:"tagulous-settings" }}
     {{ form.skills.tag_list|json_script:"tagulous-initial-tags" }}
+
+    <script>
+        // Initialize Tagulous when the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const tagOptions = JSON.parse(document.getElementById('tagulous-settings').textContent);
+            const initialTags = JSON.parse(document.getElementById('tagulous-initial-tags').textContent);
+            
+            // Make options available to Alpine store
+            window.TAGULOUS_SETTINGS = tagOptions;
+            window.TAGULOUS_INITIAL_TAGS = initialTags;
+            
+            // Initialize Tagulous with settings
+            Tagulous.init({
+                selector: '[data-tagulous]',
+                settings: tagOptions,
+                tags: initialTags
+            });
+        });
+    </script>
 {% endif %}
 
 <script type="text/javascript">
