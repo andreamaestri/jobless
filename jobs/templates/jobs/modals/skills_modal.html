@@ -54,22 +54,44 @@
                     <span class="sm:hidden">Skills</span>
                 </h3>
 
-                <!-- Search -->
+                <!-- Search with Tagulous Autocomplete -->
                 <div class="relative flex-1 max-w-lg mx-auto">
                     <div class="relative">
                         <input type="text" 
-                               x-model="$store.app.skills.search"
-                               @input="handleSearch($event.target.value)"
+                               x-model="searchQuery"
+                               @input="handleTagSearch($event.target.value)"
+                               @focus="showSuggestions = true"
+                               @blur="setTimeout(() => closeSuggestions(), 200)"
+                               @keydown.down.prevent="navigateSuggestion(1)"
+                               @keydown.up.prevent="navigateSuggestion(-1)"
+                               @keydown.enter.prevent="handleEnter"
+                               @keydown.escape="closeSuggestions"
                                placeholder="Search skills..."
                                class="input input-bordered w-full pl-11 pr-4 h-10 sm:h-12 bg-base-200/50 focus:bg-base-200 transition-colors">
                         <iconify-icon icon="heroicons:magnifying-glass" 
-                                      class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
                         </iconify-icon>
-                        <button x-show="$store.app.skills.search"
-                                @click="$store.app.skills.search = ''"
+                        <button x-show="searchQuery"
+                                @click="searchQuery = ''; closeSuggestions()"
                                 class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle">
                             <iconify-icon icon="heroicons:x-mark" class="text-base"></iconify-icon>
                         </button>
+                    </div>
+                    
+                    <!-- Tagulous Suggestions Dropdown -->
+                    <div x-show="showSuggestions && suggestions.length > 0"
+                         x-transition
+                         class="absolute mt-2 w-full bg-base-100 rounded-xl shadow-lg border border-base-300 overflow-hidden z-50">
+                        <ul class="max-h-64 overflow-y-auto">
+                            <template x-for="(suggestion, index) in suggestions" :key="suggestion.name">
+                                <li @click="addSkill(suggestion)"
+                                    :class="{'bg-primary/10': selectedIndex === index}"
+                                    class="p-3 hover:bg-base-200 cursor-pointer flex items-center gap-3">
+                                    <iconify-icon :icon="suggestion.icon" class="text-2xl"></iconify-icon>
+                                    <span x-text="suggestion.name"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -87,6 +109,21 @@
                          class="py-12 text-center text-base-content/60">
                         <iconify-icon icon="heroicons:magnifying-glass" class="text-4xl mb-4"></iconify-icon>
                         <p class="text-sm">No skills found matching "<span x-text="$store.app.skills.search"></span>"</p>
+                    </div>
+
+                    <!-- Selected Skills -->
+                    <div class="py-4">
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="skill in store.selected" :key="skill.name">
+                                <div class="badge badge-lg gap-2">
+                                    <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
+                                    <span x-text="skill.name"></span>
+                                    <button @click="store.remove(skill.name)" class="btn btn-ghost btn-xs btn-circle">
+                                        <iconify-icon icon="heroicons:x-mark" class="text-sm"></iconify-icon>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
                     </div>
 
                     <!-- Skill groups -->

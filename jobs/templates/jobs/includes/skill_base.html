@@ -1,24 +1,50 @@
 {% load job_tags %}
 {% load django_vite %}
 
+{# Skill Data Initialization #}
 {{ skill_icons|json_script:"skill-icons-data" }}
 {{ dark_variants|json_script:"dark-variants-data" }}
 {{ icon_name_mapping|json_script:"icon-mapping-data" }}
+
+{# Tagulous Data #}
+{% if form %}
+    {{ form.skills.tag_options.autocomplete_settings|json_script:"tagulous-settings" }}
+    {{ form.skills.tag_list|json_script:"tagulous-initial-tags" }}
+{% endif %}
 
 <script type="text/javascript">
     // Initialize globals with safe defaults
     window.SKILL_ICONS = [];
     window.MODAL_DARK_VARIANTS = {};
     window.MODAL_ICON_MAPPING = {};
+    window.TAGULOUS_SETTINGS = {};
+    window.TAGULOUS_INITIAL_TAGS = [];
 
     // Safely parse and assign data
     try {
         window.SKILL_ICONS = JSON.parse(document.getElementById('skill-icons-data').textContent) || [];
         window.MODAL_DARK_VARIANTS = JSON.parse(document.getElementById('dark-variants-data').textContent) || {};
         window.MODAL_ICON_MAPPING = JSON.parse(document.getElementById('icon-mapping-data').textContent) || {};
+
+        // Parse Tagulous data if form is present
+        if (document.getElementById('tagulous-settings')) {
+            window.TAGULOUS_SETTINGS = JSON.parse(document.getElementById('tagulous-settings').textContent) || {};
+        }
+        if (document.getElementById('tagulous-initial-tags')) {
+            window.TAGULOUS_INITIAL_TAGS = JSON.parse(document.getElementById('tagulous-initial-tags').textContent) || [];
+        }
     } catch (e) {
         console.error('Error initializing skill data:', e);
     }
+
+    // Initialize Alpine store data with Tagulous settings
+    document.addEventListener('alpine:init', () => {
+        const store = Alpine.store('app');
+        if (store && store.skills) {
+            store.skills.tagulousSettings = window.TAGULOUS_SETTINGS;
+            store.skills.initialTags = window.TAGULOUS_INITIAL_TAGS;
+        }
+    });
 </script>
 
 {% vite_hmr_client %}
