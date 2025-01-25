@@ -1,0 +1,52 @@
+{% load job_tags %}
+
+{# Skill Icons and Mappings #}
+{{ skill_icons|json_script:"skill-icons-data" }}
+{{ dark_variants|json_script:"dark-variants-data" }}
+{{ icon_name_mapping|json_script:"icon-mapping-data" }}
+
+{# Tagulous Data #}
+{% if form %}
+    {{ form.skills.tag_options.autocomplete_settings|json_script:"tagulous-settings" }}
+    {{ form.skills.tag_list|json_script:"tagulous-initial-tags" }}
+{% endif %}
+
+<script type="text/javascript">
+    // Initialize Alpine store with skill data
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('skills', {
+            icons: [],
+            darkVariants: {},
+            iconMapping: {},
+            tagulousSettings: {},
+            initialTags: [],
+
+            init() {
+                try {
+                    this.icons = JSON.parse(document.getElementById('skill-icons-data')?.textContent || '[]');
+                    this.darkVariants = JSON.parse(document.getElementById('dark-variants-data')?.textContent || '{}');
+                    this.iconMapping = JSON.parse(document.getElementById('icon-mapping-data')?.textContent || '{}');
+                    
+                    if (document.getElementById('tagulous-settings')) {
+                        this.tagulousSettings = JSON.parse(document.getElementById('tagulous-settings').textContent);
+                    }
+                    
+                    if (document.getElementById('tagulous-initial-tags')) {
+                        this.initialTags = JSON.parse(document.getElementById('tagulous-initial-tags').textContent);
+                    }
+                } catch (e) {
+                    console.error('Error initializing skill data:', e);
+                }
+                
+                // Initialize Tagulous if form is present
+                if (this.tagulousSettings && Object.keys(this.tagulousSettings).length) {
+                    Tagulous.init({
+                        selector: '[data-tagulous]',
+                        settings: this.tagulousSettings,
+                        tags: this.initialTags
+                    });
+                }
+            }
+        });
+    });
+</script>

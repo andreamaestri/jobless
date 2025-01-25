@@ -1,5 +1,5 @@
 <!DOCTYPE html>{% load django_vite %} {% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load static %}
-<html lang="en" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current">
+<html lang="en" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current" data-features="script tag-input skill-tree-widget toast">
   <head>{% vite_hmr_client %}
     <meta charset="UTF-8" />
     <meta

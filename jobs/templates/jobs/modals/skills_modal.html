@@ -1,213 +1,114 @@
-{% include "jobs/includes/skill_base.html" %}
-
-<!-- Modal wrapper -->
-<div x-data="skillsModal"
-     x-init="init()"
-     x-show="modal.open"
-     x-cloak
-     @open-skills-modal.window="store.openModal()"
-     @keydown.escape.window="store.closeModal()"
-     class="modal"
-     :class="{ 'modal-open': modal.open }">
+<!-- Enhanced Skill Selection Modal -->
+<div x-data="skillSelector"
+     x-show="$store.modals.skills.open"
+     class="modal modal-open"
+     @keydown.escape.window="$store.modals.skills.close()"
+     @click.self="$store.modals.skills.close()">
     
-    <!-- Backdrop -->
-    <div x-show="modal.open"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
-         @click="store.closeModal()"
-         aria-hidden="true"></div>
+    <div class="modal-box max-w-3xl">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold">Manage Skills</h3>
+            <button class="btn btn-ghost btn-sm btn-square"
+                    @click="$store.modals.skills.close()">
+                <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
+            </button>
+        </div>
 
-    <!-- Modal content -->
-    <div x-show="modal.open"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-95"
-         x-transition:enter-end="opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-95"
-         class="modal-box relative w-11/12 max-w-5xl mx-auto rounded-2xl overflow-hidden bg-base-100 shadow-xl flex flex-col"
-         :class="{'h-[100vh]': isMobile, 'h-[90vh]': !isMobile}"
-         @click.stop>
-        
-        <!-- Header -->
-        <div class="sticky top-0 z-[90] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-md border-b border-base-200"
-             :class="{'shadow-lg': $store.app.skills.search}">
-            <div class="flex items-center gap-3 sm:gap-6">
-                <!-- Mobile back button -->
-                <button @click="store.closeModal()" 
-                        class="btn btn-ghost btn-sm sm:hidden">
-                    <iconify-icon icon="heroicons:arrow-left" class="text-xl"></iconify-icon>
+        <!-- Skill Search and View Toggle -->
+        <div class="flex gap-4 mb-4">
+            <div class="flex-1">
+                <input type="text"
+                       class="input input-bordered w-full"
+                       placeholder="Search skills..."
+                       x-model="searchQuery"
+                       @input="filterSkills">
+            </div>
+            <div class="flex gap-2">
+                <button class="btn btn-ghost btn-sm"
+                        :class="{'btn-active': viewMode === 'search'}"
+                        @click="viewMode = 'search'">
+                    <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
                 </button>
-                
-                <!-- Title -->
-                <h3 class="text-lg sm:text-xl font-bold whitespace-nowrap items-center gap-2"
-                    :class="{'hidden': isMobile && isSearchFocused}">
-                    <span class="hidden sm:inline-flex items-center gap-2">
-                        <iconify-icon icon="heroicons:academic-cap" class="text-primary text-2xl"></iconify-icon>
-                        Manage Skills
-                    </span>
-                    <span class="sm:hidden">Skills</span>
-                </h3>
-
-                <!-- Search with Tagulous Autocomplete -->
-                <div class="relative flex-1 max-w-lg mx-auto">
-                    <div class="relative">
-                        <input type="text" 
-                               x-model="searchQuery"
-                               @input="handleTagSearch($event.target.value)"
-                               @focus="showSuggestions = true"
-                               @blur="setTimeout(() => closeSuggestions(), 200)"
-                               @keydown.down.prevent="navigateSuggestion(1)"
-                               @keydown.up.prevent="navigateSuggestion(-1)"
-                               @keydown.enter.prevent="handleEnter"
-                               @keydown.escape="closeSuggestions"
-                               placeholder="Search skills..."
-                               class="input input-bordered w-full pl-11 pr-4 h-10 sm:h-12 bg-base-200/50 focus:bg-base-200 transition-colors">
-                        <iconify-icon icon="heroicons:magnifying-glass" 
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-base-content/60">
-                        </iconify-icon>
-                        <button x-show="searchQuery"
-                                @click="searchQuery = ''; closeSuggestions()"
-                                class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle">
-                            <iconify-icon icon="heroicons:x-mark" class="text-base"></iconify-icon>
-                        </button>
-                    </div>
-                    
-                    <!-- Tagulous Suggestions Dropdown -->
-                    <div x-show="showSuggestions && suggestions.length > 0"
-                         x-transition
-                         class="absolute mt-2 w-full bg-base-100 rounded-xl shadow-lg border border-base-300 overflow-hidden z-50">
-                        <ul class="max-h-64 overflow-y-auto">
-                            <template x-for="(suggestion, index) in suggestions" :key="suggestion.name">
-                                <li @click="addSkill(suggestion)"
-                                    :class="{'bg-primary/10': selectedIndex === index}"
-                                    class="p-3 hover:bg-base-200 cursor-pointer flex items-center gap-3">
-                                    <iconify-icon :icon="suggestion.icon" class="text-2xl"></iconify-icon>
-                                    <span x-text="suggestion.name"></span>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
-                </div>
+                <button class="btn btn-ghost btn-sm"
+                        :class="{'btn-active': viewMode === 'tree'}"
+                        @click="viewMode = 'tree'">
+                    <iconify-icon icon="heroicons:squares-2x2" class="text-lg"></iconify-icon>
+                </button>
             </div>
         </div>
 
-        <!-- Main content -->
-        <div class="flex-1 min-h-0">
-            <div class="flex h-full overflow-hidden">
-                <!-- Skills grid -->
-                <div class="flex-1 overflow-y-auto bg-base-300 px-4 sm:px-6 pb-32 scroll-smooth overscroll-contain" 
-                     x-ref="skillsContainer">
-                    
-                    <!-- Empty state -->
-                    <div x-show="$store.app.skills.search && !$store.app.skills.filteredSkills.length"
-                         class="py-12 text-center text-base-content/60">
-                        <iconify-icon icon="heroicons:magnifying-glass" class="text-4xl mb-4"></iconify-icon>
-                        <p class="text-sm">No skills found matching "<span x-text="$store.app.skills.search"></span>"</p>
-                    </div>
-
-                    <!-- Selected Skills -->
-                    <div class="py-4">
-                        <div class="flex flex-wrap gap-2">
-                            <template x-for="skill in store.selected" :key="skill.name">
-                                <div class="badge badge-lg gap-2">
-                                    <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
-                                    <span x-text="skill.name"></span>
-                                    <button @click="store.remove(skill.name)" class="btn btn-ghost btn-xs btn-circle">
-                                        <iconify-icon icon="heroicons:x-mark" class="text-sm"></iconify-icon>
-                                    </button>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Skill groups -->
-                    {% for group in skill_icons %}
-                    <div class="skill-group" data-letter="{{ group.letter }}"
-                         x-show="!$store.app.skills.search || {{ group.skills|tojson }}.some(s => s.name.toLowerCase().includes($store.app.skills.search.toLowerCase()))">
-                        <div class="sticky bg-base-200 rounded-xl top-0 p-3 mb-4 z-[40] border-b border-base-200/30 backdrop-blur-md">
-                            <div class="flex items-center gap-3">
-                                <span class="text-4xl font-black text-primary">{{ group.letter }}</span>
-                                <div class="h-px flex-1 bg-gradient-to-r from-base-300 to-transparent"></div>
+        <!-- Skill Browser -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Skill Tree/Search Results -->
+            <div class="border rounded-lg bg-base-100">
+                <!-- Tree View -->
+                <div x-show="viewMode === 'tree'" class="p-4 max-h-96 overflow-y-auto">
+                    <template x-for="category in categories" :key="category.path">
+                        <div class="mb-4">
+                            <div class="flex items-center gap-2 cursor-pointer p-2 hover:bg-base-200 rounded"
+                                 @click="toggleCategory(category)">
+                                <iconify-icon :icon="category.expanded ? 'heroicons:chevron-down' : 'heroicons:chevron-right'"
+                                             class="text-lg"></iconify-icon>
+                                <span x-text="category.label" class="font-medium"></span>
+                            </div>
+                            <div x-show="category.expanded" class="ml-6">
+                                <template x-for="skill in category.skills" :key="skill.id">
+                                    <div class="skill-item flex items-center gap-2 p-2 cursor-pointer hover:bg-base-200 rounded"
+                                         :class="{'bg-primary/10': isSelected(skill.id)}"
+                                         @click="toggleSkill(skill)">
+                                        <iconify-icon :icon="skill.icon" class="text-xl"></iconify-icon>
+                                        <span x-text="skill.label"></span>
+                                    </div>
+                                </template>
                             </div>
                         </div>
-                        <div class="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                            {% for skill in group.skills %}
-                            <button type="button"
-                                    class="skill-card group bg-base-100 hover:bg-base-200 active:bg-base-300
-                                           transition-all duration-200 rounded-xl p-3 sm:p-4 flex items-center
-                                           gap-3 sm:gap-4 relative shadow-sm hover:shadow-md
-                                           focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                    :class="{
-                                        'selected': $store.app.skills.has('{{ skill.name }}'),
-                                        'transform active:scale-95': isMobile
-                                    }"
-                                    x-show="!$store.app.skills.search || '{{ skill.name }}'.toLowerCase().includes($store.app.skills.search.toLowerCase())"
-                                    @click="$store.app.skills.add({{ skill|tojson }})">
-                                <div class="icon-wrapper">
-                                    <iconify-icon :icon="$store.app.skills.getDarkIconForSkill('{{ skill.name }}')"
-                                                 width="45" 
-                                                 height="45">
-                                    </iconify-icon>
-                                </div>
-                                <span class="skill-name p-2">{{ skill.name }}</span>
-                                <div class="check-indicator">
-                                    <iconify-icon icon="heroicons:check-circle" class="text-xl"></iconify-icon>
-                                </div>
-                            </button>
-                            {% endfor %}
+                    </template>
+                </div>
+
+                <!-- Search Results -->
+                <div x-show="viewMode === 'search'" class="p-4 max-h-96 overflow-y-auto">
+                    <template x-for="skill in filteredSkills" :key="skill.id">
+                        <div class="skill-item flex items-center gap-2 p-2 cursor-pointer hover:bg-base-200 rounded mb-2"
+                             :class="{'bg-primary/10': isSelected(skill.id)}"
+                             @click="toggleSkill(skill)">
+                            <iconify-icon :icon="skill.icon" class="text-xl"></iconify-icon>
+                            <span x-text="skill.label"></span>
                         </div>
-                    </div>
-                    {% endfor %}
+                    </template>
+                </div>
+            </div>
+
+            <!-- Selected Skills -->
+            <div class="border rounded-lg bg-base-100 p-4">
+                <h4 class="font-medium mb-3">Selected Skills</h4>
+                <div class="space-y-2">
+                    <template x-for="skill in selectedSkills" :key="skill.id">
+                        <div class="flex items-center gap-2 p-2 bg-base-200 rounded">
+                            <iconify-icon :icon="skill.icon" class="text-xl"></iconify-icon>
+                            <span x-text="skill.label" class="flex-1"></span>
+                            <select class="select select-sm select-bordered"
+                                    x-model="skill.proficiency"
+                                    @change="updateSkill(skill)">
+                                <option value="required">Required</option>
+                                <option value="preferred">Preferred</option>
+                                <option value="bonus">Nice to Have</option>
+                            </select>
+                            <button class="btn btn-ghost btn-sm btn-square"
+                                    @click="removeSkill(skill)">
+                                <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
+                            </button>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="fixed bottom-0 inset-x-0 z-[80] px-4 sm:px-6 py-3 sm:py-4 bg-base-100/95 backdrop-blur-lg border-t border-base-200 shadow-lg">
-            <div class="flex items-center justify-between sm:justify-end gap-3">
-                <span class="text-base-content/60 text-sm whitespace-nowrap">
-                    <span x-text="$store.app.skills.selected.length"></span> selected
-                </span>
-                <div class="flex gap-2 sm:gap-3">
-                    <button @click="store.closeModal()"
-                            type="button"
-                            class="btn btn-sm sm:btn-md btn-ghost hover:bg-error/10 hover:text-error">
-                        Cancel
-                    </button>
-                    <button @click="save()"
-                            type="button"
-                            class="btn btn-sm sm:btn-md btn-primary min-w-[100px]"
-                            :disabled="!store.selected.length">
-                        Apply
-                    </button>
-                </div>
-            </div>
+        <!-- Modal Actions -->
+        <div class="modal-action">
+            <button class="btn" @click="$store.modals.skills.close()">Cancel</button>
+            <button class="btn btn-primary" @click="saveSkills">
+                Save Changes
+            </button>
         </div>
     </div>
 </div>
-
-<style>
-[x-cloak] { display: none !important; }
-
-@media (max-width: 640px) {
-    .skill-card {
-        -webkit-tap-highlight-color: transparent;
-        touch-action: manipulation;
-    }
-    
-    .skill-card:active {
-        transform: scale(0.98);
-    }
-}
-
-.overscroll-contain {
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-}
-</style>
