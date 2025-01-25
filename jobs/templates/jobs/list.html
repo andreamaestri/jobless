@@ -50,6 +50,7 @@
                     <!-- Job List Section -->
                     <div id="jobs-table-container" class="p-0 sm:p-6 md:p-8 bg-base-100/80 relative">
                         {% component "job_list" jobs=jobs favorite_job_ids=favorite_job_ids %}
+                        {% endcomponent %}
                     </div>
                 </div>
                 {% else %}

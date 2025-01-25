@@ -1,0 +1,18 @@
+{% load job_tags %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    {% for job in jobs %}
+        {% component "job_card" 
+            job=job 
+            is_favorite=job.id|in_list:favorite_job_ids 
+        %}
+        {% endcomponent %}
+    {% empty %}
+        <div class="col-span-full text-center py-8">
+            <div class="flex flex-col items-center gap-3 text-base-content/60">
+                <iconify-icon icon="octicon:inbox-24" class="text-3xl"></iconify-icon>
+                <p>No jobs found matching your criteria</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
