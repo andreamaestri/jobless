@@ -40,12 +40,40 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"
              x-show="filteredSkills.length > 0">
             <template x-for="skill in filteredSkills" :key="skill.id">
-                <button class="btn btn-sm justify-start gap-2 normal-case"
-                        :class="isSelected(skill.id) ? 'btn-primary' : 'btn-ghost'"
-                        @click="toggleSkill(skill)">
-                    <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
-                    <span x-text="skill.label"></span>
-                </button>
+                <div class="dropdown dropdown-hover">
+                    <button class="btn btn-sm justify-start gap-2 normal-case w-full"
+                            :class="{
+                                'btn-primary': isSelected(skill.id),
+                                'btn-ghost': !isSelected(skill.id)
+                            }">
+                        <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
+                        <span x-text="skill.label" class="flex-1 text-left"></span>
+                        <template x-if="isSelected(skill.id)">
+                            <iconify-icon :icon="proficiencyLevels.find(p => p.value === getSkillProficiency(skill.id))?.icon"
+                                        class="text-lg"></iconify-icon>
+                        </template>
+                    </button>
+                    <div class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
+                         x-show="isSelected(skill.id)">
+                        <template x-for="level in proficiencyLevels" :key="level.value">
+                            <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
+                                    :class="{
+                                        'btn-primary': getSkillProficiency(skill.id) === level.value,
+                                        'btn-ghost': getSkillProficiency(skill.id) !== level.value
+                                    }"
+                                    @click.stop="updateProficiency(skill.id, level.value)">
+                                <iconify-icon :icon="level.icon" class="text-lg"></iconify-icon>
+                                <span x-text="level.label"></span>
+                            </button>
+                        </template>
+                        <div class="divider my-1"></div>
+                        <button class="btn btn-sm btn-error justify-start gap-2 normal-case w-full"
+                                @click.stop="removeSkill(skill)">
+                            <iconify-icon icon="heroicons:trash" class="text-lg"></iconify-icon>
+                            <span>Remove</span>
+                        </button>
+                    </div>
+                </div>
             </template>
         </div>
         <div x-show="filteredSkills.length === 0"
