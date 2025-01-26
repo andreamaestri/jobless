@@ -40,9 +40,11 @@ class SkillTreeModel(tagulous.models.TagTreeModel):
         return {
             'id': self.pk,
             'name': self.name,
+            'label': self.label,
             'path': self.path,
             'icon': self.get_icon(),
-            'description': self.description or ''
+            'description': self.description or '',
+            'proficiency_levels': dict(JobSkill.PROFICIENCY_LEVELS)
         }
 
 
