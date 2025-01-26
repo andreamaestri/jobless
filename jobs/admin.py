@@ -1,27 +1,96 @@
+from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
-from .models import JobPosting, SkillTreeModel, JobSkill
+import tagulous.admin
+from .models import JobPosting, SkillTreeModel, JobSkill, SkillTag
+
+
+class SkillTreeModelForm(forms.ModelForm):
+    class Meta:
+        model = SkillTreeModel
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get('name') and not cleaned_data.get('tags'):
+            cleaned_data['tags'] = cleaned_data['name']
+        return cleaned_data
+
+
+class SkillTagAdmin(tagulous.admin.TagTreeModelAdmin, ModelAdmin):
+    list_display = [
+        'name', 'slug', 'count', 'protected', 'path', 'display_icon'
+    ]
+    list_filter = ['protected']
+    search_fields = ['name', 'path', 'slug']
+    
+    fieldsets = (
+        ('Tag Information', {
+            'fields': ('name', 'slug', 'parent', 'protected'),
+            'description': 'Basic tag information'
+        }),
+        ('Hierarchy', {
+            'fields': ('path',),
+            'classes': ('collapse',),
+        }),
+    )
+    
+    prepopulated_fields = {"slug": ("name",)}
+    
+    def display_icon(self, obj):
+        icon = obj.name.split('/')[-1]
+        return format_html(
+            '<div style="display: flex; align-items: center;">'
+                '<iconify-icon icon="skill:{}" style="margin: 0 8px" '
+                'width="20"></iconify-icon>'
+            '<span>{}</span>'
+            '</div>',
+            icon,
+            icon
+        )
+    display_icon.short_description = 'Icon'
 
 
 @admin.register(SkillTreeModel)
 class SkillTreeModelAdmin(ModelAdmin):
-    list_display = ('name', 'label', 'path', 'display_icon')
-    search_fields = ['name', 'label']  # Enable search for autocomplete
-    list_filter = ('icon',)
-    fields = ('name', 'icon', 'description')
+    form = SkillTreeModelForm
+    model = SkillTreeModel
+    list_display = ('name', 'label', 'display_icon', 'tag_list')
+    search_fields = ['name', 'label', 'tags__name']
+    list_filter = ('tags',)
     ordering = ('name',)
-    verbose_name = "Skill Catalog"
-    verbose_name_plural = "Skill Catalog"
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'label', 'icon'),
+            'description': 'Basic skill information'
+        }),
+        ('Tags', {
+            'fields': ('tags',),
+            'description': 'Hierarchical skill tags'
+        }),
+        ('Additional Info', {
+            'fields': ('description',),
+            'classes': ('collapse',)
+        }),
+    )
+
+    tabs = [
+        ("General", {'fieldsets': ['Basic Information', 'Visual']}),
+        ("Advanced", {'fieldsets': ['Additional Info']}),
+    ]
 
     class Media:
-        extend = True
-        js = ['https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js']
+        js = [
+            'https://code.iconify.design/iconify-icon/2.3.0/'
+            'iconify-icon.min.js'
+        ]
 
     def display_icon(self, obj):
         if obj.icon:
             return format_html(
-                '<div style="display: flex; align-items: center; gap: 8px;">'
+                '<div style="display: flex; align-items: center;">'
                 '<iconify-icon icon="{}" width="20" height="20"></iconify-icon>'
                 '<span>{}</span>'
                 '</div>',
@@ -31,11 +100,35 @@ class SkillTreeModelAdmin(ModelAdmin):
         return '-'
     display_icon.short_description = 'Icon'
 
+    def tag_list(self, obj):
+        """Display hierarchical tags in list view"""
+        tags = obj.tags.all()
+        if not tags:
+            return '-'
+        return format_html(
+            '<div style="color: #666;">{}</div>',
+            '<br>'.join(str(t.path) for t in tags)
+        )
+    tag_list.short_description = 'Tags'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('tags')
+
+    def save_model(self, request, obj, form, change):
+        """Ensure tags are properly synced when saving from admin"""
+        if obj.name and not obj.tags:
+            self.message_user(
+                request,
+                f"Auto-syncing tags for '{obj.name}'",
+                level='INFO'
+            )
+            obj.tags = obj.name
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(JobSkill)
 class JobSkillAdmin(ModelAdmin):
-    verbose_name = "Job Skill Assignment"
-    verbose_name_plural = "Job Skill Assignments"
+    model = JobSkill
     list_display = [
         'job',
         'skill_with_icon',
@@ -47,11 +140,31 @@ class JobSkillAdmin(ModelAdmin):
     ]
     list_filter = ['proficiency']
 
+    fieldsets = (
+        ('Skill Details', {
+            'fields': ('skill', 'proficiency'),
+            'description': 'Main skill information'
+        }),
+        ('Job Association', {
+            'fields': ('job',),
+        }),
+    )
+
+    class Media:
+        js = [
+            'https://code.iconify.design/iconify-icon/2.3.0/'
+            'iconify-icon.min.js'
+        ]
+
     def skill_with_icon(self, obj):
-        icon = obj.skill.icon if obj.skill and obj.skill.icon else 'heroicons:academic-cap'
+        icon = (
+            obj.skill.icon if obj.skill and obj.skill.icon 
+            else 'heroicons:academic-cap'
+        )
         return format_html(
-            '<div style="display: flex; align-items: center; gap: 8px;">'
-            '<iconify-icon icon="{}" width="20" height="20"></iconify-icon>'
+            '<div style="display: flex; align-items: center;">'
+            '<iconify-icon icon="{}" style="margin-right: 8px" '
+            'width="20" height="20"></iconify-icon>'
             '<span>{}</span>'
             '</div>',
             icon,
@@ -65,40 +178,28 @@ class JobSkillInline(TabularInline):
     extra = 1
     fields = ('skill', 'proficiency')
     autocomplete_fields = ['skill']
-    classes = ['unfold-inline']
-    show_change_link = True
-    
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-        class CustomForm(formset.form):
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                if self.instance and self.instance.skill:
-                    icon = self.instance.skill.icon or 'heroicons:academic-cap'
-                    self.fields['skill'].widget.attrs.update({
-                        'data-icon': icon,
-                        'class': 'skill-select unfold-inline-field'
-                    })
-        formset.form = CustomForm
-        return formset
 
     class Media:
-        extend = True
         js = [
-            'https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js',
-            'js/admin/job_skill_inline.js'
+            'https://code.iconify.design/iconify-icon/2.3.0/'
+            'iconify-icon.min.js'
         ]
-        css = {
-            'all': ('css/admin/job_skill_inline.css',)
-        }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "skill":
+            kwargs["queryset"] = (
+                SkillTreeModel.objects.prefetch_related('tags')
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(JobPosting)
 class JobPostingAdmin(ModelAdmin):
+    model = JobPosting
+    
     class Media:
         js = ['https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js']
 
-    # Display fields in list view
     list_display = [
         'title',
         'company',
@@ -108,42 +209,50 @@ class JobPostingAdmin(ModelAdmin):
         'updated_at'
     ]
     
-    # Fields to search
     search_fields = ['title', 'company', 'description']
-    
-    # Filters in the right sidebar
     list_filter = ['status', 'created_at', 'company']
-    
-    # Readonly fields
     readonly_fields = ['created_at', 'updated_at']
-    
-    # Fields to show in the edit form
-    fields = [
-        'title',
-        'company',
-        'location',
-        'salary_range',
-        'url',
-        'description',
-        'status',
-        'user',
-        'created_at',
-        'updated_at'
-    ]
     
     inlines = [JobSkillInline]
     
-    # Enable features
-    list_filter_submit = True  # Add submit button in filters
-    warn_unsaved_form = True   # Warn before leaving unsaved changes
-    list_fullwidth = True      # Use full width for list view
-    
-    # Preprocess content of readonly fields
-    readonly_preprocess_fields = {
-        "description": lambda content: content.strip(),
-    }
-    
-    # Custom list actions
+    fieldsets = (
+        ('Basic Information', {
+            'fields': (
+                'title',
+                'company',
+                'location'
+            ),
+            'description': 'Core job posting details'
+        }),
+        ('Details', {
+            'fields': (
+                'salary_range',
+                'url',
+                'description'
+            ),
+        }),
+        ('Status', {
+            'fields': (
+                'status',
+                'user'
+            ),
+        }),
+        ('Timestamps', {
+            'fields': (
+                'created_at',
+                'updated_at'
+            ),
+            'classes': ('collapse',),
+        }),
+    )
+
+    tabs = [
+        ("Overview", {'fieldsets': ['Basic Information', 'Status']}),
+        ("Details", {'fieldsets': ['Details'], 'inlines': ['JobSkillInline']}),
+        ("History", {'fieldsets': ['Timestamps']}),
+    ]
+
+    # Actions
     actions = [
         'mark_as_applied',
         'mark_as_interviewing',
@@ -152,9 +261,7 @@ class JobPostingAdmin(ModelAdmin):
     
     def mark_as_applied(self, request, queryset):
         queryset.update(status='applied')
-    mark_as_applied.short_description = (
-        "Mark selected jobs as Applied"
-    )
+    mark_as_applied.short_description = "Mark selected jobs as Applied"
     
     def mark_as_interviewing(self, request, queryset):
         queryset.update(status='interviewing')
@@ -164,6 +271,8 @@ class JobPostingAdmin(ModelAdmin):
     
     def mark_as_rejected(self, request, queryset):
         queryset.update(status='rejected')
-    mark_as_rejected.short_description = (
-        "Mark selected jobs as Rejected"
-    )
+    mark_as_rejected.short_description = "Mark selected jobs as Rejected"
+
+
+# Register models
+tagulous.admin.register(SkillTag, SkillTagAdmin)

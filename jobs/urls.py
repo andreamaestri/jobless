@@ -1,5 +1,7 @@
 from django.urls import path
+import tagulous.views
 from . import views
+from .models import SkillTag
 
 app_name = 'jobs'
 
@@ -14,4 +16,10 @@ urlpatterns = [
     path('parse-description/', views.parse_job_description, name='parse_description'),
     path('favorites/', views.JobFavoritesView.as_view(), name='favorites'),
     path('job/<int:pk>/toggle-favorite/', views.ToggleFavoriteView.as_view(), name='toggle_favorite'),
+    path(
+        'skill-tags-autocomplete/',
+        tagulous.views.autocomplete,
+        {'tag_model': SkillTag},
+        name='skill_tags_autocomplete'  # Matches the TagMeta autocomplete_view
+    ),
 ]
