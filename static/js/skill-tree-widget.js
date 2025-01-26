@@ -18,28 +18,49 @@ document.addEventListener("alpine:init", () => {
     },
 
     init() {
-      // Wait for Alpine store to be ready
-      Alpine.effect(() => {
-        const store = Alpine.store("app")?.skills;
-        if (store) {
-          this.loadSkillsData(window.TAGULOUS_SETTINGS || {});
-          
-          if (window.TAGULOUS_INITIAL_TAGS?.length) {
-            this.loadInitialSkills(window.TAGULOUS_INITIAL_TAGS);
-          }
-        }
-      });
+      // Initialize store data first
+      const store = Alpine.store("app");
+      if (!store?.skills) {
+        console.error("Alpine store not initialized properly");
+        return;
+      }
+
+      // Load initial data
+      this.loadSkillsData(window.TAGULOUS_SETTINGS || {});
+      
+      if (window.TAGULOUS_INITIAL_TAGS?.length) {
+        this.loadInitialSkills(window.TAGULOUS_INITIAL_TAGS);
+      }
 
       // Set up form validation listener
       this.$nextTick(() => {
         this.setupFormValidation();
       });
+
+      // Watch for store changes
+      Alpine.effect(() => {
+        const storeSkills = store.skills.selected;
+        if (storeSkills && Array.isArray(storeSkills)) {
+          this.syncWithStore(storeSkills);
+        }
+      });
+    },
+
+    syncWithStore(storeSkills) {
+      // Update local skills based on store
+      this.selectedSkills = storeSkills.map(skill => ({
+        id: skill.id || skill.name,
+        label: skill.name,
+        icon: skill.icon || window.MODAL_ICON_MAPPING?.[skill.name.toLowerCase()] || "heroicons:academic-cap",
+        path: skill.path || "",
+        proficiency: skill.proficiency || "required"
+      }));
+      this.updateFormField();
     },
 
     loadSkillsData(settings) {
       try {
         const choices = settings.autocomplete_choices || [];
-        const store = Alpine.store("app")?.skills;
 
         this.allSkills = choices.map(choice => ({
           id: choice[0],
