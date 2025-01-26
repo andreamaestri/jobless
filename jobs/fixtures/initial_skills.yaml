@@ -1,203 +1,161 @@
 # Root Skills
 - model: jobs.skilltreemodel
-  pk: 1
   fields:
     name: "programming"
-    slug: "programming"
     path: "programming"
     label: "Programming"
-    level: 1
     icon: "heroicons:code-bracket"
-    description: ""
+    description: "Core programming concepts and skills"
     protected: false
     count: 0
-    parent_id: null
+    parent: null
 
 - model: jobs.skilltreemodel
-  pk: 2
   fields:
     name: "frontend"
-    slug: "frontend"
     path: "frontend"
     label: "Frontend"
-    level: 1
     icon: "heroicons:computer-desktop"
-    description: ""
+    description: "Frontend development skills"
     protected: false
     count: 0
-    parent_id: null
+    parent: null
 
 - model: jobs.skilltreemodel
-  pk: 3
   fields:
     name: "backend"
-    slug: "backend"
     path: "backend"
     label: "Backend"
-    level: 1
     icon: "heroicons:server"
     description: ""
     protected: false
     count: 0
-    parent_id: null
+    parent: null
 
 # Level 2 - Programming
 - model: jobs.skilltreemodel
-  pk: 4
   fields:
-    name: "languages"
-    slug: "languages"
+    name: "programming/languages"
     path: "programming/languages"
     label: "Languages"
-    level: 2
     icon: "heroicons:command-line"
-    description: ""
+    description: "Programming languages"
     protected: false
     count: 0
-    parent_id: 1
+    parent: null
 
 # Level 3 - Programming Languages
 - model: jobs.skilltreemodel
-  pk: 5
   fields:
     name: "python"
-    slug: "python"
     path: "programming/languages/python"
     label: "Python"
-    level: 3
     icon: "skill-icons:python-dark"
     description: ""
     protected: false
     count: 0
-    parent_id: 4
+    parent: 4
 
 - model: jobs.skilltreemodel
-  pk: 6
   fields:
     name: "javascript"
-    slug: "javascript"
     path: "programming/languages/javascript"
     label: "JavaScript"
-    level: 3
     icon: "skill-icons:javascript"
     description: ""
     protected: false
     count: 0
-    parent_id: 4
+    parent: 4
 
 # Level 2 - Frontend
 - model: jobs.skilltreemodel
-  pk: 7
   fields:
     name: "core"
-    slug: "core"
     path: "frontend/core"
     label: "Core Technologies"
-    level: 2
     icon: "heroicons:code-bracket"
     description: ""
     protected: false
     count: 0
-    parent_id: 2
+    parent: 2
 
 # Level 3 - Frontend Core
 - model: jobs.skilltreemodel
-  pk: 8
   fields:
     name: "html"
-    slug: "html"
     path: "frontend/core/html"
     label: "HTML"
-    level: 3
     icon: "skill-icons:html"
     description: ""
     protected: false
     count: 0
-    parent_id: 7
+    parent: 7
 
 - model: jobs.skilltreemodel
-  pk: 9
   fields:
     name: "css"
-    slug: "css"
     path: "frontend/core/css"
     label: "CSS"
-    level: 3
     icon: "skill-icons:css"
     description: ""
     protected: false
     count: 0
-    parent_id: 7
+    parent: 7
 
 # Level 2 - Frontend Frameworks
 - model: jobs.skilltreemodel
-  pk: 10
   fields:
     name: "frameworks"
-    slug: "frameworks"
     path: "frontend/frameworks"
     label: "Frameworks"
-    level: 2
     icon: "heroicons:cube"
     description: ""
     protected: false
     count: 0
-    parent_id: 2
+    parent: 2
 
 # Level 3 - Frontend Frameworks
 - model: jobs.skilltreemodel
-  pk: 11
   fields:
     name: "react"
-    slug: "react"
     path: "frontend/frameworks/react"
     label: "React"
-    level: 3
     icon: "skill-icons:react-dark"
     description: ""
     protected: false
     count: 0
-    parent_id: 10
+    parent: 10
 
 - model: jobs.skilltreemodel
-  pk: 12
   fields:
     name: "vue"
-    slug: "vue"
     path: "frontend/frameworks/vue"
     label: "Vue"
-    level: 3
     icon: "skill-icons:vuejs-dark"
     description: ""
     protected: false
     count: 0
-    parent_id: 10
+    parent: 10
 
 # Level 3 - Backend Frameworks
 - model: jobs.skilltreemodel
-  pk: 13
   fields:
     name: "django"
-    slug: "django"
     path: "backend/frameworks/django"
     label: "Django"
-    level: 3
     icon: "skill-icons:django"
     description: ""
     protected: false
     count: 0
-    parent_id: 3
+    parent: 3
 
 - model: jobs.skilltreemodel
-  pk: 14
   fields:
     name: "nodejs"
-    slug: "nodejs"
     path: "backend/frameworks/nodejs"
     label: "Node.js"
-    level: 3
     icon: "skill-icons:nodejs-dark"
     description: ""
     protected: false
     count: 0
-    parent_id: 3
+    parent: 3

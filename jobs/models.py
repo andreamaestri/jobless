@@ -4,7 +4,24 @@ from django.urls import reverse
 import tagulous.models
 
 
-class SkillTreeModel(tagulous.models.TagTreeModel):
+class SkillTag(tagulous.models.TagTreeModel):
+    class TagMeta:
+        force_lowercase = True
+        space_delimiter = False
+        path_separator = "/"
+        autocomplete_view = "jobs:skill_tags_autocomplete"  # Updated to include namespace
+        initial = "programming/web, programming/database, programming/mobile"
+        protected = False  # Allow tag deletion by default
+        case_sensitive = False  # Case-insensitive comparison
+        max_count = 10
+        use_default_slug = True  # Added for proper slug handling
+        
+    def __str__(self):
+        return self.path
+
+
+class SkillTreeModel(models.Model):
+    name = models.CharField(max_length=100)
     label = models.CharField(max_length=100)
     icon = models.CharField(
         max_length=100,
@@ -15,25 +32,16 @@ class SkillTreeModel(tagulous.models.TagTreeModel):
         blank=True,
         help_text="Detailed description of the skill"
     )
-    
-    class TagMeta:
-        force_lowercase = True
-        space_delimiter = False
-        path_separator = "/"
-        autocomplete_view = "jobs:skill_tags_autocomplete"
-        initial = "programming/web, programming/database, programming/mobile"
-        protected = False
-        case_sensitive = False
-        max_count = 10
-        use_default_slug = True
-    
+    tags = tagulous.models.TagField(
+        to=SkillTag,
+        help_text="Enter hierarchical tags (e.g. programming/python/django)",
+        blank=True
+    )
+
     class Meta:
         verbose_name = "Skill"
         verbose_name_plural = "Skills"
         ordering = ['name']
-
-    def __str__(self):
-        return self.path
 
     def get_icon(self):
         """Get the icon for this skill"""
@@ -62,6 +70,20 @@ class SkillTreeModel(tagulous.models.TagTreeModel):
             'description': self.description or '',
             'proficiency_levels': dict(JobSkill.PROFICIENCY_LEVELS)
         }
+
+    def save(self, *args, **kwargs):
+        # Ensure name is synced with tags
+        if self.name and not self.tags:
+            self.tags = self.name
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        # Ensure name matches the last part of the tag path
+        if self.tags:
+            tag_parts = str(self.tags).split('/')
+            if tag_parts:
+                self.name = tag_parts[-1]
+        super().clean()
 
 
 class JobSkill(models.Model):
