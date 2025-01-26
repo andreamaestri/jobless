@@ -36,7 +36,8 @@ class SkillTreeWidget(forms.SelectMultiple):
                             ),
                             "id": (
                                 skill.pk if i == len(path_parts) - 1 else None
-                            )
+                            ),
+                            "proficiency_levels": dict(JobSkill.PROFICIENCY_LEVELS)
                         }
 
                     if i == len(path_parts) - 1:
@@ -45,7 +46,8 @@ class SkillTreeWidget(forms.SelectMultiple):
                                 "id": skill.pk,
                                 "label": skill.label,
                                 "icon": skill.get_icon(),
-                                "path": skill.path
+                                "path": skill.path,
+                                "proficiency_levels": dict(JobSkill.PROFICIENCY_LEVELS)
                             }
                         )
                     else:
@@ -60,6 +62,7 @@ class SkillTreeWidget(forms.SelectMultiple):
         context['widget']['categories_json'] = json.dumps(
             tree_data, cls=DjangoJSONEncoder
         )
+        context['widget']['proficiency_levels'] = dict(JobSkill.PROFICIENCY_LEVELS)
         return context
 
 
@@ -83,39 +86,53 @@ class JobPostingForm(forms.ModelForm):
 
         try:
             skills = json.loads(skills_data)
+            if not isinstance(skills, list):
+                raise forms.ValidationError('Skills data must be a list')
+
             validated_skills = []
+            errors = []
 
-            for item in skills:
-                skill_id = item.get('skill')
-                proficiency = item.get('proficiency')
-
-                if not skill_id or not proficiency:
-                    raise forms.ValidationError('Invalid skill data format')
-
-                proficiency_levels = dict(JobSkill.PROFICIENCY_LEVELS)
-                if proficiency not in proficiency_levels:
-                    raise forms.ValidationError(
-                        f'Invalid proficiency level: {proficiency}'
-                    )
-
+            for index, item in enumerate(skills):
                 try:
-                    skill = SkillTreeModel.objects.get(pk=skill_id)
-                    validated_skills.append({
-                        'skill': skill,
-                        'proficiency': proficiency
-                    })
-                except SkillTreeModel.DoesNotExist:
-                    raise forms.ValidationError(
-                        f'Skill with ID {skill_id} does not exist'
-                    )
+                    if not isinstance(item, dict):
+                        raise forms.ValidationError(f'Invalid skill data format at index {index}')
+
+                    skill_id = item.get('skill')
+                    proficiency = item.get('proficiency')
+
+                    if not skill_id:
+                        raise forms.ValidationError(f'Missing skill ID at index {index}')
+                    if not proficiency:
+                        raise forms.ValidationError(f'Missing proficiency at index {index}')
+
+                    proficiency_levels = dict(JobSkill.PROFICIENCY_LEVELS)
+                    if proficiency not in proficiency_levels:
+                        raise forms.ValidationError(
+                            f'Invalid proficiency level "{proficiency}" at index {index}. '
+                            f'Valid levels are: {", ".join(proficiency_levels.keys())}'
+                        )
+
+                    try:
+                        skill = SkillTreeModel.objects.get(pk=skill_id)
+                        validated_skills.append({
+                            'skill': skill,
+                            'proficiency': proficiency
+                        })
+                    except SkillTreeModel.DoesNotExist:
+                        raise forms.ValidationError(f'Skill with ID {skill_id} does not exist')
+
+                except forms.ValidationError as e:
+                    errors.extend(e.messages)
+
+            if errors:
+                raise forms.ValidationError(errors)
 
             return validated_skills
+
         except json.JSONDecodeError:
-            raise forms.ValidationError('Invalid JSON data')
+            raise forms.ValidationError('Invalid JSON data format')
         except Exception as e:
-            raise forms.ValidationError(
-                f'Error processing skills: {str(e)}'
-            )
+            raise forms.ValidationError(f'Error processing skills: {str(e)}')
 
     def save(self, commit=True):
         instance = super().save(commit=False)
