@@ -2,160 +2,487 @@
 - model: jobs.skilltreemodel
   fields:
     name: "programming"
-    path: "programming"
     label: "Programming"
     icon: "heroicons:code-bracket"
     description: "Core programming concepts and skills"
-    protected: false
-    count: 0
-    parent: null
+    tags: "programming"
 
 - model: jobs.skilltreemodel
   fields:
     name: "frontend"
-    path: "frontend"
     label: "Frontend"
     icon: "heroicons:computer-desktop"
     description: "Frontend development skills"
-    protected: false
-    count: 0
-    parent: null
+    tags: "frontend"
 
 - model: jobs.skilltreemodel
   fields:
     name: "backend"
-    path: "backend"
     label: "Backend"
     icon: "heroicons:server"
     description: ""
-    protected: false
-    count: 0
-    parent: null
+    tags: "backend"
 
 # Level 2 - Programming
 - model: jobs.skilltreemodel
   fields:
-    name: "programming/languages"
-    path: "programming/languages"
+    name: "languages"
     label: "Languages"
     icon: "heroicons:command-line"
     description: "Programming languages"
-    protected: false
-    count: 0
-    parent: null
+    tags: "programming/languages"
 
 # Level 3 - Programming Languages
 - model: jobs.skilltreemodel
   fields:
     name: "python"
-    path: "programming/languages/python"
     label: "Python"
     icon: "skill-icons:python-dark"
     description: ""
-    protected: false
-    count: 0
-    parent: 4
+    tags: "programming/languages/python"
 
 - model: jobs.skilltreemodel
   fields:
     name: "javascript"
-    path: "programming/languages/javascript"
     label: "JavaScript"
     icon: "skill-icons:javascript"
     description: ""
-    protected: false
-    count: 0
-    parent: 4
+    tags: "programming/languages/javascript"
 
 # Level 2 - Frontend
 - model: jobs.skilltreemodel
   fields:
     name: "core"
-    path: "frontend/core"
     label: "Core Technologies"
     icon: "heroicons:code-bracket"
     description: ""
-    protected: false
-    count: 0
-    parent: 2
+    tags: "frontend/core"
 
 # Level 3 - Frontend Core
 - model: jobs.skilltreemodel
   fields:
     name: "html"
-    path: "frontend/core/html"
     label: "HTML"
     icon: "skill-icons:html"
     description: ""
-    protected: false
-    count: 0
-    parent: 7
+    tags: "frontend/core/html"
 
 - model: jobs.skilltreemodel
   fields:
     name: "css"
-    path: "frontend/core/css"
     label: "CSS"
     icon: "skill-icons:css"
     description: ""
-    protected: false
-    count: 0
-    parent: 7
+    tags: "frontend/core/css"
 
 # Level 2 - Frontend Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "frameworks"
-    path: "frontend/frameworks"
     label: "Frameworks"
     icon: "heroicons:cube"
     description: ""
-    protected: false
-    count: 0
-    parent: 2
+    tags: "frontend/frameworks"
 
 # Level 3 - Frontend Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "react"
-    path: "frontend/frameworks/react"
     label: "React"
     icon: "skill-icons:react-dark"
     description: ""
-    protected: false
-    count: 0
-    parent: 10
+    tags: "frontend/frameworks/react"
 
 - model: jobs.skilltreemodel
   fields:
     name: "vue"
-    path: "frontend/frameworks/vue"
     label: "Vue"
     icon: "skill-icons:vuejs-dark"
     description: ""
-    protected: false
-    count: 0
-    parent: 10
+    tags: "frontend/frameworks/vue"
 
 # Level 3 - Backend Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "django"
-    path: "backend/frameworks/django"
     label: "Django"
     icon: "skill-icons:django"
     description: ""
-    protected: false
-    count: 0
-    parent: 3
+    tags: "backend/frameworks/django"
 
 - model: jobs.skilltreemodel
   fields:
     name: "nodejs"
-    path: "backend/frameworks/nodejs"
     label: "Node.js"
     icon: "skill-icons:nodejs-dark"
     description: ""
-    protected: false
-    count: 0
-    parent: 3
+    tags: "backend/frameworks/nodejs"
+# Level 2 - Backend
+- model: jobs.skilltreemodel
+  fields:
+    name: "databases"
+    label: "Databases"
+    icon: "heroicons:circle-stack"
+    description: "Database management systems and technologies"
+    tags: "backend/databases"
+
+# Level 3 - Backend Databases
+- model: jobs.skilltreemodel
+  fields:
+    name: "postgresql"
+    label: "PostgreSQL"
+    icon: "skill-icons:postgresql-dark"
+    description: ""
+    tags: "backend/databases/postgresql"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mysql"
+    label: "MySQL"
+    icon: "skill-icons:mysql-dark"
+    description: ""
+    tags: "backend/databases/mysql"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mongodb"
+    label: "MongoDB"
+    icon: "skill-icons:mongodb"
+    description: ""
+    tags: "backend/databases/mongodb"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "redis"
+    label: "Redis"
+    icon: "skill-icons:redis-dark"
+    description: ""
+    tags: "backend/databases/redis"
+
+# Level 2 - DevOps
+- model: jobs.skilltreemodel
+  fields:
+    name: "containerization"
+    label: "Containerization"
+    icon: "heroicons:cube-transparent"
+    description: "Technologies for containerizing applications"
+    tags: "devops/containerization"
+
+# Level 3 - DevOps Containerization
+- model: jobs.skilltreemodel
+  fields:
+    name: "docker"
+    label: "Docker"
+    icon: "skill-icons:docker"
+    description: ""
+    tags: "devops/containerization/docker"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "kubernetes"
+    label: "Kubernetes"
+    icon: "skill-icons:kubernetes"
+    description: ""
+    tags: "devops/containerization/kubernetes"
+
+# Level 2 - Cloud Platforms
+- model: jobs.skilltreemodel
+  fields:
+    name: "cloud"
+    label: "Cloud Platforms"
+    icon: "heroicons:cloud"
+    description: "Cloud-based technologies and platforms"
+    tags: "devops/cloud"
+
+# Level 3 - Cloud Platforms
+- model: jobs.skilltreemodel
+  fields:
+    name: "aws"
+    label: "AWS"
+    icon: "skill-icons:aws-dark"
+    description: ""
+    tags: "devops/cloud/aws"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "azure"
+    label: "Azure"
+    icon: "skill-icons:azure-dark"
+    description: ""
+    tags: "devops/cloud/azure"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "gcp"
+    label: "Google Cloud Platform"
+    icon: "skill-icons:gcp-dark"
+    description: ""
+    tags: "devops/cloud/gcp"
+
+# Level 2 - Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "vcs"
+    label: "Version Control"
+    icon: "heroicons:code-bracket-square"
+    description: "Version control systems"
+    tags: "tools/vcs"
+
+# Level 3 - Version Control Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "git"
+    label: "Git"
+    icon: "skill-icons:git"
+    description: ""
+    tags: "tools/vcs/git"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "github"
+    label: "GitHub"
+    icon: "skill-icons:github-dark"
+    description: ""
+    tags: "tools/vcs/github"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "gitlab"
+    label: "GitLab"
+    icon: "skill-icons:gitlab-dark"
+    description: ""
+    tags: "tools/vcs/gitlab"
+
+# Level 2 - Mobile Development
+- model: jobs.skilltreemodel
+  fields:
+    name: "mobile"
+    label: "Mobile Development"
+    icon: "heroicons:device-mobile"
+    description: "Technologies for mobile application development"
+    tags: "mobile"
+
+# Level 3 - Mobile Frameworks
+- model: jobs.skilltreemodel
+  fields:
+    name: "flutter"
+    label: "Flutter"
+    icon: "skill-icons:flutter-dark"
+    description: ""
+    tags: "mobile/flutter"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "react-native"
+    label: "React Native"
+    icon: "skill-icons:react-dark"
+    description: ""
+    tags: "mobile/react-native"
+
+# Level 2 - Design
+- model: jobs.skilltreemodel
+  fields:
+    name: "ui"
+    label: "UI Design"
+    icon: "heroicons:squares-2x2"
+    description: "User interface design tools and techniques"
+    tags: "design/ui"
+
+# Level 3 - Design Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "figma"
+    label: "Figma"
+    icon: "skill-icons:figma-dark"
+    description: ""
+    tags: "design/ui/figma"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "photoshop"
+    label: "Photoshop"
+    icon: "skill-icons:photoshop"
+    description: ""
+    tags: "design/ui/photoshop"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "illustrator"
+    label: "Illustrator"
+    icon: "skill-icons:illustrator"
+    description: ""
+    tags: "design/ui/illustrator"
+# Level 1 - Testing
+- model: jobs.skilltreemodel
+  fields:
+    name: "testing"
+    label: "Testing"
+    icon: "heroicons:check-circle"
+    description: "Skills and tools for software testing"
+    tags: "testing"
+
+# Level 2 - Testing Frameworks
+- model: jobs.skilltreemodel
+  fields:
+    name: "testing/frameworks"
+    label: "Testing Frameworks"
+    icon: "heroicons:chip"
+    description: "Frameworks for automated and manual testing"
+    tags: "testing/frameworks"
+
+# Level 3 - Testing Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "jest"
+    label: "Jest"
+    icon: "skill-icons:jest"
+    description: ""
+    tags: "testing/frameworks/jest"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "selenium"
+    label: "Selenium"
+    icon: "skill-icons:selenium"
+    description: ""
+    tags: "testing/frameworks/selenium"
+
+# Level 1 - Data Visualization
+- model: jobs.skilltreemodel
+  fields:
+    name: "data-visualization"
+    label: "Data Visualization"
+    icon: "heroicons:chart-bar"
+    description: "Skills and tools for creating visual representations of data"
+    tags: "data-visualization"
+
+# Level 2 - Data Visualization Libraries
+- model: jobs.skilltreemodel
+  fields:
+    name: "libraries"
+    label: "Libraries"
+    icon: "heroicons:chart-pie"
+    description: "Libraries for building data visualizations"
+    tags: "data-visualization/libraries"
+
+# Level 3 - Data Visualization Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "d3"
+    label: "D3.js"
+    icon: "skill-icons:d3-dark"
+    description: ""
+    tags: "data-visualization/libraries/d3"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "chartjs"
+    label: "Chart.js"
+    icon: "skill-icons:chartjs"
+    description: ""
+    tags: "data-visualization/libraries/chartjs"
+
+# Level 1 - Artificial Intelligence
+- model: jobs.skilltreemodel
+  fields:
+    name: "ai"
+    label: "Artificial Intelligence"
+    icon: "heroicons:light-bulb"
+    description: "Technologies and frameworks for AI development"
+    tags: "ai"
+
+# Level 2 - AI Frameworks
+- model: jobs.skilltreemodel
+  fields:
+    name: "frameworks"
+    label: "Frameworks"
+    icon: "heroicons:chip"
+    description: "Frameworks for developing AI applications"
+    tags: "ai/frameworks"
+
+# Level 3 - AI Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "tensorflow"
+    label: "TensorFlow"
+    icon: "skill-icons:tensorflow-dark"
+    description: ""
+    tags: "ai/frameworks/tensorflow"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "pytorch"
+    label: "PyTorch"
+    icon: "skill-icons:pytorch-dark"
+    description: ""
+    tags: "ai/frameworks/pytorch"
+
+# Level 1 - Cybersecurity
+- model: jobs.skilltreemodel
+  fields:
+    name: "cybersecurity"
+    label: "Cybersecurity"
+    icon: "heroicons:shield-check"
+    description: "Skills and tools for securing applications and systems"
+    tags: "cybersecurity"
+
+# Level 2 - Cybersecurity Tools
+- model: jobs.skilltreemodel
+  fields:
+    name: "tools"
+    label: "Tools"
+    icon: "heroicons:key"
+    description: "Tools for cybersecurity and threat detection"
+    tags: "cybersecurity/tools"
+
+# Level 3 - Cybersecurity Platforms
+- model: jobs.skilltreemodel
+  fields:
+    name: "aws-shield"
+    label: "AWS Shield"
+    icon: "skill-icons:aws-dark"
+    description: ""
+    tags: "cybersecurity/tools/aws-shield"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "fortinet"
+    label: "Fortinet"
+    icon: "skill-icons:fortinet"
+    description: ""
+    tags: "cybersecurity/tools/fortinet"
+
+# Level 1 - Game Development
+- model: jobs.skilltreemodel
+  fields:
+    name: "game-development"
+    label: "Game Development"
+    icon: "heroicons:joystick"
+    description: "Skills and tools for developing video games"
+    tags: "game-development"
+
+# Level 2 - Game Engines
+- model: jobs.skilltreemodel
+  fields:
+    name: "engines"
+    label: "Engines"
+    icon: "heroicons:cube"
+    description: "Game engines for creating video games"
+    tags: "game-development/engines"
+
+# Level 3 - Game Engines
+- model: jobs.skilltreemodel
+  fields:
+    name: "unity"
+    label: "Unity"
+    icon: "skill-icons:unity-dark"
+    description: ""
+    tags: "game-development/engines/unity"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "unreal-engine"
+    label: "Unreal Engine"
+    icon: "skill-icons:unrealengine"
+    description: ""
+    tags: "game-development/engines/unreal-engine"
