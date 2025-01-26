@@ -5,45 +5,92 @@ from unfold.admin import ModelAdmin, TabularInline
 import tagulous.admin
 from .models import JobPosting, SkillTreeModel, JobSkill
 
+
+class SkillTreeModelForm(forms.ModelForm):
+    class Meta:
+        model = SkillTreeModel
+        fields = '__all__'
+
+
+@admin.register(SkillTreeModel)
 class SkillTreeModelAdmin(tagulous.admin.TagModelAdmin, ModelAdmin):
-    list_display = ['name', 'label', 'path', 'display_icon']
-    list_filter = ['protected']
-    search_fields = ['name', 'path', 'label']
-    
+    form = SkillTreeModelForm
+    model = SkillTreeModel
+    list_display = (
+        'name',
+        'label',
+        'path',
+        'level',
+        'parent',
+        'count',
+        'protected',
+        'display_icon'
+    )
+    search_fields = ['name', 'label', 'path']
+    list_filter = ['protected', 'level']
+    ordering = ('path',)
+    actions = ['merge_tags']
+    exclude = ['count']
+    readonly_fields = ['path']
+
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'label', 'icon'),
+            'fields': ('name', 'label', 'slug', 'icon'),
             'description': 'Basic skill information'
         }),
-        ('Hierarchy', {
+        ('Tree Information', {
             'fields': ('parent',),
-            'description': 'Tag hierarchy position'
+            'description': 'Hierarchical structure information'
+        }),
+        ('Tag Settings', {
+            'fields': ('protected',),
+            'description': 'Tag configuration'
         }),
         ('Additional Info', {
             'fields': ('description',),
             'classes': ('collapse',)
         }),
     )
-    
-    def display_icon(self, obj):
-        if obj.icon:
-            return format_html(
-                '<div style="display: flex; align-items: center;">'
-                '<iconify-icon icon="{}" style="margin-right: 8px" '
-                'width="20"></iconify-icon>'
-                '<span>{}</span>'
-                '</div>',
-                obj.icon,
-                obj.name
-            )
-        return '-'
-    display_icon.short_description = 'Icon'
+
+    tabs = [
+        ("General", {'fieldsets': ['Basic Information', 'Tree Information']}),
+        ("Settings", {'fieldsets': ['Tag Settings']}),
+        ("More", {'fieldsets': ['Additional Info']}),
+    ]
 
     class Media:
         js = [
             'https://code.iconify.design/iconify-icon/2.3.0/'
             'iconify-icon.min.js'
         ]
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "parent":
+            kwargs["queryset"] = self.model.objects.order_by('path')
+            indent = "    "
+
+            def label_from_instance(obj):
+                indentation = indent * (obj.level - 1)
+                tree_path = obj.path
+                return f"{indentation}{obj.label} ({tree_path})"
+
+            kwargs["label_from_instance"] = label_from_instance
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def display_icon(self, obj):
+        if obj.icon:
+            return format_html(
+                '<div style="display: flex; align-items: center;">'
+                '<iconify-icon icon="{}" width="20" '
+                'height="20"></iconify-icon>'
+                '<span>{}</span>'
+                '</div>',
+                obj.icon,
+                obj.icon
+            )
+        return '-'
+    display_icon.short_description = 'Icon'
+
 
 @admin.register(JobSkill)
 class JobSkillAdmin(ModelAdmin):
@@ -77,7 +124,7 @@ class JobSkillAdmin(ModelAdmin):
 
     def skill_with_icon(self, obj):
         icon = (
-            obj.skill.icon if obj.skill and obj.skill.icon 
+            obj.skill.icon if obj.skill and obj.skill.icon
             else 'heroicons:academic-cap'
         )
         return format_html(
@@ -90,6 +137,7 @@ class JobSkillAdmin(ModelAdmin):
             obj.skill.name
         )
     skill_with_icon.short_description = 'Skill'
+
 
 class JobSkillInline(TabularInline):
     model = JobSkill
@@ -105,15 +153,20 @@ class JobSkillInline(TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "skill":
-            kwargs["queryset"] = (
-                SkillTreeModel.objects.all()
-            )
+            kwargs["queryset"] = SkillTreeModel.objects.all()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 @admin.register(JobPosting)
 class JobPostingAdmin(ModelAdmin):
     model = JobPosting
     
+    class Media:
+        js = [
+            'https://code.iconify.design/iconify-icon/2.3.0/'
+            'iconify-icon.min.js'
+        ]
+
     list_display = [
         'title',
         'company',
@@ -186,12 +239,3 @@ class JobPostingAdmin(ModelAdmin):
     def mark_as_rejected(self, request, queryset):
         queryset.update(status='rejected')
     mark_as_rejected.short_description = "Mark selected jobs as Rejected"
-
-    class Media:
-        js = [
-            'https://code.iconify.design/iconify-icon/2.3.0/'
-            'iconify-icon.min.js'
-        ]
-
-# Register SkillTreeModel with Tagulous
-tagulous.admin.register(SkillTreeModel, SkillTreeModelAdmin)
