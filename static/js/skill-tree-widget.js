@@ -20,12 +20,12 @@ document.addEventListener("alpine:init", () => {
     init() {
       // Wait for Alpine store to be ready
       Alpine.effect(() => {
-        const store = Alpine.store("skills");
+        const store = Alpine.store("app")?.skills;
         if (store) {
-          this.loadSkillsData(store.tagulousSettings || {});
+          this.loadSkillsData(window.TAGULOUS_SETTINGS || {});
           
-          if (store.initialTags?.length) {
-            this.loadInitialSkills(store.initialTags);
+          if (window.TAGULOUS_INITIAL_TAGS?.length) {
+            this.loadInitialSkills(window.TAGULOUS_INITIAL_TAGS);
           }
         }
       });
@@ -39,12 +39,12 @@ document.addEventListener("alpine:init", () => {
     loadSkillsData(settings) {
       try {
         const choices = settings.autocomplete_choices || [];
-        const store = Alpine.store("skills");
+        const store = Alpine.store("app")?.skills;
 
         this.allSkills = choices.map(choice => ({
           id: choice[0],
           label: choice[1],
-          icon: store.iconMapping[choice[1]] || "heroicons:academic-cap",
+          icon: window.MODAL_ICON_MAPPING?.[choice[1].toLowerCase()] || "heroicons:academic-cap",
           path: choice[2] || "",
           proficiency: "required"
         }));
@@ -168,6 +168,7 @@ document.addEventListener("alpine:init", () => {
       }
 
       this.updateFormField();
+      this.dispatchSkillUpdate();
     },
 
     addSkill(skill) {
@@ -204,7 +205,9 @@ document.addEventListener("alpine:init", () => {
       if (input) {
         input.value = this.skillsJson;
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        this.dispatchSkillUpdate();
+        window.dispatchEvent(new CustomEvent('skills-updated', {
+          detail: this.selectedSkills
+        }));
       }
     }
   }));
