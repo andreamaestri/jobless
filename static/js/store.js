@@ -72,6 +72,13 @@ export function initializeStore() {
                 this.initializeCategories();
                 this.loadInitialSkills();
                 this.setupEventListeners();
+
+                // Dispatch initial state
+                if (this.selected.length > 0) {
+                    window.dispatchEvent(new CustomEvent('skills-updated', {
+                        detail: this.selected
+                    }));
+                }
             },
 
             initializeSkillIcons() {
