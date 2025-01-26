@@ -1,25 +1,27 @@
 from django.urls import path
-import tagulous.views
 from . import views
-from .models import SkillTag
-
-app_name = 'jobs'
+from .models import SkillTreeModel
+import tagulous.views
 
 urlpatterns = [
-    path('api/skills/', views.api_skills, name='api_skills'),
     path('', views.JobListView.as_view(), name='list'),
     path('add/', views.JobCreateView.as_view(), name='add'),
     path('<int:pk>/', views.JobPostingDetailView.as_view(), name='detail'),
-    path('<int:pk>/edit/', views.JobPostingUpdateView.as_view(), name='edit'),
+    path('<int:pk>/update/', views.JobPostingUpdateView.as_view(), name='update'),
     path('<int:pk>/delete/', views.JobPostingDeleteView.as_view(), name='delete'),
+    path('favorites/', views.JobFavoritesView.as_view(), name='favorites'),
+    path('<int:pk>/toggle-favorite/', 
+         views.ToggleFavoriteView.as_view(), 
+         name='toggle-favorite'),
+    
+    # API endpoints     
+    path('skills/', views.api_skills, name='api_skills'),
     path('skills/autocomplete/', views.skills_autocomplete, name='skills_autocomplete'),
     path('parse-description/', views.parse_job_description, name='parse_description'),
-    path('favorites/', views.JobFavoritesView.as_view(), name='favorites'),
-    path('job/<int:pk>/toggle-favorite/', views.ToggleFavoriteView.as_view(), name='toggle_favorite'),
-    path(
-        'skill-tags-autocomplete/',
-        tagulous.views.autocomplete,
-        {'tag_model': SkillTag},
-        name='skill_tags_autocomplete'  # Matches the TagMeta autocomplete_view
-    ),
+         
+    # Tag autocomplete
+    path('skill-tags/autocomplete/',
+         tagulous.views.autocomplete,
+         {'tag_model': SkillTreeModel},
+         name='skill_tags_autocomplete'),
 ]
