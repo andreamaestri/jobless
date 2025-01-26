@@ -8,10 +8,7 @@ class SkillTreeWidget(forms.SelectMultiple):
     template_name = 'jobs/widgets/skill_tree_widget.html'
 
     class Media:
-        css = {
-            'all': ['css/skill-tree.css']
-        }
-        js = ['js/skill-tree-widget.js']
+        pass
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)

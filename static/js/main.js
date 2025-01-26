@@ -28,7 +28,7 @@ const featureModules = {
     'skill-icons': () => import('./skill-icons'),
     'skills-select': () => import('./skills-select'),
     'skills-manager': () => import('./skills-manager'),
-    'skill-tree-widget': () => import('../../assets/js/skill-tree-widget'),
+    'skill-tree-widget': () => import('./skill-tree-widget'),
     'events': () => import('./events')
 }
 

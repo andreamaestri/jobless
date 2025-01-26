@@ -1,6 +1,16 @@
 {% load static %}
 
 <div class="skill-tree-widget" x-data="skillSelector">
+    <!-- Error Messages -->
+    <div x-show="errors.length > 0" class="alert alert-error mb-4">
+        <template x-for="error in errors" :key="error">
+            <div class="flex items-center gap-2">
+                <iconify-icon icon="heroicons:exclamation-circle" class="text-lg"></iconify-icon>
+                <span x-text="error"></span>
+            </div>
+        </template>
+    </div>
+
     <!-- Search/Tree Mode Toggle -->
     <div class="flex justify-between items-center mb-4">
         <div class="flex items-center space-x-4">
@@ -55,17 +65,25 @@
                     </button>
                     <div class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
                          x-show="isSelected(skill.id)">
-                        <template x-for="level in proficiencyLevels" :key="level.value">
-                            <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
-                                    :class="{
-                                        'btn-primary': getSkillProficiency(skill.id) === level.value,
-                                        'btn-ghost': getSkillProficiency(skill.id) !== level.value
-                                    }"
-                                    @click.stop="updateProficiency(skill.id, level.value)">
-                                <iconify-icon :icon="level.icon" class="text-lg"></iconify-icon>
-                                <span x-text="level.label"></span>
-                            </button>
-                        </template>
+                        <div class="mb-2 text-sm font-medium text-base-content/70">Proficiency Level</div>
+                        <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
+                                :class="{'btn-primary': skill.proficiency === 'required'}"
+                                @click.stop="updateSkill({...skill, proficiency: 'required'})">
+                            <iconify-icon icon="heroicons:exclamation-circle" class="text-lg"></iconify-icon>
+                            <span>Required</span>
+                        </button>
+                        <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
+                                :class="{'btn-primary': skill.proficiency === 'preferred'}"
+                                @click.stop="updateSkill({...skill, proficiency: 'preferred'})">
+                            <iconify-icon icon="heroicons:star" class="text-lg"></iconify-icon>
+                            <span>Preferred</span>
+                        </button>
+                        <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
+                                :class="{'btn-primary': skill.proficiency === 'bonus'}"
+                                @click.stop="updateSkill({...skill, proficiency: 'bonus'})">
+                            <iconify-icon icon="heroicons:plus-circle" class="text-lg"></iconify-icon>
+                            <span>Nice to Have</span>
+                        </button>
                         <div class="divider my-1"></div>
                         <button class="btn btn-sm btn-error justify-start gap-2 normal-case w-full"
                                 @click.stop="removeSkill(skill)">
