@@ -18,15 +18,22 @@ document.addEventListener("alpine:init", () => {
     },
 
     init() {
-      const store = Alpine.store("skills");
-      this.loadSkillsData(store.tagulousSettings || {});
-      
-      if (store.initialTags?.length) {
-        this.loadInitialSkills(store.initialTags);
-      }
+      // Wait for Alpine store to be ready
+      Alpine.effect(() => {
+        const store = Alpine.store("skills");
+        if (store) {
+          this.loadSkillsData(store.tagulousSettings || {});
+          
+          if (store.initialTags?.length) {
+            this.loadInitialSkills(store.initialTags);
+          }
+        }
+      });
 
       // Set up form validation listener
-      this.setupFormValidation();
+      this.$nextTick(() => {
+        this.setupFormValidation();
+      });
     },
 
     loadSkillsData(settings) {
@@ -186,11 +193,18 @@ document.addEventListener("alpine:init", () => {
       }
     },
 
+    dispatchSkillUpdate() {
+      this.$dispatch('skills-updated', {
+        detail: this.selectedSkills
+      });
+    },
+
     updateFormField() {
       const input = document.querySelector('input[name="skills"]');
       if (input) {
         input.value = this.skillsJson;
         input.dispatchEvent(new Event('change', { bubbles: true }));
+        this.dispatchSkillUpdate();
       }
     }
   }));

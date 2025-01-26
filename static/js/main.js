@@ -16,6 +16,9 @@ Alpine.start()
 // Core initialization - base store and features
 import './store'
 
+// Register skill tree component
+import './skill-tree-widget'
+
 // Initialize motion globally
 window.Motion = { animate }
 
