@@ -66,24 +66,14 @@
                     <div class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
                          x-show="isSelected(skill.id)">
                         <div class="mb-2 text-sm font-medium text-base-content/70">Proficiency Level</div>
-                        <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
-                                :class="{'btn-primary': skill.proficiency === 'required'}"
-                                @click.stop="updateSkill({...skill, proficiency: 'required'})">
-                            <iconify-icon icon="heroicons:exclamation-circle" class="text-lg"></iconify-icon>
-                            <span>Required</span>
-                        </button>
-                        <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
-                                :class="{'btn-primary': skill.proficiency === 'preferred'}"
-                                @click.stop="updateSkill({...skill, proficiency: 'preferred'})">
-                            <iconify-icon icon="heroicons:star" class="text-lg"></iconify-icon>
-                            <span>Preferred</span>
-                        </button>
-                        <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
-                                :class="{'btn-primary': skill.proficiency === 'bonus'}"
-                                @click.stop="updateSkill({...skill, proficiency: 'bonus'})">
-                            <iconify-icon icon="heroicons:plus-circle" class="text-lg"></iconify-icon>
-                            <span>Nice to Have</span>
-                        </button>
+                        <template x-for="level in proficiencyLevels" :key="level.value">
+                            <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
+                                    :class="{'btn-primary': getSkillProficiency(skill.id) === level.value}"
+                                    @click.stop="updateSkill({...skill, proficiency: level.value})">
+                                <iconify-icon :icon="level.icon" class="text-lg"></iconify-icon>
+                                <span x-text="level.label"></span>
+                            </button>
+                        </template>
                         <div class="divider my-1"></div>
                         <button class="btn btn-sm btn-error justify-start gap-2 normal-case w-full"
                                 @click.stop="removeSkill(skill)">

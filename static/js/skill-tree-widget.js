@@ -6,6 +6,16 @@ document.addEventListener("alpine:init", () => {
     selectedSkills: [],
     allSkills: [],
     errors: [],
+    proficiencyLevels: [
+      { value: 'required', label: 'Required', icon: 'heroicons:exclamation-circle' },
+      { value: 'preferred', label: 'Preferred', icon: 'heroicons:star' },
+      { value: 'bonus', label: 'Nice to Have', icon: 'heroicons:plus-circle' }
+    ],
+
+    getSkillProficiency(skillId) {
+      const skill = this.selectedSkills.find(s => s.id === skillId);
+      return skill ? skill.proficiency : null;
+    },
 
     init() {
       const store = Alpine.store("skills");
