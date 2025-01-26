@@ -17,13 +17,17 @@ class Command(BaseCommand):
         updated = 0
         skipped = 0
 
-        self.stdout.write(self.style.SUCCESS('Starting tag synchronization...'))
+        self.stdout.write(
+            self.style.SUCCESS('Starting tag synchronization...')
+        )
         
         skills = SkillTreeModel.objects.all()
         total = skills.count()
         
         if total == 0:
-            self.stdout.write(self.style.WARNING('No skills found in database'))
+            self.stdout.write(
+                self.style.WARNING('No skills found in database')
+            )
             return
             
         for skill in skills:
@@ -47,7 +51,8 @@ class Command(BaseCommand):
         
         if updated == 0 and skipped == total:
             summary.append(
-                f"✓ All {total} skills are properly synced - no changes needed"
+                f"✓ All {total} skills are properly synced - "
+                f"no changes needed"
             )
         else:
             if updated:
