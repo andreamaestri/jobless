@@ -1,29 +1,39 @@
 {
-  "_module.esm-BQdiiSWd.js": {
-    "file": "js/module.esm-BQdiiSWd.js",
-    "name": "module.esm"
-  },
   "_module.esm-CLWRBzRS.js": {
     "file": "js/module.esm-CLWRBzRS.js",
     "name": "module.esm"
   },
+  "_modulepreload-polyfill-B5Qt9EMX.js": {
+    "file": "js/modulepreload-polyfill-B5Qt9EMX.js",
+    "name": "modulepreload-polyfill"
+  },
+  "assets/js/skill-tree-widget.js": {
+    "file": "js/skillTreeWidget-D3x4SbnH.js",
+    "name": "skillTreeWidget",
+    "src": "assets/js/skill-tree-widget.js",
+    "isEntry": true,
+    "isDynamicEntry": true
+  },
   "static/js/events.js": {
-    "file": "js/events-B4flbIWS.js",
+    "file": "js/events-C1KOPNAm.js",
     "name": "events",
     "src": "static/js/events.js",
     "isDynamicEntry": true,
     "imports": [
-      "_module.esm-CLWRBzRS.js"
+      "_module.esm-CLWRBzRS.js",
+      "static/js/main.js",
+      "_modulepreload-polyfill-B5Qt9EMX.js",
+      "static/js/store.js"
     ]
   },
   "static/js/main.js": {
-    "file": "js/main-Cow9Y7lO.js",
+    "file": "js/main-Bqe_gt0f.js",
     "name": "main",
     "src": "static/js/main.js",
     "isEntry": true,
     "imports": [
+      "_modulepreload-polyfill-B5Qt9EMX.js",
       "_module.esm-CLWRBzRS.js",
-      "_module.esm-BQdiiSWd.js",
       "static/js/store.js"
     ],
     "dynamicImports": [
@@ -34,6 +44,7 @@
       "static/js/skill-icons.js",
       "static/js/skills-select.js",
       "static/js/skills-manager.js",
+      "assets/js/skill-tree-widget.js",
       "static/js/events.js"
     ]
   },
@@ -45,28 +56,31 @@
     "isDynamicEntry": true
   },
   "static/js/skill-icons.js": {
-    "file": "js/skillIcons-C9oJdqO8.js",
+    "file": "js/skillIcons-DxDJuwmZ.js",
     "name": "skillIcons",
     "src": "static/js/skill-icons.js",
     "isEntry": true,
     "isDynamicEntry": true
   },
   "static/js/skills-manager.js": {
-    "file": "js/skillsManager-DaP3ZMOm.js",
+    "file": "js/skillsManager-CjL5i7n0.js",
     "name": "skillsManager",
     "src": "static/js/skills-manager.js",
     "isEntry": true,
-    "isDynamicEntry": true
+    "isDynamicEntry": true,
+    "imports": [
+      "_modulepreload-polyfill-B5Qt9EMX.js",
+      "_module.esm-CLWRBzRS.js"
+    ]
   },
   "static/js/skills-modal.js": {
-    "file": "js/skills-B6EC6Yck.js",
+    "file": "js/skills-CwGF9sCj.js",
     "name": "skills",
     "src": "static/js/skills-modal.js",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
-      "_module.esm-CLWRBzRS.js",
-      "_module.esm-BQdiiSWd.js"
+      "_module.esm-CLWRBzRS.js"
     ]
   },
   "static/js/skills-select.js": {
@@ -77,7 +91,7 @@
     "isDynamicEntry": true
   },
   "static/js/store.js": {
-    "file": "js/store-LFfY1JsL.js",
+    "file": "js/store-DSnQNQ08.js",
     "name": "store",
     "src": "static/js/store.js",
     "isEntry": true,
@@ -86,13 +100,15 @@
     ]
   },
   "static/js/tag-input.js": {
-    "file": "js/tag-input-BujDkp0o.js",
+    "file": "js/tag-input-ClejcBqQ.js",
     "name": "tag-input",
     "src": "static/js/tag-input.js",
     "isDynamicEntry": true,
     "imports": [
       "_module.esm-CLWRBzRS.js",
-      "_module.esm-BQdiiSWd.js"
+      "static/js/main.js",
+      "_modulepreload-polyfill-B5Qt9EMX.js",
+      "static/js/store.js"
     ]
   },
   "static/js/toast.js": {

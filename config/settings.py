@@ -318,7 +318,7 @@ else:
 
 DJANGO_VITE = {
   "default": {
-    "dev_mode": True
+    "dev_mode": DEBUG
   }
 }
 
