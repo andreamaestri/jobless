@@ -19,32 +19,22 @@ class SkillTreeModelAdmin(tagulous.admin.TagModelAdmin, ModelAdmin):
     list_display = (
         'name',
         'label',
-        'path',
-        'level',
-        'parent',
-        'count',
-        'protected',
         'display_icon'
     )
-    search_fields = ['name', 'label', 'path']
-    list_filter = ['protected', 'level']
-    ordering = ('path',)
+    search_fields = ['name', 'label']
+    list_filter = []
+    ordering = ('name',)
     actions = ['merge_tags']
-    exclude = ['count']
-    readonly_fields = ['path']
+    prepopulated_fields = {}  # Override TagModelAdmin's default
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'label', 'slug', 'icon'),
+            'fields': ('name', 'label', 'icon'),
             'description': 'Basic skill information'
         }),
-        ('Tree Information', {
-            'fields': ('parent',),
-            'description': 'Hierarchical structure information'
-        }),
-        ('Tag Settings', {
-            'fields': ('protected',),
-            'description': 'Tag configuration'
+        ('Tags', {
+            'fields': ('tags',),
+            'description': 'Skill categorization'
         }),
         ('Additional Info', {
             'fields': ('description',),
@@ -53,8 +43,8 @@ class SkillTreeModelAdmin(tagulous.admin.TagModelAdmin, ModelAdmin):
     )
 
     tabs = [
-        ("General", {'fieldsets': ['Basic Information', 'Tree Information']}),
-        ("Settings", {'fieldsets': ['Tag Settings']}),
+        ("General", {'fieldsets': ['Basic Information']}),
+        ("Settings", {'fieldsets': ['Tags']}),
         ("More", {'fieldsets': ['Additional Info']}),
     ]
 
@@ -63,19 +53,6 @@ class SkillTreeModelAdmin(tagulous.admin.TagModelAdmin, ModelAdmin):
             'https://code.iconify.design/iconify-icon/2.3.0/'
             'iconify-icon.min.js'
         ]
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "parent":
-            kwargs["queryset"] = self.model.objects.order_by('path')
-            indent = "    "
-
-            def label_from_instance(obj):
-                indentation = indent * (obj.level - 1)
-                tree_path = obj.path
-                return f"{indentation}{obj.label} ({tree_path})"
-
-            kwargs["label_from_instance"] = label_from_instance
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def display_icon(self, obj):
         if obj.icon:
