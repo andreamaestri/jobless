@@ -130,7 +130,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.navigation',
-                'unfold.context_processors.unfold',  # Add Unfold context processor
             ],
             'builtins': [
                 'django_components.templatetags.component_tags',
