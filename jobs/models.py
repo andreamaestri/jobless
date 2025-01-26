@@ -35,6 +35,16 @@ class SkillTreeModel(tagulous.models.TagTreeModel):
         logger.warning(f"No icon found for skill: {self.name}")
         return 'heroicons:academic-cap'  # Default icon
 
+    def to_dict(self):
+        """Convert skill to dictionary format for JSON serialization"""
+        return {
+            'id': self.pk,
+            'name': self.name,
+            'path': self.path,
+            'icon': self.get_icon(),
+            'description': self.description or ''
+        }
+
 
 class JobSkill(models.Model):
     PROFICIENCY_LEVELS = [
@@ -72,6 +82,15 @@ class JobSkill(models.Model):
             f"{self.job.title} - {self.skill.name} "
             f"({self.get_proficiency_display()})"
         )
+
+    def to_dict(self):
+        """Convert job skill to dictionary format for JSON serialization"""
+        return {
+            'id': self.pk,
+            'skill': self.skill.to_dict(),
+            'proficiency': self.proficiency,
+            'proficiency_display': self.get_proficiency_display()
+        }
 
 
 class JobPosting(models.Model):
