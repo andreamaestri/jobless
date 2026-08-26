@@ -20,7 +20,7 @@ import re
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = '/srv/django/jobless/templates'
 
 # Quick-start development settings - unsuitable for production
@@ -151,9 +151,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
-}
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -287,9 +296,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Extra places for collectstatic to find static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'theme/static'),
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'theme/static'),
 ]
 
 # Default primary key field type

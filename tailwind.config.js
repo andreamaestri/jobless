@@ -1,8 +1,8 @@
-
 module.exports = {
-  purge: [
+  content: [
     './templates/**/*.html',
-    './basic_django/utils.py',
+    './theme/static/**/*.{js,svg}',
+    './components/**/*.html',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
