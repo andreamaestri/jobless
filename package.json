@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.23.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -17,10 +20,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@alpinejs/focus": "^3.14.8",
-    "@alpinejs/persist": "^3.14.8",
-    "alpinejs": "^3.14.8",
-    "iconify-icon": "^2.3.0",
-    "motion": "^12.0.5"
+    "@alpinejs/focus": "^3.16.3",
+    "@alpinejs/persist": "^3.16.3",
+    "alpinejs": "^3.16.3",
+    "iconify-icon": "^3.0.2",
+    "motion": "^13.1.1"
   }
 }

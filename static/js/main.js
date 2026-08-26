@@ -4,13 +4,15 @@ import 'vite/modulepreload-polyfill'
 import Alpine from 'alpinejs'
 import persist from '@alpinejs/persist'
 import focus from '@alpinejs/focus'
-import { animate } from "motion"
 import 'iconify-icon' 
+import { animations } from './script'
+import { registerMotion } from './motion'
 
 // Initialize Alpine
 window.Alpine = Alpine
 Alpine.plugin(persist)
 Alpine.plugin(focus)
+registerMotion(Alpine, animations)
 Alpine.start()
 
 // Core initialization - base store and features
@@ -18,9 +20,6 @@ import './store'
 
 // Register skill tree component
 import './skill-tree-widget'
-
-// Initialize motion globally
-window.Motion = { animate }
 
 // On-demand imports for specific features
 const featureModules = {

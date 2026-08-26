@@ -8,7 +8,7 @@
     "name": "modulepreload-polyfill"
   },
   "static/js/events.js": {
-    "file": "js/events-wdpHhsdN.js",
+    "file": "js/events-B26Alh-K.js",
     "name": "events",
     "src": "static/js/events.js",
     "isDynamicEntry": true,
@@ -18,13 +18,15 @@
     ]
   },
   "static/js/main.js": {
-    "file": "js/main-DAw1zvTM.js",
+    "file": "js/main-q01Iq3fd.js",
     "name": "main",
     "src": "static/js/main.js",
     "isEntry": true,
     "imports": [
       "_modulepreload-polyfill-P2Xu9kJm.js",
       "_module.esm-DwhdkKpW.js",
+      "static/js/script.js",
+      "static/js/script.js",
       "static/js/store.js",
       "static/js/skill-tree-widget.js",
       "static/js/skill-tree-widget.js"
@@ -42,7 +44,7 @@
     ]
   },
   "static/js/script.js": {
-    "file": "js/script-BKIxIy7D.js",
+    "file": "js/script-Bs0MygTe.js",
     "name": "script",
     "src": "static/js/script.js",
     "isEntry": true
@@ -94,7 +96,7 @@
     ]
   },
   "static/js/tag-input.js": {
-    "file": "js/tag-input-CLuUczaF.js",
+    "file": "js/tag-input-6OsrEDuB.js",
     "name": "tag-input",
     "src": "static/js/tag-input.js",
     "isDynamicEntry": true,

@@ -4,7 +4,7 @@ RUN echo "CI version from base"
 
 ### NodeJS ###
 USER gitpod
-ENV NODE_VERSION=16.13.0
+ENV NODE_VERSION=22.23.1
 ENV TRIGGER_REBUILD=1
 RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | PROFILE=/dev/null bash \
     && bash -c ". .nvm/nvm.sh \
