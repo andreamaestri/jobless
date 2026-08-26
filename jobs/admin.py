@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
-import tagulous.admin
+import django_tagulous.admin
 from .models import JobPosting, SkillTreeModel, JobSkill
 
 
@@ -13,7 +13,7 @@ class SkillTreeModelForm(forms.ModelForm):
 
 
 @admin.register(SkillTreeModel)
-class SkillTreeModelAdmin(tagulous.admin.TagModelAdmin, ModelAdmin):
+class SkillTreeModelAdmin(django_tagulous.admin.TagModelAdmin, ModelAdmin):
     form = SkillTreeModelForm
     model = SkillTreeModel
     list_display = (

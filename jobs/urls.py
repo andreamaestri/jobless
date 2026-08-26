@@ -1,5 +1,5 @@
 from django.urls import path
-import tagulous.views
+import django_tagulous.views
 from . import views
 from .models import SkillTag
 
@@ -18,7 +18,7 @@ urlpatterns = [
     path('job/<int:pk>/toggle-favorite/', views.ToggleFavoriteView.as_view(), name='toggle_favorite'),
     path(
         'skill-tags-autocomplete/',
-        tagulous.views.autocomplete,
+        django_tagulous.views.autocomplete,
         {'tag_model': SkillTag},
         name='skill_tags_autocomplete'  # Matches the TagMeta autocomplete_view
     ),
