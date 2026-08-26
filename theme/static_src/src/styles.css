@@ -1,9 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
 
-/* Import Tailwind layers */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+/* Tailwind 4 discovers utilities from the templates and source files explicitly listed here. */
+@import 'tailwindcss';
+@plugin 'daisyui';
+@source '../../../templates';
+@source '../../../jobs';
+@source '../../../contacts';
+@source '../../../events';
+@source '../../../home';
+@source '../../../static';
 
 /* Root Variables */
 :root {

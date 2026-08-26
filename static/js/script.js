@@ -8,7 +8,7 @@ export const CONSTANTS = {
             CONTENT: 0.4,
             STAGGER: 0.03
         },
-        SPRING: {
+        OVERSHOOT: {
             DEFAULT: [0.34, 1.56, 0.64, 1]
         },
         EASE: {
@@ -34,7 +34,7 @@ export const animations = {
             },
             options: {
                 duration: CONSTANTS.ANIMATION_CONFIG.DURATION.SIDEBAR,
-                ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+                 ease: CONSTANTS.ANIMATION_CONFIG.OVERSHOOT.DEFAULT
             }
         },
         close: {
@@ -45,7 +45,7 @@ export const animations = {
             },
             options: {
                 duration: CONSTANTS.ANIMATION_CONFIG.DURATION.SIDEBAR,
-                ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+                 ease: CONSTANTS.ANIMATION_CONFIG.OVERSHOOT.DEFAULT
             }
         }
     },
@@ -57,7 +57,7 @@ export const animations = {
             },
             options: {
                 duration: CONSTANTS.ANIMATION_CONFIG.DURATION.CONTENT,
-                ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+                 ease: CONSTANTS.ANIMATION_CONFIG.OVERSHOOT.DEFAULT
             }
         },
         collapse: {
@@ -67,7 +67,7 @@ export const animations = {
             },
             options: {
                 duration: CONSTANTS.ANIMATION_CONFIG.DURATION.CONTENT,
-                ease: CONSTANTS.ANIMATION_CONFIG.SPRING.DEFAULT
+                 ease: CONSTANTS.ANIMATION_CONFIG.OVERSHOOT.DEFAULT
             }
         }
     }
@@ -79,52 +79,8 @@ passiveListeners.forEach(event => {
     document.addEventListener(event, () => {}, { passive: true });
 });
 
-// Alpine.js initialization with Motion integration
-document.addEventListener("alpine:init", () => {
-    try {
-        // Motion helper
-        Alpine.magic("motion", () => ({
-            animate: (el, keyframes, options = {}) => {
-                if (!window.Motion?.animate) {
-                    console.warn('Motion library not loaded');
-                    return Promise.resolve();
-                }
-                return window.Motion.animate(el, keyframes, options);
-            },
-            applyAnimation: (el, animationName, variant) => {
-                if (!window.Motion?.animate) {
-                    console.warn('Motion library not loaded');
-                    return Promise.resolve();
-                }
-                
-                const animation = animations[animationName]?.[variant];
-                if (!animation) {
-                    console.warn(`Animation ${animationName}.${variant} not found`);
-                    return Promise.resolve();
-                }
-                
-                const { keyframes, options } = animation;
-                return window.Motion.animate(el, keyframes, { 
-                    duration: options.duration, 
-                    ease: options.ease 
-                });
-            }
-        }));
-
-        // Initialize page state if store exists and has init method
-        const pageState = Alpine.store("app")?.pageState;
-        if (typeof pageState?.init === 'function') {
-            pageState.init();
-        } else {
-            console.warn('pageState store or init method not found');
-        }
-
-    } catch (error) {
-        console.error('Error initializing Alpine:', error);
-        console.debug('Store state:', {
-            app: Alpine.store("app"),
-            pageState: Alpine.store("app")?.pageState,
-            hasInit: typeof Alpine.store("app")?.pageState?.init === 'function'
-        });
-    }
+// Initialize page state when this feature module is loaded.
+document.addEventListener('alpine:initialized', () => {
+    const pageState = Alpine.store('app')?.pageState;
+    if (typeof pageState?.init === 'function') pageState.init();
 });
