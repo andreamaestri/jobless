@@ -1,10 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-import tagulous.models
+import django_tagulous.models
 
 
-class SkillTag(tagulous.models.TagTreeModel):
+class SkillTag(django_tagulous.models.TagTreeModel):
     class TagMeta:
         force_lowercase = True
         space_delimiter = False
@@ -32,7 +32,7 @@ class SkillTreeModel(models.Model):
         blank=True,
         help_text="Detailed description of the skill"
     )
-    tags = tagulous.models.TagField(
+    tags = django_tagulous.models.TagField(
         to=SkillTag,
         help_text="Enter hierarchical tags (e.g. programming/python/django)",
         blank=True

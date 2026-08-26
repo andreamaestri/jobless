@@ -1,5 +1,5 @@
 # Core dependencies
-django>=5.1.4
+Django>=5.1.4,<6.0
 gunicorn>=23.0.0
 whitenoise>=6.8.2
 python-dotenv>=1.0.1
@@ -17,22 +17,22 @@ boto3>=1.35.97
 # Frontend
 django-crispy-forms>=2.3
 django-browser-reload>=1.17.0
-django-tailwind>=3.8.0
+django-tailwind>=3.8.0,<5.0
 
 # Additional dependencies
 django-unfold>=0.21.1
-django-allauth>=0.65.3
-django-allauth[google]>=0.65.3
-django-allauth[github]>=0.65.3
-django-allauth[openid]>=0.65.3
+django-allauth>=65.3.0,<66.0
+django-allauth[google]>=65.3.0,<66.0
+django-allauth[github]>=65.3.0,<66.0
+django-allauth[openid]>=65.3.0,<66.0
 django-summernote>=0.8.20.0
 django-tagulous>=2.1.0
 django-widget-tweaks>=1.4.11
 django-extensions>=3.2.3
 django-htmx>=1.21.0
 django-vite>=3.0.6
-django-components>=0.125
+django-components>=0.125,<1.0
 PyJWT>=2.3.0
 
 # AI Integration
-openai>=1.12.0
+openai>=1.12.0,<4.0

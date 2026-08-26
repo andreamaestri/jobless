@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'django_summernote',
     'crispy_forms',
     'storages',
-    'tagulous',
+    'django_tagulous',
     'tailwind',
     'theme',
     'jobs',
@@ -82,10 +82,10 @@ INSTALLED_APPS = [
 TAILWIND_APP_NAME = 'theme'
 
 SERIALIZATION_MODULES = {
-    'xml':    'tagulous.serializers.xml_serializer',
-    'json':   'tagulous.serializers.json',
-    'python': 'tagulous.serializers.python',
-    'yaml':   'tagulous.serializers.pyyaml',
+    'xml':    'django_tagulous.serializers.xml_serializer',
+    'json':   'django_tagulous.serializers.json',
+    'python': 'django_tagulous.serializers.python',
+    'yaml':   'django_tagulous.serializers.pyyaml',
 }
 
 SITE_ID = 1
@@ -189,10 +189,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Allauth configuration
-ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Options: 'mandatory', 'optional', or 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'   # Options: 'username', 'email' or 'username_email'
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
