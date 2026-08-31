@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 14:40+0000\n"
+"POT-Creation-Date: 2026-08-31 18:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -553,7 +552,7 @@ msgstr "Termin hinzufügen"
 msgid "Event"
 msgstr "Termin"
 
-#: events/templates/events/list.html:55 home/templates/home/home.html:219
+#: events/templates/events/list.html:55 home/templates/home/home.html:327
 msgid "Type"
 msgstr "Art"
 
@@ -570,12 +569,12 @@ msgid "Schedule your first event"
 msgstr "Plane deinen ersten Termin"
 
 #: events/templates/events/list.html:137 events/templates/events/list.html:141
-#: home/templates/home/home.html:174 home/templates/home/home.html:241
+#: home/templates/home/home.html:279 home/templates/home/home.html:284
+#: home/templates/home/home.html:349
 msgid "Close"
 msgstr "Schließen"
 
 #: home/context_processors.py:6
-
 msgid "Overview"
 msgstr "Übersicht"
 
@@ -587,78 +586,146 @@ msgstr "Stellen"
 msgid "AI Assistant"
 msgstr "KI-Assistent"
 
-#: home/templates/home/home.html:13
-#, python-format
-msgid ""
-"Hi, <span class=\"text-primary\">%(user.username)s</span>! Welcome back."
-msgstr ""
-"Hi, <span class=\"text-primary\">%(user.username)s</span>! Willkommen zurück."
+#: home/templates/home/home.html:13 home/templates/home/home.html:18
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:23
+msgid "Search"
+msgstr "Suchen"
 
-#: home/templates/home/home.html:23 home/templates/home/home.html:157
+#: home/templates/home/home.html:26 home/templates/home/home.html:262
 msgid "Quick add"
 msgstr "Schnell hinzufügen"
 
+#: home/templates/home/home.html:34
+msgid "Dashboard"
+msgstr "Übersicht"
+
 #: home/templates/home/home.html:36
+#, python-format
+msgid "Hi <span class=\"text-primary\">%(user.username)s</span>, welcome back."
+msgstr ""
+"Hi, <span class=\"text-primary\">%(user.username)s</span>! Willkommen zurück."
+
+#: home/templates/home/home.html:38
+msgid "Here's how your job search is going."
+msgstr "So läuft es bei deiner Jobsuche."
+
+#: home/templates/home/home.html:50
 msgid "Active applications"
 msgstr "Aktive Bewerbungen"
 
-#: home/templates/home/home.html:43
+#: home/templates/home/home.html:61 home/templates/home/home.html:175
 msgid "Upcoming events"
 msgstr "Anstehende Termine"
 
-#: home/templates/home/home.html:50
+#: home/templates/home/home.html:72
 msgid "Your network"
 msgstr "Dein Netzwerk"
 
-#: home/templates/home/home.html:57
+#: home/templates/home/home.html:83
 msgid "Overall success"
 msgstr "Gesamterfolg"
 
-#: home/templates/home/home.html:66
+#: home/templates/home/home.html:93
 msgid "Your application progress"
 msgstr "Dein Bewerbungsfortschritt"
 
-#: home/templates/home/home.html:67
+#: home/templates/home/home.html:94
 #, python-format
 msgid "%(success_rate)s%% success"
 msgstr "%(success_rate)s %% Erfolg"
 
-#: home/templates/home/home.html:143
-#, python-format
-msgid "Explore all %(title)s"
-msgstr "Alle %(title)s entdecken"
+#: home/templates/home/home.html:114
+msgid "Add a job to start tracking your progress."
+msgstr "Füge eine Stelle hinzu, um deinen Fortschritt zu verfolgen."
 
-#: home/templates/home/home.html:161
+#: home/templates/home/home.html:118 home/templates/home/home.html:165
+#: home/templates/home/home.html:266
 msgid "Add job application"
 msgstr "Stellenbewerbung hinzufügen"
 
-#: home/templates/home/home.html:165
+#: home/templates/home/home.html:131
+msgid "Recent applications"
+msgstr "Aktuelle Bewerbungen"
+
+#: home/templates/home/home.html:132
+msgid "Track your latest updates"
+msgstr "Behalte deine letzten Aktualisierungen im Blick"
+
+#: home/templates/home/home.html:152
+msgid "Explore all jobs"
+msgstr "Alle Stellen ansehen"
+
+#: home/templates/home/home.html:161
+msgid "No applications yet"
+msgstr "Noch keine Bewerbungen"
+
+#: home/templates/home/home.html:162
+msgid "Add your first job to get started."
+msgstr "Füge deine erste Stelle hinzu, um zu starten."
+
+#: home/templates/home/home.html:176
+msgid "Interviews and meetings"
+msgstr "Interviews und Termine"
+
+#: home/templates/home/home.html:196
+msgid "Explore all events"
+msgstr "Alle Termine ansehen"
+
+#: home/templates/home/home.html:205
+msgid "No upcoming events"
+msgstr "Keine anstehenden Termine"
+
+#: home/templates/home/home.html:206
+msgid "Add an event to schedule an interview."
+msgstr "Füge einen Termin hinzu, um ein Vorstellungsgespräch zu planen."
+
+#: home/templates/home/home.html:209 home/templates/home/home.html:270
 msgid "Add event"
 msgstr "Termin hinzufügen"
 
-#: home/templates/home/home.html:169
+#: home/templates/home/home.html:218
+msgid "Recent contacts"
+msgstr "Aktuelle Kontakte"
+
+#: home/templates/home/home.html:219
+msgid "Your professional network"
+msgstr "Dein berufliches Netzwerk"
+
+#: home/templates/home/home.html:236
+msgid "Explore all contacts"
+msgstr "Alle Kontakte ansehen"
+
+#: home/templates/home/home.html:245
+msgid "No contacts yet"
+msgstr "Noch keine Kontakte"
+
+#: home/templates/home/home.html:246
+msgid "Start building your network."
+msgstr "Beginne, dein Netzwerk aufzubauen."
+
+#: home/templates/home/home.html:249 home/templates/home/home.html:274
 msgid "Add contact"
 msgstr "Kontakt hinzufügen"
 
-#: home/templates/home/home.html:189
+#: home/templates/home/home.html:297
 msgid "Find what you need"
 msgstr "Finde, was du suchst"
 
-#: home/templates/home/home.html:203
+#: home/templates/home/home.html:311
 msgid "Search suggestions"
 msgstr "Suchvorschläge"
 
-#: home/templates/home/home.html:212 jobs/components/job_form.html:135
+#: home/templates/home/home.html:320 jobs/components/job_form.html:135
 #: jobs/templates/jobs/partials/form_fields.html:113
 #: jobs/templates/jobs/partials/job_table.html:12
 msgid "Status"
 msgstr "Status"
 
-#: home/templates/home/home.html:229
+#: home/templates/home/home.html:337
 msgid "Apply filters"
 msgstr "Filter anwenden"
 
-#: home/templates/home/home.html:234
+#: home/templates/home/home.html:342
 msgid "Clear all"
 msgstr "Alle löschen"
 
@@ -947,7 +1014,7 @@ msgid "Add your first job"
 msgstr "Füge deine erste Stelle hinzu"
 
 #: jobs/templates/jobs/modals/skills_modal.html:23
-#: jobs/templates/jobs/widgets/skill_tree_widget.html:43
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:42
 msgid "Search skills ..."
 msgstr "Fähigkeiten suchen …"
 
@@ -976,19 +1043,15 @@ msgstr "Füge die Stellenbeschreibung hier ein …"
 msgid "(Markdown supported)"
 msgstr "(Markdown unterstützt)"
 
-#: jobs/templates/jobs/widgets/skill_tree_widget.html:23
-msgid "Search"
-msgstr "Suchen"
-
 #: jobs/templates/jobs/widgets/skill_tree_widget.html:29
 msgid "Categories"
 msgstr "Kategorien"
 
-#: jobs/templates/jobs/widgets/skill_tree_widget.html:69
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:67
 msgid "Proficiency Level"
 msgstr "Kenntnisstufe"
 
-#: jobs/templates/jobs/widgets/skill_tree_widget.html:82
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:80
 #: templates/account/email.html:50
 #: templates/mfa/webauthn/authenticator_confirm_delete.html:16
 #: templates/mfa/webauthn/authenticator_list.html:60
@@ -996,7 +1059,7 @@ msgstr "Kenntnisstufe"
 msgid "Remove"
 msgstr "Entfernen"
 
-#: jobs/templates/jobs/widgets/skill_tree_widget.html:90
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:88
 msgid "No skills found matching your search"
 msgstr "Keine Fähigkeiten gefunden, die deiner Suche entsprechen"
 
@@ -1716,27 +1779,27 @@ msgstr "Zwei-Faktor-Authentifizierung"
 msgid "Sessions"
 msgstr "Sitzungen"
 
-#: templates/base.html:383 templates/base.html:426
+#: templates/base.html:369 templates/base.html:412
 msgid "Online"
 msgstr "Online"
 
-#: templates/base.html:479
+#: templates/base.html:465
 msgid "Theme"
 msgstr "Design"
 
-#: templates/base.html:518
+#: templates/base.html:504
 msgid "Favorites"
 msgstr "Favoriten"
 
-#: templates/base.html:523
+#: templates/base.html:509
 msgid "Language"
 msgstr "Sprache"
 
-#: templates/base.html:534
+#: templates/base.html:520
 msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/base.html:555
+#: templates/base.html:541
 msgid "Log in"
 msgstr "Anmelden"
 
