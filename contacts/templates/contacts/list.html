@@ -21,7 +21,7 @@
         {% if messages %}
         <div class="mb-6">
             {% for message in messages %}
-            <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-100 text-green-700{% endif %}">
+            <div class="alert alert-success">
                 {{ message }}
             </div>
             {% endfor %}
@@ -34,13 +34,13 @@
                 <table class="w-full">
                     <thead class="bg-primary text-primary-content">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Name" %}</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Company" %}</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Position" %}</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Email" %}</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Phone" %}</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "LinkedIn" %}</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Actions" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "Name" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "Company" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "Position" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "Email" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "Phone" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "LinkedIn" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primary-content">{% translate "Actions" %}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-base-200">

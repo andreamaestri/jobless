@@ -1,5 +1,5 @@
 <!DOCTYPE html>{% load django_vite %} {% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load i18n %} {% load static %}
-<html lang="{{ LANGUAGE_CODE|default:'en' }}" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current" data-features="script tag-input skill-tree-widget toast">
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" data-theme="Jobless" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current" data-features="script tag-input skill-tree-widget toast">
   <head>{% vite_hmr_client %}
     <meta charset="UTF-8" />
     <meta
@@ -82,7 +82,7 @@
     <!-- Additional Meta -->
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Jobless" />
-    <meta name="theme-color" content="#570df8" />
+    <meta name="theme-color" content="#f97316" />
 
     <!-- Tailwind -->
     {% tailwind_css %}

@@ -15,19 +15,19 @@
                 <!-- View Toggle -->
                 <div class="flex items-center join bg-base-100 shadow-sm">
                     <button onclick="showListView()" id="listViewBtn"
-                        class="join-item btn btn-sm hover:btn-primary-focus">
+                        class="join-item btn btn-sm hover:btn-primary">
                         <iconify-icon icon="octicon:list-unordered-16"></iconify-icon>
                         {% translate "List" %}
                     </button>
                     <button onclick="showCalendarView()" id="calendarViewBtn"
-                        class="join-item btn btn-sm hover:btn-primary-focus">
+                        class="join-item btn btn-sm hover:btn-primary">
                         <iconify-icon icon="octicon:calendar-16"></iconify-icon>
                         {% translate "Calendar" %}
                     </button>
                 </div>
                 <!-- Add Event Button -->
                 <a href="{% url 'events:add' %}"
-                    class="btn btn-primary btn-sm hover:btn-primary-focus">
+                    class="btn btn-primary btn-sm hover:btn-primary">
                     <iconify-icon icon="octicon:plus-16"></iconify-icon>
                     {% translate "Add Event" %}
                 </a>
@@ -37,7 +37,7 @@
         {% if messages %}
         <div class="mb-6">
             {% for message in messages %}
-            <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-100 text-green-700{% endif %}">
+            <div class="alert alert-success">
                 {{ message }}
             </div>
             {% endfor %}
@@ -129,7 +129,7 @@
 
 <!-- Calendar Modal -->
 <dialog id="calendar-modal" class="modal">
-    <div class="modal-box">
+    <div class="modal-box bg-base-100 text-base-content">
         <h3 class="font-bold text-lg" id="modal-title"></h3>
         <p class="py-4" id="modal-description"></p>
         <div class="modal-action">

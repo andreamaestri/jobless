@@ -61,7 +61,7 @@
                                 {% translate "Target job" %} <span class="text-base-content/50 font-normal">{% translate "(optional - select for personalized hints)" %}</span>
                             </label>
                             <select id="fb-job" x-model="fb.job" :disabled="busy"
-                                    class="select select-bordered w-full focus:outline-primary">
+                                    class="select w-full focus:outline-primary">
                                 <option value="">{% translate "General review - no specific job" %}</option>
                                 {% for job in jobs %}
                                 <option value="{{ job.pk }}">{{ job.title }} — {{ job.company }} ({{ job.get_status_display }})</option>
@@ -99,7 +99,7 @@
                             <div>
                                 <label class="block text-sm font-semibold text-base-content mb-2" for="cl-job">{% translate "Target job" %}</label>
                                 <select id="cl-job" x-model="cl.job" :disabled="busy"
-                                        class="select select-bordered w-full focus:outline-primary">
+                                        class="select w-full focus:outline-primary">
                                     <option value="" disabled>{% if jobs %}{% translate "Select a job…" %}{% else %}{% translate "No jobs added yet" %}{% endif %}</option>
                                     {% for job in jobs %}
                                     <option value="{{ job.pk }}">{{ job.title }} — {{ job.company }}</option>
@@ -109,7 +109,7 @@
                             <div>
                                 <label class="block text-sm font-semibold text-base-content mb-2" for="cl-tone">{% translate "Tone" %}</label>
                                 <select id="cl-tone" x-model="cl.tone" :disabled="busy"
-                                        class="select select-bordered w-full focus:outline-primary">
+                                        class="select w-full focus:outline-primary">
                                     <option value="professional">{% translate "Professional" %}</option>
                                     <option value="warm">{% translate "Warm &amp; personable" %}</option>
                                     <option value="concise">{% translate "Direct &amp; concise" %}</option>

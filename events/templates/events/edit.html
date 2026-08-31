@@ -16,9 +16,9 @@
             
             <div class="space-y-4">
                 {% for field in form %}
-                <div class="form-control w-full">
+                <fieldset class="fieldset w-full">
                     <label class="label">
-                        <span class="label-text font-medium">{{ field.label }}</span>
+                        <span class="fieldset-legend font-medium">{{ field.label }}</span>
                     </label>
                     {{ field }}
                     {% if field.errors %}
@@ -31,7 +31,7 @@
                         <span class="label-text-alt">{{ field.help_text }}</span>
                     </label>
                     {% endif %}
-                </div>
+                </fieldset>
                 {% endfor %}
             </div>
 
