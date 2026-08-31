@@ -2,7 +2,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.utils import timezone
-from django.urls import reverse  # Add this import
 from datetime import timedelta
 from jobs.models import JobPosting
 from events.models import Event
@@ -103,48 +102,23 @@ class HomeView(LoginRequiredMixin, TemplateView):
         status_counts = dict(jobs.values_list('status').annotate(count=Count('status')))
         context['status_counts'] = status_counts
 
+        # Ordered status rows for the progress card
+        total = context['total_jobs']
+        context['status_rows'] = [
+            {
+                'key': key,
+                'label': label,
+                'count': status_counts.get(key, 0),
+                'pct': round(status_counts.get(key, 0) / total * 100) if total else 0,
+            }
+            for key, label in JobPosting.STATUS_CHOICES
+        ]
+
         # Add chart data
         context['job_status_chart'] = self.get_job_status_chart_data(jobs)
         
         # Add activity timeline
         context['recent_activity'] = self.get_recent_activity()
-        
-        # Add cards data
-        context['cards'] = [
-            {
-                'title': 'Recent Jobs',
-                'subtitle': 'Track your applications',
-                'items': context['recent_jobs'],
-                'headers': ['Title', 'Company', 'Location', 'Status', 'Updated'],
-                'empty_icon': 'octicon:briefcase-16',
-                'empty_message': 'No jobs added yet',
-                'empty_button': 'Add Your First Job',
-                'add_url': reverse('jobs:add'),
-                'view_all_url': reverse('jobs:list'),
-            },
-            {
-                'title': 'Upcoming Events',
-                'subtitle': 'Your scheduled interviews and meetings',
-                'items': context['upcoming_events'],
-                'headers': ['Title', 'Type', 'Date & Time', 'Location'],
-                'empty_icon': 'octicon:calendar-16',
-                'empty_message': 'No upcoming events',
-                'empty_button': 'Add Your First Event',
-                'add_url': reverse('events:add'),
-                'view_all_url': reverse('events:list'),
-            },
-            {
-                'title': 'Recent Contacts',
-                'subtitle': 'Your professional network',
-                'items': context['recent_contacts'],
-                'headers': ['Name', 'Company', 'Position', 'Email', 'Phone'],
-                'empty_icon': 'octicon:people-16',
-                'empty_message': 'No contacts added yet',
-                'empty_button': 'Add Your First Contact',
-                'add_url': reverse('contacts:add'),
-                'view_all_url': reverse('contacts:list'),
-            }
-        ]
         
         # Add search form to context
         initial_data = {
