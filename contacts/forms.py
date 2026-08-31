@@ -1,6 +1,7 @@
 from django import forms
 from django_summernote.widgets import SummernoteWidget
 from crispy_forms.helper import FormHelper
+from django.utils.translation import gettext_lazy as _
 from .models import Contact
 
 
@@ -14,7 +15,7 @@ class ContactForm(forms.ModelForm):
     name = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter contact name'
+            'placeholder': _('Enter contact name')
         })
     )
 
@@ -22,7 +23,7 @@ class ContactForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter company name'
+            'placeholder': _('Enter company')
         })
     )
 
@@ -30,7 +31,7 @@ class ContactForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter contact position'
+            'placeholder': _('Enter position')
         })
     )
 
@@ -38,7 +39,7 @@ class ContactForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter contact email address'
+            'placeholder': _('Enter email address')
         })
     )
 
@@ -46,7 +47,7 @@ class ContactForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter contact phone number'
+            'placeholder': _('Enter phone number')
         })
     )
 
@@ -68,6 +69,15 @@ class ContactForm(forms.ModelForm):
             'name', 'company', 'position', 'email',
             'phone', 'linkedin', 'notes',
         ]
+        labels = {
+            'name': _('Name'),
+            'company': _('Company'),
+            'position': _('Position'),
+            'email': _('Email address'),
+            'phone': _('Phone number'),
+            'linkedin': _('LinkedIn profile'),
+            'notes': _('Notes'),
+        }
         
 
     def __init__(self, *args, **kwargs):

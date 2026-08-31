@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.i18n import JavaScriptCatalog
 
 
 
 urlpatterns = [
+    path("jsi18n/", JavaScriptCatalog.as_view(), name="javascript-catalog"),
     path("__reload__/", include("django_browser_reload.urls")),
     path("accounts/", include("allauth.urls")),
+    path("i18n/", include("django.conf.urls.i18n")),
     path('admin/', admin.site.urls),
     path('ai-assistant/', include('ai_assistant.urls', namespace='ai_assistant')),
     path('contacts/', include('contacts.urls')),

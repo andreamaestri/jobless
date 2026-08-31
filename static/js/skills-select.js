@@ -12,7 +12,7 @@ document.addEventListener('alpine:init', () => {
         if (skills.length === 0) {
             display.innerHTML = `
                 <div class="empty-state text-base-content/50 flex items-center justify-center w-full h-full">
-                    Click 'Manage Skills' to add required skills
+                    ${gettext("Click 'Manage Skills' to add required skills")}
                 </div>`;
             return;
         }
@@ -38,7 +38,7 @@ document.addEventListener('alpine:init', () => {
         // Update skills count
         const skillsCount = document.getElementById('skills-count');
         if (skillsCount) {
-            skillsCount.textContent = `${skills.length} selected`;
+            skillsCount.textContent = interpolate(gettext('%s selected'), [skills.length]);
         }
 
         // Update display
@@ -178,7 +178,7 @@ document.addEventListener('alpine:init', () => {
             },
             no_results: function(data, escape) {
                 return `<div class="p-4 text-center text-base-content/70">
-                    No skills found for "${escape(data.input)}"
+                    ${interpolate(gettext('No skills found for "%s"'), [escape(data.input)])}
                 </div>`;
             },
             loading: function() {
@@ -201,7 +201,7 @@ document.addEventListener('alpine:init', () => {
                                     }
                                 }))">
                             <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
-                            Manage Skills
+                            ${gettext('Manage Skills')}
                         </button>
                     </div>
                 </div>`;
@@ -270,7 +270,7 @@ document.addEventListener('alpine:init', () => {
             // Update skills count
             const skillsCount = document.getElementById('skills-count');
             if (skillsCount) {
-                skillsCount.textContent = `${selectedSkills.length} selected`;
+                skillsCount.textContent = interpolate(gettext('%s selected'), [selectedSkills.length]);
             }
         }
     });

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
@@ -7,8 +8,8 @@
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
             <div class="space-y-1">
-                <h1 class="text-2xl font-bold text-base-content">Events</h1>
-                <p class="text-base-content/70">Manage your upcoming events and interviews</p>
+                <h1 class="text-2xl font-bold text-base-content">{% translate "Events" %}</h1>
+                <p class="text-base-content/70">{% translate "Manage your upcoming events and meetings" %}</p>
             </div>
             <div class="flex items-center space-x-4">
                 <!-- View Toggle -->
@@ -16,19 +17,19 @@
                     <button onclick="showListView()" id="listViewBtn"
                         class="join-item btn btn-sm hover:btn-primary-focus">
                         <iconify-icon icon="octicon:list-unordered-16"></iconify-icon>
-                        List
+                        {% translate "List" %}
                     </button>
                     <button onclick="showCalendarView()" id="calendarViewBtn"
                         class="join-item btn btn-sm hover:btn-primary-focus">
                         <iconify-icon icon="octicon:calendar-16"></iconify-icon>
-                        Calendar
+                        {% translate "Calendar" %}
                     </button>
                 </div>
                 <!-- Add Event Button -->
                 <a href="{% url 'events:add' %}"
                     class="btn btn-primary btn-sm hover:btn-primary-focus">
                     <iconify-icon icon="octicon:plus-16"></iconify-icon>
-                    Add Event
+                    {% translate "Add Event" %}
                 </a>
             </div>
         </div>
@@ -50,12 +51,12 @@
                 <table class="table table-zebra">
                     <thead class="bg-primary text-primary-content">
                         <tr>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Event</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Type</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Date & Time</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Location</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Related Job</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">Actions</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Event" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Type" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Date and Time" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Location" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Related Job Posting" %}</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-primar-content">{% translate "Actions" %}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#fce8dd]">
@@ -70,7 +71,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="badge badge-primary">{{ event.event_type|title }}</span>
+                                <span class="badge badge-primary">{{ event.get_event_type_display }}</span>
                             </td>
                             <td class="px-6 py-4 text-sm text-base-content">{{ event.date|date:"M d, Y - g:i A" }}
                             </td>
@@ -85,7 +86,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center space-x-3">
                                     <a href="{% url 'events:detail' event.pk %}"
-                                        class="btn btn-ghost btn-sm btn-square" aria-label="View Details">
+                                        class="btn btn-ghost btn-sm btn-square" aria-label="{% translate 'View details' %}">
                                         <iconify-icon icon="octicon:eye-16"></iconify-icon>
                                     </a>
                                     <a href="{% url 'events:edit' event.pk %}"
@@ -105,13 +106,13 @@
             </div>
             {% else %}
             <div class="bg-[#fff5ef] rounded-2xl shadow-lg p-12 text-center">
-                <p class="text-[#666666] mb-6">No events added yet</p>
+                <p class="text-[#666666] mb-6">{% translate "No events added yet" %}</p>
                 <a href="{% url 'events:add' %}"
                     class="inline-flex items-center px-4 py-2 bg-[#e28b67] text-white rounded-xl hover:bg-[#c77857] transition-colors duration-200">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Schedule Your First Event
+                    {% translate "Schedule your first event" %}
                 </a>
             </div>
             {% endif %}
@@ -132,12 +133,12 @@
         <h3 class="font-bold text-lg" id="modal-title"></h3>
         <p class="py-4" id="modal-description"></p>
         <div class="modal-action">
-            <a href="#" id="modal-edit" class="btn btn-primary">Edit Event</a>
-            <button class="btn" onclick="document.getElementById('calendar-modal').close()">Close</button>
+            <a href="#" id="modal-edit" class="btn btn-primary">{% translate "Edit Event" %}</a>
+            <button class="btn" onclick="document.getElementById('calendar-modal').close()">{% translate "Close" %}</button>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-        <button>close</button>
+        <button>{% translate "Close" %}</button>
     </form>
 </dialog>
 

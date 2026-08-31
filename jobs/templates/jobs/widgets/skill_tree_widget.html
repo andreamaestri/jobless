@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <div class="skill-tree-widget" x-data="skillSelector">
     <!-- Error Messages -->
@@ -19,13 +20,13 @@
                         :class="{ 'tab-active': viewMode === 'search' }"
                         @click="viewMode = 'search'">
                     <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
-                    <span class="ml-2">Search</span>
+                    <span class="ml-2">{% translate "Search" %}</span>
                 </button>
                 <button class="tab" 
                         :class="{ 'tab-active': viewMode === 'tree' }"
                         @click="viewMode = 'tree'">
                     <iconify-icon icon="heroicons:squares-2x2" class="text-lg"></iconify-icon>
-                    <span class="ml-2">Categories</span>
+                    <span class="ml-2">{% translate "Categories" %}</span>
                 </button>
             </div>
         </div>
@@ -39,7 +40,7 @@
         <div class="form-control">
             <div class="input-group">
                 <input type="text"
-                       placeholder="Search skills..."
+                       placeholder="{% translate 'Search skills ...' %}"
                        class="input input-bordered w-full"
                        x-model="searchQuery">
                 <button class="btn btn-square">
@@ -65,7 +66,7 @@
                     </button>
                     <div class="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
                          x-show="isSelected(skill.id)">
-                        <div class="mb-2 text-sm font-medium text-base-content/70">Proficiency Level</div>
+                        <div class="mb-2 text-sm font-medium text-base-content/70">{% translate "Proficiency Level" %}</div>
                         <template x-for="level in proficiencyLevels" :key="level.value">
                             <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
                                     :class="{'btn-primary': getSkillProficiency(skill.id) === level.value}"
@@ -78,7 +79,7 @@
                         <button class="btn btn-sm btn-error justify-start gap-2 normal-case w-full"
                                 @click.stop="removeSkill(skill)">
                             <iconify-icon icon="heroicons:trash" class="text-lg"></iconify-icon>
-                            <span>Remove</span>
+                            <span>{% translate "Remove" %}</span>
                         </button>
                     </div>
                 </div>
@@ -86,7 +87,7 @@
         </div>
         <div x-show="filteredSkills.length === 0"
              class="text-center py-8 text-base-content/70">
-            No skills found matching your search
+            {% translate "No skills found matching your search" %}
         </div>
     </div>
 

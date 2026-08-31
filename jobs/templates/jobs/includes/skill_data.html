@@ -38,14 +38,6 @@
                     console.error('Error initializing skill data:', e);
                 }
                 
-                // Initialize Tagulous if form is present
-                if (this.tagulousSettings && Object.keys(this.tagulousSettings).length) {
-                    Tagulous.init({
-                        selector: '[data-tagulous]',
-                        settings: this.tagulousSettings,
-                        tags: this.initialTags
-                    });
-                }
             }
         });
     });

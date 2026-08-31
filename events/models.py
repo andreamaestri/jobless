@@ -1,14 +1,15 @@
 from django.db import models 
 from django.conf import settings 
 from django.urls import reverse 
+from django.utils.translation import gettext_lazy as _
 
 class Event(models.Model): 
 
     EVENT_TYPES = [ 
-            ('interview', 'Interview'), 
-            ('meeting', 'Meeting'),
-            ('followup', 'Follow-up'),
-            ('networking', 'Networking Event')
+            ('interview', _('Interview')),
+            ('meeting', _('Meeting')),
+            ('followup', _('Follow-up')),
+            ('networking', _('Networking event'))
         ] 
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 

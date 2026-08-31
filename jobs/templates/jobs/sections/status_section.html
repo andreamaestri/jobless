@@ -1,7 +1,9 @@
+{% load i18n %}
+{% translate "Application Status" as section_title %}
 <div class="p-8 form-section" style="--delay: 3">
     {% include "jobs/includes/section_header.html" with 
         icon="heroicons:flag"
-        title="Application Status" %}
+        title=section_title %}
     
     <div>
         {% include "jobs/includes/form_field.html" with field=form.status %}

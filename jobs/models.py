@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 import django_tagulous.models
 
 
@@ -26,21 +27,26 @@ class SkillTreeModel(models.Model):
     icon = models.CharField(
         max_length=100,
         blank=True,
-        help_text="Icon code (e.g., skill-icons:python)"
+        help_text=_("Icon code (e.g. skill-icons:python)")
     )
     description = models.TextField(
         blank=True,
-        help_text="Detailed description of the skill"
+        help_text=_("Detailed description of the skill")
     )
     tags = django_tagulous.models.TagField(
         to=SkillTag,
-        help_text="Enter hierarchical tags (e.g. programming/python/django)",
+        help_text=_("Enter hierarchical tags (e.g. programming/python/django)"),
         blank=True
     )
 
+    @property
+    def path(self):
+        """Expose a stable path for the skill selector and serializers."""
+        return self.name
+
     class Meta:
-        verbose_name = "Skill"
-        verbose_name_plural = "Skills"
+        verbose_name = _("Skill")
+        verbose_name_plural = _("Skills")
         ordering = ['name']
 
     def get_icon(self):
@@ -88,9 +94,9 @@ class SkillTreeModel(models.Model):
 
 class JobSkill(models.Model):
     PROFICIENCY_LEVELS = [
-        ('required', 'Required'),
-        ('preferred', 'Preferred'),
-        ('bonus', 'Nice to Have')
+        ('required', _('Required')),
+        ('preferred', _('Preferred')),
+        ('bonus', _('Nice to have'))
     ]
 
     job = models.ForeignKey(
@@ -111,7 +117,7 @@ class JobSkill(models.Model):
 
     class Meta:
         unique_together = ['job', 'skill']
-        verbose_name_plural = "Job Skills"
+        verbose_name_plural = _("Job skills")
         indexes = [
             models.Index(fields=['job', 'skill']),
             models.Index(fields=['proficiency']),
@@ -135,11 +141,11 @@ class JobSkill(models.Model):
 
 class JobPosting(models.Model):
     STATUS_CHOICES = [
-        ('interested', 'Interested'),
-        ('applied', 'Applied'),
-        ('interviewing', 'Interviewing'),
-        ('rejected', 'Rejected'),
-        ('accepted', 'Accepted')
+        ('interested', _('Interested')),
+        ('applied', _('Applied')),
+        ('interviewing', _('Interviewing')),
+        ('rejected', _('Rejected')),
+        ('accepted', _('Accepted'))
     ]
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -153,7 +159,7 @@ class JobPosting(models.Model):
         SkillTreeModel,
         through='JobSkill',
         related_name='jobs',
-        help_text="Skills associated with this job posting"
+        help_text=_("Skills linked to this job posting")
     )
     status = models.CharField(
         max_length=20,

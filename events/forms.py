@@ -1,6 +1,7 @@
 from django import forms
 from django_summernote.widgets import SummernoteWidget
 from crispy_forms.helper import FormHelper
+from django.utils.translation import gettext_lazy as _
 from .models import Event
 from jobs.models import JobPosting
 from contacts.models import Contact
@@ -16,7 +17,7 @@ class EventForm(forms.ModelForm):
     title = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter event title'
+            'placeholder': _('Enter event title')
         })
     )
 
@@ -39,7 +40,7 @@ class EventForm(forms.ModelForm):
     location = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': BASE_CLASS,
-            'placeholder': 'Enter event location'
+            'placeholder': _('Enter event location')
         })
     )
 
@@ -47,7 +48,7 @@ class EventForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             'class': BASE_CLASS,
             'rows': 5,
-            'placeholder': 'Enter notes'
+            'placeholder': _('Enter notes')
         }),
         required=False
     )
@@ -73,6 +74,15 @@ class EventForm(forms.ModelForm):
         fields = [
             'title', 'event_type', 'date', 'location', 'notes', 'job_posting', 'contacts'  # Added contacts
         ]
+        labels = {
+            'title': _('Title'),
+            'event_type': _('Event type'),
+            'date': _('Date and time'),
+            'location': _('Location'),
+            'notes': _('Notes'),
+            'job_posting': _('Related job'),
+            'contacts': _('Contact'),
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

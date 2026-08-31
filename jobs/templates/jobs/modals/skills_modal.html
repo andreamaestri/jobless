@@ -1,15 +1,16 @@
+{% load i18n %}
 <!-- Enhanced Skill Selection Modal -->
 <div x-data="skillSelector"
-     x-show="$store.modals.skills.open"
+     x-show="$store.app.skills.modal.open"
      class="modal modal-open"
-     @keydown.escape.window="$store.modals.skills.close()"
-     @click.self="$store.modals.skills.close()">
+     @keydown.escape.window="$store.app.skills.closeModal()"
+     @click.self="$store.app.skills.closeModal()">
     
     <div class="modal-box max-w-3xl">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-bold">Manage Skills</h3>
+            <h3 class="text-lg font-bold">{% translate "Manage Skills" %}</h3>
             <button class="btn btn-ghost btn-sm btn-square"
-                    @click="$store.modals.skills.close()">
+                     @click="$store.app.skills.closeModal()">
                 <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
             </button>
         </div>
@@ -19,7 +20,7 @@
             <div class="flex-1">
                 <input type="text"
                        class="input input-bordered w-full"
-                       placeholder="Search skills..."
+                       placeholder="{% translate 'Search skills ...' %}"
                        x-model="searchQuery"
                        @input="filterSkills">
             </div>
@@ -80,7 +81,7 @@
 
             <!-- Selected Skills -->
             <div class="border rounded-lg bg-base-100 p-4">
-                <h4 class="font-medium mb-3">Selected Skills</h4>
+                <h4 class="font-medium mb-3">{% translate "Selected Skills" %}</h4>
                 <div class="space-y-2">
                     <template x-for="skill in selectedSkills" :key="skill.id">
                         <div class="flex items-center gap-2 p-2 bg-base-200 rounded">
@@ -89,9 +90,9 @@
                             <select class="select select-sm select-bordered"
                                     x-model="skill.proficiency"
                                     @change="updateSkill(skill)">
-                                <option value="required">Required</option>
-                                <option value="preferred">Preferred</option>
-                                <option value="bonus">Nice to Have</option>
+                                <option value="required">{% translate "Required" %}</option>
+                                <option value="preferred">{% translate "Preferred" %}</option>
+                                <option value="bonus">{% translate "Nice to have" %}</option>
                             </select>
                             <button class="btn btn-ghost btn-sm btn-square"
                                     @click="removeSkill(skill)">
@@ -105,9 +106,9 @@
 
         <!-- Modal Actions -->
         <div class="modal-action">
-            <button class="btn" @click="$store.modals.skills.close()">Cancel</button>
+            <button class="btn" @click="$store.app.skills.closeModal()">{% translate "Cancel" %}</button>
             <button class="btn btn-primary" @click="saveSkills">
-                Save Changes
+                {% translate "Save changes" %}
             </button>
         </div>
     </div>

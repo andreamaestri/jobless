@@ -1,10 +1,12 @@
+{% load i18n %}
+{% translate "Required Skills" as section_title %}
 {% include "jobs/includes/skill_base.html" %}
 
 <div class="p-8 form-section" style="--delay: 2">
     {% include "jobs/includes/section_header.html" with 
         icon="heroicons:academic-cap"
-        title="Required Skills"
-        extra_content='<button type="button" @click="$dispatch(\'open-skills-modal\')" class="btn btn-ghost btn-sm gap-2"><iconify-icon icon="heroicons:squares-plus"></iconify-icon>Manage Skills</button>' %}
+        title=section_title
+        extra_content='<button type="button" @click="$dispatch(\'open-skills-modal\')" class="btn btn-ghost btn-sm gap-2"><iconify-icon icon="heroicons:squares-plus"></iconify-icon>Manage skills</button>' %}
     
     <div class="relative" 
          x-data="{ 

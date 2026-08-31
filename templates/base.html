@@ -1,5 +1,5 @@
-<!DOCTYPE html>{% load django_vite %} {% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load static %}
-<html lang="en" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current" data-features="script tag-input skill-tree-widget toast">
+<!DOCTYPE html>{% load django_vite %} {% load static tailwind_tags %} {% load django_htmx %} {% load account %} {% load i18n %} {% load static %}
+<html lang="{{ LANGUAGE_CODE|default:'en' }}" class="h-screen w-screen" x-data :data-theme="$store.app.theme.current" data-features="script tag-input skill-tree-widget toast">
   <head>{% vite_hmr_client %}
     <meta charset="UTF-8" />
     <meta
@@ -87,6 +87,7 @@
     <!-- Tailwind -->
     {% tailwind_css %}
     <!-- Core JS -->
+    <script src="{% url 'javascript-catalog' %}"></script>
     {% vite_asset 'static/js/main.js' %}
     <!-- Tag Input Component -->
     <script>
@@ -379,7 +380,7 @@
               class="flex-1 text-left"
             >
               <p class="font-medium leading-tight">{{ user.username }}</p>
-              <p class="text-sm text-base-content/70">Online</p>
+              <p class="text-sm text-base-content/70">{% translate "Online" %}</p>
             </div>
             <iconify-icon
               x-show="!$store.app.sidebar.collapsed || window.innerWidth < 1024"
@@ -422,7 +423,7 @@
                 class="flex items-center justify-center gap-2 text-sm text-base-content/70"
               >
                 <span class="w-2 h-2 bg-success rounded-full"></span>
-                Online
+                {% translate "Online" %}
               </div>
             </div>
 
@@ -475,7 +476,7 @@
                     class="text-base-content/70"
                   >
                   </iconify-icon>
-                  <span class="flex-1 text-left">Theme</span>
+                  <span class="flex-1 text-left">{% translate "Theme" %}</span>
                   <iconify-icon
                     icon="octicon:chevron-right-16"
                     class="transition-transform duration-200"
@@ -512,16 +513,25 @@
                 </div>
               </div>
               <!-- Favorites link -->
-              <div class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-base-100/80 transition-colors duration-200">
+                <div class="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-base-100/80 transition-colors duration-200">
                 <iconify-icon icon="octicon:star-24" class="text-base-content/70"></iconify-icon>
-                <a href="{% url 'jobs:favorites' %}" class="flex-1 text-left">Favorites</a>
+                <a href="{% url 'jobs:favorites' %}" class="flex-1 text-left">{% translate "Favorites" %}</a>
               </div>
+              <form action="{% url 'set_language' %}" method="post" class="flex items-center gap-2 w-full p-2">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                <label for="language-select" class="text-sm">{% translate "Language" %}</label>
+                <select id="language-select" name="language" class="select select-xs flex-1" onchange="this.form.submit()">
+                  <option value="de"{% if LANGUAGE_CODE == 'de' %} selected{% endif %}>Deutsch</option>
+                  <option value="en"{% if LANGUAGE_CODE == 'en' %} selected{% endif %}>English</option>
+                </select>
+              </form>
               <a
                 href="{% url 'account_logout' %}"
                 class="flex items-center gap-2 w-full p-2 rounded-lg bg-accent text-accent-content hover:bg-accent/90 transition-colors duration-200"
               >
                 <iconify-icon icon="octicon:sign-out-16"></iconify-icon>
-                <span>Logout</span>
+                <span>{% translate "Log out" %}</span>
               </a>
             </div>
           </div>
@@ -542,7 +552,7 @@
           >
           </iconify-icon>
           <span x-show="!$store.app.sidebar.collapsed || window.innerWidth < 1024"
-            >Sign In</span
+            >{% translate "Log in" %}</span
           >
         </a>
         {% endif %}

@@ -1,0 +1,2226 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-31 14:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ai_assistant/templates/ai_assistant/_history.html:18
+msgid "General review"
+msgstr "Allgemeine Überprüfung"
+
+#: ai_assistant/templates/ai_assistant/_history.html:21
+#, python-format
+msgid "%(ts)s ago"
+msgstr "vor %(ts)s"
+
+#: ai_assistant/templates/ai_assistant/_history.html:24
+msgid "Copy"
+msgstr "Kopieren"
+
+#: ai_assistant/templates/ai_assistant/_history.html:27
+#: contacts/templates/contacts/list.html:100
+#: events/templates/events/delete.html:30 jobs/templates/jobs/delete.html:30
+#: jobs/templates/jobs/partials/job_table.html:92
+msgid "Delete"
+msgstr "Löschen"
+
+#: ai_assistant/templates/ai_assistant/_history.html:34
+msgid "View output"
+msgstr "Ausgabe anzeigen"
+
+#: ai_assistant/templates/ai_assistant/_history.html:46
+msgid "Your generated feedback and cover letters will be saved here."
+msgstr ""
+"Deine generierten Rückmeldungen und Anschreiben werden hier gespeichert."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:5
+#: ai_assistant/templates/ai_assistant/assistant.html:20
+msgid "AI Career Assistant"
+msgstr "KI-Assistent"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:6
+msgid ""
+"Tailored CV feedback and AI-generated cover letters for your applications."
+msgstr ""
+"Zugeschnittenes Lebenslauf-Feedback und KI-generierte Anschreiben für deine "
+"Bewerbungen."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:22
+msgid "Tailored CV feedback and cover letters for your current applications."
+msgstr ""
+"Zugeschnittenes Lebenslauf-Feedback und Anschreiben für deine aktuellen "
+"Bewerbungen."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:28
+msgid "Add your CV once. All tools will then use it automatically."
+msgstr ""
+"Füge deinen Lebenslauf einmal hinzu. Alle Tools verwenden ihn dann "
+"automatisch."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:29
+msgid "Add CV"
+msgstr "Lebenslauf hinzufügen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:41
+msgid "Assistant tools"
+msgstr "Assistent-Tools"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:47
+msgid "Individual CV feedback"
+msgstr "Individuelles Lebenslauf-Feedback"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:54
+msgid "Cover letter"
+msgstr "Anschreiben"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:61
+#: ai_assistant/templates/ai_assistant/assistant.html:100
+msgid "Target job"
+msgstr "Zielstelle"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:61
+msgid "(optional - select for personalized hints)"
+msgstr "(optional – für personalisierte Hinweise auswählen)"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:65
+msgid "General review - no specific job"
+msgstr "Allgemeine Überprüfung – keine bestimmte Stelle"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:83
+msgid "Focus requests"
+msgstr "Schwerpunktwünsche"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:83
+#: ai_assistant/templates/ai_assistant/assistant.html:128
+msgid "(optional)"
+msgstr "(optional)"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:87
+msgid "e.g. worried about my career gap — help me frame it positively"
+msgstr ""
+"z. B. Sorgen wegen meiner Berufslücke – hilf mir, sie positiv zu formulieren"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:91
+msgid "Analyze my CV"
+msgstr "Meinen Lebenslauf analysieren"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:92
+msgid "Analyzing…"
+msgstr "Analyse läuft…"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:94
+#: ai_assistant/templates/ai_assistant/assistant.html:140
+msgid "Save your CV first to enable generation."
+msgstr "Speichere zuerst deinen Lebenslauf, um die Generierung zu aktivieren."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:103
+msgid "Select a job…"
+msgstr "Stelle auswählen…"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:103
+#: jobs/templates/jobs/list.html:66
+msgid "No jobs added yet"
+msgstr "Noch keine Stellen hinzugefügt"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:110
+msgid "Tone"
+msgstr "Tonalität"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:113
+msgid "Professional"
+msgstr "Professionell"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:114
+msgid "Warm &amp; personable"
+msgstr "Warmherzig &amp; sympathisch"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:115
+msgid "Direct &amp; concise"
+msgstr "Direkt &amp; prägnant"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:128
+msgid "Extra instructions"
+msgstr "Zusätzliche Anweisungen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:132
+msgid "e.g. mention my open-source work, keep it under 250 words"
+msgstr "z. B. erwähne meine Open-Source-Arbeit, halte es unter 250 Wörtern"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:137
+msgid "Write my cover letter"
+msgstr "Mein Anschreiben schreiben"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:138
+msgid "Writing…"
+msgstr "Wird geschrieben…"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:143
+msgid "Add a job first"
+msgstr "Füge zuerst eine Stelle hinzu"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:162
+msgid "Copy to clipboard"
+msgstr "In die Zwischenablage kopieren"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:165
+msgid "Download as .txt"
+msgstr "Als .txt herunterladen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:168
+msgid "Regenerate"
+msgstr "Neu generieren"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:171
+msgid "Hide"
+msgstr "Ausblenden"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:180
+msgid "Retry"
+msgstr "Erneut versuchen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:199
+msgid "Pick a tool above to get started"
+msgstr "Wähle oben ein Tool aus, um loszulegen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:201
+msgid ""
+"Feedback is tailored to a specific posting you are tracking — or choose "
+"general review. Cover letters need a target job."
+msgstr ""
+"Das Feedback bezieht sich auf eine bestimmte Stellenausschreibung, die du "
+"verfolgst – oder wähle die allgemeine Überprüfung. Für Anschreiben wird eine "
+"Zielstelle benötigt."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:214
+msgid "Saved CV"
+msgstr "Gespeicherter Lebenslauf"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:223
+msgid "Last updated:"
+msgstr "Zuletzt aktualisiert:"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:224
+msgid "never"
+msgstr "nie"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:228
+msgid "No CV saved yet. Add it once so all tools can use it."
+msgstr ""
+"Noch kein Lebenslauf gespeichert. Füge ihn einmal hinzu, damit alle Tools "
+"ihn verwenden können."
+
+#: ai_assistant/templates/ai_assistant/assistant.html:242
+msgid "/ 30,000 chars"
+msgstr "/ 30.000 Zeichen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:247
+#: templates/mfa/webauthn/edit_form.html:18
+msgid "Save"
+msgstr "Speichern"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:248
+msgid "Saving…"
+msgstr "Wird gespeichert…"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:250
+#: contacts/templates/contacts/add.html:52
+#: contacts/templates/contacts/delete.html:57
+#: contacts/templates/contacts/edit.html:60 events/templates/events/add.html:47
+#: events/templates/events/delete.html:27 events/templates/events/edit.html:43
+#: jobs/templates/jobs/add.html:46 jobs/templates/jobs/delete.html:26
+#: jobs/templates/jobs/edit.html:40
+#: jobs/templates/jobs/modals/skills_modal.html:109
+#: templates/account/confirm_email_verification_code.html:31
+#: templates/account/confirm_email_verification_code.html:35
+#: templates/account/confirm_login_code.html:32
+#: templates/account/logout.html:31 templates/mfa/authenticate.html:28
+#: templates/mfa/authenticate.html:44
+#: templates/mfa/webauthn/signup_form.html:26
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:259
+msgid "Recent outputs"
+msgstr "Letzte Ausgaben"
+
+#: ai_assistant/templates/ai_assistant/assistant.html:261
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: contacts/forms.py:18
+msgid "Enter contact name"
+msgstr "Kontaktnamen eingeben"
+
+#: contacts/forms.py:26
+msgid "Enter company"
+msgstr "Unternehmen eingeben"
+
+#: contacts/forms.py:34
+msgid "Enter position"
+msgstr "Position eingeben"
+
+#: contacts/forms.py:42
+msgid "Enter email address"
+msgstr "E-Mail-Adresse eingeben"
+
+#: contacts/forms.py:50
+msgid "Enter phone number"
+msgstr "Telefonnummer eingeben"
+
+#: contacts/forms.py:73 contacts/templates/contacts/delete.html:25
+#: contacts/templates/contacts/list.html:37
+msgid "Name"
+msgstr "Name"
+
+#: contacts/forms.py:74 contacts/templates/contacts/delete.html:33
+#: contacts/templates/contacts/detail.html:24
+#: contacts/templates/contacts/list.html:38 jobs/components/job_form.html:77
+#: jobs/forms.py:81 jobs/templates/jobs/partials/form_fields.html:81
+#: jobs/templates/jobs/partials/job_table.html:8
+msgid "Company"
+msgstr "Unternehmen"
+
+#: contacts/forms.py:75 contacts/templates/contacts/delete.html:42
+#: contacts/templates/contacts/detail.html:29
+#: contacts/templates/contacts/list.html:39
+msgid "Position"
+msgstr "Position"
+
+#: contacts/forms.py:76
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: contacts/forms.py:77
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: contacts/forms.py:78
+msgid "LinkedIn profile"
+msgstr "LinkedIn-Profil"
+
+#: contacts/forms.py:79 contacts/templates/contacts/detail.html:73
+#: events/forms.py:82 events/templates/events/detail.html:48
+msgid "Notes"
+msgstr "Notizen"
+
+#: contacts/templates/contacts/add.html:11
+msgid "Add New Contact"
+msgstr "Neuen Kontakt hinzufügen"
+
+#: contacts/templates/contacts/add.html:12
+msgid "Add a new connection to your network"
+msgstr "Füge eine neue Verbindung zu deinem Netzwerk hinzu"
+
+#: contacts/templates/contacts/add.html:56
+msgid "Save Contact"
+msgstr "Kontakt speichern"
+
+#: contacts/templates/contacts/delete.html:14
+#: contacts/templates/contacts/delete.html:62
+msgid "Delete Contact"
+msgstr "Kontakt löschen"
+
+#: contacts/templates/contacts/delete.html:16
+msgid "Are you sure you want to delete this contact?"
+msgstr "Möchtest du diesen Kontakt wirklich löschen?"
+
+#: contacts/templates/contacts/detail.html:15
+msgid "No company provided"
+msgstr "Kein Unternehmen angegeben"
+
+#: contacts/templates/contacts/detail.html:34
+#: contacts/templates/contacts/list.html:40
+msgid "Email"
+msgstr "E-Mail"
+
+#: contacts/templates/contacts/detail.html:47
+#: contacts/templates/contacts/list.html:41
+msgid "Phone"
+msgstr "Telefon"
+
+#: contacts/templates/contacts/detail.html:60
+#: contacts/templates/contacts/list.html:42
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: contacts/templates/contacts/detail.html:64
+#: contacts/templates/contacts/list.html:81
+msgid "View Profile"
+msgstr "Profil anzeigen"
+
+#: contacts/templates/contacts/detail.html:67
+#: events/templates/events/detail.html:41
+msgid "None"
+msgstr "Keine"
+
+#: contacts/templates/contacts/detail.html:86
+#: events/templates/events/detail.html:61
+msgid "Created"
+msgstr "Erstellt"
+
+#: contacts/templates/contacts/detail.html:91
+#: jobs/components/job_detail.html:75 jobs/templates/jobs/detail.html:80
+msgid "Last Updated"
+msgstr "Zuletzt aktualisiert"
+
+#: contacts/templates/contacts/detail.html:100
+#: events/templates/events/detail.html:70
+msgid "Back to List"
+msgstr "Zurück zur Liste"
+
+#: contacts/templates/contacts/detail.html:103
+#: contacts/templates/contacts/edit.html:14
+msgid "Edit Contact"
+msgstr "Kontakt bearbeiten"
+
+#: contacts/templates/contacts/edit.html:16
+msgid "Update contact information"
+msgstr "Kontaktinformationen aktualisieren"
+
+#: contacts/templates/contacts/edit.html:65
+#: events/templates/events/edit.html:47
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: contacts/templates/contacts/list.html:11 home/context_processors.py:9
+msgid "Contacts"
+msgstr "Kontakte"
+
+#: contacts/templates/contacts/list.html:12
+msgid "Manage your professional network"
+msgstr "Verwalte dein berufliches Netzwerk"
+
+#: contacts/templates/contacts/list.html:17
+msgid "Add Contact"
+msgstr "Kontakt hinzufügen"
+
+#: contacts/templates/contacts/list.html:43
+#: events/templates/events/list.html:59
+#: jobs/templates/jobs/partials/job_table.html:13
+msgid "Actions"
+msgstr "Aktionen"
+
+#: contacts/templates/contacts/list.html:90
+#: events/templates/events/list.html:89
+#: jobs/templates/jobs/partials/job_table.html:79
+msgid "View details"
+msgstr "Details anzeigen"
+
+#: contacts/templates/contacts/list.html:95
+#: jobs/templates/jobs/partials/job_table.html:83
+#: templates/mfa/webauthn/authenticator_list.html:56
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: contacts/templates/contacts/list.html:113
+msgid "No contacts added yet"
+msgstr "Noch keine Kontakte hinzugefügt"
+
+#: contacts/templates/contacts/list.html:117
+msgid "Add your first contact"
+msgstr "Füge deinen ersten Kontakt hinzu"
+
+#: events/forms.py:20
+msgid "Enter event title"
+msgstr "Termintitel eingeben"
+
+#: events/forms.py:43
+msgid "Enter event location"
+msgstr "Ort des Termins eingeben"
+
+#: events/forms.py:51
+msgid "Enter notes"
+msgstr "Notizen eingeben"
+
+#: events/forms.py:78
+msgid "Title"
+msgstr "Titel"
+
+#: events/forms.py:79
+msgid "Event type"
+msgstr "Terminart"
+
+#: events/forms.py:80
+msgid "Date and time"
+msgstr "Datum und Uhrzeit"
+
+#: events/forms.py:81 events/templates/events/detail.html:27
+#: events/templates/events/list.html:57 jobs/components/job_detail.html:21
+#: jobs/components/job_form.html:86 jobs/forms.py:82
+#: jobs/templates/jobs/detail.html:27
+#: jobs/templates/jobs/partials/form_fields.html:89
+#: jobs/templates/jobs/partials/job_table.html:9
+msgid "Location"
+msgstr "Ort"
+
+#: events/forms.py:83
+msgid "Related job"
+msgstr "Zugehörige Stelle"
+
+#: events/forms.py:84
+msgid "Contact"
+msgstr "Kontakt"
+
+#: events/models.py:9
+msgid "Interview"
+msgstr "Vorstellungsgespräch"
+
+#: events/models.py:10
+msgid "Meeting"
+msgstr "Besprechung"
+
+#: events/models.py:11
+msgid "Follow-up"
+msgstr "Nachfassen"
+
+#: events/models.py:12
+msgid "Networking event"
+msgstr "Netzwerkveranstaltung"
+
+#: events/templates/events/add.html:18
+msgid "Add New Event"
+msgstr "Neuen Termin hinzufügen"
+
+#: events/templates/events/add.html:19
+msgid "Plan and manage your professional events"
+msgstr "Plane und verwalte deine beruflichen Termine"
+
+#: events/templates/events/add.html:52
+msgid "Save Event"
+msgstr "Termin speichern"
+
+#: events/templates/events/delete.html:9
+msgid "Delete Event"
+msgstr "Termin löschen"
+
+#: events/templates/events/delete.html:12
+msgid "Are you sure you want to delete this event?"
+msgstr "Möchtest du diesen Termin wirklich löschen?"
+
+#: events/templates/events/detail.html:22
+msgid "Event Type"
+msgstr "Terminart"
+
+#: events/templates/events/detail.html:33 events/templates/events/list.html:58
+msgid "Related Job Posting"
+msgstr "Zugehörige Stellenausschreibung"
+
+#: events/templates/events/detail.html:38
+#, python-format
+msgid "%(object.job_posting.title)s at %(object.job_posting.company)s"
+msgstr "%(object.job_posting.title)s bei %(object.job_posting.company)s"
+
+#: events/templates/events/detail.html:73 events/templates/events/edit.html:11
+#: events/templates/events/list.html:136
+msgid "Edit Event"
+msgstr "Termin bearbeiten"
+
+#: events/templates/events/list.html:11 home/context_processors.py:8
+msgid "Events"
+msgstr "Termine"
+
+#: events/templates/events/list.html:12
+msgid "Manage your upcoming events and meetings"
+msgstr "Verwalte deine anstehenden Termine und Besprechungen"
+
+#: events/templates/events/list.html:20
+msgid "List"
+msgstr "Liste"
+
+#: events/templates/events/list.html:25
+msgid "Calendar"
+msgstr "Kalender"
+
+#: events/templates/events/list.html:32
+msgid "Add Event"
+msgstr "Termin hinzufügen"
+
+#: events/templates/events/list.html:54
+msgid "Event"
+msgstr "Termin"
+
+#: events/templates/events/list.html:55 home/templates/home/home.html:219
+msgid "Type"
+msgstr "Art"
+
+#: events/templates/events/list.html:56
+msgid "Date and Time"
+msgstr "Datum und Uhrzeit"
+
+#: events/templates/events/list.html:109
+msgid "No events added yet"
+msgstr "Noch keine Termine hinzugefügt"
+
+#: events/templates/events/list.html:115
+msgid "Schedule your first event"
+msgstr "Plane deinen ersten Termin"
+
+#: events/templates/events/list.html:137 events/templates/events/list.html:141
+#: home/templates/home/home.html:174 home/templates/home/home.html:241
+msgid "Close"
+msgstr "Schließen"
+
+#: home/context_processors.py:6
+
+msgid "Overview"
+msgstr "Übersicht"
+
+#: home/context_processors.py:7 jobs/templates/jobs/list.html:20
+msgid "Jobs"
+msgstr "Stellen"
+
+#: home/context_processors.py:10
+msgid "AI Assistant"
+msgstr "KI-Assistent"
+
+#: home/templates/home/home.html:13
+#, python-format
+msgid ""
+"Hi, <span class=\"text-primary\">%(user.username)s</span>! Welcome back."
+msgstr ""
+"Hi, <span class=\"text-primary\">%(user.username)s</span>! Willkommen zurück."
+
+#: home/templates/home/home.html:23 home/templates/home/home.html:157
+msgid "Quick add"
+msgstr "Schnell hinzufügen"
+
+#: home/templates/home/home.html:36
+msgid "Active applications"
+msgstr "Aktive Bewerbungen"
+
+#: home/templates/home/home.html:43
+msgid "Upcoming events"
+msgstr "Anstehende Termine"
+
+#: home/templates/home/home.html:50
+msgid "Your network"
+msgstr "Dein Netzwerk"
+
+#: home/templates/home/home.html:57
+msgid "Overall success"
+msgstr "Gesamterfolg"
+
+#: home/templates/home/home.html:66
+msgid "Your application progress"
+msgstr "Dein Bewerbungsfortschritt"
+
+#: home/templates/home/home.html:67
+#, python-format
+msgid "%(success_rate)s%% success"
+msgstr "%(success_rate)s %% Erfolg"
+
+#: home/templates/home/home.html:143
+#, python-format
+msgid "Explore all %(title)s"
+msgstr "Alle %(title)s entdecken"
+
+#: home/templates/home/home.html:161
+msgid "Add job application"
+msgstr "Stellenbewerbung hinzufügen"
+
+#: home/templates/home/home.html:165
+msgid "Add event"
+msgstr "Termin hinzufügen"
+
+#: home/templates/home/home.html:169
+msgid "Add contact"
+msgstr "Kontakt hinzufügen"
+
+#: home/templates/home/home.html:189
+msgid "Find what you need"
+msgstr "Finde, was du suchst"
+
+#: home/templates/home/home.html:203
+msgid "Search suggestions"
+msgstr "Suchvorschläge"
+
+#: home/templates/home/home.html:212 jobs/components/job_form.html:135
+#: jobs/templates/jobs/partials/form_fields.html:113
+#: jobs/templates/jobs/partials/job_table.html:12
+msgid "Status"
+msgstr "Status"
+
+#: home/templates/home/home.html:229
+msgid "Apply filters"
+msgstr "Filter anwenden"
+
+#: home/templates/home/home.html:234
+msgid "Clear all"
+msgstr "Alle löschen"
+
+#: jobs/components/job_card_list.html:14
+#: jobs/templates/jobs/partials/job_table.html:106
+msgid "No matching jobs found"
+msgstr "Keine passenden Stellen gefunden"
+
+#: jobs/components/job_detail.html:27 jobs/components/job_form.html:117
+#: jobs/templates/jobs/detail.html:33
+#: jobs/templates/jobs/partials/form_fields.html:105
+msgid "Salary Range"
+msgstr "Gehaltsspanne"
+
+#: jobs/components/job_detail.html:34 jobs/components/job_form.html:108
+#: jobs/templates/jobs/detail.html:40
+msgid "Job URL"
+msgstr "Job-URL"
+
+#: jobs/components/job_detail.html:37
+msgid "View original posting"
+msgstr "Originale Stellenausschreibung ansehen"
+
+#: jobs/components/job_detail.html:45 jobs/forms.py:86 jobs/models.py:49
+#: jobs/templates/jobs/detail.html:51
+#: jobs/templates/jobs/partials/form_fields.html:122
+#: jobs/templates/jobs/partials/job_table.html:11
+msgid "Skills"
+msgstr "Fähigkeiten"
+
+#: jobs/components/job_detail.html:60 jobs/templates/jobs/detail.html:65
+msgid "Description"
+msgstr "Beschreibung"
+
+#: jobs/components/job_detail.html:87 jobs/templates/jobs/detail.html:92
+msgid "Remove from favorites"
+msgstr "Aus Favoriten entfernen"
+
+#: jobs/components/job_detail.html:90 jobs/templates/jobs/detail.html:95
+msgid "Add to favorites"
+msgstr "Zu Favoriten hinzufügen"
+
+#: jobs/components/job_detail.html:95 jobs/templates/jobs/detail.html:100
+msgid "Back to list"
+msgstr "Zurück zur Liste"
+
+#: jobs/components/job_detail.html:98
+msgid "Edit Job"
+msgstr "Stelle bearbeiten"
+
+#: jobs/components/job_form.html:25
+#: jobs/templates/jobs/partials/form_fields.html:10
+#: jobs/templates/jobs/sections/ai_section.html:5
+msgid "Quick Fill with AI"
+msgstr "Schnelles Ausfüllen mit KI"
+
+#: jobs/components/job_form.html:32
+#: jobs/templates/jobs/sections/ai_section.html:11
+msgid "Paste job posting"
+msgstr "Stellenausschreibung einfügen"
+
+#: jobs/components/job_form.html:33
+msgid "AI extracts the details"
+msgstr "Die KI extrahiert die Details"
+
+#: jobs/components/job_form.html:38
+msgid "Paste job posting here ..."
+msgstr "Stellenausschreibung hier einfügen …"
+
+#: jobs/components/job_form.html:46
+msgid "Fill with AI"
+msgstr "Mit KI ausfüllen"
+
+#: jobs/components/job_form.html:58
+#: jobs/templates/jobs/partials/form_fields.html:68
+msgid "Basic Information"
+msgstr "Grundlegende Informationen"
+
+#: jobs/components/job_form.html:64
+#: jobs/templates/jobs/partials/form_fields.html:73
+#: jobs/templates/jobs/partials/job_table.html:10
+msgid "Job Title"
+msgstr "Stellenbezeichnung"
+
+#: jobs/components/job_form.html:67
+msgid "Enter the official job title from the posting"
+msgstr "Gib die offizielle Stellenbezeichnung aus der Ausschreibung ein"
+
+#: jobs/components/job_form.html:89
+msgid "City, state or remote"
+msgstr "Stadt, Bundesland oder remote"
+
+#: jobs/components/job_form.html:102
+#: jobs/templates/jobs/sections/additional_details.html:2
+msgid "Additional Details"
+msgstr "Weitere Details"
+
+#: jobs/components/job_form.html:131
+#: jobs/templates/jobs/sections/status_section.html:2
+msgid "Application Status"
+msgstr "Bewerbungsstatus"
+
+#: jobs/components/job_form.html:148 jobs/components/job_form.html:153
+#: jobs/templates/jobs/partials/form_fields.html:134
+#: jobs/templates/jobs/sections/description_section.html:2
+#: jobs/templates/jobs/sections/description_section.html:11
+msgid "Job Description"
+msgstr "Stellenbeschreibung"
+
+#: jobs/components/job_form.html:154
+msgid "Markdown supported"
+msgstr "Markdown unterstützt"
+
+#: jobs/components/job_form.html:170
+#: jobs/templates/jobs/partials/form_fields.html:125
+#: jobs/templates/jobs/sections/skills_section.html:2
+msgid "Required Skills"
+msgstr "Erforderliche Fähigkeiten"
+
+#: jobs/components/job_form.html:176
+#: jobs/templates/jobs/modals/skills_modal.html:11
+msgid "Manage Skills"
+msgstr "Fähigkeiten verwalten"
+
+#: jobs/components/job_form.html:184
+msgid "Click on \"Manage Skills\" to add required skills"
+msgstr ""
+"Klicke auf „Fähigkeiten verwalten“, um erforderliche Fähigkeiten hinzuzufügen"
+
+#: jobs/forms.py:80
+msgid "Job title"
+msgstr "Stellenbezeichnung"
+
+#: jobs/forms.py:83
+msgid "Salary range"
+msgstr "Gehaltsspanne"
+
+#: jobs/forms.py:84 jobs/templates/jobs/partials/form_fields.html:97
+msgid "Job posting URL"
+msgstr "URL der Stellenausschreibung"
+
+#: jobs/forms.py:85
+msgid "Job description"
+msgstr "Stellenbeschreibung"
+
+#: jobs/forms.py:87
+msgid "Application status"
+msgstr "Bewerbungsstatus"
+
+#: jobs/models.py:30
+msgid "Icon code (e.g. skill-icons:python)"
+msgstr "Icon-Code (z. B. skill-icons:python)"
+
+#: jobs/models.py:34
+msgid "Detailed description of the skill"
+msgstr "Detaillierte Beschreibung der Fähigkeit"
+
+#: jobs/models.py:38
+msgid "Enter hierarchical tags (e.g. programming/python/django)"
+msgstr "Hierarchische Tags eingeben (z. B. programming/python/django)"
+
+#: jobs/models.py:48
+msgid "Skill"
+msgstr "Fähigkeit"
+
+#: jobs/models.py:97 jobs/templates/jobs/modals/skills_modal.html:93
+msgid "Required"
+msgstr "Erforderlich"
+
+#: jobs/models.py:98 jobs/templates/jobs/modals/skills_modal.html:94
+msgid "Preferred"
+msgstr "Bevorzugt"
+
+#: jobs/models.py:99 jobs/templates/jobs/modals/skills_modal.html:95
+msgid "Nice to have"
+msgstr "Wünschenswert"
+
+#: jobs/models.py:120
+msgid "Job skills"
+msgstr "Fähigkeiten der Stelle"
+
+#: jobs/models.py:144
+msgid "Interested"
+msgstr "Interessiert"
+
+#: jobs/models.py:145
+msgid "Applied"
+msgstr "Beworben"
+
+#: jobs/models.py:146
+msgid "Interviewing"
+msgstr "Vorstellungsgespräch"
+
+#: jobs/models.py:147
+msgid "Rejected"
+msgstr "Abgelehnt"
+
+#: jobs/models.py:148
+msgid "Accepted"
+msgstr "Angenommen"
+
+#: jobs/models.py:162
+msgid "Skills linked to this job posting"
+msgstr "Mit dieser Stellenausschreibung verknüpfte Fähigkeiten"
+
+#: jobs/templates/jobs/add.html:17
+msgid "Add a new job"
+msgstr "Neue Stelle hinzufügen"
+
+#: jobs/templates/jobs/add.html:18
+msgid "Track and manage your application"
+msgstr "Verfolge und verwalte deine Bewerbung"
+
+#: jobs/templates/jobs/add.html:41 jobs/templates/jobs/edit.html:35
+msgid "Required fields"
+msgstr "Erforderliche Felder"
+
+#: jobs/templates/jobs/add.html:53
+msgid "Save job"
+msgstr "Stelle speichern"
+
+#: jobs/templates/jobs/delete.html:9
+msgid "Delete job"
+msgstr "Stelle löschen"
+
+#: jobs/templates/jobs/delete.html:12
+#: jobs/templates/jobs/partials/job_table.html:88
+msgid "Are you sure you want to delete this job?"
+msgstr "Möchtest du diese Stelle wirklich löschen?"
+
+#: jobs/templates/jobs/detail.html:43
+msgid "View original job posting"
+msgstr "Originale Stellenausschreibung ansehen"
+
+#: jobs/templates/jobs/detail.html:103 jobs/templates/jobs/edit.html:15
+msgid "Edit job"
+msgstr "Stelle bearbeiten"
+
+#: jobs/templates/jobs/edit.html:16
+msgid "Update job details and status"
+msgstr "Stellendetails und Status aktualisieren"
+
+#: jobs/templates/jobs/edit.html:47
+#: jobs/templates/jobs/modals/skills_modal.html:111
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: jobs/templates/jobs/favorites.html:13
+msgid "Favorite Jobs"
+msgstr "Favorisierte Stellen"
+
+#: jobs/templates/jobs/favorites.html:16
+msgid "Back to all jobs"
+msgstr "Zurück zu allen Stellen"
+
+#: jobs/templates/jobs/favorites.html:29
+msgid "No favorite jobs yet"
+msgstr "Noch keine favorisierten Stellen"
+
+#: jobs/templates/jobs/favorites.html:30
+msgid ""
+"Start marking jobs as favorites to keep track of the ones you're most "
+"interested in."
+msgstr ""
+"Markiere Stellen als Favoriten, um den Überblick über diejenigen zu "
+"behalten, die dich am meisten interessieren."
+
+#: jobs/templates/jobs/favorites.html:33
+msgid "Browse jobs"
+msgstr "Stellen durchsuchen"
+
+#: jobs/templates/jobs/list.html:27
+msgid "Track and manage your applications"
+msgstr "Verfolge und verwalte deine Bewerbungen"
+
+#: jobs/templates/jobs/list.html:34
+msgid "Add job"
+msgstr "Stelle hinzufügen"
+
+#: jobs/templates/jobs/list.html:67
+msgid "Start tracking your applications and organize everything in one place"
+msgstr "Verfolge deine Bewerbungen und organisiere alles an einem Ort"
+
+#: jobs/templates/jobs/list.html:72
+msgid "Add your first job"
+msgstr "Füge deine erste Stelle hinzu"
+
+#: jobs/templates/jobs/modals/skills_modal.html:23
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:43
+msgid "Search skills ..."
+msgstr "Fähigkeiten suchen …"
+
+#: jobs/templates/jobs/modals/skills_modal.html:84
+msgid "Selected Skills"
+msgstr "Ausgewählte Fähigkeiten"
+
+#: jobs/templates/jobs/partials/form_fields.html:17
+#: jobs/templates/jobs/sections/ai_section.html:25
+msgid "Process with AI"
+msgstr "Mit KI verarbeiten"
+
+#: jobs/templates/jobs/partials/form_fields.html:33
+msgid "Job details successfully extracted!"
+msgstr "Stellendetails erfolgreich extrahiert!"
+
+#: jobs/templates/jobs/sections/ai_section.html:12
+msgid "(AI will extract details)"
+msgstr "(Die KI extrahiert die Details)"
+
+#: jobs/templates/jobs/sections/ai_section.html:17
+msgid "Paste the job description here..."
+msgstr "Füge die Stellenbeschreibung hier ein …"
+
+#: jobs/templates/jobs/sections/description_section.html:12
+msgid "(Markdown supported)"
+msgstr "(Markdown unterstützt)"
+
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:23
+msgid "Search"
+msgstr "Suchen"
+
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:29
+msgid "Categories"
+msgstr "Kategorien"
+
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:69
+msgid "Proficiency Level"
+msgstr "Kenntnisstufe"
+
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:82
+#: templates/account/email.html:50
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:16
+#: templates/mfa/webauthn/authenticator_list.html:60
+#: templates/socialaccount/connections.html:40
+msgid "Remove"
+msgstr "Entfernen"
+
+#: jobs/templates/jobs/widgets/skill_tree_widget.html:90
+msgid "No skills found matching your search"
+msgstr "Keine Fähigkeiten gefunden, die deiner Suche entsprechen"
+
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:9
+msgid "Account Inactive"
+msgstr "Konto inaktiv"
+
+#: templates/account/account_inactive.html:12
+msgid "This account is inactive."
+msgstr "Dieses Konto ist inaktiv."
+
+#: templates/account/base_reauthenticate.html:5
+#: templates/account/base_reauthenticate.html:9
+msgid "Confirm Access"
+msgstr "Zugriff bestätigen"
+
+#: templates/account/base_reauthenticate.html:12
+msgid "Please reauthenticate to safeguard your account."
+msgstr "Bitte authentifiziere dich erneut, um dein Konto zu schützen."
+
+#: templates/account/base_reauthenticate.html:19
+#: templates/mfa/authenticate.html:37
+msgid "Alternative options"
+msgstr "Alternative Optionen"
+
+#: templates/account/confirm_email_verification_code.html:5
+msgid "Email Verification"
+msgstr "E-Mail-Verifizierung"
+
+#: templates/account/confirm_email_verification_code.html:9
+msgid "Enter Email Verification Code"
+msgstr "E-Mail-Verifizierungscode eingeben"
+
+#: templates/account/confirm_email_verification_code.html:15
+#: templates/account/confirm_login_code.html:15
+#, python-format
+msgid ""
+"We’ve sent a code to %(email_link)s. The code expires shortly, so please "
+"enter it soon."
+msgstr ""
+"Wir haben einen Code an %(email_link)s gesendet. Der Code läuft kurzfristig "
+"ab, gib ihn daher bitte bald ein."
+
+#: templates/account/confirm_email_verification_code.html:27
+#: templates/account/email_confirm.html:24
+#: templates/account/reauthenticate.html:18
+#: templates/mfa/reauthenticate.html:18
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: templates/account/confirm_login_code.html:5
+#: templates/account/confirm_login_code.html:27 templates/account/login.html:8
+#: templates/account/request_login_code.html:5
+#: templates/allauth/layouts/base.html:57 templates/mfa/authenticate.html:6
+#: templates/mfa/authenticate.html:24 templates/openid/login.html:5
+#: templates/openid/login.html:9 templates/openid/login.html:20
+#: templates/socialaccount/login_redirect.html:5
+msgid "Sign In"
+msgstr "Anmelden"
+
+#: templates/account/confirm_login_code.html:9
+msgid "Enter Sign-In Code"
+msgstr "Anmeldecode eingeben"
+
+#: templates/account/email.html:4 templates/account/email.html:8
+msgid "Email Addresses"
+msgstr "E-Mail-Adressen"
+
+#: templates/account/email.html:12
+msgid "The following email addresses are associated with your account:"
+msgstr "Die folgenden E-Mail-Adressen sind mit deinem Konto verknüpft:"
+
+#: templates/account/email.html:25
+msgid "Verified"
+msgstr "Verifiziert"
+
+#: templates/account/email.html:29
+msgid "Unverified"
+msgstr "Nicht verifiziert"
+
+#: templates/account/email.html:34
+msgid "Primary"
+msgstr "Primär"
+
+#: templates/account/email.html:44
+msgid "Make Primary"
+msgstr "Als primär festlegen"
+
+#: templates/account/email.html:47 templates/account/email_change.html:37
+msgid "Re-send Verification"
+msgstr "Verifizierung erneut senden"
+
+#: templates/account/email.html:59
+msgid "Add Email Address"
+msgstr "E-Mail-Adresse hinzufügen"
+
+#: templates/account/email.html:70
+msgid "Add Email"
+msgstr "E-Mail hinzufügen"
+
+#: templates/account/email.html:79
+msgid "Do you really want to remove the selected email address?"
+msgstr "Möchtest du die ausgewählte E-Mail-Adresse wirklich entfernen?"
+
+#: templates/account/email/account_already_exists_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you or someone else tried to signup for "
+"an\n"
+"account using email address:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"However, an account using that email address already exists.  In case you "
+"have\n"
+"forgotten about this, please use the password forgotten procedure to "
+"recover\n"
+"your account:\n"
+"\n"
+"%(password_reset_url)s"
+msgstr ""
+"du erhältst diese E-Mail, weil du oder jemand anderes versucht hat, ein\n"
+"Konto mit der folgenden E-Mail-Adresse zu registrieren:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"Es existiert jedoch bereits ein Konto mit dieser E-Mail-Adresse. Falls du\n"
+"dies vergessen hast, nutze bitte die Funktion „Passwort vergessen“, um dein\n"
+"Konto wiederherzustellen:\n"
+"\n"
+"%(password_reset_url)s"
+
+#: templates/account/email/account_already_exists_subject.txt:3
+msgid "Account Already Exists"
+msgstr "Konto existiert bereits"
+
+#: templates/account/email/base_message.txt:1
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "Hallo von %(site_name)s!"
+
+#: templates/account/email/base_message.txt:5
+#, python-format
+msgid ""
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s"
+msgstr ""
+"Danke, dass du %(site_name)s nutzt!\n"
+"%(site_domain)s"
+
+#: templates/account/email/base_notification.txt:5
+msgid ""
+"You are receiving this mail because the following change was made to your "
+"account:"
+msgstr ""
+"Du erhältst diese E-Mail, weil die folgende Änderung an deinem Konto "
+"vorgenommen wurde:"
+
+#: templates/account/email/base_notification.txt:10
+#, python-format
+msgid ""
+"If you do not recognize this change then please take proper security "
+"precautions immediately. The change to your account originates from:\n"
+"\n"
+"- IP address: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Date: %(timestamp)s"
+msgstr ""
+"Wenn du diese Änderung nicht erkennst, triff bitte sofort entsprechende "
+"Sicherheitsmaßnahmen. Die Änderung an deinem Konto stammt von:\n"
+"\n"
+"- IP-Adresse: %(ip)s\n"
+"- Browser: %(user_agent)s\n"
+"- Datum: %(timestamp)s"
+
+#: templates/account/email/email_changed_message.txt:4
+#, python-format
+msgid "Your email has been changed from %(from_email)s to %(to_email)s."
+msgstr ""
+"Deine E-Mail-Adresse wurde von %(from_email)s zu %(to_email)s geändert."
+
+#: templates/account/email/email_changed_subject.txt:3
+msgid "Email Changed"
+msgstr "E-Mail-Adresse geändert"
+
+#: templates/account/email/email_confirm_message.txt:4
+msgid "Your email has been confirmed."
+msgstr "Deine E-Mail-Adresse wurde bestätigt."
+
+#: templates/account/email/email_confirm_subject.txt:3
+msgid "Email Confirmation"
+msgstr "E-Mail-Bestätigung"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this email because user %(user_display)s has given your "
+"email address to register an account on %(site_domain)s."
+msgstr ""
+"Du erhältst diese E-Mail, weil der Benutzer %(user_display)s deine E-Mail-"
+"Adresse angegeben hat, um ein Konto auf %(site_domain)s zu registrieren."
+
+#: templates/account/email/email_confirmation_message.txt:7
+msgid ""
+"Your email verification code is listed below. Please enter it in your open "
+"browser window."
+msgstr ""
+"Dein E-Mail-Verifizierungscode steht unten. Bitte gib ihn in deinem "
+"geöffneten Browserfenster ein."
+
+#: templates/account/email/email_confirmation_message.txt:9
+#, python-format
+msgid "To confirm this is correct, go to %(activate_url)s"
+msgstr "Um zu bestätigen, dass dies korrekt ist, gehe zu %(activate_url)s"
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your Email Address"
+msgstr "Bitte bestätige deine E-Mail-Adresse"
+
+#: templates/account/email/email_deleted_message.txt:4
+#, python-format
+msgid "Email address %(deleted_email)s has been removed from your account."
+msgstr "Die E-Mail-Adresse %(deleted_email)s wurde aus deinem Konto entfernt."
+
+#: templates/account/email/email_deleted_subject.txt:3
+msgid "Email Removed"
+msgstr "E-Mail-Adresse entfernt"
+
+#: templates/account/email/login_code_message.txt:5
+msgid ""
+"Your sign-in code is listed below. Please enter it in your open browser "
+"window."
+msgstr ""
+"Dein Anmeldecode steht unten. Bitte gib ihn in deinem geöffneten "
+"Browserfenster ein."
+
+#: templates/account/email/login_code_message.txt:9
+#: templates/account/email/unknown_account_message.txt:6
+msgid "This mail can be safely ignored if you did not initiate this action."
+msgstr ""
+"Diese E-Mail kann ignoriert werden, wenn du diese Aktion nicht ausgelöst "
+"hast."
+
+#: templates/account/email/login_code_subject.txt:3
+msgid "Sign-In Code"
+msgstr "Anmeldecode"
+
+#: templates/account/email/password_changed_message.txt:4
+msgid "Your password has been changed."
+msgstr "Dein Passwort wurde geändert."
+
+#: templates/account/email/password_changed_subject.txt:3
+msgid "Password Changed"
+msgstr "Passwort geändert"
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"You're receiving this email because you or someone else has requested a "
+"password reset for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+"Du erhältst diese E-Mail, weil du oder jemand anderes einen Passwort-Reset "
+"für dein Benutzerkonto angefordert hat.\n"
+"Sie kann ignoriert werden, wenn du keinen Passwort-Reset angefordert hast. "
+"Klicke auf den folgenden Link, um dein Passwort zurückzusetzen."
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Falls du es vergessen hast: Dein Benutzername ist %(username)s."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "Password Reset Email"
+msgstr "Passwort-Reset-E-Mail"
+
+#: templates/account/email/password_reset_message.txt:4
+msgid "Your password has been reset."
+msgstr "Dein Passwort wurde zurückgesetzt."
+
+#: templates/account/email/password_reset_subject.txt:3
+#: templates/account/password_reset.html:4
+#: templates/account/password_reset.html:8
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:10
+msgid "Password Reset"
+msgstr "Passwort zurücksetzen"
+
+#: templates/account/email/password_set_message.txt:4
+msgid "Your password has been set."
+msgstr "Dein Passwort wurde festgelegt."
+
+#: templates/account/email/password_set_subject.txt:3
+msgid "Password Set"
+msgstr "Passwort festgelegt"
+
+#: templates/account/email/unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this email because you, or someone else, tried to access "
+"an account with email %(email)s. However, we do not have any record of such "
+"an account in our database."
+msgstr ""
+"Du erhältst diese E-Mail, weil du oder jemand anderes versucht hat, auf ein "
+"Konto mit der E-Mail-Adresse %(email)s zuzugreifen. Wir haben jedoch keinen "
+"Eintrag über ein solches Konto in unserer Datenbank."
+
+#: templates/account/email/unknown_account_message.txt:8
+msgid "If it was you, you can sign up for an account using the link below."
+msgstr ""
+"Falls du es warst, kannst du über den folgenden Link ein Konto registrieren."
+
+#: templates/account/email/unknown_account_subject.txt:3
+msgid "Unknown Account"
+msgstr "Unbekanntes Konto"
+
+#: templates/account/email_change.html:5 templates/account/email_change.html:9
+msgid "Email Address"
+msgstr "E-Mail-Adresse"
+
+#: templates/account/email_change.html:21
+#: templates/account/email_change.html:29
+msgid "Current email"
+msgstr "Aktuelle E-Mail"
+
+#: templates/account/email_change.html:31
+msgid "Changing to"
+msgstr "Änderung in"
+
+#: templates/account/email_change.html:35
+msgid "Your email address is still pending verification."
+msgstr "Deine E-Mail-Adresse wartet noch auf die Verifizierung."
+
+#: templates/account/email_change.html:41
+msgid "Cancel Change"
+msgstr "Änderung abbrechen"
+
+#: templates/account/email_change.html:49
+msgid "Change to"
+msgstr "Ändern in"
+
+#: templates/account/email_change.html:55
+#: templates/allauth/layouts/base.html:20
+msgid "Change Email"
+msgstr "E-Mail ändern"
+
+#: templates/account/email_confirm.html:6
+#: templates/account/email_confirm.html:10
+msgid "Confirm Email Address"
+msgstr "E-Mail-Adresse bestätigen"
+
+#: templates/account/email_confirm.html:16
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email "
+"address for user %(user_display)s."
+msgstr ""
+"Bitte bestätige, dass <a href=\"mailto:%(email)s\">%(email)s</a> eine E-Mail-"
+"Adresse des Benutzers %(user_display)s ist."
+
+#: templates/account/email_confirm.html:30
+#: templates/account/messages/email_confirmation_failed.txt:2
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr ""
+"%(email)s kann nicht bestätigt werden, da sie bereits von einem anderen "
+"Konto bestätigt wurde."
+
+#: templates/account/email_confirm.html:36
+#, python-format
+msgid ""
+"This email confirmation link expired or is invalid. Please <a "
+"href=\"%(email_url)s\">issue a new email confirmation request</a>."
+msgstr ""
+"Dieser E-Mail-Bestätigungslink ist abgelaufen oder ungültig. Bitte <a "
+"href=\"%(email_url)s\">fordere eine neue E-Mail-Bestätigung an</a>."
+
+#: templates/account/login.html:24
+msgid "Welcome Back!"
+msgstr "Willkommen zurück!"
+
+#: templates/account/login.html:27
+#, python-format
+msgid ""
+"New to Jobless? <a href=\"%(signup_url)s\" class=\"font-medium text-primary "
+"hover:text-primary-focus\">Create your free account</a>"
+msgstr ""
+"Neu bei Jobless? <a href=\"%(signup_url)s\" class=\"font-medium text-primary "
+"hover:text-primary-focus\">Erstelle dein kostenloses Konto</a>"
+
+#: templates/account/login.html:75
+msgid "Or use your email"
+msgstr "Oder verwende deine E-Mail"
+
+#: templates/account/login.html:83
+msgid "Your email"
+msgstr "Deine E-Mail"
+
+#: templates/account/login.html:93
+msgid "Your password"
+msgstr "Dein Passwort"
+
+#: templates/account/login.html:116
+msgid "Keep me signed in"
+msgstr "Angemeldet bleiben"
+
+#: templates/account/login.html:122
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"
+
+#: templates/account/login.html:130
+msgid "Sign In to Your Account"
+msgstr "Bei deinem Konto anmelden"
+
+#: templates/account/logout.html:5 templates/account/logout.html:13
+#: templates/account/logout.html:37 templates/allauth/layouts/base.html:50
+#: templates/usersessions/usersession_list.html:64
+msgid "Sign Out"
+msgstr "Abmelden"
+
+#: templates/account/logout.html:16
+msgid "Are you sure you want to sign out?"
+msgstr "Möchtest du dich wirklich abmelden?"
+
+#: templates/account/messages/cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary email address (%(email)s)."
+msgstr "Du kannst deine primäre E-Mail-Adresse (%(email)s) nicht entfernen."
+
+#: templates/account/messages/email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation email sent to %(email)s."
+msgstr "Bestätigungs-E-Mail an %(email)s gesendet."
+
+#: templates/account/messages/email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr "Du hast %(email)s bestätigt."
+
+#: templates/account/messages/email_deleted.txt:2
+#, python-format
+msgid "Removed email address %(email)s."
+msgstr "E-Mail-Adresse %(email)s entfernt."
+
+#: templates/account/messages/logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr "Erfolgreich als %(name)s angemeldet."
+
+#: templates/account/messages/logged_out.txt:2
+msgid "You have signed out."
+msgstr "Du hast dich abgemeldet."
+
+#: templates/account/messages/login_code_sent.txt:2
+#, python-format
+msgid "A sign-in code has been mailed to %(email)s."
+msgstr "Ein Anmeldecode wurde an %(email)s gesendet."
+
+#: templates/account/messages/password_changed.txt:2
+msgid "Password successfully changed."
+msgstr "Passwort erfolgreich geändert."
+
+#: templates/account/messages/password_set.txt:2
+msgid "Password successfully set."
+msgstr "Passwort erfolgreich festgelegt."
+
+#: templates/account/messages/primary_email_set.txt:2
+msgid "Primary email address set."
+msgstr "Primäre E-Mail-Adresse festgelegt."
+
+#: templates/account/messages/unverified_primary_email.txt:2
+msgid "Your primary email address must be verified."
+msgstr "Deine primäre E-Mail-Adresse muss verifiziert werden."
+
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:20
+#: templates/account/password_reset_from_key.html:5
+#: templates/account/password_reset_from_key.html:12
+#: templates/account/password_reset_from_key.html:30
+#: templates/account/password_reset_from_key_done.html:5
+#: templates/account/password_reset_from_key_done.html:9
+#: templates/allauth/layouts/base.html:26
+msgid "Change Password"
+msgstr "Passwort ändern"
+
+#: templates/account/password_change.html:22
+msgid "Forgot Password?"
+msgstr "Passwort vergessen?"
+
+#: templates/account/password_reset.html:14
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll send you "
+"an email allowing you to reset it."
+msgstr ""
+"Passwort vergessen? Gib unten deine E-Mail-Adresse ein, und wir senden dir "
+"eine E-Mail, mit der du es zurücksetzen kannst."
+
+#: templates/account/password_reset.html:25
+msgid "Reset My Password"
+msgstr "Passwort zurücksetzen"
+
+#: templates/account/password_reset.html:30
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+"Kontaktiere uns, falls du Probleme beim Zurücksetzen deines Passworts hast."
+
+#: templates/account/password_reset_done.html:16
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+"Wir haben dir eine E-Mail gesendet. Wenn du sie nicht erhalten hast, prüfe "
+"bitte deinen Spam-Ordner. Andernfalls kontaktiere uns, wenn sie nach wenigen "
+"Minuten nicht angekommen ist."
+
+#: templates/account/password_reset_from_key.html:10
+msgid "Bad Token"
+msgstr "Ungültiger Token"
+
+#: templates/account/password_reset_from_key.html:18
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+"Der Passwort-Reset-Link war ungültig, möglicherweise weil er bereits "
+"verwendet wurde. Bitte fordere einen <a href=\"%(passwd_reset_url)s\">neuen "
+"Passwort-Reset</a> an."
+
+#: templates/account/password_reset_from_key_done.html:12
+msgid "Your password is now changed."
+msgstr "Dein Passwort wurde jetzt geändert."
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:9
+#: templates/account/password_set.html:21
+msgid "Set Password"
+msgstr "Passwort festlegen"
+
+#: templates/account/reauthenticate.html:6
+msgid "Enter your password:"
+msgstr "Gib dein Passwort ein:"
+
+#: templates/account/request_login_code.html:9
+msgid "Mail me a sign-in code"
+msgstr "Sende mir einen Anmeldecode per E-Mail"
+
+#: templates/account/request_login_code.html:12
+msgid ""
+"You will receive an email containing a special code for a password-free sign-"
+"in."
+msgstr ""
+"Du erhältst eine E-Mail mit einem speziellen Code für eine Anmeldung ohne "
+"Passwort."
+
+#: templates/account/request_login_code.html:24
+msgid "Request Code"
+msgstr "Code anfordern"
+
+#: templates/account/request_login_code.html:30
+msgid "Other sign-in options"
+msgstr "Weitere Anmeldeoptionen"
+
+#: templates/account/signup.html:7 templates/account/signup_by_passkey.html:29
+#: templates/allauth/layouts/base.html:63
+msgid "Sign Up"
+msgstr "Registrieren"
+
+#: templates/account/signup.html:23
+msgid "Join Jobless Today"
+msgstr "Werde heute Teil von Jobless"
+
+#: templates/account/signup.html:26
+#, python-format
+msgid ""
+"Already a member? <a href=\"%(login_url)s\" class=\"font-medium text-primary "
+"hover:text-primary-focus\">Sign in to your account</a>"
+msgstr ""
+"Bereits Mitglied? <a href=\"%(login_url)s\" class=\"font-medium text-primary "
+"hover:text-primary-focus\">Melde dich bei deinem Konto an</a>"
+
+#: templates/account/signup.html:74
+msgid "Or create an account with email"
+msgstr "Oder erstelle ein Konto mit E-Mail"
+
+#: templates/account/signup.html:126
+msgid "Get Started Now"
+msgstr "Jetzt loslegen"
+
+#: templates/account/signup_by_passkey.html:4
+msgid "Signup"
+msgstr "Registrierung"
+
+#: templates/account/signup_by_passkey.html:8
+msgid "Passkey Sign Up"
+msgstr "Mit Passkey registrieren"
+
+#: templates/account/signup_by_passkey.html:17
+#, python-format
+msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
+msgstr "Du hast bereits ein Konto? Dann bitte %(link)sanmelden%(end_link)s."
+
+#: templates/account/signup_by_passkey.html:36
+msgid "Other options"
+msgstr "Weitere Optionen"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr "Registrierung geschlossen"
+
+#: templates/account/signup_closed.html:12
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "Es tut uns leid, aber die Registrierung ist derzeit geschlossen."
+
+#: templates/account/snippets/already_logged_in.html:7
+msgid "Note"
+msgstr "Hinweis"
+
+#: templates/account/snippets/already_logged_in.html:7
+#, python-format
+msgid "You are already logged in as %(user_display)s."
+msgstr "Du bist bereits als %(user_display)s angemeldet."
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid "Warning:"
+msgstr "Warnung:"
+
+#: templates/account/snippets/warn_no_email.html:3
+msgid ""
+"You currently do not have any email address set up. You should really add an "
+"email address so you can receive notifications, reset your password, etc."
+msgstr ""
+"Du hast derzeit keine E-Mail-Adresse hinterlegt. Du solltest wirklich eine E-"
+"Mail-Adresse hinzufügen, damit du Benachrichtigungen erhalten und dein "
+"Passwort zurücksetzen kannst."
+
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:9
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:9
+msgid "Verify Your Email Address"
+msgstr "Bestätige deine E-Mail-Adresse"
+
+#: templates/account/verification_sent.html:12
+msgid ""
+"We have sent an email to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification email in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification email within a few minutes."
+msgstr ""
+"Wir haben dir eine E-Mail zur Verifizierung gesendet. Folge dem darin "
+"enthaltenen Link, um die Registrierung abzuschließen. Wenn du die "
+"Verifizierungs-E-Mail nicht in deinem Haupt-Posteingang siehst, prüfe deinen "
+"Spam-Ordner. Bitte kontaktiere uns, wenn du die Verifizierungs-E-Mail nicht "
+"innerhalb weniger Minuten erhältst."
+
+#: templates/account/verified_email_required.html:13
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your email address. "
+msgstr ""
+"Dieser Bereich der Website erfordert, dass wir überprüfen,\n"
+"ob du wirklich die Person bist, für die du dich ausgibst. Zu diesem Zweck\n"
+"ist es erforderlich, dass du den Besitz deiner E-Mail-Adresse bestätigst. "
+
+#: templates/account/verified_email_required.html:18
+msgid ""
+"We have sent an email to you for\n"
+"verification. Please click on the link inside that email. If you do not see "
+"the verification email in your main inbox, check your spam folder. "
+"Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+"Wir haben dir eine E-Mail zur\n"
+"Verifizierung gesendet. Bitte klicke auf den Link in dieser E-Mail. Wenn du "
+"die Verifizierungs-E-Mail nicht in deinem Haupt-Posteingang siehst, prüfe "
+"deinen Spam-Ordner. Andernfalls\n"
+"kontaktiere uns, wenn du sie nicht innerhalb weniger Minuten erhältst."
+
+#: templates/account/verified_email_required.html:23
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your "
+"email address</a>."
+msgstr ""
+"<strong>Hinweis:</strong> du kannst deine E-Mail-Adresse weiterhin <a "
+"href=\"%(email_url)s\">ändern</a>."
+
+#: templates/allauth/layouts/base.html:7
+msgid "Messages:"
+msgstr "Nachrichten:"
+
+#: templates/allauth/layouts/base.html:14
+msgid "Menu:"
+msgstr "Menü:"
+
+#: templates/allauth/layouts/base.html:32
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:9
+msgid "Account Connections"
+msgstr "Kontoverknüpfungen"
+
+#: templates/allauth/layouts/base.html:38 templates/mfa/authenticate.html:10
+#: templates/mfa/index.html:5 templates/mfa/index.html:9
+msgid "Two-Factor Authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
+
+#: templates/allauth/layouts/base.html:44
+#: templates/usersessions/usersession_list.html:6
+#: templates/usersessions/usersession_list.html:10
+msgid "Sessions"
+msgstr "Sitzungen"
+
+#: templates/base.html:383 templates/base.html:426
+msgid "Online"
+msgstr "Online"
+
+#: templates/base.html:479
+msgid "Theme"
+msgstr "Design"
+
+#: templates/base.html:518
+msgid "Favorites"
+msgstr "Favoriten"
+
+#: templates/base.html:523
+msgid "Language"
+msgstr "Sprache"
+
+#: templates/base.html:534
+msgid "Log out"
+msgstr "Abmelden"
+
+#: templates/base.html:555
+msgid "Log in"
+msgstr "Anmelden"
+
+#: templates/mfa/authenticate.html:13
+msgid ""
+"Your account is protected by two-factor authentication. Please enter an "
+"authenticator code:"
+msgstr ""
+"Dein Konto ist durch Zwei-Faktor-Authentifizierung geschützt. Bitte gib "
+"einen Authentifizierungscode ein:"
+
+#: templates/mfa/authenticate.html:41
+#: templates/mfa/webauthn/reauthenticate.html:15
+msgid "Use a security key"
+msgstr "Sicherheitsschlüssel verwenden"
+
+#: templates/mfa/email/recovery_codes_generated_message.txt:4
+msgid ""
+"A new set of Two-Factor Authentication recovery codes has been generated."
+msgstr ""
+"Ein neuer Satz Wiederherstellungscodes für die Zwei-Faktor-Authentifizierung "
+"wurde generiert."
+
+#: templates/mfa/email/recovery_codes_generated_subject.txt:3
+msgid "New Recovery Codes Generated"
+msgstr "Neue Wiederherstellungscodes generiert"
+
+#: templates/mfa/email/totp_activated_message.txt:4
+#: templates/mfa/messages/totp_activated.txt:2
+msgid "Authenticator app activated."
+msgstr "Authenticator-App aktiviert."
+
+#: templates/mfa/email/totp_activated_subject.txt:3
+msgid "Authenticator App Activated"
+msgstr "Authenticator-App aktiviert"
+
+#: templates/mfa/email/totp_deactivated_message.txt:4
+#: templates/mfa/messages/totp_deactivated.txt:2
+msgid "Authenticator app deactivated."
+msgstr "Authenticator-App deaktiviert."
+
+#: templates/mfa/email/totp_deactivated_subject.txt:3
+msgid "Authenticator App Deactivated"
+msgstr "Authenticator-App deaktiviert"
+
+#: templates/mfa/email/webauthn_added_message.txt:4
+msgid "A new security key has been added."
+msgstr "Ein neuer Sicherheitsschlüssel wurde hinzugefügt."
+
+#: templates/mfa/email/webauthn_added_subject.txt:3
+msgid "Security Key Added"
+msgstr "Sicherheitsschlüssel hinzugefügt"
+
+#: templates/mfa/email/webauthn_removed_message.txt:4
+msgid "A security key has been removed."
+msgstr "Ein Sicherheitsschlüssel wurde entfernt."
+
+#: templates/mfa/email/webauthn_removed_subject.txt:3
+msgid "Security Key Removed"
+msgstr "Sicherheitsschlüssel entfernt"
+
+#: templates/mfa/index.html:14 templates/mfa/totp/base.html:4
+msgid "Authenticator App"
+msgstr "Authenticator-App"
+
+#: templates/mfa/index.html:19
+msgid "Authentication using an authenticator app is active."
+msgstr "Authentifizierung über eine Authenticator-App ist aktiv."
+
+#: templates/mfa/index.html:23
+msgid "An authenticator app is not active."
+msgstr "Eine Authenticator-App ist nicht aktiv."
+
+#: templates/mfa/index.html:32 templates/mfa/totp/deactivate_form.html:24
+msgid "Deactivate"
+msgstr "Deaktivieren"
+
+#: templates/mfa/index.html:36 templates/mfa/totp/activate_form.html:32
+msgid "Activate"
+msgstr "Aktivieren"
+
+#: templates/mfa/index.html:45 templates/mfa/webauthn/authenticator_list.html:8
+#: templates/mfa/webauthn/base.html:4
+msgid "Security Keys"
+msgstr "Sicherheitsschlüssel"
+
+#: templates/mfa/index.html:50
+#, python-format
+msgid "You have added %(count)s security key."
+msgid_plural "You have added %(count)s security keys."
+msgstr[0] "Du hast %(count)s Sicherheitsschlüssel hinzugefügt."
+msgstr[1] "Du hast %(count)s Sicherheitsschlüssel hinzugefügt."
+
+#: templates/mfa/index.html:54
+#: templates/mfa/webauthn/authenticator_list.html:12
+msgid "No security keys have been added."
+msgstr "Es wurden keine Sicherheitsschlüssel hinzugefügt."
+
+#: templates/mfa/index.html:62
+msgid "Manage"
+msgstr "Verwalten"
+
+#: templates/mfa/index.html:67 templates/mfa/webauthn/add_form.html:18
+#: templates/mfa/webauthn/authenticator_list.html:70
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: templates/mfa/index.html:77 templates/mfa/recovery_codes/base.html:4
+#: templates/mfa/recovery_codes/generate.html:6
+#: templates/mfa/recovery_codes/index.html:6
+msgid "Recovery Codes"
+msgstr "Wiederherstellungscodes"
+
+#: templates/mfa/index.html:82 templates/mfa/recovery_codes/index.html:9
+#, python-format
+msgid ""
+"There is %(unused_count)s out of %(total_count)s recovery codes available."
+msgid_plural ""
+"There are %(unused_count)s out of %(total_count)s recovery codes available."
+msgstr[0] ""
+"Es ist %(unused_count)s von %(total_count)s Wiederherstellungscodes "
+"verfügbar."
+msgstr[1] ""
+"Es sind %(unused_count)s von %(total_count)s Wiederherstellungscodes "
+"verfügbar."
+
+#: templates/mfa/index.html:86
+msgid "No recovery codes set up."
+msgstr "Keine Wiederherstellungscodes eingerichtet."
+
+#: templates/mfa/index.html:96
+msgid "View"
+msgstr "Anzeigen"
+
+#: templates/mfa/index.html:102
+msgid "Download"
+msgstr "Herunterladen"
+
+#: templates/mfa/index.html:110 templates/mfa/recovery_codes/generate.html:29
+msgid "Generate"
+msgstr "Generieren"
+
+#: templates/mfa/messages/recovery_codes_generated.txt:2
+msgid "A new set of recovery codes has been generated."
+msgstr "Ein neuer Satz Wiederherstellungscodes wurde generiert."
+
+#: templates/mfa/messages/webauthn_added.txt:2
+msgid "Security key added."
+msgstr "Sicherheitsschlüssel hinzugefügt."
+
+#: templates/mfa/messages/webauthn_removed.txt:2
+msgid "Security key removed."
+msgstr "Sicherheitsschlüssel entfernt."
+
+#: templates/mfa/reauthenticate.html:6
+msgid "Enter an authenticator code:"
+msgstr "Gib einen Authentifizierungscode ein:"
+
+#: templates/mfa/recovery_codes/generate.html:9
+msgid "You are about to generate a new set of recovery codes for your account."
+msgstr ""
+"Du bist dabei, einen neuen Satz Wiederherstellungscodes für dein Konto zu "
+"generieren."
+
+#: templates/mfa/recovery_codes/generate.html:11
+msgid "This action will invalidate your existing codes."
+msgstr "Diese Aktion macht deine vorhandenen Codes ungültig."
+
+#: templates/mfa/recovery_codes/generate.html:13
+msgid "Are you sure?"
+msgstr "Bist du sicher?"
+
+#: templates/mfa/recovery_codes/index.html:13
+msgid "Unused codes"
+msgstr "Ungenutzte Codes"
+
+#: templates/mfa/recovery_codes/index.html:25
+msgid "Download codes"
+msgstr "Codes herunterladen"
+
+#: templates/mfa/recovery_codes/index.html:30
+msgid "Generate new codes"
+msgstr "Neue Codes generieren"
+
+#: templates/mfa/totp/activate_form.html:4
+#: templates/mfa/totp/activate_form.html:8
+msgid "Activate Authenticator App"
+msgstr "Authenticator-App aktivieren"
+
+#: templates/mfa/totp/activate_form.html:11
+msgid ""
+"To protect your account with two-factor authentication, scan the QR code "
+"below with your authenticator app. Then, input the verification code "
+"generated by the app below."
+msgstr ""
+"Um dein Konto mit Zwei-Faktor-Authentifizierung zu schützen, scanne den "
+"unten stehenden QR-Code mit deiner Authenticator-App. Gib anschließend den "
+"von der App generierten Verifizierungscode unten ein."
+
+#: templates/mfa/totp/activate_form.html:21
+msgid "Authenticator secret"
+msgstr "Authenticator-Geheimnis"
+
+#: templates/mfa/totp/activate_form.html:24
+msgid ""
+"You can store this secret and use it to reinstall your authenticator app at "
+"a later time."
+msgstr ""
+"Du kannst dieses Geheimnis speichern und es später verwenden, um deine "
+"Authenticator-App neu einzurichten."
+
+#: templates/mfa/totp/deactivate_form.html:5
+#: templates/mfa/totp/deactivate_form.html:9
+msgid "Deactivate Authenticator App"
+msgstr "Authenticator-App deaktivieren"
+
+#: templates/mfa/totp/deactivate_form.html:12
+msgid ""
+"You are about to deactivate authenticator app based authentication. Are you "
+"sure?"
+msgstr ""
+"Du bist dabei, die Authentifizierung per Authenticator-App zu deaktivieren. "
+"Bist du sicher?"
+
+#: templates/mfa/webauthn/add_form.html:7
+msgid "Add Security Key"
+msgstr "Sicherheitsschlüssel hinzufügen"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:6
+msgid "Remove Security Key"
+msgstr "Sicherheitsschlüssel entfernen"
+
+#: templates/mfa/webauthn/authenticator_confirm_delete.html:9
+msgid "Are you sure you want to remove this security key?"
+msgstr "Möchtest du diesen Sicherheitsschlüssel wirklich entfernen?"
+
+#: templates/mfa/webauthn/authenticator_list.html:18
+msgid "Key"
+msgstr "Schlüssel"
+
+#: templates/mfa/webauthn/authenticator_list.html:21
+msgid "Usage"
+msgstr "Verwendung"
+
+#: templates/mfa/webauthn/authenticator_list.html:33
+msgid "Passkey"
+msgstr "Passkey"
+
+#: templates/mfa/webauthn/authenticator_list.html:37
+msgid "Security key"
+msgstr "Sicherheitsschlüssel"
+
+#: templates/mfa/webauthn/authenticator_list.html:40
+msgid "This key does not indicate whether it is a passkey."
+msgstr "Dieser Schlüssel gibt nicht an, ob es sich um einen Passkey handelt."
+
+#: templates/mfa/webauthn/authenticator_list.html:41
+msgid "Unspecified"
+msgstr "Nicht angegeben"
+
+#: templates/mfa/webauthn/authenticator_list.html:46
+#, python-format
+msgid "Added on %(created_at)s"
+msgstr "Hinzugefügt am %(created_at)s"
+
+#: templates/mfa/webauthn/authenticator_list.html:48
+#, python-format
+msgid "Last used %(last_used)s"
+msgstr "Zuletzt verwendet %(last_used)s"
+
+#: templates/mfa/webauthn/edit_form.html:7
+msgid "Edit Security Key"
+msgstr "Sicherheitsschlüssel bearbeiten"
+
+#: templates/mfa/webauthn/signup_form.html:7
+msgid "Create Passkey"
+msgstr "Passkey erstellen"
+
+#: templates/mfa/webauthn/signup_form.html:10
+msgid ""
+"You are about to create a passkey for your account. As you can add "
+"additional keys later on, you can use a descriptive name to tell the keys "
+"apart."
+msgstr ""
+"Du bist dabei, einen Passkey für dein Konto zu erstellen. Da du später "
+"weitere Schlüssel hinzufügen kannst, kannst du einen aussagekräftigen Namen "
+"verwenden, um die Schlüssel zu unterscheiden."
+
+#: templates/mfa/webauthn/signup_form.html:21
+msgid "Create"
+msgstr "Erstellen"
+
+#: templates/mfa/webauthn/snippets/scripts.html:2
+msgid "This functionality requires JavaScript."
+msgstr "Diese Funktionalität erfordert JavaScript."
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:9
+msgid "Third-Party Login Failure"
+msgstr "Fehler bei der Anmeldung über Drittanbieter"
+
+#: templates/socialaccount/authentication_error.html:12
+msgid ""
+"An error occurred while attempting to login via your third-party account."
+msgstr ""
+"Beim Anmeldeversuch über dein Drittanbieter-Konto ist ein Fehler aufgetreten."
+
+#: templates/socialaccount/connections.html:13
+msgid ""
+"You can sign in to your account using any of the following third-party "
+"accounts:"
+msgstr ""
+"Du kannst dich mit einem der folgenden Drittanbieter-Konten bei deinem Konto "
+"anmelden:"
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no third-party accounts connected to this account."
+msgstr "Mit diesem Konto sind derzeit keine Drittanbieter-Konten verknüpft."
+
+#: templates/socialaccount/connections.html:50
+msgid "Add a Third-Party Account"
+msgstr "Drittanbieter-Konto hinzufügen"
+
+#: templates/socialaccount/email/account_connected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been connected to your account."
+msgstr ""
+"Ein Drittanbieter-Konto von %(provider)s wurde mit deinem Konto verknüpft."
+
+#: templates/socialaccount/email/account_connected_subject.txt:3
+msgid "Third-Party Account Connected"
+msgstr "Drittanbieter-Konto verknüpft"
+
+#: templates/socialaccount/email/account_disconnected_message.txt:4
+#, python-format
+msgid ""
+"A third-party account from %(provider)s has been disconnected from your "
+"account."
+msgstr ""
+"Die Verknüpfung des Drittanbieter-Kontos von %(provider)s mit deinem Konto "
+"wurde aufgehoben."
+
+#: templates/socialaccount/email/account_disconnected_subject.txt:3
+msgid "Third-Party Account Disconnected"
+msgstr "Verknüpfung des Drittanbieter-Kontos aufgehoben"
+
+#: templates/socialaccount/login.html:4
+msgid "Social Login"
+msgstr "Social Login"
+
+#: templates/socialaccount/login.html:25
+#, python-format
+msgid "Connect %(provider)s"
+msgstr "%(provider)s verbinden"
+
+#: templates/socialaccount/login.html:27
+#, python-format
+msgid "Sign In via %(provider)s"
+msgstr "Anmelden über %(provider)s"
+
+#: templates/socialaccount/login.html:32
+#, python-format
+msgid ""
+"\n"
+"                        You are about to connect your account to "
+"%(provider)s. Click continue to proceed.\n"
+"                        "
+msgstr ""
+"\n"
+"                        Du bist dabei, dein Konto mit %(provider)s zu "
+"verbinden. Klicke auf „Weiter“, um fortzufahren.\n"
+"                        "
+
+#: templates/socialaccount/login.html:36
+#, python-format
+msgid ""
+"\n"
+"                        You are about to sign in using your %(provider)s "
+"account. Click continue to proceed.\n"
+"                        "
+msgstr ""
+"\n"
+"                        Du bist dabei, dich mit deinem %(provider)s-Konto "
+"anzumelden. Klicke auf „Weiter“, um fortzufahren.\n"
+"                        "
+
+#: templates/socialaccount/login.html:52
+#: templates/socialaccount/login_redirect.html:10
+msgid "Continue"
+msgstr "Weiter"
+
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr "Anmeldung abgebrochen"
+
+#: templates/socialaccount/login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a "
+"href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Du hast dich entschieden, die Anmeldung auf unserer Website über eines "
+"deiner bestehenden Konten abzubrechen. Falls dies ein Versehen war, fahre "
+"mit der <a href=\"%(login_url)s\">Anmeldung</a> fort."
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "The third-party account has been connected."
+msgstr "Das Drittanbieter-Konto wurde verknüpft."
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "The third-party account is already connected to a different account."
+msgstr "Das Drittanbieter-Konto ist bereits mit einem anderen Konto verknüpft."
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "The third-party account has been disconnected."
+msgstr "Die Verknüpfung des Drittanbieter-Kontos wurde aufgehoben."
+
+#: templates/socialaccount/signup.html:5 templates/socialaccount/signup.html:25
+msgid "Complete Sign Up"
+msgstr "Registrierung abschließen"
+
+#: templates/socialaccount/signup.html:28
+#, python-format
+msgid ""
+"\n"
+"                    You're almost there! Please fill in these final details "
+"to complete your registration with %(provider_name)s.\n"
+"                    "
+msgstr ""
+"\n"
+"                    Fast geschafft! Bitte fülle diese letzten Angaben aus, "
+"um deine Registrierung bei %(provider_name)s abzuschließen.\n"
+"                    "
+
+#: templates/socialaccount/signup.html:63
+msgid "Complete Registration"
+msgstr "Registrierung abschließen"
+
+#: templates/socialaccount/snippets/login.html:10
+msgid "Or use a third-party"
+msgstr "Oder verwende einen Drittanbieter"
+
+#: templates/usersessions/messages/sessions_logged_out.txt:2
+msgid "Signed out of all other sessions."
+msgstr "Von allen anderen Sitzungen abgemeldet."
+
+#: templates/usersessions/usersession_list.html:23
+msgid "Started At"
+msgstr "Gestartet am"
+
+#: templates/usersessions/usersession_list.html:24
+msgid "IP Address"
+msgstr "IP-Adresse"
+
+#: templates/usersessions/usersession_list.html:25
+msgid "Browser"
+msgstr "Browser"
+
+#: templates/usersessions/usersession_list.html:27
+msgid "Last seen at"
+msgstr "Zuletzt gesehen am"
+
+#: templates/usersessions/usersession_list.html:47
+msgid "Current"
+msgstr "Aktuell"
+
+#: templates/usersessions/usersession_list.html:60
+msgid "Sign Out Other Sessions"
+msgstr "Andere Sitzungen abmelden"
+
+#~ msgid "Übersicht"
+#~ msgstr "Übersicht"
+
+#~ msgid "Stellen"
+#~ msgstr "Stellen"
+
+#~ msgid "Termine"
+#~ msgstr "Termine"
+
+#~ msgid "Kontakte"
+#~ msgstr "Kontakte"
+
+#~ msgid "KI-Assistent"
+#~ msgstr "KI-Assistent"

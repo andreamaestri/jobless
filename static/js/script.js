@@ -84,3 +84,76 @@ document.addEventListener('alpine:initialized', () => {
     const pageState = Alpine.store('app')?.pageState;
     if (typeof pageState?.init === 'function') pageState.init();
 });
+
+// Fill the structured fields from a pasted job advert.
+document.addEventListener('DOMContentLoaded', () => {
+    const parser = document.getElementById('description-parser');
+    const button = document.getElementById('parse-button');
+    const paste = document.getElementById('paste');
+    const error = document.getElementById('parse-error');
+    if (!parser || !button || !paste) return;
+
+    const csrf = parser.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    const setValue = (id, value) => {
+        const field = document.getElementById(id);
+        if (field && value) {
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    };
+
+    button.addEventListener('click', async () => {
+        error.textContent = '';
+        error.classList.add('hidden');
+        if (!paste.value.trim()) {
+            error.textContent = gettext('Please add a job posting first.');
+            error.classList.remove('hidden');
+            return;
+        }
+
+        button.disabled = true;
+        button.querySelector('.loading-spinner')?.classList.remove('hidden');
+        try {
+            const response = await fetch(parser.dataset.url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrf, 'X-Requested-With': 'XMLHttpRequest' },
+                body: new URLSearchParams({ description: paste.value })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || gettext('The job posting could not be processed.'));
+
+            setValue('id_title', data.title);
+            setValue('id_company', data.company);
+            setValue('id_location', data.location);
+            setValue('id_salary_range', data.salary_range);
+            setValue('id_url', data.url);
+            setValue('id_description', data.description || paste.value);
+
+            if (Array.isArray(data.skills)) {
+                const skills = Alpine.store('app').skills;
+                const available = await fetch('/jobs/api/skills/').then(response => response.json());
+                const byName = new Map((available.skills || []).map(skill => [
+                    (skill.name || skill.label).toLowerCase(), skill
+                ]));
+                skills.clear();
+                data.skills.forEach(name => {
+                    const skill = byName.get(String(name).toLowerCase());
+                    if (skill) skills.add({
+                        id: skill.id,
+                        name: skill.name || skill.label,
+                        icon: skill.icon || window.MODAL_ICON_MAPPING?.[String(name).toLowerCase()] || 'heroicons:academic-cap'
+                    });
+                });
+                skills.updateHiddenInput();
+            }
+            button.querySelector('.button-text').textContent = gettext('Filled');
+        } catch (err) {
+            error.textContent = err.message;
+            error.classList.remove('hidden');
+        } finally {
+            button.disabled = false;
+            button.querySelector('.loading-spinner')?.classList.add('hidden');
+        }
+    });
+});
