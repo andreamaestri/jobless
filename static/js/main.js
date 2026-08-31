@@ -8,12 +8,15 @@ import 'iconify-icon'
 import { animations } from './script'
 import { registerMotion } from './motion'
 
+// Keep the production entrypoint fingerprinted when frontend fixes are deployed.
+
 // Initialize Alpine
 window.Alpine = Alpine
 Alpine.plugin(persist)
 Alpine.plugin(focus)
 registerMotion(Alpine, animations)
 Alpine.start()
+window.__JOBLESS_BUILD__ = 'jobs-add-fix'
 
 // Core initialization - base store and features
 import './store'
