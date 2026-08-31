@@ -12,6 +12,10 @@ from django.views.generic import (
 from django.views import View
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from openai import OpenAI
+import json
 
 from .models import JobPosting, SkillTreeModel
 from .forms import JobPostingForm
@@ -21,7 +25,7 @@ from .components.job_detail_component import JobDetailComponent
 
 def api_skills(request):
     """API endpoint to get all skills"""
-    skills = SkillTreeModel.objects.values('name', 'label', 'icon')
+    skills = SkillTreeModel.objects.values('id', 'name', 'label', 'icon')
     return JsonResponse({'skills': list(skills)})
 
 
@@ -42,6 +46,7 @@ def skills_autocomplete(request):
     return JsonResponse({'results': results})
 
 
+@login_required
 def parse_job_description(request):
     """Endpoint to parse job descriptions"""
     if request.method != 'POST':
@@ -51,9 +56,41 @@ def parse_job_description(request):
     if not description:
         return JsonResponse({'error': 'No description provided'}, status=400)
         
-    form = JobPostingForm()
-    parsed = form.parse_job_with_ai(description)
-    return JsonResponse(parsed)
+    if not getattr(settings, 'GEMINI_API_KEY', None):
+        return JsonResponse({'error': 'AI ist derzeit nicht konfiguriert.'}, status=503)
+
+    prompt = """Extract structured job posting data from the text below. Return only valid JSON with
+these keys: title, company, location, salary_range, url, description, skills.
+Use empty strings for unknown text fields and an array of concise skill names for skills.
+Do not invent information. Preserve the complete original description in description.
+
+JOB POSTING:
+""" + description[:12000]
+
+    try:
+        response = OpenAI(
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            api_key=settings.GEMINI_API_KEY,
+            timeout=60,
+            max_retries=1,
+        ).chat.completions.create(
+            model=getattr(settings, 'GEMINI_MODEL', 'gemini-2.0-flash'),
+            messages=[
+                {'role': 'system', 'content': 'You extract job posting data accurately.'},
+                {'role': 'user', 'content': prompt},
+            ],
+            response_format={'type': 'json_object'},
+            temperature=0,
+        )
+        content = response.choices[0].message.content or '{}'
+        parsed = json.loads(content)
+        if not isinstance(parsed, dict):
+            raise ValueError('AI response was not an object')
+        return JsonResponse(parsed)
+    except (json.JSONDecodeError, ValueError, IndexError, KeyError) as exc:
+        return JsonResponse({'error': f'AI-Antwort konnte nicht verarbeitet werden: {exc}'}, status=502)
+    except Exception:
+        return JsonResponse({'error': 'Die Stellenausschreibung konnte nicht verarbeitet werden.'}, status=502)
 
 
 class JobListView(LoginRequiredMixin, ListView):

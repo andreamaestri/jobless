@@ -1,72 +1,575 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n %}
+{% load static job_tags %}
+
+{% block title %}{% translate "AI Career Assistant" %}{% endblock %}
+{% block meta_description %}{% translate "Tailored CV feedback and AI-generated cover letters for your applications." %}{% endblock %}
 
 {% block content %}
+{{ initial_job_id|json_script:"data-initial-job" }}
+{{ has_cv|json_script:"data-has-cv" }}
+{{ jobs_json|json_script:"data-jobs-json" }}
+{% if cv %}{{ cv.content|truncatechars:220|json_script:"data-cv-preview" }}{% endif %}
+
 <div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 bg-base-200 rounded-2xl">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-base-content">CV Assistant</h1>
-            <p class="text-base-content/70 mt-2">Get AI-powered insights and improvements for your CV</p>
+            <h1 class="text-3xl font-bold text-base-content flex items-center gap-3">
+                <iconify-icon icon="heroicons:sparkles" class="text-primary"></iconify-icon>
+                {% translate "AI Career Assistant" %}
+            </h1>
+            <p class="text-base-content/70 mt-2">{% translate "Tailored CV feedback and cover letters for your current applications." %}</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
-                <form method="POST" class="space-y-4">
-                    {% csrf_token %}
-                    <div>
-                        <label class="block text-sm font-semibold text-base-content mb-2">Paste CV Content Here:</label>
-                        <textarea 
-                            name="cv_content" 
-                            rows="10" 
-                            class="w-full p-3 textarea textarea-bordered focus:outline-primary"
-                            placeholder="Enter CV information..."
-                        ></textarea>
+        {% if not has_cv %}
+        <div class="alert shadow-lg mb-6 border border-warning/30 bg-warning/10 text-warning-content">
+            <iconify-icon icon="heroicons:exclamation-triangle" class="text-xl shrink-0"></iconify-icon>
+            <span>{% translate "Add your CV once. All tools will then use it automatically." %}</span>
+            <a href="#cv-card" class="btn btn-warning btn-sm shrink-0">{% translate "Add CV" %}</a>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+            <div class="lg:col-span-2 space-y-6" x-data="assistantPage"
+                 data-url-generate="{% url 'ai_assistant:generate' %}"
+                 data-url-history="{% url 'ai_assistant:runs_fragment' %}">
+
+                <div class="bg-base-100 rounded-2xl shadow-lg p-6 space-y-6">
+
+                    <div role="tablist" aria-label="{% translate "Assistant tools" %}" class="flex flex-col sm:flex-row gap-2 p-1.5 bg-base-200/70 rounded-2xl">
+                        <button type="button" role="tab" :aria-selected="String(tab==='feedback')"
+                                @click="switchTab('feedback')"
+                                :class="tab === 'feedback' ? 'btn-primary shadow-md' : 'btn-ghost'"
+                                class="btn btn-sm sm:btn-md flex-1 gap-2">
+                            <iconify-icon icon="heroicons:document-chart-bar" class="text-lg"></iconify-icon>
+                            {% translate "Individual CV feedback" %}
+                        </button>
+                        <button type="button" role="tab" :aria-selected="String(tab==='letter')"
+                                @click="switchTab('letter')"
+                                :class="tab === 'letter' ? 'btn-primary shadow-md' : 'btn-ghost'"
+                                class="btn btn-sm sm:btn-md flex-1 gap-2">
+                            <iconify-icon icon="heroicons:envelope-open" class="text-lg"></iconify-icon>
+                            {% translate "Cover letter" %}
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-base-content mb-2">Your Question</label>
-                        <textarea 
-                            name="user_input" 
-                            rows="3" 
-                            class="w-full p-3 textarea textarea-bordered focus:outline-primary" 
-                            placeholder="Ask for CV improvements, suggestions, or feedback..."
-                        ></textarea>
+
+                    <div x-show="tab === 'feedback'" role="tabpanel" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-base-content mb-2" for="fb-job">
+                                {% translate "Target job" %} <span class="text-base-content/50 font-normal">{% translate "(optional - select for personalized hints)" %}</span>
+                            </label>
+                            <select id="fb-job" x-model="fb.job" :disabled="busy"
+                                    class="select select-bordered w-full focus:outline-primary">
+                                <option value="">{% translate "General review - no specific job" %}</option>
+                                {% for job in jobs %}
+                                <option value="{{ job.pk }}">{{ job.title }} — {{ job.company }} ({{ job.get_status_display }})</option>
+                                {% endfor %}
+                            </select>
+                            <template x-if="jobFor(fb.job)">
+                                <p class="text-xs mt-2 text-base-content/60 flex items-center gap-2">
+                                    <iconify-icon icon="octicon:eye-16"></iconify-icon>
+                                    <span>The AI will read the full posting for
+                                        <strong x-text="jobFor(fb.job).title"></strong> at
+                                        <strong x-text="jobFor(fb.job).company"></strong>
+                                        <span class="badge badge-sm" :class="statusClass(jobFor(fb.job).status)" x-text="jobFor(fb.job).status"></span>
+                                    </span>
+                                </p>
+                            </template>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-base-content mb-2" for="fb-extra">
+                                {% translate "Focus requests" %} <span class="text-base-content/50 font-normal">{% translate "(optional)" %}</span>
+                            </label>
+                            <textarea id="fb-extra" rows="2" x-model="fb.extra" :disabled="busy"
+                                      class="w-full p-3 textarea textarea-bordered focus:outline-primary text-sm"
+                                      placeholder="{% translate "e.g. worried about my career gap — help me frame it positively" %}"></textarea>
+                        </div>
+                        <button type="button" @click="generate()" :disabled="busy || !hasCv"
+                                class="btn btn-primary w-full gap-2 shadow-lg hover:shadow-primary/30 transition-all duration-300">
+                            <span x-show="!busy" class="flex items-center gap-2"><iconify-icon icon="heroicons:sparkles"></iconify-icon> {% translate "Analyze my CV" %}</span>
+                            <span x-show="busy" x-cloak class="flex items-center gap-2"><span class="loading loading-spinner loading-sm"></span> {% translate "Analyzing…" %}</span>
+                        </button>
+                        <p x-show="!hasCv" x-cloak class="text-xs text-center text-base-content/50">{% translate "Save your CV first to enable generation." %}</p>
                     </div>
-                    <button 
-                        type="submit" 
-                        class="btn btn-primary w-full"
-                    >
-                        Get AI Feedback
-                    </button>
-                    <small class="block text-xs text-center text-base-content/70 mt-2">
-                        Please allow some time for the response
-                    </small>
-                </form>
+
+                    <div x-show="tab === 'letter'" role="tabpanel" x-cloak class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-base-content mb-2" for="cl-job">{% translate "Target job" %}</label>
+                                <select id="cl-job" x-model="cl.job" :disabled="busy"
+                                        class="select select-bordered w-full focus:outline-primary">
+                                    <option value="" disabled>{% if jobs %}{% translate "Select a job…" %}{% else %}{% translate "No jobs added yet" %}{% endif %}</option>
+                                    {% for job in jobs %}
+                                    <option value="{{ job.pk }}">{{ job.title }} — {{ job.company }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-base-content mb-2" for="cl-tone">{% translate "Tone" %}</label>
+                                <select id="cl-tone" x-model="cl.tone" :disabled="busy"
+                                        class="select select-bordered w-full focus:outline-primary">
+                                    <option value="professional">{% translate "Professional" %}</option>
+                                    <option value="warm">{% translate "Warm &amp; personable" %}</option>
+                                    <option value="concise">{% translate "Direct &amp; concise" %}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <template x-if="jobFor(cl.job)">
+                            <p class="text-xs text-base-content/60 flex items-center gap-2 -mt-1">
+                                <iconify-icon icon="octicon:eye-16"></iconify-icon>
+                                <span>Built around the <strong x-text="jobFor(cl.job).title"></strong> role at
+                                    <strong x-text="jobFor(cl.job).company"></strong>, signed with your account name.</span>
+                            </p>
+                        </template>
+                        <div>
+                            <label class="block text-sm font-semibold text-base-content mb-2" for="cl-extra">
+                                {% translate "Extra instructions" %} <span class="text-base-content/50 font-normal">{% translate "(optional)" %}</span>
+                            </label>
+                            <textarea id="cl-extra" rows="2" x-model="cl.extra" :disabled="busy"
+                                      class="w-full p-3 textarea textarea-bordered focus:outline-primary text-sm"
+                                      placeholder="{% translate "e.g. mention my open-source work, keep it under 250 words" %}"></textarea>
+                        </div>
+                        {% if jobs %}
+                        <button type="button" @click="generate()" :disabled="busy || !hasCv || !cl.job"
+                                class="btn btn-primary w-full gap-2 shadow-lg hover:shadow-primary/30 transition-all duration-300">
+                            <span x-show="!busy" class="flex items-center gap-2"><iconify-icon icon="octicon:paper-airplane-16"></iconify-icon> {% translate "Write my cover letter" %}</span>
+                            <span x-show="busy" x-cloak class="flex items-center gap-2"><span class="loading loading-spinner loading-sm"></span> {% translate "Writing…" %}</span>
+                        </button>
+                        <p x-show="!hasCv" x-cloak class="text-xs text-center text-base-content/50">{% translate "Save your CV first to enable generation." %}</p>
+                        {% else %}
+                        <a href="{% url 'jobs:add' %}" class="btn btn-outline btn-primary w-full gap-2">
+                            <iconify-icon icon="octicon:plus-16"></iconify-icon> {% translate "Add a job first" %}
+                        </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="bg-base-100 rounded-2xl shadow-lg p-6" x-show="result.active" x-cloak x-transition.opacity>
+                    <div class="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-base-300">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="p-2.5 rounded-xl bg-primary/10 shrink-0">
+                                <iconify-icon :icon="result.kind === 'cover_letter' ? 'heroicons:envelope-open' : 'heroicons:document-chart-bar'" class="text-primary text-xl"></iconify-icon>
+                            </div>
+                            <div class="min-w-0">
+                                <h2 class="font-bold text-lg leading-tight" x-text="result.kind === 'cover_letter' ? 'Your cover letter' : 'CV feedback'"></h2>
+                                <p class="text-xs text-base-content/50 truncate" x-text="result.subtitle"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" class="btn btn-ghost btn-sm btn-circle" title="{% translate "Copy to clipboard" %}" @click="copyResult()">
+                                <iconify-icon icon="octicon:copy-16" class="text-lg"></iconify-icon>
+                            </button>
+                            <button type="button" x-show="result.kind === 'cover_letter'" x-cloak class="btn btn-ghost btn-sm btn-circle" title="{% translate "Download as .txt" %}" @click="downloadResult()">
+                                <iconify-icon icon="octicon:download-16" class="text-lg"></iconify-icon>
+                            </button>
+                            <button type="button" class="btn btn-ghost btn-sm btn-circle" title="{% translate "Regenerate" %}" :disabled="busy" @click="generate()">
+                                <iconify-icon icon="octicon:sync-16" class="text-lg"></iconify-icon>
+                            </button>
+                            <button type="button" class="btn btn-ghost btn-sm btn-circle" title="{% translate "Hide" %}" @click="resetResult()">
+                                <iconify-icon icon="octicon:x-16" class="text-lg"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div x-show="result.error" x-cloak class="alert alert-error mb-4 text-sm">
+                        <iconify-icon icon="octicon:alert-16"></iconify-icon>
+                        <span x-text="result.error"></span>
+                        <button type="button" class="btn btn-sm btn-ghost" @click="generate()">{% translate "Retry" %}</button>
+                    </div>
+
+                    <div x-show="result.streaming">
+                        <pre class="whitespace-pre-wrap font-sans text-sm leading-relaxed text-base-content/90 max-h-[32rem] overflow-y-auto" x-text="result.text"></pre>
+                        <span class="loading loading-dots loading-sm text-primary mt-2"></span>
+                    </div>
+
+                    <div x-show="!result.streaming && result.html && !result.error" x-html="result.html"
+                         class="prose prose-sm sm:prose-base max-w-none overflow-x-auto"></div>
+
+                    <div x-show="!result.streaming && !result.html && !result.error && result.text" x-cloak
+                         class="prose prose-sm max-w-none whitespace-pre-wrap font-sans" x-text="result.text"></div>
+                </div>
+
+                <div class="bg-base-100 rounded-2xl shadow-lg p-10 text-center" x-show="!result.active">
+                    <div class="inline-flex p-4 rounded-full bg-primary/10 mb-4">
+                        <iconify-icon icon="heroicons:sparkles" class="text-4xl text-primary"></iconify-icon>
+                    </div>
+                    <h2 class="font-bold text-lg">{% translate "Pick a tool above to get started" %}</h2>
+                    <p class="text-sm text-base-content/60 mt-1 max-w-md mx-auto">
+                        {% translate "Feedback is tailored to a specific posting you are tracking — or choose general review. Cover letters need a target job." %}
+                    </p>
+                </div>
+
             </div>
-            
-            <div class="bg-base-100 rounded-2xl shadow-lg p-6">
-                {% if response %}
-                <div class="bg-base-200 p-4 rounded-lg">
-                    <h2 class="text-xl font-semibold text-base-content mb-4">AI Assistant Response:</h2>
-                    <div id="aiResponse" class="whitespace-pre-wrap text-primar-content leading-relaxed space-y-1">{{ response }}</div>
+
+            <div class="space-y-6">
+
+                <div id="cv-card" class="bg-base-100 rounded-2xl shadow-lg p-6" x-data="cvCard"
+                     data-url-save="{% url 'ai_assistant:save_cv' %}">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-lg flex items-center gap-2">
+                            <iconify-icon icon="heroicons:document-text" class="text-primary"></iconify-icon>
+                            {% translate "Saved CV" %}
+                        </h2>
+                        <span class="badge gap-1" :class="$store.cvStatus.hasCv ? 'badge-success' : 'badge-warning'">
+                            <span class="text-xs" x-text="$store.cvStatus.hasCv ? 'Ready' : 'Missing'"></span>
+                        </span>
+                    </div>
+
+                    <div x-show="!editing">
+                        <p class="text-xs text-base-content/50 mb-2">
+                            {% translate "Last updated:" %}
+                            <span x-text="$store.cvStatus.updatedAt || '{% if cv %}{{ cv.updated_at|date:'d M Y, H:i' }}{% else %}{% translate 'never' %}{% endif %}'"></span>
+                        </p>
+                        <div class="bg-base-200/60 rounded-lg p-3 text-xs text-base-content/70 whitespace-pre-line leading-relaxed max-h-28 overflow-hidden relative">
+                            <span x-show="$store.cvStatus.hasCv" x-text="$store.cvStatus.preview"></span>
+                            <span x-show="!$store.cvStatus.hasCv" class="text-base-content/50">{% translate "No CV saved yet. Add it once so all tools can use it." %}</span>
+                            <div class="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-base-100 to-transparent pointer-events-none"></div>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-primary btn-sm w-full mt-3 gap-2" @click="startEdit()">
+                            <iconify-icon icon="{% if cv %}octicon:pencil-16{% else %}octicon:plus-16{% endif %}"></iconify-icon>
+                            <span x-text="$store.cvStatus.hasCv ? 'Edit CV' : 'Add CV'"></span>
+                        </button>
+                    </div>
+
+                    <div x-show="editing" x-cloak>
+                        <textarea x-ref="cvInput" x-model="content" rows="9"
+                                  class="w-full p-3 textarea textarea-bordered focus:outline-primary text-sm">{{ cv.content|default:'' }}</textarea>
+                        <div class="flex items-center justify-between mt-1 mb-3">
+                            <span class="text-xs" :class="content.length > 30000 ? 'text-error' : 'text-base-content/50'">
+                                <span x-text="content.length.toLocaleString()"></span> {% translate "/ 30,000 chars" %}
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm flex-1" :disabled="saving" @click="save()">
+                                <span x-show="!saving">{% translate "Save" %}</span>
+                                <span x-show="saving" x-cloak class="flex items-center gap-2"><span class="loading loading-spinner loading-xs"></span> {% translate "Saving…" %}</span>
+                            </button>
+                             <button type="button" class="btn btn-ghost btn-sm" @click="cancelEdit()">{% translate "Cancel" %}</button>
+                        </div>
+                    </div>
                 </div>
-                {% else %}
-                <div class="text-center text-base-content/70 py-8">
-                    <p>Your CV suggestions will appear here</p>
+
+                <div class="bg-base-200/40 backdrop-blur-sm rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-lg flex items-center gap-2">
+                            <iconify-icon icon="heroicons:clock" class="text-primary"></iconify-icon>
+                            {% translate "Recent outputs" %}
+                        </h2>
+                        <button type="button" class="btn btn-ghost btn-xs btn-circle" title="{% translate "Refresh" %}" onclick="aiAssistantActions.refreshHistory()">
+                            <iconify-icon icon="octicon:sync-16"></iconify-icon>
+                        </button>
+                    </div>
+                    <div id="history-list">
+                        {% include 'ai_assistant/_history.html' %}
+                    </div>
                 </div>
-                {% endif %}
+
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const responseElement = document.getElementById('aiResponse');
-        if (responseElement) {
-            const markdownContent = responseElement.textContent;
-            responseElement.innerHTML = marked.parse(markdownContent);
-        }
-    });
-</script>
+    function aiGetJson(id) {
+        const el = document.getElementById(id);
+        return el ? JSON.parse(el.textContent) : null;
+    }
 
+    function aiToast(type, message) {
+        try {
+            Alpine.store('toastManager').show({ type: type, message: message });
+        } catch (e) {}
+    }
+
+    async function* aiSseEvents(response) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            let idx;
+            while ((idx = buffer.indexOf('\n\n')) >= 0) {
+                const chunk = buffer.slice(0, idx).trim();
+                buffer = buffer.slice(idx + 2);
+                if (chunk.startsWith('data:')) {
+                    try { yield JSON.parse(chunk.slice(5)); } catch (e) {}
+                }
+            }
+        }
+    }
+
+    function aiCsrf() {
+        return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
+    }
+
+    function aiRenderMarkdown(root) {
+        if (typeof marked === 'undefined') return;
+        root.querySelectorAll('.js-markdown:not([data-rendered])').forEach(el => {
+            el.innerHTML = marked.parse(el.textContent);
+            el.dataset.rendered = '1';
+        });
+    }
+
+    document.addEventListener('alpine:init', () => {
+        const hasCv = aiGetJson('data-has-cv');
+        Alpine.store('cvStatus', {
+            hasCv: !!hasCv,
+            updatedAt: '',
+            preview: aiGetJson('data-cv-preview') || '',
+        });
+        window.__jobsData = aiGetJson('data-jobs-json') || [];
+
+        const STATUS_CLASSES = {
+            interested: 'badge-info',
+            applied: 'badge-primary',
+            interviewing: 'badge-secondary',
+            rejected: 'badge-error',
+            accepted: 'badge-success',
+        };
+
+        Alpine.data('assistantPage', () => ({
+            tab: 'feedback',
+            busy: false,
+            fb: { job: '', extra: '' },
+            cl: { job: '', tone: 'professional', extra: '' },
+            result: { active: false, kind: '', subtitle: '', text: '', html: '', error: '', streaming: false },
+            controller: null,
+
+            init() {
+                const initialJob = String(aiGetJson('data-initial-job') || '');
+                this.fb.job = initialJob;
+                this.cl.job = initialJob;
+                this.$nextTick(() => aiRenderMarkdown(this.$el));
+            },
+
+            get hasCv() {
+                return Alpine.store('cvStatus').hasCv;
+            },
+
+            switchTab(tab) {
+                if (!this.busy) this.tab = tab;
+            },
+
+            statusClass(status) {
+                return STATUS_CLASSES[status] || 'badge-ghost';
+            },
+
+            jobFor(id) {
+                if (!id) return null;
+                return window.__jobsData.find(job => String(job.id) === String(id)) || null;
+            },
+
+            resetResult() {
+                this.result = { active: false, kind: '', subtitle: '', text: '', html: '', error: '', streaming: false };
+            },
+
+            cancel() {
+                if (this.controller) this.controller.abort();
+            },
+
+            async generate() {
+                if (this.busy) return;
+                if (!this.hasCv) {
+                    aiToast('warning', 'Save your CV first.');
+                    return;
+                }
+                if (this.tab === 'feedback') {
+                    var payload = { kind: 'feedback', job: this.fb.job, extra: this.fb.extra };
+                } else {
+                    if (!this.cl.job) {
+                        aiToast('warning', 'Pick a job to write the letter for.');
+                        return;
+                    }
+                    var payload = { kind: 'cover_letter', job: this.cl.job, tone: this.cl.tone, extra: this.cl.extra };
+                }
+
+                const job = this.jobFor(payload.job);
+                this.result = {
+                    active: true,
+                    kind: payload.kind,
+                    subtitle: job ? job.title + ' · ' + job.company : 'General review',
+                    text: '', html: '', error: '', streaming: true,
+                };
+                this.busy = true;
+                this.controller = new AbortController();
+
+                try {
+                    const body = new URLSearchParams(payload);
+                    const response = await fetch(this.$el.dataset.urlGenerate, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': aiCsrf(), 'Accept': 'text/event-stream' },
+                        body: body,
+                        signal: this.controller.signal,
+                    });
+                    if (!response.ok) {
+                        let message = 'Request failed (' + response.status + ')';
+                        try { const data = await response.json(); message = data.error || message; } catch (e) {}
+                        throw new Error(message);
+                    }
+                    let sawDone = false;
+                    for await (const event of aiSseEvents(response)) {
+                        if (event.type === 'delta') {
+                            this.result.text += event.text;
+                        } else if (event.type === 'done') {
+                            sawDone = true;
+                        } else if (event.type === 'partial_saved') {
+                            aiToast('info', 'Partial result was saved to your recent outputs.');
+                        } else if (event.type === 'error') {
+                            this.result.error = event.message;
+                        }
+                    }
+                    if (this.result.text && !this.result.error) {
+                        this.result.html = typeof marked !== 'undefined'
+                            ? marked.parse(this.result.text)
+                            : '';
+                        if (sawDone) aiToast('success', 'Done — result saved to recent outputs.');
+                        this.refreshHistory();
+                    } else if (!this.result.error) {
+                        this.result.error = 'The AI did not provide an answer. Please try again.';
+                    }
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        if (this.result.text) {
+                            this.result.html = typeof marked !== 'undefined' ? marked.parse(this.result.text) : '';
+                            aiToast('info', 'Generation stopped — partial result kept.');
+                        }
+                    } else {
+                        this.result.error = err.message || 'Something went wrong.';
+                    }
+                } finally {
+                    this.result.streaming = false;
+                    this.busy = false;
+                    this.controller = null;
+                }
+            },
+
+            async copyResult() {
+                try {
+                    await navigator.clipboard.writeText(this.result.text);
+                    aiToast('success', 'Copied to clipboard.');
+                } catch (e) {
+                    aiToast('error', 'Could not copy — please select the text manually.');
+                }
+            },
+
+            downloadResult() {
+                const blob = new Blob([this.result.text], { type: 'text/plain;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                const company = (this.jobFor(this.cl.job) || {}).company || 'general';
+                link.download = 'cover-letter-' + company.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.txt';
+                link.click();
+                URL.revokeObjectURL(link.href);
+            },
+
+            async refreshHistory() {
+                try {
+                    const response = await fetch(this.$el.dataset.urlHistory);
+                    if (!response.ok) return;
+                    const list = document.getElementById('history-list');
+                    list.innerHTML = await response.text();
+                    aiRenderMarkdown(list);
+                } catch (e) {}
+            },
+        }));
+
+        Alpine.data('cvCard', () => ({
+            editing: false,
+            saving: false,
+            content: '',
+            original: '',
+
+            startEdit() {
+                const input = this.$refs.cvInput;
+                if (!input.value) input.value = input.dataset.initial || '';
+                this.original = input.value;
+                this.content = input.value;
+                this.editing = true;
+                this.$nextTick(() => input.focus());
+            },
+
+            cancelEdit() {
+                this.$refs.cvInput.value = this.original;
+                this.content = this.original;
+                this.editing = false;
+            },
+
+            async save() {
+                const content = this.content.trim();
+                if (!content) {
+                    aiToast('warning', 'The CV must not be empty.');
+                    return;
+                }
+                this.saving = true;
+                try {
+                    const response = await fetch(this.$el.dataset.urlSave, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': aiCsrf() },
+                        body: new URLSearchParams({ content: content }),
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok || !data.ok) {
+                        aiToast('error', data.error || 'Could not save your CV.');
+                        return;
+                    }
+                    this.$refs.cvInput.value = content;
+                    Alpine.store('cvStatus').hasCv = true;
+                    Alpine.store('cvStatus').updatedAt = data.updated_at;
+                    this.editing = false;
+                    aiToast('success', 'CV saved. All tools will now use it.');
+                } catch (e) {
+                    aiToast('error', 'Network error while saving.');
+                } finally {
+                    this.saving = false;
+                }
+            },
+        }));
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        aiRenderMarkdown(document.getElementById('history-list'));
+    });
+
+    window.aiAssistantActions = {
+        copy(btn) {
+            const card = btn.closest('.run-card');
+            const text = card.querySelector('.js-markdown');
+            navigator.clipboard.writeText(text.innerText).then(
+                () => aiToast('success', 'Copied to clipboard.'),
+                () => aiToast('error', 'Could not copy.')
+            );
+        },
+        async deleteRun(btn) {
+            const card = btn.closest('.run-card');
+            if (!confirm('Permanently delete this saved output?')) return;
+            const url = '/ai-assistant/runs/' + card.dataset.runId + '/delete/';
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': aiCsrf() },
+                });
+                if (response.ok) {
+                    card.remove();
+                    aiToast('success', 'Deleted.');
+                } else {
+                    aiToast('error', 'Could not delete.');
+                }
+            } catch (e) {
+                aiToast('error', 'Network error.');
+            }
+        },
+        refreshHistory() {
+            const page = document.querySelector('[x-data="assistantPage"]');
+            if (page && page._x_dataStack) page._x_dataStack[0].refreshHistory();
+        },
+    };
+</script>
 {% endblock %}

@@ -1,0 +1,48 @@
+{% load i18n %}
+{% if recent_runs %}
+<div class="space-y-3">
+    {% for run in recent_runs %}
+    <div class="bg-base-100 rounded-xl shadow border border-base-300/60 run-card" data-run-id="{{ run.pk }}">
+        <div class="flex items-start gap-3 p-4">
+            <div class="p-2 rounded-lg bg-primary/10 shrink-0">
+                <iconify-icon icon="{% if run.kind == 'cover_letter' %}heroicons:envelope-open{% else %}heroicons:document-chart-bar{% endif %}" class="text-primary text-xl"></iconify-icon>
+            </div>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-semibold text-sm">{{ run.get_kind_display }}</span>
+                    {% if run.job %}
+                        <span class="text-xs text-base-content/60 truncate">
+                            {{ run.job.title }} &middot; {{ run.job.company }}
+                        </span>
+                    {% else %}
+                        <span class="text-xs text-base-content/60">{% translate "General review" %}</span>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-base-content/50 mt-0.5">{% blocktranslate with ts=run.created_at|timesince %}{{ ts }} ago{% endblocktranslate %}</p>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+                <button class="btn btn-ghost btn-xs btn-circle" title="{% translate "Copy" %}" onclick="aiAssistantActions.copy(this)">
+                    <iconify-icon icon="octicon:copy-16"></iconify-icon>
+                </button>
+                <button class="btn btn-ghost btn-xs btn-circle text-error" title="{% translate "Delete" %}" onclick="aiAssistantActions.deleteRun(this)">
+                    <iconify-icon icon="octicon:trash-16"></iconify-icon>
+                </button>
+            </div>
+        </div>
+        <details class="px-4 pb-4">
+            <summary class="text-xs text-primary cursor-pointer select-none hover:text-primary-focus">
+                {% translate "View output" %}
+            </summary>
+            <div class="js-markdown prose prose-sm max-w-none mt-3 bg-base-200/50 rounded-lg p-4 overflow-x-auto">{{ run.output }}</div>
+        </details>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-8 px-4">
+    <div class="inline-flex p-4 rounded-full bg-primary/10 mb-3">
+        <iconify-icon icon="heroicons:clock" class="text-3xl text-primary"></iconify-icon>
+    </div>
+    <p class="text-sm text-base-content/60">{% translate "Your generated feedback and cover letters will be saved here." %}</p>
+</div>
+{% endif %}

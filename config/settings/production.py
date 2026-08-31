@@ -29,14 +29,17 @@ SECURE_HSTS_PRELOAD = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "location": "media",
+        },
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
@@ -46,6 +49,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DJANGO_VITE = {
     "default": {
         "dev_mode": False,
+        "manifest_path": os.path.join(BASE_DIR, 'assets', '.vite', 'manifest.json'),
     }
 }
 
