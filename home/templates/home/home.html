@@ -155,20 +155,20 @@
 <dialog id="quickAdd" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
         <h3 class="font-bold text-lg mb-4">{% translate "Quick add" %}</h3>
-        <div class="menu bg-base-200 rounded-box">
-            <a href="{% url 'jobs:add' %}" class="menu-item">
+        <ul class="menu bg-base-200 rounded-box w-full">
+            <li><a href="{% url 'jobs:add' %}">
                 <iconify-icon icon="octicon:briefcase-24"></iconify-icon>
                 {% translate "Add job application" %}
-            </a>
-            <a href="{% url 'events:add' %}" class="menu-item">
+            </a></li>
+            <li><a href="{% url 'events:add' %}">
                 <iconify-icon icon="octicon:calendar-24"></iconify-icon>
                 {% translate "Add event" %}
-            </a>
-            <a href="{% url 'contacts:add' %}" class="menu-item">
+            </a></li>
+            <li><a href="{% url 'contacts:add' %}">
                 <iconify-icon icon="octicon:people-24"></iconify-icon>
                 {% translate "Add contact" %}
-            </a>
-        </div>
+            </a></li>
+        </ul>
         <div class="modal-action">
             <form method="dialog">
                 <button class="btn">{% translate "Close" %}</button>

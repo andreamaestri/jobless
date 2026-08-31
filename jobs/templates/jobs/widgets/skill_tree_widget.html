@@ -15,7 +15,7 @@
     <!-- Search/Tree Mode Toggle -->
     <div class="flex justify-between items-center mb-4">
         <div class="flex items-center space-x-4">
-            <div class="tabs tabs-boxed bg-base-200">
+            <div class="tabs tabs-box bg-base-200">
                 <button class="tab" 
                         :class="{ 'tab-active': viewMode === 'search' }"
                         @click="viewMode = 'search'">
@@ -37,16 +37,14 @@
 
     <!-- Search View -->
     <div x-show="viewMode === 'search'" class="space-y-4">
-        <div class="form-control">
-            <div class="input-group">
-                <input type="text"
-                       placeholder="{% translate 'Search skills ...' %}"
-                       class="input input-bordered w-full"
-                       x-model="searchQuery">
-                <button class="btn btn-square">
-                    <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
-                </button>
-            </div>
+        <div class="join w-full">
+            <input type="text"
+                   placeholder="{% translate 'Search skills ...' %}"
+                   class="input input-bordered join-item grow"
+                   x-model="searchQuery">
+            <button class="btn btn-square join-item">
+                <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
+            </button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"
              x-show="filteredSkills.length > 0">
