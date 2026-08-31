@@ -152,34 +152,37 @@
 </div>
 
 <!-- Modals with updated styling -->
-<dialog id="quickAdd" class="modal modal-bottom sm:modal-middle">
-    <div class="modal-box">
+<dialog id="quickAdd" class="modal">
+    <div class="modal-box bg-base-100 text-base-content">
         <h3 class="font-bold text-lg mb-4">{% translate "Quick add" %}</h3>
-        <ul class="menu bg-base-200 rounded-box w-full">
-            <li><a href="{% url 'jobs:add' %}">
+        <div class="flex flex-col gap-2">
+            <a href="{% url 'jobs:add' %}" class="btn btn-neutral justify-start gap-3">
                 <iconify-icon icon="octicon:briefcase-24"></iconify-icon>
                 {% translate "Add job application" %}
-            </a></li>
-            <li><a href="{% url 'events:add' %}">
+            </a>
+            <a href="{% url 'events:add' %}" class="btn btn-neutral justify-start gap-3">
                 <iconify-icon icon="octicon:calendar-24"></iconify-icon>
                 {% translate "Add event" %}
-            </a></li>
-            <li><a href="{% url 'contacts:add' %}">
+            </a>
+            <a href="{% url 'contacts:add' %}" class="btn btn-neutral justify-start gap-3">
                 <iconify-icon icon="octicon:people-24"></iconify-icon>
                 {% translate "Add contact" %}
-            </a></li>
-        </ul>
+            </a>
+        </div>
         <div class="modal-action">
             <form method="dialog">
                 <button class="btn">{% translate "Close" %}</button>
             </form>
         </div>
     </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>{% translate "Close" %}</button>
+    </form>
 </dialog>
 
 <!-- Search Modal -->
 <dialog id="searchFilters" class="modal">
-    <div class="modal-box max-w-2xl relative">
+    <div class="modal-box max-w-2xl relative bg-base-100 text-base-content">
         <!-- Close Button at Top-Right -->
         <button type="button" class="btn btn-sm btn-ghost absolute top-2 right-2"
                 onclick="document.getElementById('searchFilters').close()">
@@ -191,7 +194,7 @@
             <!-- Search Input with Widget Tweaks -->
             <div class="form-control">
                 <div class="relative">
-                    <label class="input input-bordered flex items-center gap-2 pr-2">
+                    <label class="input flex items-center gap-2 pr-2">
                         {% render_field search_form.search %}
                         <span id="searchLoading" class="loading loading-spinner loading-sm hidden"></span>
                         <iconify-icon class="h-4 w-4 opacity-70" icon="octicon:search-16"></iconify-icon>
@@ -211,14 +214,14 @@
                     <label class="label">
                         <span class="label-text">{% translate "Status" %}</span>
                     </label>
-                    {% render_field search_form.status class="select select-bordered w-full" %}
+                    {% render_field search_form.status class="select w-full" %}
                 </div>
                 
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text">{% translate "Type" %}</span>
                     </label>
-                    {% render_field search_form.type class="select select-bordered w-full" %}
+                    {% render_field search_form.type class="select w-full" %}
                 </div>
             </div>
             

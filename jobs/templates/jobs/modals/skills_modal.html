@@ -6,7 +6,7 @@
      @keydown.escape.window="$store.app.skills.closeModal()"
      @click.self="$store.app.skills.closeModal()">
     
-    <div class="modal-box max-w-3xl">
+     <div class="modal-box max-w-3xl bg-base-100 text-base-content opacity-100!">
         <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-bold">{% translate "Manage Skills" %}</h3>
             <button class="btn btn-ghost btn-sm btn-square"
@@ -19,7 +19,7 @@
         <div class="flex gap-4 mb-4">
             <div class="flex-1">
                 <input type="text"
-                       class="input input-bordered w-full"
+                        class="input w-full"
                        placeholder="{% translate 'Search skills ...' %}"
                        x-model="searchQuery"
                        @input="filterSkills">
@@ -87,7 +87,7 @@
                         <div class="flex items-center gap-2 p-2 bg-base-200 rounded">
                             <iconify-icon :icon="skill.icon" class="text-xl"></iconify-icon>
                             <span x-text="skill.label" class="flex-1"></span>
-                            <select class="select select-sm select-bordered"
+                            <select class="select select-sm"
                                     x-model="skill.proficiency"
                                     @change="updateSkill(skill)">
                                 <option value="required">{% translate "Required" %}</option>
