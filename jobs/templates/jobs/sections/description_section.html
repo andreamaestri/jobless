@@ -1,13 +1,15 @@
+{% load i18n %}
+{% translate "Job Description" as section_title %}
 <div class="p-8 form-section" style="--delay: 4">
     {% include "jobs/includes/section_header.html" with 
         icon="heroicons:document-text"
-        title="Job Description" %}
+        title=section_title %}
     
     <div>
         <div class="flex justify-between items-center mb-2">
             <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-base-content">
-                Job Description
-                <span class="ml-1 text-xs text-base-content/60">(Markdown supported)</span>
+                {% translate "Job Description" %}
+                <span class="ml-1 text-xs text-base-content/60">{% translate "(Markdown supported)" %}</span>
             </label>
             <span class="text-xs text-base-content/60" id="char-counter">0/4000</span>
         </div>

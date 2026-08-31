@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <div class="card w-full max-w-3xl mx-auto bg-base-100 shadow-xl">
@@ -7,7 +8,7 @@
         <!-- Header -->
         <div class="flex items-center gap-2 mb-6">
             <span class="iconify" data-icon="octicon:pencil-16"></span>
-            <h1 class="card-title text-2xl">Edit Event</h1>
+            <h1 class="card-title text-2xl">{% translate "Edit Event" %}</h1>
         </div>
         
         <form method="post">
@@ -38,11 +39,12 @@
             <div class="card-actions justify-end mt-6 pt-6 border-t">
                 <a href="{% url 'events:list' %}" class="btn btn-ghost">
                     <span class="iconify mr-2" data-icon="octicon:x-circle-16"></span>
-                    Cancel
+                    <span class="iconify mr-2" data-icon="octicon:x-circle-16"></span>
+                    {% translate "Cancel" %}
                 </a>
                 <button type="submit" class="btn btn-primary">
                     <span class="iconify mr-2" data-icon="octicon:check-16"></span>
-                    Save Changes
+                     {% translate "Save Changes" %}
                 </button>
             </div>
         </form>

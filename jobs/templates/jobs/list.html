@@ -2,6 +2,7 @@
 {% load static %}
 {% load job_tags %}
 {% load component_tags %}  {# Add this for django-components #}
+{% load i18n %}
 
 {% block content %}
 <div class="min-h-screen flex flex-col page-transition-wrapper" 
@@ -16,21 +17,21 @@
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-6 mb-8 sm:mb-12">
                     <div class="animate-in slide-in-from-left duration-500">
                         <div class="flex items-center justify-between sm:block">
-                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">Jobs</h1>
+                            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">{% translate "Jobs" %}</h1>
                             <!-- Mobile-only Add Button -->
                             <a href="{% url 'jobs:add' %}"
                                class="btn btn-primary btn-circle sm:hidden shadow-lg hover:shadow-primary/30 transition-all duration-300">
                                 <iconify-icon icon="octicon:plus-16" class="text-xl"></iconify-icon>
                             </a>
                         </div>
-                        <p class="text-base-content/70 mt-2 text-sm sm:text-base">Track and manage your job applications</p>
+                        <p class="text-base-content/70 mt-2 text-sm sm:text-base">{% translate "Track and manage your applications" %}</p>
                     </div>
                     <!-- Desktop-only Add Button -->
                     <div class="hidden sm:block animate-in slide-in-from-right duration-500">
                         <a href="{% url 'jobs:add' %}"
                            class="btn btn-primary shadow-lg hover:shadow-primary/30 transition-all duration-300">
                             <iconify-icon icon="octicon:plus-16"></iconify-icon>
-                            Add Job
+                             {% translate "Add job" %}
                         </a>
                     </div>
                 </div>
@@ -62,13 +63,13 @@
                                 <div class="p-4 rounded-full bg-primary/10 inline-block mb-4">
                                     <iconify-icon icon="heroicons:document-plus" class="text-6xl text-primary"></iconify-icon>
                                 </div>
-                                <h3 class="text-2xl font-semibold text-base-content mb-2">No jobs added yet</h3>
-                                <p class="text-base-content/70 mb-4">Start tracking your job applications and keep everything organized in one place</p>
+                                 <h3 class="text-2xl font-semibold text-base-content mb-2">{% translate "No jobs added yet" %}</h3>
+                                 <p class="text-base-content/70 mb-4">{% translate "Start tracking your applications and organize everything in one place" %}</p>
                             </div>
                             <a href="{% url 'jobs:add' %}"
                                 class="btn btn-primary gap-2 shadow-lg hover:shadow-primary/30 transition-all duration-300">
                                 <span class="icon" data-icon="octicon:plus-16"></span>
-                                Add Your First Job
+                                 {% translate "Add your first job" %}
                             </a>
                         </div>
                     </div>
@@ -83,4 +84,3 @@
 {% block modal %}
 {% include "jobs/modals/skills_modal.html" %}
 {% endblock %}
-

@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-31 14:15+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: static/js/script.js:110
+msgid "Please add a job posting first."
+msgstr "Bitte füge zuerst eine Stellenausschreibung hinzu."
+
+#: static/js/script.js:124
+msgid "The job posting could not be processed."
+msgstr "Die Stellenausschreibung konnte nicht verarbeitet werden."
+
+#: static/js/script.js:150
+msgid "Filled"
+msgstr "Ausgefüllt"
+
+#: static/js/skill-tree-widget.js:10
+msgid "Required"
+msgstr "Erforderlich"
+
+#: static/js/skill-tree-widget.js:11
+msgid "Preferred"
+msgstr "Bevorzugt"
+
+#: static/js/skill-tree-widget.js:12
+msgid "Nice to have"
+msgstr "Wünschenswert"
+
+#: static/js/skill-tree-widget.js:77
+msgid "Failed to load skills"
+msgstr "Fähigkeiten konnten nicht geladen werden"
+
+#: static/js/skill-tree-widget.js:89
+msgid "Uncategorized"
+msgstr "Nicht kategorisiert"
+
+#: static/js/skill-tree-widget.js:119
+msgid "Failed to load initial skills"
+msgstr "Fähigkeiten konnten nicht initial geladen werden"
+
+#: static/js/skill-tree-widget.js:138
+msgid "Select at least one skill"
+msgstr "Wähle mindestens eine Fähigkeit aus"
+
+#: static/js/skill-tree-widget.js:147
+msgid "Some skills have invalid proficiency levels"
+msgstr "Einige Fähigkeiten haben ungültige Kenntnisstufen"
+
+#: static/js/skills-select.js:15 static/js/store.js:201
+msgid "Click 'Manage Skills' to add required skills"
+msgstr "Klicke auf „Fähigkeiten verwalten“, um erforderliche Fähigkeiten hinzuzufügen"
+
+#: static/js/skills-select.js:41 static/js/skills-select.js:273
+#, javascript-format
+msgid "%s selected"
+msgstr "%s ausgewählt"
+
+#: static/js/skills-select.js:181
+#, javascript-format
+msgid "No skills found for \"%s\""
+msgstr "Keine Fähigkeiten für „%s“ gefunden"
+
+#: static/js/skills-select.js:204
+msgid "Manage Skills"
+msgstr "Fähigkeiten verwalten"
+
+#: static/js/store.js:222
+msgid "Remove skill"
+msgstr "Fähigkeit entfernen"

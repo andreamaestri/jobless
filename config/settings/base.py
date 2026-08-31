@@ -29,8 +29,8 @@ TEMPLATES_DIR = '/srv/django/jobless/templates'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-3.5-flash-lite')
 
 # Get environment setting
 DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
@@ -38,8 +38,8 @@ DEVELOPMENT = os.getenv('DEVELOPMENT', 'False') == 'True'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['jobless.andreadev.uk', 'api.groq.com' , 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1', 'jobless-1v-b91dc24e55b1.herokuapp.com']
-CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'https://api.groq.com' , 'http://localhost/', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'https://jobless-1v-b91dc24e55b1.herokuapp.com']
+ALLOWED_HOSTS = ['jobless.andreadev.uk', 'hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'localhost', '127.0.0.1', 'jobless-1v-b91dc24e55b1.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://jobless.andreadev.uk', 'http://localhost/', 'http://hk08c0gs8kcsck48kwkoo4ww.130.162.164.53.sslip.io', 'https://jobless-1v-b91dc24e55b1.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
@@ -103,6 +103,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -127,6 +128,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.navigation',
@@ -269,7 +271,12 @@ LOGOUT_REDIRECT_URL = '/'
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+LANGUAGES = [
+    ('de', 'Deutsch'),
+    ('en', 'English'),
+]
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 TIME_ZONE = 'UTC'
 
@@ -285,13 +292,40 @@ AWS_STORAGE_BUCKET_NAME = os.getenv('OCI_BUCKET_NAME')
 AWS_S3_ENDPOINT_URL = f"https://{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.getenv('OCI_REGION')}.oraclecloud.com"
 AWS_S3_CUSTOM_DOMAIN = f"{os.getenv('OCI_NAMESPACE')}.compat.objectstorage.{os.getenv('OCI_REGION')}.oraclecloud.com/{os.getenv('OCI_BUCKET_NAME')}"
 
-# Tell Django to use S3 for file storage
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# OCI S3-compatible API requirements: path-style addressing and disabled
+# flexible checksums (botocore >= 1.38 checksums break OCI SigV4 signing).
+# django-storages ignores addressing_style when AWS_S3_CLIENT_CONFIG is set,
+# so it must be included here.
+from botocore.config import Config as BotoConfig  # noqa: E402
+
+AWS_S3_CLIENT_CONFIG = BotoConfig(
+    s3={'addressing_style': 'path'},
+    request_checksum_calculation='when_required',
+    response_checksum_validation='when_required',
+)
+
+if AWS_ACCESS_KEY_ID and AWS_STORAGE_BUCKET_NAME:
+    DEFAULT_STORAGE_BACKEND = {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "location": "media",
+        },
+    }
+else:
+    DEFAULT_STORAGE_BACKEND = {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    }
+
+STORAGES = {
+    "default": DEFAULT_STORAGE_BACKEND,
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # Static files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Extra places for collectstatic to find static files
 STATICFILES_DIRS = [
@@ -327,7 +361,8 @@ else:
 
 DJANGO_VITE = {
   "default": {
-    "dev_mode": DEBUG
+    "dev_mode": DEBUG,
+    "manifest_path": os.path.join(BASE_DIR, 'assets', '.vite', 'manifest.json')
   }
 }
 

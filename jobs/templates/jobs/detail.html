@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load job_tags %}
+{% load i18n %}
 
 {% block content %}
 <div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 rounded-2xl bg-base-200">
@@ -23,23 +24,23 @@
             <!-- Details Table -->
             <div class="divide-y divide-base-300">
                 <div class="grid grid-cols-3 py-4">
-                    <div class="text-sm font-semibold text-base-content">Location</div>
+                    <div class="text-sm font-semibold text-base-content">{% translate "Location" %}</div>
                     <div class="col-span-2 text-base-content">{{ object.location }}</div>
                 </div>
 
                 {% if object.salary_range %}
                 <div class="grid grid-cols-3 py-4">
-                    <div class="text-sm font-semibold text-base-content">Salary Range</div>
+                    <div class="text-sm font-semibold text-base-content">{% translate "Salary Range" %}</div>
                     <div class="col-span-2 text-base-content">{{ object.salary_range }}</div>
                 </div>
                 {% endif %}
 
                 {% if object.url %}
                 <div class="grid grid-cols-3 py-4">
-                    <div class="text-sm font-semibold text-base-content">Job URL</div>
+                    <div class="text-sm font-semibold text-base-content">{% translate "Job URL" %}</div>
                     <div class="col-span-2">
                         <a href="{{ object.url }}" target="_blank" class="text-primary hover:text-primary-focus">
-                            View Original Posting
+                            {% translate "View original job posting" %}
                         </a>
                     </div>
                 </div>
@@ -47,7 +48,7 @@
 
                 {% if object.skills.count > 0 %}
                 <div class="grid grid-cols-3 py-4">
-                    <div class="text-sm font-semibold text-base-content">Skills</div>
+                    <div class="text-sm font-semibold text-base-content">{% translate "Skills" %}</div>
                     <div class="col-span-2">
                         <div class="flex flex-wrap gap-2">
                             {% for skill in object.skills.all %}
@@ -61,7 +62,7 @@
                 </div>
                 {% endif %}
                 <div class="grid grid-cols-3 py-4">
-                    <div class="text-sm font-semibold text-base-content">Description</div>
+                    <div class="text-sm font-semibold text-base-content">{% translate "Description" %}</div>
                     <div class="col-span-2 text-base-content">
                         <div x-data="{ 
                             formattedDescription: '',
@@ -76,7 +77,7 @@
                 </div>
 
                 <div class="grid grid-cols-3 py-4">
-                    <div class="text-sm font-semibold text-base-content">Last Updated</div>
+                    <div class="text-sm font-semibold text-base-content">{% translate "Last Updated" %}</div>
                     <div class="col-span-2 text-base-content">{{ object.updated_at|date:"F j, Y" }}</div>
                 </div>
             </div>
@@ -88,18 +89,18 @@
                     <button type="submit" class="btn btn-ghost flex items-center gap-2">
                         {% if request.user in object.favorited_by.all %}
                             <iconify-icon icon="octicon:star-fill-24" class="text-primary"></iconify-icon>
-                            <span>Remove from favorite</span>
+                            <span>{% translate "Remove from favorites" %}</span>
                         {% else %}
                             <iconify-icon icon="octicon:star-24"></iconify-icon>
-                            <span>Add to favorite</span>
+                            <span>{% translate "Add to favorites" %}</span>
                         {% endif %}
                     </button>
                 </form>
                 <a href="{% url 'jobs:list' %}" class="btn btn-ghost">
-                    Back to List
+                    {% translate "Back to list" %}
                 </a>
                 <a href="{% url 'jobs:edit' object.pk %}" class="btn btn-primary">
-                    Edit Job
+                            {% translate "Edit job" %}
                 </a>
             </div>
         </div>

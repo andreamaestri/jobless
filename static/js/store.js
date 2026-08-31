@@ -54,7 +54,7 @@ export function initializeStore() {
         },
 
         skills: {
-            selected: Alpine.$persist([]).as('app_skills_selected'),
+            selected: [],
             maxSkills: 10,
             icons: [],
             categories: [],
@@ -106,16 +106,20 @@ export function initializeStore() {
                 const skillsInput = document.getElementById('id_skills');
                 if (skillsInput?.value) {
                     try {
-                        const skills = skillsInput.value.split(',')
-                            .map(s => s.trim())
-                            .filter(Boolean);
+                        const raw = skillsInput.value;
+                        const skills = raw.startsWith('[')
+                            ? JSON.parse(raw)
+                            : raw.split(',').map(name => ({ name: name.trim() })).filter(skill => skill.name);
                         
                         this.clear();
-                        skills.forEach(name => {
+                        skills.forEach(skill => {
+                            const name = typeof skill === 'string' ? skill : (skill.name || skill.label);
                             this.add({
+                                id: skill.id,
                                 name,
                                 icon: window.MODAL_ICON_MAPPING?.[name.toLowerCase()] || 'heroicons:academic-cap',
-                                icon_dark: window.MODAL_DARK_VARIANTS?.[window.MODAL_ICON_MAPPING?.[name.toLowerCase()]] || 'heroicons:academic-cap'
+                                icon_dark: window.MODAL_DARK_VARIANTS?.[window.MODAL_ICON_MAPPING?.[name.toLowerCase()]] || 'heroicons:academic-cap',
+                                proficiency: skill.proficiency || 'required'
                             });
                         });
                     } catch (e) {
@@ -175,7 +179,11 @@ export function initializeStore() {
             updateHiddenInput() {
                 const skillsInput = document.getElementById('id_skills');
                 if (skillsInput) {
-                    skillsInput.value = this.selected.map(s => s.name).join(',');
+                    skillsInput.value = JSON.stringify(this.selected.map(skill => ({
+                        skill: skill.id || skill.name,
+                        proficiency: skill.proficiency || 'required',
+                        name: skill.name
+                    })));
                     skillsInput.dispatchEvent(new Event('change', { bubbles: true }));
                     
                     // Update display if container exists
@@ -190,7 +198,7 @@ export function initializeStore() {
                 container.innerHTML = '';
                 
                 if (this.selected.length === 0) {
-                    container.innerHTML = '<div class="text-base-content/60 text-sm">Click \'Manage Skills\' to add required skills</div>';
+                    container.innerHTML = `<div class="text-base-content/60 text-sm">${gettext("Click 'Manage Skills' to add required skills")}</div>`;
                     return;
                 }
 
@@ -211,7 +219,7 @@ export function initializeStore() {
                         <button type="button" 
                                 class="ml-1 rounded-full p-1.5 hover:bg-primary/20 active:bg-primary/30
                                        transition-all duration-200 opacity-60 hover:opacity-100"
-                                title="Remove skill">
+                                title="${gettext("Remove skill")}">
                             <iconify-icon icon="heroicons:x-mark" class="text-sm"></iconify-icon>
                         </button>`;
 

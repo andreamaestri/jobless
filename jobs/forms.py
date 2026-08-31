@@ -1,5 +1,6 @@
 from django import forms
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.translation import gettext_lazy as _
 import json
 from .models import JobPosting, SkillTreeModel, JobSkill
 
@@ -75,6 +76,16 @@ class JobPostingForm(forms.ModelForm):
             'title', 'company', 'location', 'salary_range',
             'url', 'description', 'skills', 'status'
         ]
+        labels = {
+            'title': _('Job title'),
+            'company': _('Company'),
+            'location': _('Location'),
+            'salary_range': _('Salary range'),
+            'url': _('Job posting URL'),
+            'description': _('Job description'),
+            'skills': _('Skills'),
+            'status': _('Application status'),
+        }
 
     def clean_skills(self):
         skills_data = self.cleaned_data.get('skills')

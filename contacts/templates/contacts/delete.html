@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <div class="min-h-min p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8 bg-base-200">
@@ -10,9 +11,9 @@
                 <div class="mb-8">
                     <h1 class="card-title text-2xl text-base-content flex items-center gap-2">
                         <span class="iconify" data-icon="octicon:trash-24"></span>
-                        Delete Contact
+                        {% translate "Delete Contact" %}
                     </h1>
-                    <p class="text-base-content/70 mt-2">Are you sure you want to delete this contact?</p>
+                     <p class="text-base-content/70 mt-2">{% translate "Are you sure you want to delete this contact?" %}</p>
                 </div>
 
                 <!-- Contact Details -->
@@ -21,7 +22,7 @@
                         <div>
                             <h3 class="text-sm font-medium text-base-content/70">
                                 <span class="iconify inline mr-1" data-icon="octicon:person-16"></span>
-                                Name
+                                {% translate "Name" %}
                             </h3>
                             <p class="text-base-content">{{ contact.name }}</p>
                         </div>
@@ -29,7 +30,7 @@
                         <div>
                             <h3 class="text-sm font-medium text-base-content/70">
                                 <span class="iconify inline mr-1" data-icon="octicon:organization-16"></span>
-                                Company
+                                {% translate "Company" %}
                             </h3>
                             <p class="text-base-content">{{ contact.company }}</p>
                         </div>
@@ -38,7 +39,7 @@
                         <div>
                             <h3 class="text-sm font-medium text-base-content/70">
                                 <span class="iconify inline mr-1" data-icon="octicon:briefcase-16"></span>
-                                Position
+                                {% translate "Position" %}
                             </h3>
                             <p class="text-base-content">{{ contact.position }}</p>
                         </div>
@@ -52,11 +53,13 @@
                     <div class="flex justify-end space-x-4">
                         <a href="{% url 'contacts:list' %}" class="btn btn-outline">
                             <span class="iconify mr-1" data-icon="octicon:x-circle-16"></span>
-                            Cancel
+                            <span class="iconify mr-1" data-icon="octicon:x-circle-16"></span>
+                            {% translate "Cancel" %}
                         </a>
                         <button type="submit" class="btn btn-error">
                             <span class="iconify mr-1" data-icon="octicon:trash-16"></span>
-                            Delete Contact
+                            <span class="iconify mr-1" data-icon="octicon:trash-16"></span>
+                            {% translate "Delete Contact" %}
                         </button>
                     </div>
                 </form>

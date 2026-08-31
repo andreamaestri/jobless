@@ -7,9 +7,9 @@ document.addEventListener("alpine:init", () => {
     allSkills: [],
     errors: [],
     proficiencyLevels: [
-      { value: 'required', label: 'Required', icon: 'heroicons:exclamation-circle' },
-      { value: 'preferred', label: 'Preferred', icon: 'heroicons:star' },
-      { value: 'bonus', label: 'Nice to Have', icon: 'heroicons:plus-circle' }
+      { value: 'required', label: gettext('Required'), icon: 'heroicons:exclamation-circle' },
+      { value: 'preferred', label: gettext('Preferred'), icon: 'heroicons:star' },
+      { value: 'bonus', label: gettext('Nice to have'), icon: 'heroicons:plus-circle' }
     ],
 
     getSkillProficiency(skillId) {
@@ -17,7 +17,7 @@ document.addEventListener("alpine:init", () => {
       return skill ? skill.proficiency : null;
     },
 
-    init() {
+    async init() {
       // Initialize store data first
       const store = Alpine.store("app");
       if (!store?.skills) {
@@ -26,7 +26,7 @@ document.addEventListener("alpine:init", () => {
       }
 
       // Load initial data
-      this.loadSkillsData(window.TAGULOUS_SETTINGS || {});
+      await this.loadSkillsData();
       
       if (window.TAGULOUS_INITIAL_TAGS?.length) {
         this.loadInitialSkills(window.TAGULOUS_INITIAL_TAGS);
@@ -58,22 +58,23 @@ document.addEventListener("alpine:init", () => {
       this.updateFormField();
     },
 
-    loadSkillsData(settings) {
+    async loadSkillsData() {
       try {
-        const choices = settings.autocomplete_choices || [];
-
-        this.allSkills = choices.map(choice => ({
-          id: choice[0],
-          label: choice[1],
-          icon: window.MODAL_ICON_MAPPING?.[choice[1].toLowerCase()] || "heroicons:academic-cap",
-          path: choice[2] || "",
+        const response = await fetch('/jobs/api/skills/');
+        if (!response.ok) throw new Error(`Skills request failed: ${response.status}`);
+        const data = await response.json();
+        this.allSkills = (data.skills || []).map(skill => ({
+          id: skill.id,
+          label: skill.label || skill.name,
+          icon: skill.icon || window.MODAL_ICON_MAPPING?.[skill.name.toLowerCase()] || "heroicons:academic-cap",
+          path: skill.name || "",
           proficiency: "required"
         }));
 
         this.buildCategoryTree();
       } catch (error) {
         console.error("Error loading skills data:", error);
-        this.errors.push("Failed to load skills data");
+        this.errors.push(gettext("Failed to load skills"));
       }
     },
 
@@ -85,7 +86,7 @@ document.addEventListener("alpine:init", () => {
         
         if (pathParts.length > 1) {
           const categoryPath = pathParts.slice(0, -1).join(":");
-          const categoryLabel = pathParts[pathParts.length - 2] || "Uncategorized";
+          const categoryLabel = pathParts[pathParts.length - 2] || gettext("Uncategorized");
 
           if (!categoryMap.has(categoryPath)) {
             categoryMap.set(categoryPath, {
@@ -115,7 +116,7 @@ document.addEventListener("alpine:init", () => {
         });
       } catch (error) {
         console.error("Error loading initial skills:", error);
-        this.errors.push("Failed to load initial skills");
+        this.errors.push(gettext("Failed to load initial skills"));
       }
     },
 
@@ -134,7 +135,7 @@ document.addEventListener("alpine:init", () => {
       this.errors = [];
       
       if (this.selectedSkills.length === 0) {
-        this.errors.push("Please select at least one skill");
+        this.errors.push(gettext("Select at least one skill"));
         return false;
       }
 
@@ -143,7 +144,7 @@ document.addEventListener("alpine:init", () => {
       );
 
       if (invalidSkills.length > 0) {
-        this.errors.push("Some skills have invalid proficiency levels");
+        this.errors.push(gettext("Some skills have invalid proficiency levels"));
         return false;
       }
 
@@ -230,6 +231,16 @@ document.addEventListener("alpine:init", () => {
           detail: this.selectedSkills
         }));
       }
+    },
+
+    filterSkills() {
+      // The filteredSkills getter reacts to searchQuery; this method keeps the
+      // template event handler explicit and compatible with Alpine.
+    },
+
+    saveSkills() {
+      this.updateFormField();
+      Alpine.store('app').skills.closeModal();
     }
   }));
 });

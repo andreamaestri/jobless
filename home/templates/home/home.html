@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
 {% load home_extras %}
 {% load widget_tweaks %}
@@ -9,7 +10,7 @@
     <div class="navbar bg-base-100 shadow-sm sticky top-0 z-50 px-4">
         <div class="flex-1">
             <h1 class="text-lg font-semibold">
-                Hello, <span class="text-primary">{{ user.username }}</span>! Great to see you again.
+                {% blocktranslate %}Hi, <span class="text-primary">{{ user.username }}</span>! Welcome back.{% endblocktranslate %}
             </h1>
         </div>
         <div class="flex-none gap-2">
@@ -19,7 +20,7 @@
             <div class="divider divider-horizontal"></div>
             <button class="btn btn-primary btn-sm" onclick="document.getElementById('quickAdd').showModal()">
                 <iconify-icon icon="octicon:plus-24"></iconify-icon>
-                <span class="hidden sm:inline">Quick Entry</span>
+                <span class="hidden sm:inline">{% translate "Quick add" %}</span>
             </button>
         </div>
     </div>
@@ -32,28 +33,28 @@
                 <div class="stat-figure text-primary">
                     <iconify-icon class="w-8 h-8" icon="octicon:briefcase-24"></iconify-icon>
                 </div>
-                <div class="stat-title">Active Job Apps</div>
+                <div class="stat-title">{% translate "Active applications" %}</div>
                 <div class="stat-value text-primary">{{ active_jobs_count }}</div>
             </div>
             <div class="stat bg-base-100 rounded-box shadow">
                 <div class="stat-figure text-secondary">
                     <iconify-icon class="w-8 h-8" icon="octicon:calendar-24"></iconify-icon>
                 </div>
-                <div class="stat-title">Events Coming Up</div>
+                <div class="stat-title">{% translate "Upcoming events" %}</div>
                 <div class="stat-value text-secondary">{{ upcoming_events_count }}</div>
             </div>
             <div class="stat bg-base-100 rounded-box shadow">
                 <div class="stat-figure text-accent">
                     <iconify-icon class="w-8 h-8" icon="octicon:people-24"></iconify-icon>
                 </div>
-                <div class="stat-title">Your Network</div>
+                <div class="stat-title">{% translate "Your network" %}</div>
                 <div class="stat-value text-accent">{{ total_contacts }}</div>
             </div>
             <div class="stat bg-base-100 rounded-box shadow">
                 <div class="stat-figure text-success">
                     <iconify-icon class="w-8 h-8" icon="octicon:graph-24"></iconify-icon>
                 </div>
-                <div class="stat-title">Overall Success</div>
+                <div class="stat-title">{% translate "Overall success" %}</div>
                 <div class="stat-value text-success">{{ success_rate }}%</div>
             </div>
         </div>
@@ -62,8 +63,8 @@
         <div class="card bg-base-100 shadow-xl">
             <div class="card-body p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="card-title text-xl">Your Application Progress</h2>
-                    <div class="badge badge-neutral badge-lg">{{ success_rate }}% Success</div>
+                    <h2 class="card-title text-xl">{% translate "Your application progress" %}</h2>
+                    <div class="badge badge-neutral badge-lg">{% blocktranslate %}{{ success_rate }}% success{% endblocktranslate %}</div>
                 </div>
                 
                 <!-- Progress Bars -->
@@ -139,7 +140,7 @@
                     <!-- Card Footer -->
                     <div class="p-6 border-t border-base-200">
                         <a href="{{ card.view_all_url }}" class="btn btn-block">
-                            Explore all {{ card.title|lower }}
+                            {% blocktranslate with title=card.title|lower %}Explore all {{ title }}{% endblocktranslate %}
                             <iconify-icon icon="octicon:arrow-right-16"></iconify-icon>
                         </a>
                     </div>
@@ -153,24 +154,24 @@
 <!-- Modals with updated styling -->
 <dialog id="quickAdd" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4">Quick Add Panel</h3>
+        <h3 class="font-bold text-lg mb-4">{% translate "Quick add" %}</h3>
         <div class="menu bg-base-200 rounded-box">
             <a href="{% url 'jobs:add' %}" class="menu-item">
                 <iconify-icon icon="octicon:briefcase-24"></iconify-icon>
-                Add a Job Application
+                {% translate "Add job application" %}
             </a>
             <a href="{% url 'events:add' %}" class="menu-item">
                 <iconify-icon icon="octicon:calendar-24"></iconify-icon>
-                Add an Event
+                {% translate "Add event" %}
             </a>
             <a href="{% url 'contacts:add' %}" class="menu-item">
                 <iconify-icon icon="octicon:people-24"></iconify-icon>
-                Add a Contact
+                {% translate "Add contact" %}
             </a>
         </div>
         <div class="modal-action">
             <form method="dialog">
-                <button class="btn">Close</button>
+                <button class="btn">{% translate "Close" %}</button>
             </form>
         </div>
     </div>
@@ -185,7 +186,7 @@
             <iconify-icon icon="octicon:x-16"></iconify-icon>
         </button>
 
-        <h3 class="font-bold text-lg mb-4">Find What You Need</h3>
+        <h3 class="font-bold text-lg mb-4">{% translate "Find what you need" %}</h3>
         <form method="GET" class="space-y-4" id="searchForm">
             <!-- Search Input with Widget Tweaks -->
             <div class="form-control">
@@ -199,7 +200,7 @@
                     <div id="searchResults" 
                          class="hidden absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-box shadow-lg border border-base-300 max-h-64 overflow-y-auto z-50"
                          role="listbox"
-                         aria-label="Search Suggestions">
+                         aria-label="{% translate "Search suggestions" %}">
                     </div>
                 </div>
             </div>
@@ -208,14 +209,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">Status</span>
+                        <span class="label-text">{% translate "Status" %}</span>
                     </label>
                     {% render_field search_form.status class="select select-bordered w-full" %}
                 </div>
                 
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">Type</span>
+                        <span class="label-text">{% translate "Type" %}</span>
                     </label>
                     {% render_field search_form.type class="select select-bordered w-full" %}
                 </div>
@@ -225,19 +226,19 @@
             <div class="flex flex-col sm:flex-row gap-2">
                 <button type="submit" class="btn btn-primary flex-1">
                     <iconify-icon icon="octicon:filter-16" class="mr-2"></iconify-icon>
-                    Apply Filters
+                    {% translate "Apply filters" %}
                 </button>
                 {% if search_query or status_filter %}
                     <a href="{% url 'home:home' %}" class="btn btn-ghost">
                         <iconify-icon icon="octicon:x-16" class="mr-2"></iconify-icon>
-                        Clear All
+                        {% translate "Clear all" %}
                     </a>
                 {% endif %}
             </div>
         </form>
     </div>
     <form method="dialog" class="modal-backdrop">
-        <button>close</button>
+        <button>{% translate "Close" %}</button>
     </form>
 </dialog>
 
