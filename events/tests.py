@@ -1,3 +1,59 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 
-# Create your tests here.
+from .models import Event
+
+User = get_user_model()
+
+
+class EventModelTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username="tester", password="pw12345")
+        cls.event = Event.objects.create(
+            user=cls.user,
+            title="Final round",
+            event_type="interview",
+            date=cls._days_from_now(2),
+            location="Zoom",
+        )
+
+    def test_str_returns_title(self):
+        self.assertIn("Final round", str(self.event))
+
+    def test_get_absolute_url(self):
+        self.assertEqual(
+            self.event.get_absolute_url(),
+            reverse("events:detail", kwargs={"pk": self.event.pk}),
+        )
+
+    @staticmethod
+    def _days_from_now(days):
+        from django.utils import timezone
+        from datetime import timedelta
+
+        return timezone.now() + timedelta(days=days)
+
+
+class SecureClientMixin:
+    """Production forces SECURE_SSL_REDIRECT; test requests must use https."""
+
+    def get(self, *args, **kwargs):
+        kwargs.setdefault("secure", True)
+        return self.client.get(*args, **kwargs)
+
+
+class EventViewTests(SecureClientMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username="tester", password="pw12345")
+
+    def test_list_requires_login(self):
+        response = self.get(reverse("events:list"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_list_renders_for_authenticated_user(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("events:list"))
+        self.assertEqual(response.status_code, 200)
