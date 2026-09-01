@@ -1,45 +1,66 @@
 # AGENTS.md
 
 Project-specific instructions for coding agents working on **Jobless** — a Django 5.1
-job-search tracker. Complements the human-facing `README.md` and the more detailed
-`CLAUDE.md`.
+job-search tracker (jobs, contacts, events, AI assistant) with a daisyUI 5 + Tailwind 4
+frontend. Complements `README.md`, the more detailed `CLAUDE.md`, and `docs/architecture/`.
 
 ## Setup
 
-- Python venv lives at `.venv/`; all Django commands run through it, e.g.
-  `.venv/bin/python manage.py ...` with `DJANGO_SETTINGS_MODULE=config.settings.production`
-  (or source the bundled `.env`).
-- JS dependencies: `npm install` at repo root (Vite) and `python manage.py tailwind install`
-  for the `theme/` app.
-- Run the dev server with `python manage.py runserver` and `npm run dev` for Vite HMR.
+- Python venv: `.venv/` — run everything as `.venv/bin/python manage.py ...`.
+- Production env lives in root-owned `/etc/jobless.env` (DB creds included). Without it,
+  DB access fails with `fe_sendauth: no password supplied`. Load it:
+  `sudo bash -c 'set -a; source /etc/jobless.env; ...'`. Repo `.env` is for local dev.
+- Node >= 22 required (`package.json` engines). `npm install` at root (Vite/Alpine) and
+  `python manage.py tailwind install` for `theme/static_src`.
 
 ## Commands
 
-- System check: `.venv/bin/python manage.py check`
-- Tests: `python manage.py test` (per-app: `test jobs|contacts|events`)
-- Frontend assets: Vite build `npm run build`; Tailwind build `python manage.py tailwind build`;
-  collect with `python manage.py collectstatic --noinput`
-- i18n: `makemessages -l de`, `compilemessages`; validate catalogs with
-  `msgfmt --check-format locale/de/LC_MESSAGES/django.po`
-- Production (systemd `jobless.service`, Gunicorn on `127.0.0.1:8001`):
-  `source /etc/jobless.env` then migrate/collect/restart; live page checks use a Django test
-  client with `Client(SERVER_NAME="localhost")` and `secure=True`
+- Check: `.venv/bin/python manage.py check`; tests: `.venv/bin/python manage.py test jobs`
+  (also `contacts`, `events`).
+- Frontend assets, in this order after template/CSS changes:
+  1. `python manage.py tailwind build` (runs npm inside `theme/static_src`, writes
+     `theme/static/css/dist/styles.css`)
+  2. `sudo chown -R $(whoami): staticfiles` (often root-owned), then
+     `python manage.py collectstatic --noinput`
+  3. `sudo systemctl restart jobless` (systemd, Gunicorn on `127.0.0.1:8001`)
+- i18n (German only): `makemessages -l de` — never use `--no-location` (strips all
+  `#:` comments and bloats the diff). Compile just the project catalog with
+  `compilemessages --locale=de` (bare `compilemessages` walks every installed app and is
+  slow). Validate with `msgfmt --check-format locale/de/LC_MESSAGES/django.po`.
+  When hand-editing `.po`, remove `#, fuzzy` and `#|` lines; verify escapes in `msgstr`
+  (a script-written `\\"` double-escape renders literally).
+
+## Verifying live pages
+
+- Use a Django test client against the running config:
+  `Client(SERVER_NAME="localhost")`, `force_login(user)`,
+  `c.get(url, HTTP_HOST="localhost", secure=True)` — `secure=True` is required.
+- To render pages with data without touching prod data, seed inside
+  `transaction.atomic()` and call `transaction.set_rollback(True)` before exiting.
+- Useful URLs: `/`, `/jobs/`, `/jobs/add/`, `/events/`, `/contacts/`, `/ai-assistant/`,
+  `/jsi18n/` (JS catalog).
 
 ## Conventions
 
-- UI: daisyUI 5 + Tailwind CSS 4 (CSS-first in `theme/static_src/src/styles.css`).
-  Custom themes (Jobless/Dark) are registered there — `tailwind.config.js` files are
-  intentionally ignored. Use daisyUI semantic colors (`bg-base-100`, `text-base-content`,
-  etc.) and current v5 classes (`fieldset`, `join`, `tabs-box`). The work tree contains a
-  bundled skill: `.agents/skills/daisyui/SKILL.md`.
-- Never put `@apply` inside template `<style>` blocks; put the styles in `styles.css` instead.
-- i18n: English is the source language; keep templates translatable with
-  `{% translate %}` / `gettext_lazy`, and add German `msgstr` entries to
-  `locale/de/LC_MESSAGES/django.po` (compile `.mo` afterwards). Model choices are
-  wrapped in `gettext_lazy`.
-- URLs are namespaced (`jobs:list`, `contacts:detail`, ...); templates reference them by name.
-- Models reference users via `settings.AUTH_USER_MODEL`; candidate JS labels for
-  JavaScript catalogs live in `locale/de/LC_MESSAGES/djangojs.po`.
+- Tailwind 4 is CSS-first: themes and plugins live in `theme/static_src/src/styles.css`
+  via `@plugin 'daisyui/theme'` blocks (Jobless/Dark). All `tailwind.config.js` files are
+  ignored/unwired — do not add config there.
+- daisyUI 5 only: use semantic colors (`bg-base-100`, `text-base-content`) and v5 classes
+  (`fieldset`, `join`, `tabs-box`, `<dialog class="modal">` + `modal-box` +
+  `form.modal-backdrop`). Never put `@apply` in template `<style>` blocks — it is not
+  processed there; put styles in `styles.css`.
+- i18n: English is the source language. Wrap user-facing strings (`{% translate %}`,
+  `gettext_lazy`; model choices included) and add German `msgstr` to
+  `locale/de/LC_MESSAGES/django.po` (JS labels go in `djangojs.po` — note literals inside
+  inline `<script>` blocks stay English).
+- URLs are namespaced (`jobs:list`, `contacts:detail`, ...); reference by name in templates.
+- Models reference users via `settings.AUTH_USER_MODEL`.
+
+## Git quirks
+
+- `theme/static/css/dist/styles.css` is tracked but matched by `.gitignore`'s `dist` rule —
+  stage it with `git add -f`.
+- Never commit `staticfiles/` artifacts.
 
 ## Code Review Rules
 
@@ -48,10 +69,10 @@ job-search tracker. Complements the human-facing `README.md` and the more detail
 - Flag hardcoded palette classes (`bg-green-100`, `text-gray-700`, `bg-white`) that break
   theming — use semantic daisyUI colors.
 - Flag untranslatable user-facing strings and missing German `msgstr` after catalog updates.
-- Avoid committing `staticfiles/` artifacts; compiled theme CSS at
-  `theme/static/css/dist/` is tracked deliberately (build locally, deploy with collectstatic).
 
 ## Notes
 
+- daisyUI skill is bundled at `.agents/skills/daisyui/SKILL.md` (managed via
+  `npx skills add`, see `skills-lock.json`).
 - If you change structure, commands, or conventions, update this file and `CLAUDE.md`.
 - Keep changes minimal; prefer editing existing files over adding new ones.
