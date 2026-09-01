@@ -16,7 +16,12 @@ frontend. Complements `README.md`, the more detailed `CLAUDE.md`, and `docs/arch
 ## Commands
 
 - Check: `.venv/bin/python manage.py check`; tests: `.venv/bin/python manage.py test jobs`
-  (also `contacts`, `events`).
+  (also `contacts`, `events`). Always pass `--noinput` (leftover test DBs otherwise prompt
+  and hang non-interactive runs). The DB role needs `CREATEDB` (granted via
+  `sudo -u postgres psql -c 'ALTER ROLE jobless CREATEDB;'`). Tests must issue https
+  requests (`secure=True`): production redirects http. In Django 6.1 `secure` is a
+  per-request kwarg — `Client(secure=True)` is silently ignored (goes into `**defaults`);
+  see the `SecureClientMixin` in the app `tests.py` files.
 - Frontend assets, in this order after template/CSS changes:
   1. `python manage.py tailwind build` (runs npm inside `theme/static_src`, writes
      `theme/static/css/dist/styles.css`)
