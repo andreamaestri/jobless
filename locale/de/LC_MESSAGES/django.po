@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 12:32+0000\n"
+"POT-Creation-Date: 2026-09-01 12:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1823,27 +1823,27 @@ msgstr "Zwei-Faktor-Authentifizierung"
 msgid "Sessions"
 msgstr "Sitzungen"
 
-#: templates/base.html:369 templates/base.html:412
-msgid "Online"
-msgstr "Online"
-
-#: templates/base.html:465
-msgid "Theme"
-msgstr "Design"
-
-#: templates/base.html:504
-msgid "Favorites"
-msgstr "Favoriten"
-
-#: templates/base.html:509
+#: templates/base.html:359 templates/base.html:580
 msgid "Language"
 msgstr "Sprache"
 
-#: templates/base.html:520
+#: templates/base.html:440 templates/base.html:483
+msgid "Online"
+msgstr "Online"
+
+#: templates/base.html:536
+msgid "Theme"
+msgstr "Design"
+
+#: templates/base.html:575
+msgid "Favorites"
+msgstr "Favoriten"
+
+#: templates/base.html:591
 msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/base.html:541
+#: templates/base.html:612
 msgid "Log in"
 msgstr "Anmelden"
 
