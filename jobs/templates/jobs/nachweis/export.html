@@ -58,7 +58,7 @@
           </span>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <a href="{% url 'jobs:nachweis_preview' %}?{{ request.GET.urlencode }}" target="_blank" class="btn btn-outline">
             <iconify-icon icon="octicon:eye-16"></iconify-icon>
             {% translate "Live preview" %}
@@ -70,6 +70,16 @@
           <a href="{% url 'jobs:nachweis_csv' %}?{{ request.GET.urlencode }}" class="btn btn-outline">
             <iconify-icon icon="octicon:download-16"></iconify-icon>
             {% translate "Download CSV" %}
+          </a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <a href="{% url 'jobs:nachweis_zip' %}?{{ request.GET.urlencode }}" class="btn btn-outline">
+            <iconify-icon icon="octicon:file-zip-16"></iconify-icon>
+            {% translate "ZIP: PDF + evidence copies" %}
+          </a>
+          <a href="{% url 'jobs:nachweis_pdf' %}?{{ request.GET.urlencode }}&amp;profile=KOSTENBELEG" class="btn btn-outline">
+            <iconify-icon icon="octicon:credit-card-16"></iconify-icon>
+            {% translate "Costs of efforts (Kostenbeleg)" %}
           </a>
         </div>
 

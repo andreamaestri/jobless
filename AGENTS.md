@@ -99,6 +99,18 @@ The **Nachweis von Eigenbemühungen** feature lives inside the `jobs` app
   filenames follow `Nachweis_Eigenbemuehungen_YYYY-MM_Nachname.pdf`.
 - **Quotas are user-configured** (ObligationPlan.required_count) — never hardcode
   "10 Bewerbungen/Monat"; there is no statutory nationwide number.
+- **Compliance layer** (same app): `Vermittlungsvorschlag` (apply-by defaults to
+  `received_on` + 3 *Werktage* via `add_workdays`; `has_rechtsfolgenbelehrung`;
+  OPEN/APPLIED/DECLINED_WICHTIGER_GRUND/IGNORED), `Absence` (Ortsabwesenheit with
+  `approval_status` — `PENDING` shows an unreported warning), `Obstacle` (wichtiger
+  Grund). `ObligationPlan` carries the § 15a four-part tuple (`instrument`,
+  `which_efforts`, `required_count`, `due_rule`, `proof_form`); `is_vague` /
+  `missing_components` power the "plan not concrete" banner — a warning, never a
+  block. Never treat "has a plan" as "will be sanctioned"; a Kooperationsplan alone
+  is not enforceable (§ 15a Verpflichtungsbescheid / EGV + Rechtsfolgenbelehrung).
+- `events.Event` gained `event_type='beratung'` (Meldetermin) and nullable `attended`.
+- **Kostenbeleg:** `jobs/pdf.py` profile `KOSTENBELEG` prints costs + sum; the
+  Nachweis PDFs (BA-Minimal / Jobcenter) must never show costs.
 - Tests: `.venv/bin/python manage.py test jobs.tests_nachweis --noinput`.
 - Evidence files use a dedicated local `FileSystemStorage`
   (`BASE_DIR/media/evidence`) on purpose — do not switch them to S3/object storage.

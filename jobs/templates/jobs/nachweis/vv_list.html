@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Vermittlungsvorschläge" %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-20">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold">{% translate "Vermittlungsvorschläge" %}</h1>
+            <p class="text-base-content/70 mt-2 text-sm">
+              {% translate "A Vermittlungsvorschlag must normally be answered within 3 working days — ignoring one is the most common reason for a Pflichtverletzung." %}
+            </p>
+          </div>
+          <a href="{% url 'jobs:vv_add' %}" class="btn btn-primary">
+            <iconify-icon icon="octicon:plus-16"></iconify-icon>
+            {% translate "Add" %}
+          </a>
+        </div>
+
+        <div class="bg-base-100/80 shadow-xl rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>{% translate "Employer" %}</th>
+                  <th>{% translate "Job title" %}</th>
+                  <th>{% translate "Received" %}</th>
+                  <th>{% translate "Apply by" %}</th>
+                  <th>{% translate "Status" %}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for vv in vvs %}
+                <tr>
+                  <td class="font-medium">
+                    {{ vv.employer_name }}
+                    {% if vv.has_rechtsfolgenbelehrung %}<span class="badge badge-ghost badge-xs">RFB</span>{% endif %}
+                  </td>
+                  <td>{{ vv.job_title|default:"—" }}</td>
+                  <td>{{ vv.received_on|date:"d.m.Y" }}</td>
+                  <td>
+                    {% if vv.is_overdue %}<span class="text-error font-semibold">{{ vv.apply_by|date:"d.m.Y" }}</span>
+                    {% else %}{{ vv.apply_by|date:"d.m.Y" }}{% endif %}
+                  </td>
+                  <td>{{ vv.get_status_display }}</td>
+                  <td class="text-right whitespace-nowrap">
+                    <a href="{% url 'jobs:vv_edit' vv.pk %}" class="btn btn-ghost btn-xs">{% translate "Edit" %}</a>
+                    <a href="{% url 'jobs:vv_delete' vv.pk %}" class="btn btn-ghost btn-xs text-error">{% translate "Delete" %}</a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-base-content/60 py-8">{% translate "No Vermittlungsvorschläge recorded." %}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

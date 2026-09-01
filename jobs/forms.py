@@ -9,6 +9,10 @@ from .models import (
     UserProfile,
     ObligationPlan,
     Application,
+    Vermittlungsvorschlag,
+    Absence,
+    Obstacle,
+    EvidenceFile,
 )
 
 
@@ -239,14 +243,16 @@ class ObligationPlanForm(forms.ModelForm):
     class Meta:
         model = ObligationPlan
         fields = [
-            'title', 'caseworker', 'valid_from', 'valid_to', 'required_count',
-            'period', 'due_rule', 'due_rule_notes', 'accepted_channels',
-            'proof_form', 'notes', 'counts_interviews_as_effort',
+            'title', 'instrument', 'caseworker', 'valid_from', 'valid_to',
+            'which_efforts', 'required_count', 'period', 'due_rule',
+            'due_rule_notes', 'accepted_channels', 'proof_form',
+            'nachweis_cost_rule', 'notes', 'counts_interviews_as_effort',
             'counts_measures_as_effort', 'counts_jobboard_search_as_effort',
             'is_active',
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'input w-full'}),
+            'instrument': forms.Select(attrs={'class': 'select w-full'}),
             'caseworker': forms.Select(attrs={'class': 'select w-full'}),
             'valid_from': forms.DateInput(
                 attrs={'type': 'date', 'class': 'input w-full'},
@@ -256,12 +262,14 @@ class ObligationPlanForm(forms.ModelForm):
                 attrs={'type': 'date', 'class': 'input w-full'},
                 format='%Y-%m-%d',
             ),
+            'which_efforts': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 2}),
             'required_count': forms.NumberInput(attrs={'class': 'input w-full'}),
             'period': forms.Select(attrs={'class': 'select w-full'}),
             'due_rule': forms.Select(attrs={'class': 'select w-full'}),
             'due_rule_notes': forms.TextInput(attrs={'class': 'input w-full'}),
             'accepted_channels': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 3}),
             'proof_form': forms.Select(attrs={'class': 'select w-full'}),
+            'nachweis_cost_rule': forms.TextInput(attrs={'class': 'input w-full'}),
             'notes': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 3}),
             'counts_interviews_as_effort': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
             'counts_measures_as_effort': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
@@ -270,15 +278,18 @@ class ObligationPlanForm(forms.ModelForm):
         }
         labels = {
             'title': _('Title'),
+            'instrument': _('Legal instrument'),
             'caseworker': _('Caseworker'),
             'valid_from': _('Valid from'),
             'valid_to': _('Valid to'),
+            'which_efforts': _('Which efforts (copy from your plan)'),
             'required_count': _('Required count'),
             'period': _('Period'),
             'due_rule': _('Due rule'),
             'due_rule_notes': _('Due rule notes'),
             'accepted_channels': _('Accepted channels'),
             'proof_form': _('Proof form'),
+            'nachweis_cost_rule': _('Who pays the costs of proof (verbatim)'),
             'notes': _('Notes (verbatim from your plan)'),
             'counts_interviews_as_effort': _('Interviews count as effort'),
             'counts_measures_as_effort': _('Measures count as effort'),
@@ -291,6 +302,93 @@ class ObligationPlanForm(forms.ModelForm):
         if isinstance(value, str):
             value = [item.strip() for item in value.split(',') if item.strip()]
         return value
+
+
+class VermittlungsvorschlagForm(forms.ModelForm):
+    class Meta:
+        model = Vermittlungsvorschlag
+        fields = [
+            'employer_name', 'job_title', 'received_on', 'apply_by',
+            'has_rechtsfolgenbelehrung', 'status', 'application', 'source_ref', 'note',
+        ]
+        widgets = {
+            'employer_name': forms.TextInput(attrs={'class': 'input w-full'}),
+            'job_title': forms.TextInput(attrs={'class': 'input w-full'}),
+            'received_on': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input w-full'}, format='%Y-%m-%d'
+            ),
+            'apply_by': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input w-full'}, format='%Y-%m-%d'
+            ),
+            'has_rechtsfolgenbelehrung': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
+            'status': forms.Select(attrs={'class': 'select w-full'}),
+            'application': forms.Select(attrs={'class': 'select w-full'}),
+            'source_ref': forms.TextInput(attrs={'class': 'input w-full'}),
+            'note': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 2}),
+        }
+        labels = {
+            'employer_name': _('Employer'),
+            'job_title': _('Job title'),
+            'received_on': _('Received on'),
+            'apply_by': _('Apply by'),
+            'has_rechtsfolgenbelehrung': _('Rechtsfolgenbelehrung included'),
+            'status': _('Status'),
+            'application': _('Linked application'),
+            'source_ref': _('Source reference'),
+            'note': _('Note'),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user is not None:
+            self.fields['application'].queryset = Application.objects.filter(user=user)
+
+
+class AbsenceForm(forms.ModelForm):
+    class Meta:
+        model = Absence
+        fields = ['from_date', 'to_date', 'destination', 'notified_on', 'approval_status', 'notes']
+        widgets = {
+            'from_date': forms.DateInput(attrs={'type': 'date', 'class': 'input w-full'}, format='%Y-%m-%d'),
+            'to_date': forms.DateInput(attrs={'type': 'date', 'class': 'input w-full'}, format='%Y-%m-%d'),
+            'destination': forms.TextInput(attrs={'class': 'input w-full'}),
+            'notified_on': forms.DateInput(attrs={'type': 'date', 'class': 'input w-full'}, format='%Y-%m-%d'),
+            'approval_status': forms.Select(attrs={'class': 'select w-full'}),
+            'notes': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 2}),
+        }
+        labels = {
+            'from_date': _('From'),
+            'to_date': _('To'),
+            'destination': _('Destination'),
+            'notified_on': _('Notified on'),
+            'approval_status': _('Approval status'),
+            'notes': _('Notes'),
+        }
+
+
+class ObstacleForm(forms.ModelForm):
+    class Meta:
+        model = Obstacle
+        fields = ['date', 'kind', 'note', 'evidence']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'input w-full'}, format='%Y-%m-%d'),
+            'kind': forms.Select(attrs={'class': 'select w-full'}),
+            'note': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 2}),
+            'evidence': forms.Select(attrs={'class': 'select w-full'}),
+        }
+        labels = {
+            'date': _('Date'),
+            'kind': _('Kind'),
+            'note': _('Note'),
+            'evidence': _('Evidence file'),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user is not None:
+            self.fields['evidence'].queryset = EvidenceFile.objects.filter(user=user)
 
 
 class UserProfileForm(forms.ModelForm):

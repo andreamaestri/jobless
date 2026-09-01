@@ -191,6 +191,23 @@ Key properties:
    Agentur für Arbeit or Jobcenter, **print and sign** it, or bring it to your
    appointment. There is no API submission — the app only produces the document.
 
+**Compliance dashboard** (beyond the export):
+
+- **Vermittlungsvorschläge**: log incoming placement proposals; the app computes the
+  usual 3-working-day apply deadline and flags overdue ones. Keep the receipt if the
+  letter contains a Rechtsfolgenbelehrung — ignoring a proposal is the most common
+  reason for a Pflichtverletzung.
+- **Plan as a 4-part obligation** (§ 15 / § 15a SGB II, EGV under § 37 SGB III): the
+  app stores *which* efforts, *how many*, *in which form* and *by which deadline* from
+  your own plan. If your plan is vague on any of these, the dashboard says so — a
+  Bescheid without these four parts can be legally attackable.
+- **Absences (Ortsabwesenheit)**: record trips and whether you reported them, so you
+  never forget to notify the office.
+- **Obstacles / wichtiger Grund**: log documented reasons (illness, childcare, no
+  suitable vacancies) when a plan could not be met.
+- **Costs (Kostenbeleg)**: a separate export shows your application costs and the
+  plan's cost rule — the Nachweis PDFs themselves never show costs.
+
 ## Technologies Used
 
 ### Planning and Design

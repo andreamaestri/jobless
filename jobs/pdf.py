@@ -27,6 +27,7 @@ class EmptyNachweisError(Exception):
 BA_MINIMAL = "BA_MINIMAL"
 JOBCENTER_LIST = "JOBCENTER_LIST"
 CUSTOM_COLUMNS = "CUSTOM_COLUMNS"
+KOSTENBELEG = "KOSTENBELEG"
 
 # German labels for the official forms (never translated away).
 CHANNEL_LABELS_DE = {
@@ -325,10 +326,52 @@ def _profile_c_html(person, applications, plan=None):
     """
 
 
+def _profile_kostenbeleg_html(person, applications, plan=None):
+    rows = "".join(
+        "<tr>"
+        f"<td>{_day(a.applied_on)}</td>"
+        f"<td>{_esc(a.employer_name)}</td>"
+        f"<td>{_esc(a.job_title)}</td>"
+        f"<td>{_esc(EFFORT_LABELS_DE.get(a.effort_type, a.effort_type))}</td>"
+        f"<td style='text-align:right;'>{a.costs_cents / 100:.2f} €</td>"
+        "</tr>"
+        for a in applications
+    )
+    total = sum(a.costs_cents for a in applications) / 100
+    footer = ""
+    if plan is not None and getattr(plan, "nachweis_cost_rule", ""):
+        footer = (
+            f'<div class="notice">Kostenregelung laut Vereinbarung: '
+            f"{_esc(plan.nachweis_cost_rule)}</div>"
+        )
+    return f"""
+    <h1>Kosten für Eigenbemühungen</h1>
+    <div class="subtitle">Übersicht der Bewerbungskosten — kein amtliches Formular</div>
+    <table class="meta"><tr>{_header_html(person)}</tr></table>
+    <table class="data">
+      <thead><tr>
+        <th>Datum</th>
+        <th>Arbeitgeber</th>
+        <th>Tätigkeit / Beruf</th>
+        <th>Art</th>
+        <th style="text-align:right;">Kosten</th>
+      </tr></thead>
+      <tbody>{rows}</tbody>
+      <tfoot><tr>
+        <td colspan="4" style="text-align:right;"><strong>Summe</strong></td>
+        <td style="text-align:right;"><strong>{total:.2f} €</strong></td>
+      </tr></tfoot>
+    </table>
+    {footer}
+    {_signature_html()}
+    """
+
+
 _BUILDERS = {
     BA_MINIMAL: _profile_a_html,
     JOBCENTER_LIST: _profile_b_html,
     CUSTOM_COLUMNS: _profile_c_html,
+    KOSTENBELEG: _profile_kostenbeleg_html,
 }
 
 

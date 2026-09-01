@@ -9,7 +9,8 @@ class Event(models.Model):
             ('interview', _('Interview')),
             ('meeting', _('Meeting')),
             ('followup', _('Follow-up')),
-            ('networking', _('Networking event'))
+            ('networking', _('Networking event')),
+            ('beratung', _('Beratungstermin / Meldetermin'))
         ] 
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 
@@ -19,6 +20,7 @@ class Event(models.Model):
     location = models.CharField(max_length=200) 
     contacts = models.ForeignKey('contacts.Contact', null=True, blank=True, on_delete=models.SET_NULL)
     job_posting = models.ForeignKey('jobs.JobPosting', null=True, blank=True, on_delete=models.SET_NULL)
+    attended = models.BooleanField(null=True, blank=True, default=None)
     notes = models.TextField(blank=True) 
     created_at = models.DateTimeField(auto_now_add=True)
 

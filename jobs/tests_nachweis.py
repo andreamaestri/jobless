@@ -380,3 +380,180 @@ class NachweisViewTests(SecureClientMixin, NachweisDataMixin, TestCase):
         self.client.force_login(self.user)
         response = self.get(reverse("jobs:nachweis_export"), {"month": "2026-08"})
         self.assertEqual(response.status_code, 200)
+
+
+class ComplianceFeatureTests(SecureClientMixin, NachweisDataMixin, TestCase):
+    """Tests for the compliance-calendar layer (VV, plan 4-tuple, absence, obstacle)."""
+
+    def _vague_plan(self):
+        return ObligationPlan.objects.create(
+            user=self.user,
+            title="vague",
+            required_count=None,
+            which_efforts="",
+            due_rule="",
+        )
+
+    def test_vv_apply_by_defaults_to_plus_3_workdays(self):
+        from .models import Vermittlungsvorschlag
+        vv = Vermittlungsvorschlag.objects.create(
+            user=self.user,
+            employer_name="ACME",
+            job_title="Techniker",
+            received_on=date(2026, 8, 13),  # Thursday
+        )
+        # Thu + Fri(1) + Mon(2) + Tue(3) => 2026-08-18
+        self.assertEqual(vv.apply_by, date(2026, 8, 18))
+
+    def test_vv_overdue_flag(self):
+        from .models import Vermittlungsvorschlag
+        vv = Vermittlungsvorschlag.objects.create(
+            user=self.user,
+            employer_name="ACME",
+            received_on=date(2020, 1, 1),
+            apply_by=date(2020, 1, 10),
+        )
+        self.assertTrue(vv.is_overdue)
+        vv.status = Vermittlungsvorschlag.Status.APPLIED
+        self.assertFalse(vv.is_overdue)
+
+    def test_vague_plan_flag_and_missing_components(self):
+        plan = self._vague_plan()
+        self.assertTrue(plan.is_vague)
+        self.assertIn("how_many", plan.missing_components)
+        self.assertIn("which", plan.missing_components)
+
+    def test_complete_plan_is_not_vague(self):
+        plan = self.plan  # has required_count, due_rule, proof_form, accepted_channels
+        plan.which_efforts = "Bewerbungen auf passende Stellen"
+        plan.accepted_channels = ["SCHRIFTLICH"]
+        plan.save()
+        self.assertFalse(plan.is_vague)
+
+    def test_dashboard_shows_vague_plan_banner(self):
+        from .models import ObligationPlan
+        ObligationPlan.objects.create(
+            user=self.user, title="vague", required_count=None, due_rule=""
+        )
+        # deactivate the complete plan so the vague one is active
+        self.plan.is_active = False
+        self.plan.save()
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:nachweis"), {"month": "2026-08"})
+        self.assertContains(response, "four required components")
+
+    def test_dashboard_shows_open_vv(self):
+        from .models import Vermittlungsvorschlag
+        Vermittlungsvorschlag.objects.create(
+            user=self.user, employer_name="ACME", job_title="Techniker",
+            received_on=date(2026, 8, 13),
+        )
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:nachweis"), {"month": "2026-08"})
+        self.assertContains(response, "ACME")
+
+    def test_dashboard_warns_on_unreported_absence(self):
+        from .models import Absence
+        Absence.objects.create(
+            user=self.user,
+            from_date=date(2026, 9, 10),
+            to_date=date(2026, 9, 15),
+            destination="Spanien",
+        )
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:nachweis"), {"month": "2026-08"})
+        self.assertContains(response, "not reported")
+
+    def test_absence_reported_not_warned(self):
+        from .models import Absence
+        Absence.objects.create(
+            user=self.user,
+            from_date=date(2026, 9, 10),
+            to_date=date(2026, 9, 15),
+            destination="Spanien",
+            approval_status=Absence.ApprovalStatus.NOTIFIED,
+            notified_on=date(2026, 9, 1),
+        )
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:nachweis"), {"month": "2026-08"})
+        self.assertNotContains(response, "not reported")
+
+    def test_regime_change_does_not_mutate_applications(self):
+        before = list(
+            Application.objects.filter(user=self.user).values_list(
+                "pk", "applied_on", "employer_name"
+            )
+        )
+        self.profile.regime = "GRUNDSICHERUNG"
+        self.profile.save()
+        after = list(
+            Application.objects.filter(user=self.user).values_list(
+                "pk", "applied_on", "employer_name"
+            )
+        )
+        self.assertEqual(before, after)
+
+    def test_kostenbeleg_pdf_shows_costs_and_sum(self):
+        from .pdf import KOSTENBELEG
+        from .models import Application
+        app = self.apps[0]
+        app.costs_cents = 160
+        app.save()
+        html_doc = build_nachweis_html(
+            self.profile, self.plan, self.apps, export_profile=KOSTENBELEG
+        )
+        self.assertIn("Kosten für Eigenbemühungen", html_doc)
+        self.assertIn("1.60 €", html_doc)
+
+    def test_nachweis_pdf_has_no_cost_column(self):
+        from .pdf import BA_MINIMAL
+        html_doc = build_nachweis_html(
+            self.profile, self.plan, self.apps, export_profile=BA_MINIMAL
+        )
+        self.assertNotIn("Kosten", html_doc)
+
+    def test_zip_export_returns_zip(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:nachweis_zip"), {"month": "2026-08"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/zip")
+
+    def test_zip_export_empty_refused(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:nachweis_zip"), {"month": "2026-01"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_vv_create_flow(self):
+        self.client.force_login(self.user)
+        response = self.post(
+            reverse("jobs:vv_add"),
+            {
+                "employer_name": "Neue Firma",
+                "job_title": "Sachbearbeiter",
+                "received_on": "2026-08-10",
+                "has_rechtsfolgenbelehrung": "on",
+                "status": "OPEN",
+                "source_ref": "",
+                "note": "",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        from .models import Vermittlungsvorschlag
+        self.assertTrue(
+            Vermittlungsvorschlag.objects.filter(user=self.user, employer_name="Neue Firma").exists()
+        )
+
+    def test_obstacle_flow(self):
+        self.client.force_login(self.user)
+        response = self.post(
+            reverse("jobs:obstacle_add"),
+            {
+                "date": "2026-08-01",
+                "kind": "ILLNESS",
+                "note": "Attest liegt vor",
+                "evidence": "",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        from .models import Obstacle
+        self.assertTrue(Obstacle.objects.filter(user=self.user).exists())
