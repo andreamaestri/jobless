@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 12:35+0000\n"
+"POT-Creation-Date: 2026-09-01 12:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -342,7 +342,7 @@ msgid "No company provided"
 msgstr "Kein Unternehmen angegeben"
 
 #: contacts/templates/contacts/detail.html:34
-#: contacts/templates/contacts/list.html:40
+#: contacts/templates/contacts/list.html:40 templates/account/signup.html:32
 msgid "Email"
 msgstr "E-Mail"
 
@@ -1112,7 +1112,7 @@ msgid "Confirm"
 msgstr "Bestätigen"
 
 #: templates/account/confirm_login_code.html:5
-#: templates/account/confirm_login_code.html:27 templates/account/login.html:8
+#: templates/account/confirm_login_code.html:27 templates/account/login.html:7
 #: templates/account/request_login_code.html:5
 #: templates/allauth/layouts/base.html:57 templates/mfa/authenticate.html:6
 #: templates/mfa/authenticate.html:24 templates/openid/login.html:5
@@ -1440,59 +1440,54 @@ msgstr ""
 "Dieser E-Mail-Bestätigungslink ist abgelaufen oder ungültig. Bitte <a "
 "href=\"%(email_url)s\">fordere eine neue E-Mail-Bestätigung an</a>."
 
-#: templates/account/login.html:19
+#: templates/account/login.html:18
 msgid "Welcome back"
 msgstr "Willkommen zurück"
 
-#: templates/account/login.html:20
+#: templates/account/login.html:19
 msgid "Sign in to Jobless"
 msgstr "Bei Jobless anmelden"
 
-#: templates/account/login.html:32
-msgid "Continue with GitHub"
-msgstr "Weiter mit GitHub"
+#: templates/account/login.html:20
+msgid "Use the email or username you registered with."
+msgstr ""
+"Verwende die E-Mail-Adresse oder den Benutzernamen, mit denen du dich "
+"registriert hast."
 
-#: templates/account/login.html:39
-msgid "Continue with LinkedIn"
-msgstr "Weiter mit LinkedIn"
-
-#: templates/account/login.html:46
-msgid "Continue with Google"
-msgstr "Weiter mit Google"
-
-#: templates/account/login.html:54 templates/account/signup.html:53
-msgid "or"
-msgstr "oder"
-
-#: templates/account/login.html:64
+#: templates/account/login.html:31
 msgid "Your email"
 msgstr "Deine E-Mail"
 
-#: templates/account/login.html:66
+#: templates/account/login.html:33
 msgid "Enter your email or username"
 msgstr "E-Mail-Adresse oder Benutzername eingeben"
 
-#: templates/account/login.html:74
+#: templates/account/login.html:41
 msgid "Your password"
 msgstr "Dein Passwort"
 
-#: templates/account/login.html:76
+#: templates/account/login.html:43
 msgid "Enter your password"
 msgstr "Gib dein Passwort ein:"
 
-#: templates/account/login.html:91
+#: templates/account/login.html:46 templates/account/signup.html:41
+#: templates/account/signup.html:61
+msgid "Show password"
+msgstr "Passwort anzeigen"
+
+#: templates/account/login.html:58
 msgid "Keep me signed in"
 msgstr "Angemeldet bleiben"
 
-#: templates/account/login.html:94
+#: templates/account/login.html:61
 msgid "Forgot password?"
 msgstr "Passwort vergessen?"
 
-#: templates/account/login.html:100
+#: templates/account/login.html:67
 msgid "Sign in"
 msgstr "Anmelden"
 
-#: templates/account/login.html:105
+#: templates/account/login.html:72
 #, python-format
 msgid ""
 "New to Jobless? <a href=\"%(signup_url)s\" class=\"font-medium text-primary "
@@ -1651,44 +1646,64 @@ msgstr "Code anfordern"
 msgid "Other sign-in options"
 msgstr "Weitere Anmeldeoptionen"
 
-#: templates/account/signup.html:7 templates/account/signup_by_passkey.html:29
+#: templates/account/signup.html:6 templates/account/signup_by_passkey.html:29
 #: templates/allauth/layouts/base.html:63
 msgid "Sign Up"
 msgstr "Registrieren"
 
-#: templates/account/signup.html:18
+#: templates/account/signup.html:17
 msgid "New here"
 msgstr "Neu hier"
 
-#: templates/account/signup.html:19
+#: templates/account/signup.html:18
 msgid "Create your account"
 msgstr "Konto erstellen"
 
-#: templates/account/signup.html:31
-msgid "Sign up with GitHub"
-msgstr "Registrieren mit GitHub"
+#: templates/account/signup.html:19
+msgid "One email and password — everything else can wait."
+msgstr "Eine E-Mail und ein Passwort – alles andere kann warten."
 
-#: templates/account/signup.html:38
-msgid "Sign up with LinkedIn"
-msgstr "Registrieren mit LinkedIn"
+#: templates/account/signup.html:34
+msgid "Enter your email"
+msgstr "Gib deine E-Mail-Adresse ein"
 
-#: templates/account/signup.html:45
-msgid "Sign up with Google"
-msgstr "Registrieren mit Google"
+#: templates/account/signup.html:37
+msgid "Password"
+msgstr "Passwort"
 
-#: templates/account/signup.html:76
-msgid "At least 8 characters long"
-msgstr "Mindestens 8 Zeichen lang"
+#: templates/account/signup.html:40
+msgid "Choose a password"
+msgstr "Wähle ein Passwort"
 
-#: templates/account/signup.html:80
+#: templates/account/signup.html:48
+msgid "At least 8 characters"
+msgstr "Mindestens 8 Zeichen"
+
+#: templates/account/signup.html:52
 msgid "Contains letters and numbers"
 msgstr "Enthält Buchstaben und Zahlen"
 
-#: templates/account/signup.html:104
+#: templates/account/signup.html:57
+msgid "Confirm password"
+msgstr "Passwort bestätigen"
+
+#: templates/account/signup.html:60
+msgid "Repeat your password"
+msgstr "Wiederhole dein Passwort"
+
+#: templates/account/signup.html:65
+msgid "Passwords don't match yet."
+msgstr "Die Passwörter stimmen noch nicht überein."
+
+#: templates/account/signup.html:81
 msgid "Create account"
 msgstr "Konto erstellen"
 
-#: templates/account/signup.html:109
+#: templates/account/signup.html:84
+msgid "We'll never share your email with anyone."
+msgstr "Deine E-Mail-Adresse geben wir niemals weiter."
+
+#: templates/account/signup.html:88
 #, python-format
 msgid ""
 "Already a member? <a href=\"%(login_url)s\" class=\"font-medium text-primary "
@@ -1823,27 +1838,27 @@ msgstr "Zwei-Faktor-Authentifizierung"
 msgid "Sessions"
 msgstr "Sitzungen"
 
-#: templates/base.html:359 templates/base.html:580
+#: templates/base.html:361
 msgid "Language"
 msgstr "Sprache"
 
-#: templates/base.html:440 templates/base.html:483
+#: templates/base.html:444 templates/base.html:487
 msgid "Online"
 msgstr "Online"
 
-#: templates/base.html:536
+#: templates/base.html:540
 msgid "Theme"
 msgstr "Design"
 
-#: templates/base.html:575
+#: templates/base.html:579
 msgid "Favorites"
 msgstr "Favoriten"
 
-#: templates/base.html:591
+#: templates/base.html:586
 msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/base.html:612
+#: templates/base.html:607
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -2316,6 +2331,27 @@ msgstr "Aktuell"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "Andere Sitzungen abmelden"
+
+#~ msgid "Continue with GitHub"
+#~ msgstr "Weiter mit GitHub"
+
+#~ msgid "Continue with LinkedIn"
+#~ msgstr "Weiter mit LinkedIn"
+
+#~ msgid "Continue with Google"
+#~ msgstr "Weiter mit Google"
+
+#~ msgid "or"
+#~ msgstr "oder"
+
+#~ msgid "Sign up with GitHub"
+#~ msgstr "Registrieren mit GitHub"
+
+#~ msgid "Sign up with LinkedIn"
+#~ msgstr "Registrieren mit LinkedIn"
+
+#~ msgid "Sign up with Google"
+#~ msgstr "Registrieren mit Google"
 
 #~ msgid "Or use your email"
 #~ msgstr "Oder verwende deine E-Mail"
