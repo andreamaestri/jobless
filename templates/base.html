@@ -328,6 +328,77 @@
         {% endfor %}
       </nav>
 
+      <!-- Language Selector -->
+      {% get_current_language as CURRENT_LANGUAGE %}
+      <div
+        x-data="{ open: false }"
+        class="relative mx-2 mt-2"
+        @click.outside="open = false"
+        @keydown.escape.window="open = false"
+      >
+        <button
+          @click="open = !open"
+          class="nav-item btn-animate w-full flex items-center p-2 rounded-lg hover:bg-base-100/80 hover:ring-2 hover:ring-primary/70 hover:ring-offset-2 hover:ring-offset-base-100 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+          :class="{ 'justify-center': $store.app.sidebar.collapsed && window.innerWidth >= 1024 }"
+        >
+          <iconify-icon
+            icon="octicon:globe-16"
+            class="icon-animate relative text-xl text-base-content/70"
+          >
+          </iconify-icon>
+          <span
+            x-show="!$store.app.sidebar.collapsed || window.innerWidth < 1024"
+            x-transition.duration.200ms
+            class="ml-3 flex-1 text-left flex items-center gap-2"
+          >
+            {% if CURRENT_LANGUAGE == 'de' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 60 30" class="rounded-sm ring-1 ring-base-content/10" aria-hidden="true"><rect width="60" height="10" fill="#000"/><rect width="60" height="10" y="10" fill="#DD0000"/><rect width="60" height="10" y="20" fill="#FFCE00"/></svg>
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 60 30" class="rounded-sm ring-1 ring-base-content/10" aria-hidden="true"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
+            {% endif %}
+            <span class="text-sm">{% translate "Language" %}</span>
+          </span>
+          <iconify-icon
+            x-show="!$store.app.sidebar.collapsed || window.innerWidth < 1024"
+            icon="octicon:chevron-down-16"
+            class="icon-animate relative text-base-content/50"
+            :class="{ 'rotate-180': open }"
+          >
+          </iconify-icon>
+        </button>
+
+        <div
+          x-show="open"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 scale-95"
+          x-transition:enter-end="opacity-100 scale-100"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 scale-100"
+          x-transition:leave-end="opacity-0 scale-95"
+          class="absolute left-full ml-2 top-0 w-48 p-1.5 space-y-1 rounded-xl bg-base-100 shadow-lg ring-1 ring-base-content/10 z-50"
+        >
+          {% for code, name in LANGUAGES %}
+          <form method="post" action="{% url 'set_language' %}" class="w-full">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="hidden" name="language" value="{{ code }}">
+            <button type="submit"
+              class="w-full flex items-center gap-2.5 p-2 rounded-lg text-sm {% if code == CURRENT_LANGUAGE %}bg-primary/10 text-primary font-medium{% else %}hover:bg-base-200/80 text-base-content{% endif %} transition-colors duration-200">
+              {% if code == 'de' %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 60 30" class="rounded-sm ring-1 ring-base-content/10" aria-hidden="true"><rect width="60" height="10" fill="#000"/><rect width="60" height="10" y="10" fill="#DD0000"/><rect width="60" height="10" y="20" fill="#FFCE00"/></svg>
+              {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 60 30" class="rounded-sm ring-1 ring-base-content/10" aria-hidden="true"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
+              {% endif %}
+              <span class="flex-1 text-left">{{ name }}</span>
+              {% if code == CURRENT_LANGUAGE %}
+              <iconify-icon icon="octicon:check-16" class="w-4 h-4 text-primary"></iconify-icon>
+              {% endif %}
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      </div>
+
       <!-- User Section -->
       <div class="absolute bottom-0 left-0 right-0 p-4 user-section">
         {% if user.is_authenticated %}
