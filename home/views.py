@@ -2,6 +2,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 from jobs.models import JobPosting
 from events.models import Event
@@ -22,12 +23,23 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return events.filter(date__range=[now, week_later]).count()
 
     def calculate_success_rate(self, jobs):
-        """Calculate interview success rate"""
-        total_applications = jobs.filter(status__in=['applied', 'interviewing', 'offered', 'rejected']).count()
+        """Calculate interview success rate."""
+        total_applications = jobs.filter(
+            status__in=['applied', 'interviewing', 'rejected', 'accepted']
+        ).count()
         if total_applications == 0:
             return 0
-        successful = jobs.filter(status__in=['interviewing', 'offered']).count()
-        return round((successful / total_applications) * 100) if total_applications > 0 else 0
+        successful = jobs.filter(status__in=['interviewing', 'accepted']).count()
+        return round((successful / total_applications) * 100)
+
+    def get_greeting(self):
+        """Return a time-of-day greeting."""
+        hour = timezone.localtime().hour
+        if hour < 12:
+            return _("Good morning")
+        if hour < 18:
+            return _("Good afternoon")
+        return _("Good evening")
 
     def get_job_status_chart_data(self, jobs):
         """Get job status data for charts"""
@@ -82,6 +94,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['upcoming_events_count'] = self.get_upcoming_events_count(events)
         context['total_contacts'] = contacts.count()
         context['success_rate'] = self.calculate_success_rate(jobs)
+        context['total_applications'] = jobs.filter(
+            status__in=['applied', 'interviewing', 'rejected', 'accepted']
+        ).count()
+        context['greeting'] = self.get_greeting()
             
         # Add to context with ordering
         context['recent_jobs'] = jobs.order_by('-updated_at')[:5]

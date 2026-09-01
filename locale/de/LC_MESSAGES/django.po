@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 12:53+0000\n"
+"POT-Creation-Date: 2026-09-01 14:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -342,7 +342,7 @@ msgid "No company provided"
 msgstr "Kein Unternehmen angegeben"
 
 #: contacts/templates/contacts/detail.html:34
-#: contacts/templates/contacts/list.html:40 templates/account/signup.html:32
+#: contacts/templates/contacts/list.html:40 templates/account/signup.html:45
 msgid "Email"
 msgstr "E-Mail"
 
@@ -586,6 +586,22 @@ msgstr "Stellen"
 msgid "AI Assistant"
 msgstr "KI-Assistent"
 
+#: home/forms.py:9 templates/account/signup.html:32
+msgid "First name"
+msgstr "Vorname"
+
+#: home/forms.py:12 templates/account/signup.html:34
+msgid "Your first name"
+msgstr "Dein Vorname"
+
+#: home/forms.py:17 templates/account/signup.html:38
+msgid "Surname"
+msgstr "Nachname"
+
+#: home/forms.py:21 templates/account/signup.html:40
+msgid "Your surname"
+msgstr "Dein Nachname"
+
 #: home/templates/home/home.html:13 home/templates/home/home.html:18
 #: jobs/templates/jobs/widgets/skill_tree_widget.html:23
 msgid "Search"
@@ -600,10 +616,8 @@ msgid "Dashboard"
 msgstr "Übersicht"
 
 #: home/templates/home/home.html:36
-#, python-format
-msgid "Hi <span class=\"text-primary\">%(user.username)s</span>, welcome back."
-msgstr ""
-"Hi, <span class=\"text-primary\">%(user.username)s</span>! Willkommen zurück."
+msgid "%(greeting)s, <span class=\"text-primary\">%(name)s</span>."
+msgstr "%(greeting)s, <span class=\"text-primary\">%(name)s</span>."
 
 #: home/templates/home/home.html:38
 msgid "Here's how your job search is going."
@@ -634,9 +648,13 @@ msgstr "Dein Bewerbungsfortschritt"
 msgid "%(success_rate)s%% success"
 msgstr "%(success_rate)s %% Erfolg"
 
+#: home/templates/home/home.html:94 home/templates/home/home.html:161
+msgid "No applications yet"
+msgstr "Noch keine Bewerbungen"
+
 #: home/templates/home/home.html:114
-msgid "Add a job to start tracking your progress."
-msgstr "Füge eine Stelle hinzu, um deinen Fortschritt zu verfolgen."
+msgid "Start tracking your first application to see your progress here."
+msgstr "Beginne mit deiner ersten Bewerbung, um hier deinen Fortschritt zu sehen."
 
 #: home/templates/home/home.html:118 home/templates/home/home.html:165
 #: home/templates/home/home.html:266
@@ -654,10 +672,6 @@ msgstr "Behalte deine letzten Aktualisierungen im Blick"
 #: home/templates/home/home.html:152
 msgid "Explore all jobs"
 msgstr "Alle Stellen ansehen"
-
-#: home/templates/home/home.html:161
-msgid "No applications yet"
-msgstr "Noch keine Bewerbungen"
 
 #: home/templates/home/home.html:162
 msgid "Add your first job to get started."
@@ -728,6 +742,18 @@ msgstr "Filter anwenden"
 #: home/templates/home/home.html:342
 msgid "Clear all"
 msgstr "Alle löschen"
+
+#: home/views.py:39
+msgid "Good morning"
+msgstr "Guten Morgen"
+
+#: home/views.py:41
+msgid "Good afternoon"
+msgstr "Guten Tag"
+
+#: home/views.py:42
+msgid "Good evening"
+msgstr "Guten Abend"
 
 #: jobs/components/job_card_list.html:14
 #: jobs/templates/jobs/partials/job_table.html:106
@@ -1470,8 +1496,8 @@ msgstr "Dein Passwort"
 msgid "Enter your password"
 msgstr "Gib dein Passwort ein:"
 
-#: templates/account/login.html:46 templates/account/signup.html:41
-#: templates/account/signup.html:61
+#: templates/account/login.html:46 templates/account/signup.html:54
+#: templates/account/signup.html:74
 msgid "Show password"
 msgstr "Passwort anzeigen"
 
@@ -1663,47 +1689,51 @@ msgstr "Konto erstellen"
 msgid "One email and password — everything else can wait."
 msgstr "Eine E-Mail und ein Passwort – alles andere kann warten."
 
-#: templates/account/signup.html:34
+#: templates/account/signup.html:42
+msgid "Optional"
+msgstr "Optional"
+
+#: templates/account/signup.html:47
 msgid "Enter your email"
 msgstr "Gib deine E-Mail-Adresse ein"
 
-#: templates/account/signup.html:37
+#: templates/account/signup.html:50
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/account/signup.html:40
+#: templates/account/signup.html:53
 msgid "Choose a password"
 msgstr "Wähle ein Passwort"
 
-#: templates/account/signup.html:48
+#: templates/account/signup.html:61
 msgid "At least 8 characters"
 msgstr "Mindestens 8 Zeichen"
 
-#: templates/account/signup.html:52
+#: templates/account/signup.html:65
 msgid "Contains letters and numbers"
 msgstr "Enthält Buchstaben und Zahlen"
 
-#: templates/account/signup.html:57
+#: templates/account/signup.html:70
 msgid "Confirm password"
 msgstr "Passwort bestätigen"
 
-#: templates/account/signup.html:60
+#: templates/account/signup.html:73
 msgid "Repeat your password"
 msgstr "Wiederhole dein Passwort"
 
-#: templates/account/signup.html:65
+#: templates/account/signup.html:78
 msgid "Passwords don't match yet."
 msgstr "Die Passwörter stimmen noch nicht überein."
 
-#: templates/account/signup.html:81
+#: templates/account/signup.html:94
 msgid "Create account"
 msgstr "Konto erstellen"
 
-#: templates/account/signup.html:84
+#: templates/account/signup.html:97
 msgid "We'll never share your email with anyone."
 msgstr "Deine E-Mail-Adresse geben wir niemals weiter."
 
-#: templates/account/signup.html:88
+#: templates/account/signup.html:101
 #, python-format
 msgid ""
 "Already a member? <a href=\"%(login_url)s\" class=\"font-medium text-primary "
@@ -2331,6 +2361,9 @@ msgstr "Aktuell"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "Andere Sitzungen abmelden"
+
+#~ msgid "Add a job to start tracking your progress."
+#~ msgstr "Füge eine Stelle hinzu, um deinen Fortschritt zu verfolgen."
 
 #~ msgid "Continue with GitHub"
 #~ msgstr "Weiter mit GitHub"
