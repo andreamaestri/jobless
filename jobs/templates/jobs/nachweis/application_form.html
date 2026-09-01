@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% if object %}{% translate "Edit effort" %}{% else %}{% translate "Add effort" %}{% endif %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-32">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">
+          {% if object %}{% translate "Edit effort" %}{% else %}{% translate "Add effort" %}{% endif %}
+        </h1>
+        <p class="text-base-content/70 text-sm mb-8">
+          {% translate "Only the date, employer and job title are required — everything else is optional." %}
+        </p>
+
+        {% if object %}
+        <div class="alert text-sm mb-6">
+          <iconify-icon icon="octicon:alert-16"></iconify-icon>
+          <span>{% translate "Only enter the real date of an effort that actually took place. Changes to the date are recorded in the audit log." %}</span>
+        </div>
+        {% endif %}
+
+        <form method="post" id="application-form" class="bg-base-100/80 shadow-xl rounded-2xl p-6 sm:p-8"
+              x-data="{ open: $el.dataset.hasError === 'true' }">
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="alert alert-error mb-4">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <!-- Fast capture -->
+          <fieldset class="mb-6">
+            <legend class="font-semibold mb-3">{% translate "Fast capture" %}</legend>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {% for field in form %}
+                {% if field.name in 'applied_on,employer_name,job_title,channel,result' %}
+                <div>
+                  <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-1">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-error">*</span>{% endif %}
+                  </label>
+                  {% render_field field %}
+                  {% if field.help_text %}<p class="text-xs text-base-content/60 mt-1">{{ field.help_text }}</p>{% endif %}
+                  {% for e in field.errors %}<p class="text-error text-xs mt-1">{{ e }}</p>{% endfor %}
+                </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </fieldset>
+
+          <!-- Details (optional) -->
+          <details class="collapse collapse-arrow bg-base-200/40 mb-4" {% if form.data %}open{% endif %}>
+            <summary class="collapse-title font-semibold">{% translate "Details (optional)" %}</summary>
+            <div class="collapse-content">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {% for field in form %}
+                  {% if field.name not in 'applied_on,employer_name,job_title,channel,result' %}
+                  <div class="{% if field.name == 'result_note' or field.name == 'source_ref' %}sm:col-span-2{% endif %}">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-1">
+                      {{ field.label }}
+                      {% if field.field.required %}<span class="text-error">*</span>{% endif %}
+                    </label>
+                    {% render_field field %}
+                    {% if field.help_text %}<p class="text-xs text-base-content/60 mt-1">{{ field.help_text }}</p>{% endif %}
+                    {% for e in field.errors %}<p class="text-error text-xs mt-1">{{ e }}</p>{% endfor %}
+                  </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </details>
+
+          <div class="flex justify-end gap-3">
+            <a href="{% url 'jobs:nachweis' %}" class="btn btn-ghost">{% translate "Cancel" %}</a>
+            <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

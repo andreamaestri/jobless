@@ -35,3 +35,7 @@ PyJWT>=2.3.0
 openai>=1.12.0,<4.0
 jiter>=0.16.0,<1.0
 PyYAML>=6.0
+
+# PDF generation (Nachweis von Eigenbemühungen)
+# Requires system libraries: pango, cairo, gdk-pixbuf (e.g. dnf install pango cairo gdk-pixbuf2)
+weasyprint>=69.0

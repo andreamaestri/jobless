@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% translate "Attach evidence" %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-20">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-xl mx-auto">
+        <div class="bg-base-100/80 shadow-xl rounded-2xl p-6 sm:p-8">
+          <h1 class="text-xl font-bold mb-2">{% translate "Attach evidence" %}</h1>
+          <p class="text-sm text-base-content/60 mb-6">{{ application.employer_name }} — {{ application.applied_on|date:"d.m.Y" }}</p>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-4">
+              <label for="{{ form.file.id_for_label }}" class="block text-sm font-medium mb-1">{{ form.file.label }}</label>
+              {% render_field form.file class="file-input file-input-bordered w-full" %}
+              {% for e in form.file.errors %}<p class="text-error text-xs mt-1">{{ e }}</p>{% endfor %}
+            </div>
+            <div class="mb-6">
+              <label for="{{ form.evidence_type.id_for_label }}" class="block text-sm font-medium mb-1">{{ form.evidence_type.label }}</label>
+              {% render_field form.evidence_type class="select w-full" %}
+            </div>
+            <div class="flex justify-end gap-3">
+              <a href="{% url 'jobs:application_detail' application.pk %}" class="btn btn-ghost">{% translate "Cancel" %}</a>
+              <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

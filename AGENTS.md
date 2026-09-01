@@ -75,6 +75,34 @@ frontend. Complements `README.md`, the more detailed `CLAUDE.md`, and `docs/arch
   theming — use semantic daisyUI colors.
 - Flag untranslatable user-facing strings and missing German `msgstr` after catalog updates.
 
+## Nachweis feature (Eigenbemühungen)
+
+The **Nachweis von Eigenbemühungen** feature lives inside the `jobs` app
+(`jobs/pdf.py`, `jobs/exports.py`, `jobs/tests_nachweis.py`, templates under
+`jobs/templates/jobs/nachweis/`). Keep these constraints in kind when touching it:
+
+- **Legal wording:** never claim BA/Jobcenter certification ("amtlich", "zertifiziert",
+  logos, partnership). Allowed: "geeignet zur Dokumentation von Eigenbemühungen",
+  "am amtlichen Formular orientiert", "kompatibel mit üblichen Nachweis-Anforderungen".
+  No BA logo anywhere.
+- **Official PDF labels are German literals** hardcoded in `jobs/pdf.py` — do NOT
+  route them through gettext. UI strings follow the normal en→de catalog.
+- **PDF generation** is WeasyPrint (system libs: `pango`, `cairo`, `gdk-pixbuf2`;
+  on this host installed via dnf). `build_nachweis_pdf` /
+  `build_nachweis_html` are pure functions — test them without request/DB.
+- **Font:** `static/fonts/din1451alt.ttf` (Alte DIN 1451 Mittelschrift, Peter Wiegel,
+  SIL OFL — license text kept next to it). Loaded server-side via `file://` URL by
+  WeasyPrint; no collectstatic dependency for PDF rendering.
+- **Invariants:** exports must never invent rows or fill in missing data (drafts are
+  blockers); `applied_on` edits must append to `AuditLog` (see `Application.save`);
+  empty exports are refused (`EmptyNachweisError` → redirect + message); PDF
+  filenames follow `Nachweis_Eigenbemuehungen_YYYY-MM_Nachname.pdf`.
+- **Quotas are user-configured** (ObligationPlan.required_count) — never hardcode
+  "10 Bewerbungen/Monat"; there is no statutory nationwide number.
+- Tests: `.venv/bin/python manage.py test jobs.tests_nachweis --noinput`.
+- Evidence files use a dedicated local `FileSystemStorage`
+  (`BASE_DIR/media/evidence`) on purpose — do not switch them to S3/object storage.
+
 ## Notes
 
 - daisyUI skill is bundled at `.agents/skills/daisyui/SKILL.md` (managed via

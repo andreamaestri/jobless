@@ -150,6 +150,47 @@ This completed sprint involved the completion of 16 items. The MoSCoW approach t
 
 ![Themes](readme_images/themes1.JPG)
 
+### German "Nachweis von Eigenbemühungen" (proof of job search efforts)
+
+Jobless can generate the printable, signable German **Nachweis von Eigenbemühungen**
+that Agentur für Arbeit (SGB III) and Jobcenter (SGB II) caseworkers ask for.
+
+> **Scope of use:** Jobless is *geeignet zur Dokumentation von Eigenbemühungen* and
+> *kompatibel mit üblichen Nachweis-Anforderungen* — it is **not** certified or
+> endorsed by the Bundesagentur für Arbeit. There is no such certification program
+> for third-party software. The office decides whether a proof is accepted;
+> **verbindlich sind Kooperationsplan / Eingliederungsvereinbarung / Bescheid.**
+
+Key properties:
+
+- **Two regimes, kept separate:** ALG I / Eingliederungsvereinbarung (§ 37 SGB III)
+  and Grundsicherung / Kooperationsplan (§ 15 SGB II) or Verpflichtungsbescheid
+  (§ 15a SGB II). The regime only changes labels, never your stored data.
+- **No hardcoded quota:** the required number of applications comes *from your own
+  plan* — you enter it in *Obligation plan*. There is no statutory nationwide number.
+- **Export profiles:** BA-Minimal (3-column official form orientation), Jobcenter
+  list (7 columns with channel codes 1–5 and an empty *Vermerke* column), and an
+  internal consultation overview (marked *kein amtliches Formular*). All PDFs are A4,
+  selectable text, black/white, typeset in Alte DIN 1451 Mittelschrift (OFL).
+- **Honest counting:** drafts (missing employer/title) are listed as blockers and
+  excluded from exports. Rejections (*Absagen*) still count. Exports never invent
+  rows to reach a target. Editing the application date is allowed but written to an
+  audit log — *nur das echte Datum einer wirklich erfolgten Bewerbung nachtragen.*
+- **Privacy:** all data stays in your account; evidence files (rejections, invites,
+  receipts) are stored locally with a SHA-256 checksum, never uploaded to third
+  parties. CSV (semicolon, UTF-8 BOM) and JSON backups are available.
+
+**How to export and submit:**
+
+1. Open **Proof of efforts** in the sidebar, record your applications (date,
+   employer, job title are enough), and enter your plan's numbers under
+   *Obligation plan*.
+2. Go to **Export**, pick a form and period, check the live preview, then download
+   the PDF (`Nachweis_Eigenbemuehungen_YYYY-MM_Nachname.pdf`).
+3. Submit it **via BA-mobil**, through the **eService / Postfach** of your
+   Agentur für Arbeit or Jobcenter, **print and sign** it, or bring it to your
+   appointment. There is no API submission — the app only produces the document.
+
 ## Technologies Used
 
 ### Planning and Design

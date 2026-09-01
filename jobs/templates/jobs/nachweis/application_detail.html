@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ application.employer_name|default:"—" }} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-20">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold">{{ application.employer_name|default:"—" }}</h1>
+            <p class="text-base-content/70 mt-1">{{ application.job_title|default:"—" }}</p>
+          </div>
+          <div class="flex gap-2">
+            <a href="{% url 'jobs:application_edit' application.pk %}" class="btn btn-outline btn-sm">{% translate "Edit" %}</a>
+            <a href="{% url 'jobs:nachweis' %}" class="btn btn-ghost btn-sm">{% translate "Back" %}</a>
+          </div>
+        </div>
+
+        <div class="bg-base-100/80 shadow-xl rounded-2xl p-6 sm:p-8 mb-6">
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div><dt class="text-base-content/60">{% translate "Applied on" %}</dt><dd class="font-medium">{{ application.applied_on|date:"d.m.Y" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "How applied" %}</dt><dd class="font-medium">{{ application.get_channel_display|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Status" %}</dt><dd class="font-medium">{{ application.get_result_display }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Result date" %}</dt><dd class="font-medium">{{ application.result_date|date:"d.m.Y"|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Contact person" %}</dt><dd class="font-medium">{{ application.contact_person|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Source" %}</dt><dd class="font-medium">{{ application.get_source_display|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Employer address" %}</dt><dd class="font-medium">{{ application.employer_address|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Employer phone" %}</dt><dd class="font-medium">{{ application.employer_phone|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Employer e-mail" %}</dt><dd class="font-medium">{{ application.employer_email|default:"—" }}</dd></div>
+            <div><dt class="text-base-content/60">{% translate "Costs (cents)" %}</dt><dd class="font-medium">{{ application.costs_cents }}</dd></div>
+            {% if application.result_note %}
+            <div class="sm:col-span-2"><dt class="text-base-content/60">{% translate "Result note" %}</dt><dd>{{ application.result_note }}</dd></div>
+            {% endif %}
+          </dl>
+        </div>
+
+        <!-- Evidence locker -->
+        <div class="bg-base-100/80 shadow-xl rounded-2xl p-6 sm:p-8">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-semibold">{% translate "Evidence" %}</h2>
+            <a href="{% url 'jobs:evidence_add' application.pk %}" class="btn btn-sm btn-outline">
+              <iconify-icon icon="octicon:paperclip-16"></iconify-icon>
+              {% translate "Attach file" %}
+            </a>
+          </div>
+          {% if application.attachments.all %}
+          <ul class="divide-y divide-base-200">
+            {% for ev in application.attachments.all %}
+            <li class="py-3 flex justify-between items-center gap-4">
+              <div>
+                <div class="font-medium">{{ ev.filename|default:ev.file.name }}</div>
+                <div class="text-xs text-base-content/60">
+                  {{ ev.get_evidence_type_display }} · {{ ev.size|filesizeformat }} · {{ ev.uploaded_at|date:"d.m.Y H:i" }}
+                </div>
+              </div>
+              <div class="text-xs font-mono text-base-content/50 truncate max-w-40" title="{{ ev.sha256 }}">{{ ev.sha256|slice:":12" }}…</div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-sm text-base-content/60">{% translate "No files attached. Stored locally only — never uploaded anywhere without your action." %}</p>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

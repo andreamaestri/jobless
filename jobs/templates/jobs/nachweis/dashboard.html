@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Job search efforts" %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-20">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-base-content">
+              {% translate "Proof of job search efforts" %}
+            </h1>
+            <p class="text-base-content/70 mt-2 text-sm">
+              {% translate "Nachweis von Eigenbemühungen — Agentur für Arbeit / Jobcenter" %}
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <a href="{% url 'jobs:application_add' %}" class="btn btn-primary">
+              <iconify-icon icon="octicon:plus-16"></iconify-icon>
+              {% translate "Add effort" %}
+            </a>
+            <a href="{% url 'jobs:nachweis_export' %}" class="btn btn-outline">
+              <iconify-icon icon="octicon:download-16"></iconify-icon>
+              {% translate "Export" %}
+            </a>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert mb-6 text-sm">
+          <iconify-icon icon="octicon:info-16"></iconify-icon>
+          <span>{% translate "For documentation purposes only. The binding requirements are your Kooperationsplan / Eingliederungsvereinbarung / Bescheid." %}</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Recorded" %} ({{ period_label }})</div>
+            <div class="stat-value text-primary">
+              {{ count }}{% if target %} / {{ target }}{% endif %}
+            </div>
+            <div class="stat-desc">
+              {% if target %}
+                {% translate "Target from your plan — not a legal nationwide number" %}
+              {% else %}
+                {% translate "No target configured" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Due" %}</div>
+            <div class="stat-value text-base-content">{{ due_on|date:"d.m.Y"|default:"—" }}</div>
+            <div class="stat-desc">
+              {% if days_until_due is not None %}
+                {% blocktranslate with n=days_until_due %}in {{ n }} days{% endblocktranslate %}
+              {% else %}
+                {% translate "see your plan / appointment" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Last submitted" %}</div>
+            <div class="stat-value text-base-content">{{ last_submitted_on|date:"d.m.Y"|default:"—" }}</div>
+            <div class="stat-desc">
+              {% if last_submission %}
+                {{ last_submission.get_profile_display }}
+              {% else %}
+                {% translate "no export yet" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Next appointment" %}</div>
+            <div class="stat-value text-base-content">
+              {{ next_appointment.date|date:"d.m."|default:"—" }}
+            </div>
+            <div class="stat-desc">{{ next_appointment.title|default:"—" }}</div>
+          </div>
+        </div>
+
+        <!-- Period filter -->
+        <div class="bg-base-200/40 rounded-2xl p-4 mb-6">
+          <form method="get" class="flex flex-wrap items-end gap-3">
+            <div>
+              <label class="label text-sm pb-1" for="month">{% translate "Calendar month" %}</label>
+              <input type="month" id="month" name="month" value="{{ request.GET.month|default:current_month }}"
+                     class="input input-sm w-44" />
+            </div>
+            <div>
+              <label class="label text-sm pb-1" for="period">{% translate "Or range" %}</label>
+              <select id="period" name="period" class="select select-sm w-44">
+                <option value="">{% translate "Calendar month" %}</option>
+                <option value="rolling" {% if request.GET.period == 'rolling' %}selected{% endif %}>{% translate "Last 30 days" %}</option>
+                <option value="custom" {% if request.GET.period == 'custom' %}selected{% endif %}>{% translate "Custom range" %}</option>
+              </select>
+            </div>
+            <div>
+              <label class="label text-sm pb-1 opacity-0" for="start">{% translate "From" %}</label>
+              <input type="date" id="start" name="start" value="{{ request.GET.start }}" class="input input-sm w-40" />
+            </div>
+            <div>
+              <label class="label text-sm pb-1 opacity-0" for="end">{% translate "To" %}</label>
+              <input type="date" id="end" name="end" value="{{ request.GET.end }}" class="input input-sm w-40" />
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline">{% translate "Filter" %}</button>
+          </form>
+        </div>
+
+        <!-- Blockers -->
+        {% if blockers %}
+        <div class="alert alert-warning mb-6">
+          <div>
+            <div class="font-semibold">{% translate "Not yet exportable (missing job title or employer):" %}</div>
+            {% for a in blockers %}
+              <div class="text-sm">
+                <a class="link" href="{% url 'jobs:application_edit' a.pk %}">{{ a.applied_on|date:"d.m.Y" }} — {{ a.employer_name|default:"?" }}</a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Settings links -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <a href="{% url 'jobs:plan_edit' %}" class="btn btn-sm btn-ghost">
+            <iconify-icon icon="octicon:checklist-16"></iconify-icon>
+            {% translate "Obligation plan" %}
+          </a>
+          <a href="{% url 'jobs:profile_edit' %}" class="btn btn-sm btn-ghost">
+            <iconify-icon icon="octicon:id-badge-16"></iconify-icon>
+            {% translate "My data" %}
+          </a>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-base-100/80 shadow-xl rounded-2xl overflow-hidden">
+          {% if applications %}
+          <div class="overflow-x-auto">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>{% translate "Date" %}</th>
+                  <th>{% translate "Employer" %}</th>
+                  <th>{% translate "Job title" %}</th>
+                  <th>{% translate "How applied" %}</th>
+                  <th>{% translate "Status" %}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in applications %}
+                <tr>
+                  <td>{{ a.applied_on|date:"d.m.Y" }}</td>
+                  <td>
+                    <a class="link link-hover font-medium" href="{% url 'jobs:application_detail' a.pk %}">
+                      {{ a.employer_name|default:"—" }}
+                    </a>
+                  </td>
+                  <td>{{ a.job_title|default:"—" }}</td>
+                  <td>{{ a.get_channel_display|default:"—" }}</td>
+                  <td>{{ a.get_result_display }}</td>
+                  <td class="text-right whitespace-nowrap">
+                    <a href="{% url 'jobs:application_edit' a.pk %}" class="btn btn-ghost btn-xs">{% translate "Edit" %}</a>
+                    <a href="{% url 'jobs:application_delete' a.pk %}" class="btn btn-ghost btn-xs text-error">{% translate "Delete" %}</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="p-10 text-center text-base-content/60">
+            <p class="mb-4">{% translate "No efforts recorded for this period yet." %}</p>
+            <a href="{% url 'jobs:application_add' %}" class="btn btn-primary btn-sm">
+              <iconify-icon icon="octicon:plus-16"></iconify-icon>
+              {% translate "Add effort" %}
+            </a>
+          </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
