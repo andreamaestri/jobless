@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Export" %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-20">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">{% translate "Export proof" %}</h1>
+        <p class="text-base-content/70 text-sm mb-8">
+          {% translate "Choose a period and form. PDFs can be uploaded in BA-mobil, sent via eService/Postfach, printed, or brought to your appointment." %}
+        </p>
+
+        <form method="get" class="bg-base-200/40 rounded-2xl p-4 mb-6">
+          <div class="flex flex-wrap items-end gap-3">
+            <div>
+              <label class="label text-sm pb-1" for="profile">{% translate "Form" %}</label>
+              <select id="profile" name="profile" class="select select-sm w-64">
+                {% for code, label in export_profiles.items %}
+                <option value="{{ code }}" {% if request.GET.profile == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="label text-sm pb-1" for="month">{% translate "Calendar month" %}</label>
+              <input type="month" id="month" name="month" value="{{ request.GET.month|default:current_month }}" class="input input-sm w-44" />
+            </div>
+            <div>
+              <label class="label text-sm pb-1" for="period">{% translate "Or range" %}</label>
+              <select id="period" name="period" class="select select-sm w-44">
+                <option value="">{% translate "Calendar month" %}</option>
+                <option value="rolling">{% translate "Last 30 days" %}</option>
+                <option value="custom">{% translate "Custom range" %}</option>
+              </select>
+            </div>
+            <div>
+              <label class="label text-sm pb-1 opacity-0" for="start">{% translate "From" %}</label>
+              <input type="date" id="start" name="start" value="{{ request.GET.start }}" class="input input-sm w-40" />
+            </div>
+            <div>
+              <label class="label text-sm pb-1 opacity-0" for="end">{% translate "To" %}</label>
+              <input type="date" id="end" name="end" value="{{ request.GET.end }}" class="input input-sm w-40" />
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline">{% translate "Apply" %}</button>
+          </div>
+        </form>
+
+        <div class="alert mb-6 text-sm">
+          <iconify-icon icon="octicon:check-16"></iconify-icon>
+          <span>
+            {% blocktranslate count counter=count %}
+              {{ counter }} exportable application in {{ period_label }}.
+            {% plural %}
+              {{ counter }} exportable applications in {{ period_label }}.
+            {% endblocktranslate %}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <a href="{% url 'jobs:nachweis_preview' %}?{{ request.GET.urlencode }}" target="_blank" class="btn btn-outline">
+            <iconify-icon icon="octicon:eye-16"></iconify-icon>
+            {% translate "Live preview" %}
+          </a>
+          <a href="{% url 'jobs:nachweis_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-primary">
+            <iconify-icon icon="octicon:file-16"></iconify-icon>
+            {% translate "Download PDF" %}
+          </a>
+          <a href="{% url 'jobs:nachweis_csv' %}?{{ request.GET.urlencode }}" class="btn btn-outline">
+            <iconify-icon icon="octicon:download-16"></iconify-icon>
+            {% translate "Download CSV" %}
+          </a>
+        </div>
+
+        <div class="bg-base-100/80 shadow-xl rounded-2xl p-6">
+          <h2 class="font-semibold mb-2">{% translate "How to submit" %}</h2>
+          <ul class="list-disc list-inside text-sm text-base-content/70 space-y-1">
+            <li>{% translate "Upload the PDF in BA-mobil or via the eService / Postfach of your Agentur für Arbeit or Jobcenter." %}</li>
+            <li>{% translate "Or print it, sign it, and bring it to your appointment." %}</li>
+            <li>{% translate "The office decides whether a proof is accepted — verbindlich sind Kooperationsplan / Eingliederungsvereinbarung / Bescheid." %}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

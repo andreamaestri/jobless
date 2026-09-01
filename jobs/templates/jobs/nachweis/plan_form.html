@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% translate "Obligation plan" %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+  <div class="flex-1 overflow-y-auto pb-32">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">{% translate "Obligation plan" %}</h1>
+        <p class="text-base-content/70 text-sm mb-6">
+          {% translate "Copy the count, format and deadline from your Kooperationsplan, Eingliederungsvereinbarung or Bescheid. There is no statutory nationwide number of applications." %}
+        </p>
+
+        <form method="post" class="bg-base-100/80 shadow-xl rounded-2xl p-6 sm:p-8">
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="alert alert-error mb-4">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for field in form %}
+            <div class="{% if field.name == 'notes' %}sm:col-span-2{% endif %}">
+              <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-1">
+                {{ field.label }}
+                {% if field.field.required %}<span class="text-error">*</span>{% endif %}
+              </label>
+              {% render_field field %}
+              {% if field.help_text %}<p class="text-xs text-base-content/60 mt-1">{{ field.help_text }}</p>{% endif %}
+              {% for e in field.errors %}<p class="text-error text-xs mt-1">{{ e }}</p>{% endfor %}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="flex justify-end gap-3 mt-6">
+            <a href="{% url 'jobs:nachweis' %}" class="btn btn-ghost">{% translate "Cancel" %}</a>
+            <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

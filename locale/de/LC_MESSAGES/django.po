@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 14:38+0000\n"
+"POT-Creation-Date: 2026-09-01 17:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,6 +33,8 @@ msgstr "Kopieren"
 #: ai_assistant/templates/ai_assistant/_history.html:27
 #: contacts/templates/contacts/list.html:100
 #: events/templates/events/delete.html:30 jobs/templates/jobs/delete.html:30
+#: jobs/templates/jobs/nachweis/application_delete.html:21
+#: jobs/templates/jobs/nachweis/dashboard.html:169
 #: jobs/templates/jobs/partials/job_table.html:92
 msgid "Delete"
 msgstr "Löschen"
@@ -227,6 +229,10 @@ msgid "/ 30,000 chars"
 msgstr "/ 30.000 Zeichen"
 
 #: ai_assistant/templates/ai_assistant/assistant.html:247
+#: jobs/templates/jobs/nachweis/application_form.html:77
+#: jobs/templates/jobs/nachweis/evidence_form.html:28
+#: jobs/templates/jobs/nachweis/plan_form.html:37
+#: jobs/templates/jobs/nachweis/profile_form.html:34
 #: templates/mfa/webauthn/edit_form.html:18
 msgid "Save"
 msgstr "Speichern"
@@ -243,6 +249,11 @@ msgstr "Wird gespeichert…"
 #: jobs/templates/jobs/add.html:46 jobs/templates/jobs/delete.html:26
 #: jobs/templates/jobs/edit.html:40
 #: jobs/templates/jobs/modals/skills_modal.html:109
+#: jobs/templates/jobs/nachweis/application_delete.html:20
+#: jobs/templates/jobs/nachweis/application_form.html:76
+#: jobs/templates/jobs/nachweis/evidence_form.html:27
+#: jobs/templates/jobs/nachweis/plan_form.html:36
+#: jobs/templates/jobs/nachweis/profile_form.html:33
 #: templates/account/confirm_email_verification_code.html:31
 #: templates/account/confirm_email_verification_code.html:35
 #: templates/account/confirm_login_code.html:32
@@ -288,7 +299,7 @@ msgstr "Name"
 #: contacts/forms.py:75 contacts/templates/contacts/delete.html:33
 #: contacts/templates/contacts/detail.html:24
 #: contacts/templates/contacts/list.html:38 jobs/components/job_form.html:77
-#: jobs/forms.py:90 jobs/templates/jobs/partials/form_fields.html:81
+#: jobs/forms.py:97 jobs/templates/jobs/partials/form_fields.html:81
 #: jobs/templates/jobs/partials/job_table.html:8
 msgid "Company"
 msgstr "Unternehmen"
@@ -347,12 +358,13 @@ msgid "Email"
 msgstr "E-Mail"
 
 #: contacts/templates/contacts/detail.html:47
-#: contacts/templates/contacts/list.html:41
+#: contacts/templates/contacts/list.html:41 jobs/forms.py:320
+#: jobs/models.py:266 jobs/models.py:398
 msgid "Phone"
 msgstr "Telefon"
 
 #: contacts/templates/contacts/detail.html:60
-#: contacts/templates/contacts/list.html:42
+#: contacts/templates/contacts/list.html:42 jobs/models.py:405
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
@@ -362,7 +374,7 @@ msgid "View Profile"
 msgstr "Profil anzeigen"
 
 #: contacts/templates/contacts/detail.html:67
-#: events/templates/events/detail.html:41
+#: events/templates/events/detail.html:41 jobs/models.py:256
 msgid "None"
 msgstr "Keine"
 
@@ -395,7 +407,7 @@ msgstr "Kontaktinformationen aktualisieren"
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
-#: contacts/templates/contacts/list.html:11 home/context_processors.py:9
+#: contacts/templates/contacts/list.html:11 home/context_processors.py:10
 msgid "Contacts"
 msgstr "Kontakte"
 
@@ -420,6 +432,8 @@ msgid "View details"
 msgstr "Details anzeigen"
 
 #: contacts/templates/contacts/list.html:95
+#: jobs/templates/jobs/nachweis/application_detail.html:18
+#: jobs/templates/jobs/nachweis/dashboard.html:168
 #: jobs/templates/jobs/partials/job_table.html:83
 #: templates/mfa/webauthn/authenticator_list.html:56
 msgid "Edit"
@@ -445,7 +459,7 @@ msgstr "Ort des Termins eingeben"
 msgid "Enter notes"
 msgstr "Notizen eingeben"
 
-#: events/forms.py:78
+#: events/forms.py:78 jobs/forms.py:272 jobs/models.py:318
 msgid "Title"
 msgstr "Titel"
 
@@ -459,7 +473,7 @@ msgstr "Datum und Uhrzeit"
 
 #: events/forms.py:81 events/templates/events/detail.html:27
 #: events/templates/events/list.html:57 jobs/components/job_detail.html:21
-#: jobs/components/job_form.html:86 jobs/forms.py:91
+#: jobs/components/job_form.html:86 jobs/forms.py:98
 #: jobs/templates/jobs/detail.html:27
 #: jobs/templates/jobs/partials/form_fields.html:89
 #: jobs/templates/jobs/partials/job_table.html:9
@@ -474,7 +488,7 @@ msgstr "Zugehörige Stelle"
 msgid "Contact"
 msgstr "Kontakt"
 
-#: events/models.py:9
+#: events/models.py:9 jobs/models.py:415
 msgid "Interview"
 msgstr "Vorstellungsgespräch"
 
@@ -528,7 +542,7 @@ msgstr "%(object.job_posting.title)s bei %(object.job_posting.company)s"
 msgid "Edit Event"
 msgstr "Termin bearbeiten"
 
-#: events/templates/events/list.html:11 home/context_processors.py:8
+#: events/templates/events/list.html:11 home/context_processors.py:9
 msgid "Events"
 msgstr "Termine"
 
@@ -582,7 +596,11 @@ msgstr "Übersicht"
 msgid "Jobs"
 msgstr "Stellen"
 
-#: home/context_processors.py:10
+#: home/context_processors.py:8
+msgid "Proof of efforts"
+msgstr "Nachweis"
+
+#: home/context_processors.py:11
 msgid "AI Assistant"
 msgstr "KI-Assistent"
 
@@ -616,6 +634,7 @@ msgid "Dashboard"
 msgstr "Übersicht"
 
 #: home/templates/home/home.html:36
+#, python-format
 msgid "%(greeting)s, <span class=\"text-primary\">%(name)s</span>."
 msgstr "%(greeting)s, <span class=\"text-primary\">%(name)s</span>."
 
@@ -654,7 +673,8 @@ msgstr "Noch keine Bewerbungen"
 
 #: home/templates/home/home.html:114
 msgid "Start tracking your first application to see your progress here."
-msgstr "Beginne mit deiner ersten Bewerbung, um hier deinen Fortschritt zu sehen."
+msgstr ""
+"Beginne mit deiner ersten Bewerbung, um hier deinen Fortschritt zu sehen."
 
 #: home/templates/home/home.html:118 home/templates/home/home.html:165
 #: home/templates/home/home.html:266
@@ -730,6 +750,8 @@ msgid "Search suggestions"
 msgstr "Suchvorschläge"
 
 #: home/templates/home/home.html:320 jobs/components/job_form.html:135
+#: jobs/forms.py:223 jobs/templates/jobs/nachweis/application_detail.html:27
+#: jobs/templates/jobs/nachweis/dashboard.html:151
 #: jobs/templates/jobs/partials/form_fields.html:113
 #: jobs/templates/jobs/partials/job_table.html:12
 msgid "Status"
@@ -775,7 +797,7 @@ msgstr "Job-URL"
 msgid "View original posting"
 msgstr "Originale Stellenausschreibung ansehen"
 
-#: jobs/components/job_detail.html:45 jobs/forms.py:95 jobs/models.py:49
+#: jobs/components/job_detail.html:45 jobs/forms.py:102 jobs/models.py:55
 #: jobs/templates/jobs/detail.html:51
 #: jobs/templates/jobs/partials/form_fields.html:122
 #: jobs/templates/jobs/partials/job_table.html:11
@@ -881,81 +903,576 @@ msgid "Click on \"Manage Skills\" to add required skills"
 msgstr ""
 "Klicke auf „Fähigkeiten verwalten“, um erforderliche Fähigkeiten hinzuzufügen"
 
-#: jobs/forms.py:89
+#: jobs/forms.py:96 jobs/forms.py:221 jobs/models.py:435
+#: jobs/templates/jobs/nachweis/dashboard.html:149
 msgid "Job title"
 msgstr "Stellenbezeichnung"
 
-#: jobs/forms.py:92
+#: jobs/forms.py:99
 msgid "Salary range"
 msgstr "Gehaltsspanne"
 
-#: jobs/forms.py:93 jobs/templates/jobs/partials/form_fields.html:97
+#: jobs/forms.py:100 jobs/templates/jobs/partials/form_fields.html:97
 msgid "Job posting URL"
 msgstr "URL der Stellenausschreibung"
 
-#: jobs/forms.py:94
+#: jobs/forms.py:101
 msgid "Job description"
 msgstr "Stellenbeschreibung"
 
-#: jobs/forms.py:96
+#: jobs/forms.py:103
 msgid "Application status"
 msgstr "Bewerbungsstatus"
 
-#: jobs/models.py:30
+#: jobs/forms.py:219 jobs/models.py:433
+#: jobs/templates/jobs/nachweis/application_detail.html:25
+msgid "Applied on"
+msgstr "Datum der Bewerbung"
+
+#: jobs/forms.py:220 jobs/models.py:434
+#: jobs/templates/jobs/nachweis/dashboard.html:148
+msgid "Employer"
+msgstr "Arbeitgeber"
+
+#: jobs/forms.py:222 jobs/templates/jobs/nachweis/application_detail.html:26
+#: jobs/templates/jobs/nachweis/dashboard.html:150
+msgid "How applied"
+msgstr "Art der Bewerbung"
+
+#: jobs/forms.py:224 jobs/models.py:436
+#: jobs/templates/jobs/nachweis/application_detail.html:31
+msgid "Employer address"
+msgstr "Anschrift (Arbeitgeber)"
+
+#: jobs/forms.py:225 jobs/models.py:437
+#: jobs/templates/jobs/nachweis/application_detail.html:32
+msgid "Employer phone"
+msgstr "Telefon (Arbeitgeber)"
+
+#: jobs/forms.py:226 jobs/models.py:438
+#: jobs/templates/jobs/nachweis/application_detail.html:33
+msgid "Employer e-mail"
+msgstr "E-Mail (Arbeitgeber)"
+
+#: jobs/forms.py:227 jobs/models.py:439
+#: jobs/templates/jobs/nachweis/application_detail.html:29
+msgid "Contact person"
+msgstr "Ansprechpartner"
+
+#: jobs/forms.py:228 jobs/models.py:444
+#: jobs/templates/jobs/nachweis/application_detail.html:30
+msgid "Source"
+msgstr "Quelle"
+
+#: jobs/forms.py:229
+msgid "Source reference (URL)"
+msgstr "Quellenangabe (URL)"
+
+#: jobs/forms.py:230 jobs/models.py:450
+#: jobs/templates/jobs/nachweis/application_detail.html:28
+msgid "Result date"
+msgstr "Datum des Ergebnisses"
+
+#: jobs/forms.py:231 jobs/models.py:451
+#: jobs/templates/jobs/nachweis/application_detail.html:36
+msgid "Result note"
+msgstr "Bemerkung zum Ergebnis"
+
+#: jobs/forms.py:232 jobs/models.py:453
+#, fuzzy
+#| msgid "Event type"
+msgid "Effort type"
+msgstr "Terminart"
+
+#: jobs/forms.py:233 jobs/models.py:459
+msgid "Related to placement proposal"
+msgstr "Bezieht sich auf Vermittlungsvorschlag"
+
+#: jobs/forms.py:234 jobs/models.py:461
+#: jobs/templates/jobs/nachweis/application_detail.html:34
+msgid "Costs (cents)"
+msgstr "Kosten (Cent)"
+
+#: jobs/forms.py:273 jobs/models.py:316
+msgid "Caseworker"
+msgstr "Vermittlungsfachkraft"
+
+#: jobs/forms.py:274 jobs/models.py:319
+msgid "Valid from"
+msgstr "Gültig von"
+
+#: jobs/forms.py:275 jobs/models.py:320
+msgid "Valid to"
+msgstr "Gültig bis"
+
+#: jobs/forms.py:276 jobs/models.py:322
+#, fuzzy
+#| msgid "Required"
+msgid "Required count"
+msgstr "Erforderlich"
+
+#: jobs/forms.py:277 jobs/models.py:325
+msgid "Period"
+msgstr "Zeitraum"
+
+#: jobs/forms.py:278 jobs/models.py:328
+msgid "Due rule"
+msgstr "Frist"
+
+#: jobs/forms.py:279 jobs/models.py:330
+#, fuzzy
+#| msgid "Enter notes"
+msgid "Due rule notes"
+msgstr "Notizen eingeben"
+
+#: jobs/forms.py:280 jobs/models.py:331
+#, fuzzy
+#| msgid "Accepted"
+msgid "Accepted channels"
+msgstr "Angenommen"
+
+#: jobs/forms.py:281 jobs/models.py:333
+msgid "Proof form"
+msgstr "Formularvariante"
+
+#: jobs/forms.py:282
+msgid "Notes (verbatim from your plan)"
+msgstr "Notizen (wörtlich aus deinem Plan)"
+
+#: jobs/forms.py:283 jobs/models.py:340
+#, fuzzy
+#| msgid "Interviews and meetings"
+msgid "Interviews count as effort"
+msgstr "Interviews und Termine"
+
+#: jobs/forms.py:284 jobs/models.py:343
+msgid "Measures count as effort"
+msgstr "Maßnahmen zählen als Eigenbemühung"
+
+#: jobs/forms.py:285 jobs/models.py:346
+msgid "Job board search counts as effort"
+msgstr "Jobbörsen-Recherche zählt als Eigenbemühung"
+
+#: jobs/forms.py:286 jobs/models.py:349
+#, fuzzy
+#| msgid "Activate"
+msgid "Active"
+msgstr "Aktivieren"
+
+#: jobs/forms.py:315 jobs/models.py:261
+#, fuzzy
+#| msgid "First name"
+msgid "Full name"
+msgstr "Vorname"
+
+#: jobs/forms.py:316 jobs/models.py:262
+msgid "Kundennummer"
+msgstr "Kundennummer"
+
+#: jobs/forms.py:317 jobs/models.py:263
+msgid "BG-Nummer"
+msgstr "BG-Nummer"
+
+#: jobs/forms.py:318 jobs/models.py:264
+#, fuzzy
+#| msgid "IP Address"
+msgid "Address"
+msgstr "IP-Adresse"
+
+#: jobs/forms.py:319 jobs/models.py:265 jobs/models.py:400
+#, fuzzy
+#| msgid "Email"
+msgid "E-mail"
+msgstr "E-Mail"
+
+#: jobs/forms.py:321 jobs/models.py:268
+msgid "Regime"
+msgstr "Rechtskreis"
+
+#: jobs/forms.py:322 jobs/models.py:270
+msgid "Office"
+msgstr "Dienststelle"
+
+#: jobs/forms.py:323 jobs/models.py:272
+#, fuzzy
+#| msgid "Preferred"
+msgid "Preferred locale"
+msgstr "Bevorzugt"
+
+#: jobs/models.py:36
 msgid "Icon code (e.g. skill-icons:python)"
 msgstr "Icon-Code (z. B. skill-icons:python)"
 
-#: jobs/models.py:34
+#: jobs/models.py:40
 msgid "Detailed description of the skill"
 msgstr "Detaillierte Beschreibung der Fähigkeit"
 
-#: jobs/models.py:38
+#: jobs/models.py:44
 msgid "Enter hierarchical tags (e.g. programming/python/django)"
 msgstr "Hierarchische Tags eingeben (z. B. programming/python/django)"
 
-#: jobs/models.py:48
+#: jobs/models.py:54
 msgid "Skill"
 msgstr "Fähigkeit"
 
-#: jobs/models.py:97 jobs/templates/jobs/modals/skills_modal.html:93
+#: jobs/models.py:103 jobs/templates/jobs/modals/skills_modal.html:93
 msgid "Required"
 msgstr "Erforderlich"
 
-#: jobs/models.py:98 jobs/templates/jobs/modals/skills_modal.html:94
+#: jobs/models.py:104 jobs/templates/jobs/modals/skills_modal.html:94
 msgid "Preferred"
 msgstr "Bevorzugt"
 
-#: jobs/models.py:99 jobs/templates/jobs/modals/skills_modal.html:95
+#: jobs/models.py:105 jobs/templates/jobs/modals/skills_modal.html:95
 msgid "Nice to have"
 msgstr "Wünschenswert"
 
-#: jobs/models.py:120
+#: jobs/models.py:126
 msgid "Job skills"
 msgstr "Fähigkeiten der Stelle"
 
-#: jobs/models.py:144
+#: jobs/models.py:150
 msgid "Interested"
 msgstr "Interessiert"
 
-#: jobs/models.py:145
+#: jobs/models.py:151
 msgid "Applied"
 msgstr "Beworben"
 
-#: jobs/models.py:146
+#: jobs/models.py:152
 msgid "Interviewing"
 msgstr "Vorstellungsgespräch"
 
-#: jobs/models.py:147
+#: jobs/models.py:153 jobs/models.py:416
 msgid "Rejected"
 msgstr "Abgelehnt"
 
-#: jobs/models.py:148
+#: jobs/models.py:154 jobs/models.py:417
 msgid "Accepted"
 msgstr "Angenommen"
 
-#: jobs/models.py:162
+#: jobs/models.py:168
 msgid "Skills linked to this job posting"
 msgstr "Mit dieser Stellenausschreibung verknüpfte Fähigkeiten"
+
+#: jobs/models.py:254
+msgid "ALG I — Agentur für Arbeit"
+msgstr "ALG I — Agentur für Arbeit"
+
+#: jobs/models.py:255
+msgid "Grundsicherung/Bürgergeld — Jobcenter"
+msgstr "Grundsicherung/Bürgergeld — Jobcenter"
+
+#: jobs/models.py:278
+#, fuzzy
+#| msgid "View Profile"
+msgid "User profile"
+msgstr "Profil anzeigen"
+
+#: jobs/models.py:279
+#, fuzzy
+#| msgid "View Profile"
+msgid "User profiles"
+msgstr "Profil anzeigen"
+
+#: jobs/models.py:292 jobs/templates/jobs/nachweis/dashboard.html:90
+#: jobs/templates/jobs/nachweis/dashboard.html:97
+#: jobs/templates/jobs/nachweis/export.html:27
+#: jobs/templates/jobs/nachweis/export.html:33
+msgid "Calendar month"
+msgstr "Kalendermonat"
+
+#: jobs/models.py:293
+msgid "Rolling 30 days"
+msgstr "Letzte 30 Tage"
+
+#: jobs/models.py:294 jobs/templates/jobs/nachweis/dashboard.html:99
+#: jobs/templates/jobs/nachweis/export.html:35
+msgid "Custom range"
+msgstr "Eigener Zeitraum"
+
+#: jobs/models.py:297
+msgid "Unaufgefordert bis Monatsende"
+msgstr "Unaufgefordert bis Monatsende"
+
+#: jobs/models.py:298
+msgid "Bis zum 5. des Folgemonats"
+msgstr "Bis zum 5. des Folgemonats"
+
+#: jobs/models.py:299
+msgid "Zum Beratungstermin mitbringen"
+msgstr "Zum Beratungstermin mitbringen"
+
+#: jobs/models.py:300
+msgid "Sonstiges"
+msgstr "Sonstiges"
+
+#: jobs/models.py:303
+msgid "BA-Minimal"
+msgstr "BA-Minimal"
+
+#: jobs/models.py:304
+msgid "Jobcenter-Liste"
+msgstr "Jobcenter-Liste"
+
+#: jobs/models.py:305
+msgid "Custom columns"
+msgstr "Eigene Spalten"
+
+#: jobs/models.py:338
+msgid "Notes (verbatim)"
+msgstr "Notizen (wörtlich)"
+
+#: jobs/models.py:348
+#, fuzzy
+#| msgid "Last updated:"
+msgid "Last submitted on"
+msgstr "Zuletzt aktualisiert:"
+
+#: jobs/models.py:355 jobs/models.py:359
+#: jobs/templates/jobs/nachweis/dashboard.html:132
+#: jobs/templates/jobs/nachweis/plan_form.html:5
+#: jobs/templates/jobs/nachweis/plan_form.html:12
+msgid "Obligation plan"
+msgstr "Vereinbarung / Plan"
+
+#: jobs/models.py:356
+msgid "Obligation plans"
+msgstr "Vereinbarungen / Pläne"
+
+#: jobs/models.py:396
+msgid "In person"
+msgstr "persönlich"
+
+#: jobs/models.py:397
+msgid "Written"
+msgstr "schriftlich"
+
+#: jobs/models.py:399 templates/base.html:444 templates/base.html:487
+msgid "Online"
+msgstr "Online"
+
+#: jobs/models.py:403
+msgid "Jobbörse BA"
+msgstr "Jobbörse BA"
+
+#: jobs/models.py:404
+msgid "Stepstone"
+msgstr "Stepstone"
+
+#: jobs/models.py:406
+#, fuzzy
+#| msgid "Company"
+msgid "Company website"
+msgstr "Unternehmen"
+
+#: jobs/models.py:407
+msgid "Newspaper"
+msgstr "Zeitung"
+
+#: jobs/models.py:408
+msgid "Placement proposal"
+msgstr "Vermittlungsvorschlag"
+
+#: jobs/models.py:409
+msgid "Initiative"
+msgstr "Initiativbewerbung"
+
+#: jobs/models.py:410 jobs/models.py:428 jobs/models.py:511
+msgid "Other"
+msgstr "Sonstiges"
+
+#: jobs/models.py:413
+msgid "Open"
+msgstr "offen"
+
+#: jobs/models.py:414
+msgid "Receipt confirmed"
+msgstr "Eingang bestätigt"
+
+#: jobs/models.py:418
+msgid "Withdrawn"
+msgstr "Zurückgezogen"
+
+#: jobs/models.py:419
+msgid "Aborted"
+msgstr "Abgebrochen"
+
+#: jobs/models.py:422
+#, fuzzy
+#| msgid "Application Status"
+msgid "Application"
+msgstr "Bewerbungsstatus"
+
+#: jobs/models.py:423
+#, fuzzy
+#| msgid "Active applications"
+msgid "Initiative application"
+msgstr "Aktive Bewerbungen"
+
+#: jobs/models.py:424
+#, fuzzy
+#| msgid "Phone"
+msgid "Phone call"
+msgstr "Telefon"
+
+#: jobs/models.py:425
+msgid "Personal visit"
+msgstr "Vorsprache"
+
+#: jobs/models.py:426
+msgid "Measure"
+msgstr "Maßnahme"
+
+#: jobs/models.py:427
+msgid "Job board search"
+msgstr "Jobbörsen-Recherche"
+
+#: jobs/models.py:441
+#, fuzzy
+#| msgid "Change Email"
+msgid "Channel"
+msgstr "E-Mail ändern"
+
+#: jobs/models.py:446
+msgid "Source reference"
+msgstr "Quellenangabe"
+
+#: jobs/models.py:448
+msgid "Result"
+msgstr "Ergebnis"
+
+#: jobs/models.py:467
+msgid "Job search effort"
+msgstr "Eigenbemühung"
+
+#: jobs/models.py:468 jobs/templates/jobs/nachweis/dashboard.html:4
+msgid "Job search efforts"
+msgstr "Eigenbemühungen"
+
+#: jobs/models.py:506
+#, fuzzy
+#| msgid "Application Status"
+msgid "Application copy"
+msgstr "Bewerbungsstatus"
+
+#: jobs/models.py:507
+#, fuzzy
+#| msgid "Rejected"
+msgid "Rejection"
+msgstr "Abgelehnt"
+
+#: jobs/models.py:508
+msgid "Invitation"
+msgstr "Einladung"
+
+#: jobs/models.py:509
+msgid "Cost receipt"
+msgstr "Kostenbeleg"
+
+#: jobs/models.py:510
+msgid "Bank statement"
+msgstr "Kontoauszug"
+
+#: jobs/models.py:520
+msgid "File"
+msgstr "Datei"
+
+#: jobs/models.py:525
+#, fuzzy
+#| msgid "Event type"
+msgid "Evidence type"
+msgstr "Terminart"
+
+#: jobs/models.py:530
+#, fuzzy
+#| msgid "First name"
+msgid "Filename"
+msgstr "Vorname"
+
+#: jobs/models.py:531
+#, fuzzy
+#| msgid "Event type"
+msgid "MIME type"
+msgstr "Terminart"
+
+#: jobs/models.py:532
+msgid "Size"
+msgstr "Größe"
+
+#: jobs/models.py:533
+msgid "SHA-256"
+msgstr "SHA-256"
+
+#: jobs/models.py:538
+msgid "Evidence file"
+msgstr "Nachweisdatei"
+
+#: jobs/models.py:539
+msgid "Evidence files"
+msgstr "Nachweisdateien"
+
+#: jobs/models.py:571
+#, fuzzy
+#| msgid "Actions"
+msgid "Action"
+msgstr "Aktionen"
+
+#: jobs/models.py:572
+msgid "Field"
+msgstr "Feld"
+
+#: jobs/models.py:573
+msgid "Old value"
+msgstr "Alter Wert"
+
+#: jobs/models.py:574
+msgid "New value"
+msgstr "Neuer Wert"
+
+#: jobs/models.py:579
+msgid "Audit log"
+msgstr "Änderungsprotokoll"
+
+#: jobs/models.py:580
+msgid "Audit logs"
+msgstr "Änderungsprotokolle"
+
+#: jobs/models.py:598
+msgid "Export profile"
+msgstr "Exportprofil"
+
+#: jobs/models.py:600
+msgid "Period from"
+msgstr "Zeitraum von"
+
+#: jobs/models.py:601
+msgid "Period to"
+msgstr "Zeitraum bis"
+
+#: jobs/models.py:602
+msgid "Submitted on"
+msgstr "Vorgelegt am"
+
+#: jobs/models.py:603
+msgid "Rows"
+msgstr "Einträge"
+
+#: jobs/models.py:604 templates/account/snippets/already_logged_in.html:7
+msgid "Note"
+msgstr "Hinweis"
+
+#: jobs/models.py:608
+#, fuzzy
+#| msgid "Sessions"
+msgid "Submission"
+msgstr "Sitzungen"
+
+#: jobs/models.py:609
+#, fuzzy
+#| msgid "Sessions"
+msgid "Submissions"
+msgstr "Sitzungen"
 
 #: jobs/templates/jobs/add.html:17
 msgid "Add a new job"
@@ -1048,6 +1565,255 @@ msgstr "Fähigkeiten suchen …"
 msgid "Selected Skills"
 msgstr "Ausgewählte Fähigkeiten"
 
+#: jobs/templates/jobs/nachweis/application_delete.html:4
+msgid "Delete effort"
+msgstr "Eigenbemühung löschen"
+
+#: jobs/templates/jobs/nachweis/application_delete.html:12
+msgid "Delete effort?"
+msgstr "Eigenbemühung löschen?"
+
+#: jobs/templates/jobs/nachweis/application_delete.html:14
+#, python-format
+msgid ""
+"\n"
+"              Delete “%(employer)s” from %(date)s? This cannot be undone.\n"
+"            "
+msgstr ""
+"\n"
+"              „%(employer)s“ vom %(date)s löschen? Das kann nicht rückgängig "
+"gemacht werden.\n"
+"            "
+
+#: jobs/templates/jobs/nachweis/application_detail.html:19
+msgid "Back"
+msgstr "Zurück"
+
+#: jobs/templates/jobs/nachweis/application_detail.html:44
+msgid "Evidence"
+msgstr "Nachweise"
+
+#: jobs/templates/jobs/nachweis/application_detail.html:47
+msgid "Attach file"
+msgstr "Datei anhängen"
+
+#: jobs/templates/jobs/nachweis/application_detail.html:65
+msgid ""
+"No files attached. Stored locally only — never uploaded anywhere without "
+"your action."
+msgstr "Keine Dateien angehängt. Nur lokal gespeichert — wird nirgendwo hochgeladen, ohne dass du es auslöst."
+
+#: jobs/templates/jobs/nachweis/application_form.html:5
+#: jobs/templates/jobs/nachweis/application_form.html:13
+msgid "Edit effort"
+msgstr "Bearbeiten"
+
+#: jobs/templates/jobs/nachweis/application_form.html:5
+#: jobs/templates/jobs/nachweis/application_form.html:13
+#: jobs/templates/jobs/nachweis/dashboard.html:25
+#: jobs/templates/jobs/nachweis/dashboard.html:181
+msgid "Add effort"
+msgstr "Erfassen"
+
+#: jobs/templates/jobs/nachweis/application_form.html:16
+msgid ""
+"Only the date, employer and job title are required — everything else is "
+"optional."
+msgstr "Nur Datum, Arbeitgeber und Tätigkeit sind Pflicht — alles andere ist optional."
+
+#: jobs/templates/jobs/nachweis/application_form.html:22
+msgid ""
+"Only enter the real date of an effort that actually took place. Changes to "
+"the date are recorded in the audit log."
+msgstr "Trage nur das echte Datum einer wirklich erfolgten Eigenbemühung nach. Änderungen am Datum werden im Änderungsprotokoll festgehalten."
+
+#: jobs/templates/jobs/nachweis/application_form.html:35
+msgid "Fast capture"
+msgstr "Schnelle Erfassung"
+
+#: jobs/templates/jobs/nachweis/application_form.html:55
+msgid "Details (optional)"
+msgstr "Details (optional)"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:16
+msgid "Proof of job search efforts"
+msgstr "Nachweis der Eigenbemühungen"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:19
+msgid "Nachweis von Eigenbemühungen — Agentur für Arbeit / Jobcenter"
+msgstr "Nachweis von Eigenbemühungen — Agentur für Arbeit / Jobcenter"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:29
+#: jobs/templates/jobs/nachweis/export.html:4
+msgid "Export"
+msgstr "Exportieren"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:37
+msgid ""
+"For documentation purposes only. The binding requirements are your "
+"Kooperationsplan / Eingliederungsvereinbarung / Bescheid."
+msgstr "Nur zur Dokumentation. Verbindlich sind Kooperationsplan / Eingliederungsvereinbarung / Bescheid."
+
+#: jobs/templates/jobs/nachweis/dashboard.html:43
+msgid "Recorded"
+msgstr "Erfasst"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:49
+msgid "Target from your plan — not a legal nationwide number"
+msgstr "Soll aus deinem Plan — keine gesetzliche bundesweite Zahl"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:51
+msgid "No target configured"
+msgstr "Kein Soll hinterlegt"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:56
+msgid "Due"
+msgstr "Frist"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:60
+#, python-format
+msgid "in %(n)s days"
+msgstr "in %(n)s Tagen"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:62
+msgid "see your plan / appointment"
+msgstr "siehe Plan / Beratungstermin"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:67
+msgid "Last submitted"
+msgstr "Zuletzt vorgelegt"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:73
+msgid "no export yet"
+msgstr "noch nichts vorgelegt"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:78
+msgid "Next appointment"
+msgstr "Nächster Termin"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:95
+#: jobs/templates/jobs/nachweis/export.html:31
+msgid "Or range"
+msgstr "Oder Zeitraum"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:98
+#: jobs/templates/jobs/nachweis/export.html:34 jobs/views.py:264
+msgid "Last 30 days"
+msgstr "Letzte 30 Tage"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:103
+#: jobs/templates/jobs/nachweis/export.html:39
+msgid "From"
+msgstr "Von"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:107
+#: jobs/templates/jobs/nachweis/export.html:43
+msgid "To"
+msgstr "Bis"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:110
+msgid "Filter"
+msgstr "Filtern"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:118
+msgid "Not yet exportable (missing job title or employer):"
+msgstr "Noch nicht nachweisbar (Tätigkeit oder Arbeitgeber fehlt):"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:136
+#: jobs/templates/jobs/nachweis/profile_form.html:5
+#: jobs/templates/jobs/nachweis/profile_form.html:12
+msgid "My data"
+msgstr "Meine Daten"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:147
+msgid "Date"
+msgstr "Datum"
+
+#: jobs/templates/jobs/nachweis/dashboard.html:178
+msgid "No efforts recorded for this period yet."
+msgstr "Für diesen Zeitraum sind noch keine Eigenbemühungen erfasst."
+
+#: jobs/templates/jobs/nachweis/evidence_form.html:5
+#: jobs/templates/jobs/nachweis/evidence_form.html:13
+msgid "Attach evidence"
+msgstr "Nachweis anhängen"
+
+#: jobs/templates/jobs/nachweis/export.html:11
+msgid "Export proof"
+msgstr "Nachweis exportieren"
+
+#: jobs/templates/jobs/nachweis/export.html:13
+msgid ""
+"Choose a period and form. PDFs can be uploaded in BA-mobil, sent via "
+"eService/Postfach, printed, or brought to your appointment."
+msgstr "Zeitraum und Formular wählen. PDFs lassen sich in BA-mobil hochladen, über eService/Postfach senden, ausdrucken oder zum Termin mitbringen."
+
+#: jobs/templates/jobs/nachweis/export.html:19
+msgid "Form"
+msgstr "Formular"
+
+#: jobs/templates/jobs/nachweis/export.html:46
+msgid "Apply"
+msgstr "Anwenden"
+
+#: jobs/templates/jobs/nachweis/export.html:53
+#, python-format
+msgid ""
+"\n"
+"              %(counter)s exportable application in %(period_label)s.\n"
+"            "
+msgid_plural ""
+"\n"
+"              %(counter)s exportable applications in %(period_label)s.\n"
+"            "
+msgstr[0] ""
+msgstr[1] ""
+
+#: jobs/templates/jobs/nachweis/export.html:64
+msgid "Live preview"
+msgstr "Live-Vorschau"
+
+#: jobs/templates/jobs/nachweis/export.html:68
+msgid "Download PDF"
+msgstr "PDF herunterladen"
+
+#: jobs/templates/jobs/nachweis/export.html:72
+msgid "Download CSV"
+msgstr "CSV herunterladen"
+
+#: jobs/templates/jobs/nachweis/export.html:77
+msgid "How to submit"
+msgstr "So reichst du ein"
+
+#: jobs/templates/jobs/nachweis/export.html:79
+msgid ""
+"Upload the PDF in BA-mobil or via the eService / Postfach of your Agentur "
+"für Arbeit or Jobcenter."
+msgstr "Lade das PDF in BA-mobil oder über eService/Postfach deiner Agentur für Arbeit oder deines Jobcenters hoch."
+
+#: jobs/templates/jobs/nachweis/export.html:80
+msgid "Or print it, sign it, and bring it to your appointment."
+msgstr "Oder drucke ihn aus, unterschreibe ihn und bringe ihn zum Termin mit."
+
+#: jobs/templates/jobs/nachweis/export.html:81
+msgid ""
+"The office decides whether a proof is accepted — verbindlich sind "
+"Kooperationsplan / Eingliederungsvereinbarung / Bescheid."
+msgstr "Über die Anerkennung entscheidet die Dienststelle — verbindlich sind Kooperationsplan / Eingliederungsvereinbarung / Bescheid."
+
+#: jobs/templates/jobs/nachweis/plan_form.html:14
+msgid ""
+"Copy the count, format and deadline from your Kooperationsplan, "
+"Eingliederungsvereinbarung or Bescheid. There is no statutory nationwide "
+"number of applications."
+msgstr "Übernimm Anzahl, Form und Frist aus deinem Kooperationsplan, deiner Eingliederungsvereinbarung oder deinem Bescheid. Es gibt keine gesetzliche bundesweite Bewerbungszahl."
+
+#: jobs/templates/jobs/nachweis/profile_form.html:14
+msgid ""
+"Printed on the official forms. Stored locally in your account — no "
+"analytics, no third parties."
+msgstr "Wird auf den offiziellen Formularen gedruckt. Nur lokal in deinem Konto gespeichert — keine Analyse, keine Dritten."
+
 #: jobs/templates/jobs/partials/form_fields.html:17
 #: jobs/templates/jobs/sections/ai_section.html:25
 msgid "Process with AI"
@@ -1088,6 +1854,55 @@ msgstr "Entfernen"
 #: jobs/templates/jobs/widgets/skill_tree_widget.html:88
 msgid "No skills found matching your search"
 msgstr "Keine Fähigkeiten gefunden, die deiner Suche entsprechen"
+
+#: jobs/views.py:240
+msgid "BA-Minimal (official form orientation)"
+msgstr "BA-Minimal (am amtlichen Formular orientiert)"
+
+#: jobs/views.py:241
+msgid "Jobcenter list"
+msgstr "Jobcenter-Liste"
+
+#: jobs/views.py:242
+msgid "Consultation overview (internal)"
+msgstr "Beratungsübersicht (intern)"
+
+#: jobs/views.py:380
+msgid "Job search effort saved."
+msgstr "Eigenbemühung gespeichert."
+
+#: jobs/views.py:390
+msgid ""
+"Possible duplicate: an effort with the same employer, title and date already "
+"exists."
+msgstr "Mögliche Dublette: Eigenbemühung mit gleichem Arbeitgeber, gleicher Tätigkeit und gleichem Datum existiert bereits."
+
+#: jobs/views.py:411
+msgid "Job search effort updated."
+msgstr "Eigenbemühung aktualisiert."
+
+#: jobs/views.py:415
+msgid ""
+"Only enter the real date of an effort that actually took place. This change "
+"has been recorded in the audit log."
+msgstr "Trage nur das echte Datum einer wirklich erfolgten Eigenbemühung nach. Diese Änderung wurde im Änderungsprotokoll festgehalten."
+
+#: jobs/views.py:461
+msgid "Evidence file saved."
+msgstr "Nachweisdatei gespeichert."
+
+#: jobs/views.py:483
+msgid "Obligation plan saved."
+msgstr "Vereinbarung gespeichert."
+
+#: jobs/views.py:499
+msgid "Profile saved."
+msgstr "Profil gespeichert."
+
+#: jobs/views.py:564
+msgid ""
+"No exportable applications in the selected period — nothing was generated."
+msgstr "Keine nachweisbaren Eigenbemühungen im gewählten Zeitraum — es wurde nichts erzeugt."
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -1769,10 +2584,6 @@ msgid "We are sorry, but the sign up is currently closed."
 msgstr "Es tut uns leid, aber die Registrierung ist derzeit geschlossen."
 
 #: templates/account/snippets/already_logged_in.html:7
-msgid "Note"
-msgstr "Hinweis"
-
-#: templates/account/snippets/already_logged_in.html:7
 #, python-format
 msgid "You are already logged in as %(user_display)s."
 msgstr "Du bist bereits als %(user_display)s angemeldet."
@@ -1871,10 +2682,6 @@ msgstr "Sitzungen"
 #: templates/base.html:361
 msgid "Language"
 msgstr "Sprache"
-
-#: templates/base.html:444 templates/base.html:487
-msgid "Online"
-msgstr "Online"
 
 #: templates/base.html:540
 msgid "Theme"

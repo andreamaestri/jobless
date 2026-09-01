@@ -2,7 +2,14 @@ from django import forms
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 import json
-from .models import JobPosting, SkillTreeModel, JobSkill
+from .models import (
+    JobPosting,
+    SkillTreeModel,
+    JobSkill,
+    UserProfile,
+    ObligationPlan,
+    Application,
+)
 
 
 class SkillTreeWidget(forms.SelectMultiple):
@@ -170,3 +177,148 @@ class JobPostingForm(forms.ModelForm):
                 )
 
         return instance
+
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = [
+            'applied_on', 'employer_name', 'job_title', 'channel', 'result',
+            'employer_address', 'employer_phone', 'employer_email',
+            'contact_person', 'source', 'source_ref', 'result_date',
+            'result_note', 'effort_type', 'related_to_vermittlungsvorschlag',
+            'costs_cents',
+        ]
+        widgets = {
+            'applied_on': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input w-full'},
+                format='%Y-%m-%d',
+            ),
+            'employer_name': forms.TextInput(attrs={'class': 'input w-full'}),
+            'job_title': forms.TextInput(attrs={'class': 'input w-full'}),
+            'channel': forms.Select(attrs={'class': 'select w-full'}),
+            'result': forms.Select(attrs={'class': 'select w-full'}),
+            'employer_address': forms.TextInput(attrs={'class': 'input w-full'}),
+            'employer_phone': forms.TextInput(attrs={'class': 'input w-full'}),
+            'employer_email': forms.EmailInput(attrs={'class': 'input w-full'}),
+            'contact_person': forms.TextInput(attrs={'class': 'input w-full'}),
+            'source': forms.Select(attrs={'class': 'select w-full'}),
+            'source_ref': forms.TextInput(attrs={'class': 'input w-full'}),
+            'result_date': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input w-full'},
+                format='%Y-%m-%d',
+            ),
+            'result_note': forms.TextInput(attrs={'class': 'input w-full'}),
+            'effort_type': forms.Select(attrs={'class': 'select w-full'}),
+            'related_to_vermittlungsvorschlag': forms.CheckboxInput(
+                attrs={'class': 'toggle toggle-primary'}
+            ),
+            'costs_cents': forms.NumberInput(attrs={'class': 'input w-full'}),
+        }
+        labels = {
+            'applied_on': _('Applied on'),
+            'employer_name': _('Employer'),
+            'job_title': _('Job title'),
+            'channel': _('How applied'),
+            'result': _('Status'),
+            'employer_address': _('Employer address'),
+            'employer_phone': _('Employer phone'),
+            'employer_email': _('Employer e-mail'),
+            'contact_person': _('Contact person'),
+            'source': _('Source'),
+            'source_ref': _('Source reference (URL)'),
+            'result_date': _('Result date'),
+            'result_note': _('Result note'),
+            'effort_type': _('Effort type'),
+            'related_to_vermittlungsvorschlag': _('Related to placement proposal'),
+            'costs_cents': _('Costs (cents)'),
+        }
+
+
+class ObligationPlanForm(forms.ModelForm):
+    class Meta:
+        model = ObligationPlan
+        fields = [
+            'title', 'caseworker', 'valid_from', 'valid_to', 'required_count',
+            'period', 'due_rule', 'due_rule_notes', 'accepted_channels',
+            'proof_form', 'notes', 'counts_interviews_as_effort',
+            'counts_measures_as_effort', 'counts_jobboard_search_as_effort',
+            'is_active',
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input w-full'}),
+            'caseworker': forms.Select(attrs={'class': 'select w-full'}),
+            'valid_from': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input w-full'},
+                format='%Y-%m-%d',
+            ),
+            'valid_to': forms.DateInput(
+                attrs={'type': 'date', 'class': 'input w-full'},
+                format='%Y-%m-%d',
+            ),
+            'required_count': forms.NumberInput(attrs={'class': 'input w-full'}),
+            'period': forms.Select(attrs={'class': 'select w-full'}),
+            'due_rule': forms.Select(attrs={'class': 'select w-full'}),
+            'due_rule_notes': forms.TextInput(attrs={'class': 'input w-full'}),
+            'accepted_channels': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 3}),
+            'proof_form': forms.Select(attrs={'class': 'select w-full'}),
+            'notes': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 3}),
+            'counts_interviews_as_effort': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
+            'counts_measures_as_effort': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
+            'counts_jobboard_search_as_effort': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
+        }
+        labels = {
+            'title': _('Title'),
+            'caseworker': _('Caseworker'),
+            'valid_from': _('Valid from'),
+            'valid_to': _('Valid to'),
+            'required_count': _('Required count'),
+            'period': _('Period'),
+            'due_rule': _('Due rule'),
+            'due_rule_notes': _('Due rule notes'),
+            'accepted_channels': _('Accepted channels'),
+            'proof_form': _('Proof form'),
+            'notes': _('Notes (verbatim from your plan)'),
+            'counts_interviews_as_effort': _('Interviews count as effort'),
+            'counts_measures_as_effort': _('Measures count as effort'),
+            'counts_jobboard_search_as_effort': _('Job board search counts as effort'),
+            'is_active': _('Active'),
+        }
+
+    def clean_accepted_channels(self):
+        value = self.cleaned_data.get('accepted_channels')
+        if isinstance(value, str):
+            value = [item.strip() for item in value.split(',') if item.strip()]
+        return value
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = [
+            'full_name', 'kundennummer', 'bg_nummer', 'address', 'email',
+            'phone', 'regime', 'office_name', 'preferred_locale',
+        ]
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'input w-full'}),
+            'kundennummer': forms.TextInput(attrs={'class': 'input w-full'}),
+            'bg_nummer': forms.TextInput(attrs={'class': 'input w-full'}),
+            'address': forms.Textarea(attrs={'class': 'textarea w-full', 'rows': 3}),
+            'email': forms.EmailInput(attrs={'class': 'input w-full'}),
+            'phone': forms.TextInput(attrs={'class': 'input w-full'}),
+            'regime': forms.Select(attrs={'class': 'select w-full'}),
+            'office_name': forms.TextInput(attrs={'class': 'input w-full'}),
+            'preferred_locale': forms.TextInput(attrs={'class': 'input w-full'}),
+        }
+        labels = {
+            'full_name': _('Full name'),
+            'kundennummer': _('Kundennummer'),
+            'bg_nummer': _('BG-Nummer'),
+            'address': _('Address'),
+            'email': _('E-mail'),
+            'phone': _('Phone'),
+            'regime': _('Regime'),
+            'office_name': _('Office'),
+            'preferred_locale': _('Preferred locale'),
+        }

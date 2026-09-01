@@ -276,6 +276,11 @@ STORAGES = {
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# User-uploaded media (evidence files are stored locally on purpose:
+# local-first privacy, never pushed to object storage or third parties)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Extra places for collectstatic to find static files
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),

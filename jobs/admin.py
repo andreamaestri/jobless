@@ -216,3 +216,67 @@ class JobPostingAdmin(ModelAdmin):
     def mark_as_rejected(self, request, queryset):
         queryset.update(status='rejected')
     mark_as_rejected.short_description = "Mark selected jobs as Rejected"
+
+
+# ---------------------------------------------------------------------------
+# Nachweis von Eigenbemühungen
+# ---------------------------------------------------------------------------
+
+from .models import (
+    UserProfile,
+    ObligationPlan,
+    Application,
+    EvidenceFile,
+    AuditLog,
+    Submission,
+)
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(ModelAdmin):
+    list_display = ('user', 'full_name', 'kundennummer', 'regime', 'office_name')
+    search_fields = ('user__username', 'full_name', 'kundennummer')
+    list_filter = ('regime',)
+
+
+@admin.register(ObligationPlan)
+class ObligationPlanAdmin(ModelAdmin):
+    list_display = (
+        'title', 'user', 'required_count', 'period', 'due_rule',
+        'proof_form', 'valid_from', 'valid_to', 'is_active',
+    )
+    list_filter = ('period', 'due_rule', 'proof_form', 'is_active')
+    search_fields = ('title', 'user__username', 'notes')
+
+
+@admin.register(Application)
+class ApplicationAdmin(ModelAdmin):
+    list_display = (
+        'applied_on', 'employer_name', 'job_title', 'user',
+        'channel', 'result', 'effort_type',
+    )
+    list_filter = ('result', 'channel', 'effort_type', 'applied_on')
+    search_fields = ('employer_name', 'job_title', 'user__username')
+    date_hierarchy = 'applied_on'
+
+
+@admin.register(EvidenceFile)
+class EvidenceFileAdmin(ModelAdmin):
+    list_display = ('filename', 'application', 'evidence_type', 'size', 'uploaded_at')
+    list_filter = ('evidence_type',)
+    search_fields = ('filename', 'application__employer_name')
+    readonly_fields = ('sha256', 'mime', 'size', 'filename')
+
+
+@admin.register(AuditLog)
+class AuditLogAdmin(ModelAdmin):
+    list_display = ('user', 'application', 'action', 'field_name', 'created_at')
+    search_fields = ('user__username', 'field_name')
+    readonly_fields = ('user', 'application', 'action', 'field_name',
+                       'old_value', 'new_value', 'created_at')
+
+
+@admin.register(Submission)
+class SubmissionAdmin(ModelAdmin):
+    list_display = ('user', 'profile', 'period_from', 'period_to', 'submitted_on', 'rows')
+    list_filter = ('profile',)

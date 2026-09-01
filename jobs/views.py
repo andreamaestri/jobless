@@ -7,13 +7,16 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
-    DetailView
+    DetailView,
+    TemplateView,
 )
+from django.views.generic.edit import FormMixin
 from django.views import View
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from openai import OpenAI
 import json
 
@@ -212,3 +215,416 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
         return HttpResponseRedirect(
             request.META.get('HTTP_REFERER', reverse('jobs:list'))
         )
+
+
+# ---------------------------------------------------------------------------
+# Nachweis von Eigenbemühungen (Agentur für Arbeit / Jobcenter)
+# ---------------------------------------------------------------------------
+
+from datetime import date, timedelta
+from django.http import HttpResponse
+from django.utils.translation import gettext as _
+
+from .models import (
+    UserProfile,
+    ObligationPlan,
+    Application,
+    EvidenceFile,
+    Submission,
+)
+from .forms import ApplicationForm, ObligationPlanForm, UserProfileForm
+from . import pdf as nachweis_pdf
+from . import exports as nachweis_exports
+
+EXPORT_PROFILES = {
+    "BA_MINIMAL": _("BA-Minimal (official form orientation)"),
+    "JOBCENTER_LIST": _("Jobcenter list"),
+    "CUSTOM_COLUMNS": _("Consultation overview (internal)"),
+}
+
+
+def _get_profile(user):
+    profile, _created = UserProfile.objects.get_or_create(user=user)
+    return profile
+
+
+def _get_active_plan(user):
+    return (
+        ObligationPlan.objects.filter(user=user, is_active=True)
+        .order_by("-valid_from", "-created_at")
+        .first()
+    )
+
+
+def _parse_period(request, default_month=None):
+    """Return (start, end, label) from GET params: month / rolling / custom."""
+    month = request.GET.get("month") or default_month
+    if request.GET.get("period") == "rolling":
+        end = date.today()
+        return end - timedelta(days=29), end, _("Last 30 days")
+    if request.GET.get("period") == "custom":
+        try:
+            start = date.fromisoformat(request.GET.get("start"))
+            end = date.fromisoformat(request.GET.get("end"))
+            return start, end, f"{start:%d.%m.%Y} – {end:%d.%m.%Y}"
+        except (ValueError, TypeError):
+            pass
+    if month:
+        try:
+            year, mon = (int(part) for part in month.split("-"))
+            start = date(year, mon, 1)
+            if mon == 12:
+                end = date(year + 1, 1, 1) - timedelta(days=1)
+            else:
+                end = date(year, mon + 1, 1) - timedelta(days=1)
+            return start, end, start.strftime("%Y-%m")
+        except (ValueError, TypeError):
+            pass
+    today = date.today()
+    start = today.replace(day=1)
+    if today.month == 12:
+        end = date(today.year + 1, 1, 1) - timedelta(days=1)
+    else:
+        end = date(today.year, today.month + 1, 1) - timedelta(days=1)
+    return start, end, start.strftime("%Y-%m")
+
+
+def _nachweisbar_qs(user, start, end):
+    return Application.objects.filter(
+        user=user,
+        applied_on__gte=start,
+        applied_on__lte=end,
+    ).exclude(job_title="").exclude(employer_name="").order_by("applied_on")
+
+
+def _export_profile(request):
+    raw = request.GET.get("profile", "")
+    return raw if raw in EXPORT_PROFILES else nachweis_pdf.JOBCENTER_LIST
+
+
+class NachweisDashboardView(LoginRequiredMixin, ListView):
+    """Calendar-month dashboard: count vs plan target, due date, blockers."""
+    template_name = "jobs/nachweis/dashboard.html"
+    context_object_name = "applications"
+
+    def get_queryset(self):
+        start, end, _label = _parse_period(self.request)
+        return (
+            Application.objects.filter(
+                user=self.request.user,
+                applied_on__gte=start,
+                applied_on__lte=end,
+            )
+            .order_by("applied_on", "employer_name")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        start, end, label = _parse_period(self.request)
+        profile = _get_profile(user)
+        plan = _get_active_plan(user)
+        all_in_range = list(self.get_queryset())
+        nachweisbar = [a for a in all_in_range if a.is_nachweisbar]
+        blockers = [
+            a for a in all_in_range
+            if not a.is_nachweisbar
+        ]
+        target = plan.required_count if plan else None
+        due_on = plan.next_due_on() if plan else None
+        next_appointment = None
+        try:
+            from events.models import Event
+            next_appointment = (
+                Event.objects.filter(user=user, date__gte=timezone.now())
+                .order_by("date")
+                .first()
+            )
+        except Exception:
+            pass
+        export_profile = _export_profile(self.request)
+        context.update(
+            {
+                "profile": profile,
+                "plan": plan,
+                "period_label": label,
+                "period_start": start,
+                "period_end": end,
+                "count": len(nachweisbar),
+                "target": target,
+                "due_on": due_on,
+                "days_until_due": (due_on - date.today()).days if due_on else None,
+                "last_submitted_on": plan.last_submitted_on if plan else None,
+                "last_submission": Submission.objects.filter(user=user).first(),
+                "blockers": blockers,
+                "export_profile": export_profile,
+                "export_profiles": EXPORT_PROFILES,
+                "current_month": date.today().strftime("%Y-%m"),
+                "next_appointment": next_appointment,
+            }
+        )
+        return context
+
+
+class ApplicationCreateView(LoginRequiredMixin, CreateView):
+    model = Application
+    form_class = ApplicationForm
+    template_name = "jobs/nachweis/application_form.html"
+
+    def get_initial(self):
+        return {"applied_on": date.today()}
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, _("Job search effort saved."))
+        duplicate = Application.objects.filter(
+            user=self.request.user,
+            employer_name__iexact=form.cleaned_data["employer_name"],
+            job_title__iexact=form.cleaned_data["job_title"],
+            applied_on=form.cleaned_data["applied_on"],
+        ).exclude(pk=self.object.pk)
+        if duplicate.exists():
+            messages.warning(
+                self.request,
+                _("Possible duplicate: an effort with the same employer, title and date already exists."),
+            )
+        return response
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
+    model = Application
+    form_class = ApplicationForm
+    template_name = "jobs/nachweis/application_form.html"
+
+    def get_queryset(self):
+        return Application.objects.filter(user=self.request.user)
+
+    def form_valid(self, form):
+        changed_date = (
+            "applied_on" in form.changed_data
+        )
+        response = super().form_valid(form)
+        messages.success(self.request, _("Job search effort updated."))
+        if changed_date:
+            messages.warning(
+                self.request,
+                _("Only enter the real date of an effort that actually took place. This change has been recorded in the audit log."),
+            )
+        return response
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class ApplicationDeleteView(LoginRequiredMixin, DeleteView):
+    model = Application
+    template_name = "jobs/nachweis/application_delete.html"
+
+    def get_queryset(self):
+        return Application.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class ApplicationDetailView(LoginRequiredMixin, DetailView):
+    model = Application
+    template_name = "jobs/nachweis/application_detail.html"
+    context_object_name = "application"
+
+    def get_queryset(self):
+        return Application.objects.filter(user=self.request.user)
+
+
+class EvidenceCreateView(LoginRequiredMixin, CreateView):
+    model = EvidenceFile
+    fields = ["file", "evidence_type"]
+    template_name = "jobs/nachweis/evidence_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["application"] = get_object_or_404(
+            Application, pk=self.kwargs["pk"], user=self.request.user
+        )
+        return context
+
+    def form_valid(self, form):
+        application = get_object_or_404(
+            Application, pk=self.kwargs["pk"], user=self.request.user
+        )
+        form.instance.user = self.request.user
+        form.instance.application = application
+        messages.success(self.request, _("Evidence file saved."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:application_detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class ObligationPlanEditView(LoginRequiredMixin, UpdateView):
+    model = ObligationPlan
+    form_class = ObligationPlanForm
+    template_name = "jobs/nachweis/plan_form.html"
+
+    def get_object(self, queryset=None):
+        return _get_active_plan(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_new"] = self.object is None
+        return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, _("Obligation plan saved."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class UserProfileEditView(LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = "jobs/nachweis/profile_form.html"
+
+    def get_object(self, queryset=None):
+        return _get_profile(self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Profile saved."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class NachweisExportView(LoginRequiredMixin, TemplateView):
+    """Export chooser page: profile + period, links to PDF/CSV/JSON."""
+    template_name = "jobs/nachweis/export.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        start, end, label = _parse_period(self.request)
+        context.update(
+            {
+                "export_profiles": EXPORT_PROFILES,
+                "period_label": label,
+                "period_start": start,
+                "period_end": end,
+                "count": _nachweisbar_qs(
+                    self.request.user, start, end
+                ).count(),
+                "current_month": date.today().strftime("%Y-%m"),
+            }
+        )
+        return context
+
+
+class NachweisExportBaseView(LoginRequiredMixin, View):
+    """Shared period/profile handling for the download endpoints."""
+
+    export_profile = nachweis_pdf.JOBCENTER_LIST
+
+    def _context(self, request):
+        start, end, label = _parse_period(request)
+        user = request.user
+        return {
+            "user": user,
+            "start": start,
+            "end": end,
+            "label": label,
+            "profile": _get_profile(user),
+            "plan": _get_active_plan(user),
+            "export_profile": _export_profile(request),
+            "applications": _nachweisbar_qs(user, start, end),
+        }
+
+    def _record_submission(self, ctx, profile_code):
+        Submission.objects.create(
+            user=ctx["user"],
+            plan=ctx["plan"],
+            profile=profile_code,
+            period_from=ctx["start"],
+            period_to=ctx["end"],
+            rows=ctx["applications"].count(),
+        )
+        if ctx["plan"]:
+            ObligationPlan.objects.filter(pk=ctx["plan"].pk).update(
+                last_submitted_on=date.today()
+            )
+
+    def _empty_response(self):
+        messages.error(
+            self.request,
+            _("No exportable applications in the selected period — nothing was generated."),
+        )
+        return HttpResponseRedirect(reverse("jobs:nachweis_export"))
+
+
+class NachweisPDFView(NachweisExportBaseView):
+    def get(self, request):
+        ctx = self._context(request)
+        try:
+            pdf_bytes = nachweis_pdf.build_nachweis_pdf(
+                person=ctx["profile"],
+                plan=ctx["plan"],
+                applications=ctx["applications"],
+                export_profile=ctx["export_profile"],
+            )
+        except nachweis_pdf.EmptyNachweisError:
+            return self._empty_response()
+        self._record_submission(ctx, ctx["export_profile"])
+        year, month = ctx["start"].year, ctx["start"].month
+        filename = nachweis_pdf.nachweis_filename(ctx["profile"], year, month)
+        response = HttpResponse(pdf_bytes, content_type="application/pdf")
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
+
+
+class NachweisPreviewView(NachweisExportBaseView):
+    """In-browser WYSIWYG preview of the exact PDF layout."""
+
+    def get(self, request):
+        ctx = self._context(request)
+        try:
+            html_doc = nachweis_pdf.build_nachweis_html(
+                person=ctx["profile"],
+                plan=ctx["plan"],
+                applications=ctx["applications"],
+                export_profile=ctx["export_profile"],
+            )
+        except nachweis_pdf.EmptyNachweisError:
+            return self._empty_response()
+        return HttpResponse(html_doc, content_type="text/html; charset=utf-8")
+
+
+class NachweisCSVView(NachweisExportBaseView):
+    def get(self, request):
+        ctx = self._context(request)
+        csv_text = nachweis_exports.build_csv(ctx["applications"])
+        if not ctx["applications"].exists():
+            return self._empty_response()
+        self._record_submission(ctx, "CSV")
+        response = HttpResponse(csv_text, content_type="text/csv; charset=utf-8")
+        response["Content-Disposition"] = (
+            f'attachment; filename="Nachweis_Eigenbemuehungen_{ctx["start"]:%Y-%m}.csv"'
+        )
+        return response
+
+
+class NachweisJSONView(NachweisExportBaseView):
+    def get(self, request):
+        ctx = self._context(request)
+        json_text = nachweis_exports.build_json(
+            ctx["profile"], ctx["plan"], ctx["applications"]
+        )
+        response = HttpResponse(json_text, content_type="application/json")
+        response["Content-Disposition"] = (
+            f'attachment; filename="Nachweis_Eigenbemuehungen_{ctx["start"]:%Y-%m}.json"'
+        )
+        return response
