@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 12:26+0000\n"
+"POT-Creation-Date: 2026-09-01 12:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1440,11 +1440,59 @@ msgstr ""
 "Dieser E-Mail-Bestätigungslink ist abgelaufen oder ungültig. Bitte <a "
 "href=\"%(email_url)s\">fordere eine neue E-Mail-Bestätigung an</a>."
 
-#: templates/account/login.html:24
-msgid "Welcome Back!"
-msgstr "Willkommen zurück!"
+#: templates/account/login.html:19
+msgid "Welcome back"
+msgstr "Willkommen zurück"
 
-#: templates/account/login.html:27
+#: templates/account/login.html:20
+msgid "Sign in to Jobless"
+msgstr "Bei Jobless anmelden"
+
+#: templates/account/login.html:32
+msgid "Continue with GitHub"
+msgstr "Weiter mit GitHub"
+
+#: templates/account/login.html:39
+msgid "Continue with LinkedIn"
+msgstr "Weiter mit LinkedIn"
+
+#: templates/account/login.html:46
+msgid "Continue with Google"
+msgstr "Weiter mit Google"
+
+#: templates/account/login.html:54 templates/account/signup.html:53
+msgid "or"
+msgstr "oder"
+
+#: templates/account/login.html:64
+msgid "Your email"
+msgstr "Deine E-Mail"
+
+#: templates/account/login.html:66
+msgid "Enter your email or username"
+msgstr "E-Mail-Adresse oder Benutzername eingeben"
+
+#: templates/account/login.html:74
+msgid "Your password"
+msgstr "Dein Passwort"
+
+#: templates/account/login.html:76
+msgid "Enter your password"
+msgstr "Gib dein Passwort ein:"
+
+#: templates/account/login.html:91
+msgid "Keep me signed in"
+msgstr "Angemeldet bleiben"
+
+#: templates/account/login.html:94
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"
+
+#: templates/account/login.html:100
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: templates/account/login.html:105
 #, python-format
 msgid ""
 "New to Jobless? <a href=\"%(signup_url)s\" class=\"font-medium text-primary "
@@ -1452,34 +1500,6 @@ msgid ""
 msgstr ""
 "Neu bei Jobless? <a href=\"%(signup_url)s\" class=\"font-medium text-primary "
 "hover:text-primary-focus\">Erstelle dein kostenloses Konto</a>"
-
-#: templates/account/login.html:75
-msgid "Or use your email"
-msgstr "Oder verwende deine E-Mail"
-
-#: templates/account/login.html:83
-msgid "Your email"
-msgstr "Deine E-Mail"
-
-#: templates/account/login.html:85
-msgid "Enter your email or username"
-msgstr "E-Mail-Adresse oder Benutzername eingeben"
-
-#: templates/account/login.html:93
-msgid "Your password"
-msgstr "Dein Passwort"
-
-#: templates/account/login.html:116
-msgid "Keep me signed in"
-msgstr "Angemeldet bleiben"
-
-#: templates/account/login.html:122
-msgid "Forgot password?"
-msgstr "Passwort vergessen?"
-
-#: templates/account/login.html:130
-msgid "Sign In to Your Account"
-msgstr "Bei deinem Konto anmelden"
 
 #: templates/account/logout.html:5 templates/account/logout.html:13
 #: templates/account/logout.html:37 templates/allauth/layouts/base.html:50
@@ -1636,11 +1656,39 @@ msgstr "Weitere Anmeldeoptionen"
 msgid "Sign Up"
 msgstr "Registrieren"
 
-#: templates/account/signup.html:23
-msgid "Join Jobless Today"
-msgstr "Werde heute Teil von Jobless"
+#: templates/account/signup.html:18
+msgid "New here"
+msgstr "Neu hier"
 
-#: templates/account/signup.html:26
+#: templates/account/signup.html:19
+msgid "Create your account"
+msgstr "Konto erstellen"
+
+#: templates/account/signup.html:31
+msgid "Sign up with GitHub"
+msgstr "Registrieren mit GitHub"
+
+#: templates/account/signup.html:38
+msgid "Sign up with LinkedIn"
+msgstr "Registrieren mit LinkedIn"
+
+#: templates/account/signup.html:45
+msgid "Sign up with Google"
+msgstr "Registrieren mit Google"
+
+#: templates/account/signup.html:76
+msgid "At least 8 characters long"
+msgstr "Mindestens 8 Zeichen lang"
+
+#: templates/account/signup.html:80
+msgid "Contains letters and numbers"
+msgstr "Enthält Buchstaben und Zahlen"
+
+#: templates/account/signup.html:104
+msgid "Create account"
+msgstr "Konto erstellen"
+
+#: templates/account/signup.html:109
 #, python-format
 msgid ""
 "Already a member? <a href=\"%(login_url)s\" class=\"font-medium text-primary "
@@ -1648,14 +1696,6 @@ msgid ""
 msgstr ""
 "Bereits Mitglied? <a href=\"%(login_url)s\" class=\"font-medium text-primary "
 "hover:text-primary-focus\">Melde dich bei deinem Konto an</a>"
-
-#: templates/account/signup.html:74
-msgid "Or create an account with email"
-msgstr "Oder erstelle ein Konto mit E-Mail"
-
-#: templates/account/signup.html:126
-msgid "Get Started Now"
-msgstr "Jetzt loslegen"
 
 #: templates/account/signup_by_passkey.html:4
 msgid "Signup"
@@ -2276,6 +2316,21 @@ msgstr "Aktuell"
 #: templates/usersessions/usersession_list.html:60
 msgid "Sign Out Other Sessions"
 msgstr "Andere Sitzungen abmelden"
+
+#~ msgid "Or use your email"
+#~ msgstr "Oder verwende deine E-Mail"
+
+#~ msgid "Sign In to Your Account"
+#~ msgstr "Bei deinem Konto anmelden"
+
+#~ msgid "Join Jobless Today"
+#~ msgstr "Werde heute Teil von Jobless"
+
+#~ msgid "Or create an account with email"
+#~ msgstr "Oder erstelle ein Konto mit E-Mail"
+
+#~ msgid "Get Started Now"
+#~ msgstr "Jetzt loslegen"
 
 #~ msgid "Übersicht"
 #~ msgstr "Übersicht"
