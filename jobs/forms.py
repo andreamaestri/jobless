@@ -76,6 +76,15 @@ class JobPostingForm(forms.ModelForm):
             'title', 'company', 'location', 'salary_range',
             'url', 'description', 'skills', 'status'
         ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input w-full'}),
+            'company': forms.TextInput(attrs={'class': 'input w-full'}),
+            'location': forms.TextInput(attrs={'class': 'input w-full'}),
+            'salary_range': forms.TextInput(attrs={'class': 'input w-full'}),
+            'url': forms.URLInput(attrs={'class': 'input w-full'}),
+            'description': forms.Textarea(attrs={'class': 'textarea w-full'}),
+            'status': forms.Select(attrs={'class': 'select w-full'}),
+        }
         labels = {
             'title': _('Job title'),
             'company': _('Company'),

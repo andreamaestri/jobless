@@ -52,8 +52,9 @@ class ContactForm(forms.ModelForm):
     )
 
     linkedin = forms.URLField(
-        required = False,
-        )
+        required=False,
+        widget=forms.URLInput(attrs={'class': BASE_CLASS}),
+    )
 
     
     notes = forms.CharField(
