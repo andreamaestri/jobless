@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 18:34+0000\n"
+"POT-Creation-Date: 2026-09-01 12:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -280,38 +280,38 @@ msgstr "E-Mail-Adresse eingeben"
 msgid "Enter phone number"
 msgstr "Telefonnummer eingeben"
 
-#: contacts/forms.py:73 contacts/templates/contacts/delete.html:25
+#: contacts/forms.py:74 contacts/templates/contacts/delete.html:25
 #: contacts/templates/contacts/list.html:37
 msgid "Name"
 msgstr "Name"
 
-#: contacts/forms.py:74 contacts/templates/contacts/delete.html:33
+#: contacts/forms.py:75 contacts/templates/contacts/delete.html:33
 #: contacts/templates/contacts/detail.html:24
 #: contacts/templates/contacts/list.html:38 jobs/components/job_form.html:77
-#: jobs/forms.py:81 jobs/templates/jobs/partials/form_fields.html:81
+#: jobs/forms.py:90 jobs/templates/jobs/partials/form_fields.html:81
 #: jobs/templates/jobs/partials/job_table.html:8
 msgid "Company"
 msgstr "Unternehmen"
 
-#: contacts/forms.py:75 contacts/templates/contacts/delete.html:42
+#: contacts/forms.py:76 contacts/templates/contacts/delete.html:42
 #: contacts/templates/contacts/detail.html:29
 #: contacts/templates/contacts/list.html:39
 msgid "Position"
 msgstr "Position"
 
-#: contacts/forms.py:76
+#: contacts/forms.py:77
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: contacts/forms.py:77
+#: contacts/forms.py:78
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: contacts/forms.py:78
+#: contacts/forms.py:79
 msgid "LinkedIn profile"
 msgstr "LinkedIn-Profil"
 
-#: contacts/forms.py:79 contacts/templates/contacts/detail.html:73
+#: contacts/forms.py:80 contacts/templates/contacts/detail.html:73
 #: events/forms.py:82 events/templates/events/detail.html:48
 msgid "Notes"
 msgstr "Notizen"
@@ -459,7 +459,7 @@ msgstr "Datum und Uhrzeit"
 
 #: events/forms.py:81 events/templates/events/detail.html:27
 #: events/templates/events/list.html:57 jobs/components/job_detail.html:21
-#: jobs/components/job_form.html:86 jobs/forms.py:82
+#: jobs/components/job_form.html:86 jobs/forms.py:91
 #: jobs/templates/jobs/detail.html:27
 #: jobs/templates/jobs/partials/form_fields.html:89
 #: jobs/templates/jobs/partials/job_table.html:9
@@ -749,7 +749,7 @@ msgstr "Job-URL"
 msgid "View original posting"
 msgstr "Originale Stellenausschreibung ansehen"
 
-#: jobs/components/job_detail.html:45 jobs/forms.py:86 jobs/models.py:49
+#: jobs/components/job_detail.html:45 jobs/forms.py:95 jobs/models.py:49
 #: jobs/templates/jobs/detail.html:51
 #: jobs/templates/jobs/partials/form_fields.html:122
 #: jobs/templates/jobs/partials/job_table.html:11
@@ -855,23 +855,23 @@ msgid "Click on \"Manage Skills\" to add required skills"
 msgstr ""
 "Klicke auf „Fähigkeiten verwalten“, um erforderliche Fähigkeiten hinzuzufügen"
 
-#: jobs/forms.py:80
+#: jobs/forms.py:89
 msgid "Job title"
 msgstr "Stellenbezeichnung"
 
-#: jobs/forms.py:83
+#: jobs/forms.py:92
 msgid "Salary range"
 msgstr "Gehaltsspanne"
 
-#: jobs/forms.py:84 jobs/templates/jobs/partials/form_fields.html:97
+#: jobs/forms.py:93 jobs/templates/jobs/partials/form_fields.html:97
 msgid "Job posting URL"
 msgstr "URL der Stellenausschreibung"
 
-#: jobs/forms.py:85
+#: jobs/forms.py:94
 msgid "Job description"
 msgstr "Stellenbeschreibung"
 
-#: jobs/forms.py:87
+#: jobs/forms.py:96
 msgid "Application status"
 msgstr "Bewerbungsstatus"
 
@@ -1460,6 +1460,10 @@ msgstr "Oder verwende deine E-Mail"
 #: templates/account/login.html:83
 msgid "Your email"
 msgstr "Deine E-Mail"
+
+#: templates/account/login.html:85
+msgid "Enter your email or username"
+msgstr "E-Mail-Adresse oder Benutzername eingeben"
 
 #: templates/account/login.html:93
 msgid "Your password"

@@ -82,7 +82,7 @@
                                 <label for="{{ form.login.id_for_label }}" class="block text-sm font-medium text-base-content/70 cursor-pointer">
                                     {% translate "Your email" %}
                                 </label>
-                                {% render_field form.login type="email" placeholder="Enter your email" autofocus=True class="w-full px-4 py-3 rounded-xl border border-base-300 bg-white/50 placeholder:text-base-content/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-shadow" %}
+                                {% translate "Enter your email or username" as login_placeholder %}{% render_field form.login type="text" placeholder=login_placeholder autofocus=True class="w-full px-4 py-3 rounded-xl border border-base-300 bg-white/50 placeholder:text-base-content/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-shadow" %}
                                 {% if form.login.errors %}
                                 <p class="mt-1 text-sm text-error">{{ form.login.errors|first }}</p>
                                 {% endif %}
