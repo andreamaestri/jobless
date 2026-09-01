@@ -231,8 +231,18 @@ from .models import (
     Application,
     EvidenceFile,
     Submission,
+    Vermittlungsvorschlag,
+    Absence,
+    Obstacle,
 )
-from .forms import ApplicationForm, ObligationPlanForm, UserProfileForm
+from .forms import (
+    ApplicationForm,
+    ObligationPlanForm,
+    UserProfileForm,
+    VermittlungsvorschlagForm,
+    AbsenceForm,
+    ObstacleForm,
+)
 from . import pdf as nachweis_pdf
 from . import exports as nachweis_exports
 
@@ -240,6 +250,7 @@ EXPORT_PROFILES = {
     "BA_MINIMAL": _("BA-Minimal (official form orientation)"),
     "JOBCENTER_LIST": _("Jobcenter list"),
     "CUSTOM_COLUMNS": _("Consultation overview (internal)"),
+    "KOSTENBELEG": _("Costs of efforts (Kostenbeleg)"),
 }
 
 
@@ -343,10 +354,19 @@ class NachweisDashboardView(LoginRequiredMixin, ListView):
         except Exception:
             pass
         export_profile = _export_profile(self.request)
+        open_vvs = Vermittlungsvorschlag.objects.filter(
+            user=user, status=Vermittlungsvorschlag.Status.OPEN
+        )
+        unreported_absences = Absence.objects.filter(
+            user=user, approval_status=Absence.ApprovalStatus.PENDING
+        )
+        recent_obstacles = Obstacle.objects.filter(user=user)[:10]
         context.update(
             {
                 "profile": profile,
                 "plan": plan,
+                "plan_is_vague": plan.is_vague if plan else False,
+                "plan_missing": plan.missing_components if plan else [],
                 "period_label": label,
                 "period_start": start,
                 "period_end": end,
@@ -361,6 +381,9 @@ class NachweisDashboardView(LoginRequiredMixin, ListView):
                 "export_profiles": EXPORT_PROFILES,
                 "current_month": date.today().strftime("%Y-%m"),
                 "next_appointment": next_appointment,
+                "open_vvs": open_vvs,
+                "unreported_absences": unreported_absences,
+                "recent_obstacles": recent_obstacles,
             }
         )
         return context
@@ -626,5 +649,200 @@ class NachweisJSONView(NachweisExportBaseView):
         response = HttpResponse(json_text, content_type="application/json")
         response["Content-Disposition"] = (
             f'attachment; filename="Nachweis_Eigenbemuehungen_{ctx["start"]:%Y-%m}.json"'
+        )
+        return response
+
+
+# --- Vermittlungsvorschlag CRUD ---
+
+class VermittlungsvorschlagCreateView(LoginRequiredMixin, CreateView):
+    model = Vermittlungsvorschlag
+    form_class = VermittlungsvorschlagForm
+    template_name = "jobs/nachweis/vv_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_initial(self):
+        return {"received_on": date.today()}
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, _("Vermittlungsvorschlag saved."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class VermittlungsvorschlagUpdateView(LoginRequiredMixin, UpdateView):
+    model = Vermittlungsvorschlag
+    form_class = VermittlungsvorschlagForm
+    template_name = "jobs/nachweis/vv_form.html"
+
+    def get_queryset(self):
+        return Vermittlungsvorschlag.objects.filter(user=self.request.user)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Vermittlungsvorschlag updated."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class VermittlungsvorschlagDeleteView(LoginRequiredMixin, DeleteView):
+    model = Vermittlungsvorschlag
+    template_name = "jobs/nachweis/vv_delete.html"
+
+    def get_queryset(self):
+        return Vermittlungsvorschlag.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class VermittlungsvorschlagListView(LoginRequiredMixin, ListView):
+    model = Vermittlungsvorschlag
+    template_name = "jobs/nachweis/vv_list.html"
+    context_object_name = "vvs"
+
+    def get_queryset(self):
+        return Vermittlungsvorschlag.objects.filter(user=self.request.user)
+
+
+# --- Absence CRUD ---
+
+class AbsenceCreateView(LoginRequiredMixin, CreateView):
+    model = Absence
+    form_class = AbsenceForm
+    template_name = "jobs/nachweis/absence_form.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, _("Absence saved."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class AbsenceUpdateView(LoginRequiredMixin, UpdateView):
+    model = Absence
+    form_class = AbsenceForm
+    template_name = "jobs/nachweis/absence_form.html"
+
+    def get_queryset(self):
+        return Absence.objects.filter(user=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Absence updated."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class AbsenceDeleteView(LoginRequiredMixin, DeleteView):
+    model = Absence
+    template_name = "jobs/nachweis/absence_delete.html"
+
+    def get_queryset(self):
+        return Absence.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+# --- Obstacle (wichtiger Grund) CRUD ---
+
+class ObstacleCreateView(LoginRequiredMixin, CreateView):
+    model = Obstacle
+    form_class = ObstacleForm
+    template_name = "jobs/nachweis/obstacle_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, _("Obstacle logged."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class ObstacleUpdateView(LoginRequiredMixin, UpdateView):
+    model = Obstacle
+    form_class = ObstacleForm
+    template_name = "jobs/nachweis/obstacle_form.html"
+
+    def get_queryset(self):
+        return Obstacle.objects.filter(user=self.request.user)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Obstacle updated."))
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+class ObstacleDeleteView(LoginRequiredMixin, DeleteView):
+    model = Obstacle
+    template_name = "jobs/nachweis/obstacle_delete.html"
+
+    def get_queryset(self):
+        return Obstacle.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        return reverse("jobs:nachweis")
+
+
+# --- ZIP + Kostenbeleg exports ---
+
+class NachweisZIPView(NachweisExportBaseView):
+    def get(self, request):
+        ctx = self._context(request)
+        apps = list(ctx["applications"])
+        if not apps:
+            return self._empty_response()
+        try:
+            pdf_bytes = nachweis_pdf.build_nachweis_pdf(
+                person=ctx["profile"],
+                plan=ctx["plan"],
+                applications=apps,
+                export_profile=nachweis_pdf.JOBCENTER_LIST,
+            )
+        except nachweis_pdf.EmptyNachweisError:
+            return self._empty_response()
+        evidence_mapping = {}
+        for app in apps:
+            attachments = app.attachments.all()
+            if attachments:
+                evidence_mapping[app] = list(attachments)
+        year, month = ctx["start"].year, ctx["start"].month
+        pdf_name = nachweis_pdf.nachweis_filename(ctx["profile"], year, month)
+        zip_bytes = nachweis_exports.build_zip(
+            pdf_bytes, pdf_name, apps, evidence_mapping
+        )
+        response = HttpResponse(zip_bytes, content_type="application/zip")
+        response["Content-Disposition"] = (
+            f'attachment; filename="Nachweis_Eigenbemuehungen_{year:04d}-{month:02d}.zip"'
         )
         return response

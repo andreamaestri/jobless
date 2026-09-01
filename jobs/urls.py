@@ -36,4 +36,18 @@ urlpatterns = [
     path('nachweis/export/preview/', views.NachweisPreviewView.as_view(), name='nachweis_preview'),
     path('nachweis/export/csv/', views.NachweisCSVView.as_view(), name='nachweis_csv'),
     path('nachweis/export/json/', views.NachweisJSONView.as_view(), name='nachweis_json'),
+    path('nachweis/export/zip/', views.NachweisZIPView.as_view(), name='nachweis_zip'),
+    # Vermittlungsvorschläge
+    path('nachweis/vv/', views.VermittlungsvorschlagListView.as_view(), name='vv_list'),
+    path('nachweis/vv/add/', views.VermittlungsvorschlagCreateView.as_view(), name='vv_add'),
+    path('nachweis/vv/<int:pk>/edit/', views.VermittlungsvorschlagUpdateView.as_view(), name='vv_edit'),
+    path('nachweis/vv/<int:pk>/delete/', views.VermittlungsvorschlagDeleteView.as_view(), name='vv_delete'),
+    # Absences
+    path('nachweis/absence/add/', views.AbsenceCreateView.as_view(), name='absence_add'),
+    path('nachweis/absence/<int:pk>/edit/', views.AbsenceUpdateView.as_view(), name='absence_edit'),
+    path('nachweis/absence/<int:pk>/delete/', views.AbsenceDeleteView.as_view(), name='absence_delete'),
+    # Obstacles (wichtiger Grund)
+    path('nachweis/obstacle/add/', views.ObstacleCreateView.as_view(), name='obstacle_add'),
+    path('nachweis/obstacle/<int:pk>/edit/', views.ObstacleUpdateView.as_view(), name='obstacle_edit'),
+    path('nachweis/obstacle/<int:pk>/delete/', views.ObstacleDeleteView.as_view(), name='obstacle_delete'),
 ]

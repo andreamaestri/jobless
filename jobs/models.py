@@ -304,6 +304,12 @@ class ObligationPlan(models.Model):
         JOBCENTER_LIST = "JOBCENTER_LIST", _("Jobcenter-Liste")
         CUSTOM_COLUMNS = "CUSTOM_COLUMNS", _("Custom columns")
 
+    class Instrument(models.TextChoices):
+        EGV = "EGV", _("Eingliederungsvereinbarung (§ 37 SGB III)")
+        KOOPERATIONSPLAN = "KOOPERATIONSPLAN", _("Kooperationsplan (§ 15 SGB II)")
+        VERPFLICHTUNGSBESCHEID = "VERPFLICHTUNGSBESCHEID", _("Verpflichtungsbescheid (§ 15a SGB II)")
+        NONE = "NONE", _("None")
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="obligation_plans"
     )
@@ -316,6 +322,13 @@ class ObligationPlan(models.Model):
         verbose_name=_("Caseworker"),
     )
     title = models.CharField(_("Title"), max_length=200, blank=True)
+    instrument = models.CharField(
+        _("Legal instrument"),
+        max_length=30,
+        choices=Instrument.choices,
+        default=Instrument.NONE,
+    )
+    which_efforts = models.TextField(_("Which efforts (verbatim)"), blank=True)
     valid_from = models.DateField(_("Valid from"), null=True, blank=True)
     valid_to = models.DateField(_("Valid to"), null=True, blank=True)
     required_count = models.PositiveIntegerField(
@@ -334,6 +347,9 @@ class ObligationPlan(models.Model):
         max_length=30,
         choices=ProofForm.choices,
         default=ProofForm.JOBCENTER_LIST,
+    )
+    nachweis_cost_rule = models.CharField(
+        _("Who pays the costs of proof (verbatim)"), max_length=300, blank=True
     )
     notes = models.TextField(_("Notes (verbatim)"), blank=True)
     counts_interviews_as_effort = models.BooleanField(
@@ -389,6 +405,29 @@ class ObligationPlan(models.Model):
             return nxt
         # APPOINTMENT / OTHER cannot be computed here
         return None
+
+    @property
+    def proof_components(self):
+        """The WHICH / HOW MANY / FORM / DEADLINE tuple (§ 15a Abs. 4 SGB II).
+
+        Returns a list of (key, present) pairs so the UI can show exactly what
+        a plan is missing. Used to warn — never to invent content.
+        """
+        return [
+            ("which", bool((self.which_efforts or "").strip())),
+            ("how_many", self.required_count is not None),
+            ("form", bool(self.proof_form and self.accepted_channels)),
+            ("deadline", bool(self.due_rule)),
+        ]
+
+    @property
+    def is_vague(self):
+        """True if the plan does not pin down all four required components."""
+        return not all(present for _key, present in self.proof_components)
+
+    @property
+    def missing_components(self):
+        return [key for key, present in self.proof_components if not present]
 
 
 class Application(models.Model):
@@ -610,3 +649,143 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"{self.get_profile_display()} {self.period_from}–{self.period_to}"
+
+
+def add_workdays(start, days):
+    """Return ``start`` advanced by ``days`` working days (Mon–Fri)."""
+    current = start
+    added = 0
+    while added < days:
+        current += timedelta(days=1)
+        if current.weekday() < 5:
+            added += 1
+    return current
+
+
+class Vermittlungsvorschlag(models.Model):
+    class Status(models.TextChoices):
+        OPEN = "OPEN", _("Open")
+        APPLIED = "APPLIED", _("Applied")
+        DECLINED_WICHTIGER_GRUND = "DECLINED_WICHTIGER_GRUND", _("Declined — wichtiger Grund")
+        IGNORED = "IGNORED", _("Ignored")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="vermittlungsvorschlaege"
+    )
+    employer_name = models.CharField(_("Employer"), max_length=200)
+    job_title = models.CharField(_("Job title"), max_length=200, blank=True)
+    received_on = models.DateField(_("Received on"), default=date.today)
+    apply_by = models.DateField(_("Apply by"), null=True, blank=True)
+    has_rechtsfolgenbelehrung = models.BooleanField(
+        _("Rechtsfolgenbelehrung included"), default=False
+    )
+    status = models.CharField(
+        _("Status"), max_length=30, choices=Status.choices, default=Status.OPEN
+    )
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vermittlungsvorschlaege",
+    )
+    source_ref = models.CharField(_("Source reference"), max_length=500, blank=True)
+    note = models.TextField(_("Note"), blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["apply_by", "-received_on"]
+        verbose_name = _("Vermittlungsvorschlag")
+        verbose_name_plural = _("Vermittlungsvorschläge")
+
+    def __str__(self):
+        return f"{self.employer_name} — {self.job_title or 'Stelle'}"
+
+    def save(self, *args, **kwargs):
+        if self.apply_by is None and self.received_on:
+            self.apply_by = add_workdays(self.received_on, 3)
+        super().save(*args, **kwargs)
+
+    @property
+    def is_open(self):
+        return self.status == self.Status.OPEN
+
+    @property
+    def is_overdue(self):
+        return self.is_open and self.apply_by and self.apply_by < date.today()
+
+    @property
+    def days_left(self):
+        if not self.is_open or not self.apply_by:
+            return None
+        return (self.apply_by - date.today()).days
+
+
+class Absence(models.Model):
+    class ApprovalStatus(models.TextChoices):
+        PENDING = "PENDING", _("Not yet reported")
+        NOTIFIED = "NOTIFIED", _("Notified")
+        APPROVED = "APPROVED", _("Approved")
+        REJECTED = "REJECTED", _("Rejected / not approved")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="absences"
+    )
+    from_date = models.DateField(_("From"))
+    to_date = models.DateField(_("To"))
+    destination = models.CharField(_("Destination"), max_length=200, blank=True)
+    notified_on = models.DateField(_("Notified on"), null=True, blank=True)
+    approval_status = models.CharField(
+        _("Approval status"),
+        max_length=20,
+        choices=ApprovalStatus.choices,
+        default=ApprovalStatus.PENDING,
+    )
+    notes = models.TextField(_("Notes"), blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["from_date"]
+        verbose_name = _("Absence (Ortsabwesenheit)")
+        verbose_name_plural = _("Absences (Ortsabwesenheit)")
+
+    def __str__(self):
+        return f"{self.from_date}–{self.to_date} {self.destination}"
+
+    @property
+    def is_unreported(self):
+        return self.approval_status == self.ApprovalStatus.PENDING
+
+
+class Obstacle(models.Model):
+    class Kind(models.TextChoices):
+        ILLNESS = "ILLNESS", _("Illness")
+        CHILDCARE = "CHILDCARE", _("Childcare / care")
+        NO_VACANCIES = "NO_VACANCIES", _("No suitable vacancies")
+        OTHER = "OTHER", _("Other")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="obstacles"
+    )
+    date = models.DateField(_("Date"), default=date.today)
+    kind = models.CharField(
+        _("Kind"), max_length=20, choices=Kind.choices, default=Kind.OTHER
+    )
+    note = models.TextField(_("Note"), blank=True)
+    evidence = models.ForeignKey(
+        EvidenceFile,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="obstacles",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-date"]
+        verbose_name = _("Obstacle / wichtiger Grund")
+        verbose_name_plural = _("Obstacles / wichtige Gründe")
+
+    def __str__(self):
+        return f"{self.get_kind_display()} {self.date}"

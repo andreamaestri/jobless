@@ -229,6 +229,9 @@ from .models import (
     EvidenceFile,
     AuditLog,
     Submission,
+    Vermittlungsvorschlag,
+    Absence,
+    Obstacle,
 )
 
 
@@ -280,3 +283,28 @@ class AuditLogAdmin(ModelAdmin):
 class SubmissionAdmin(ModelAdmin):
     list_display = ('user', 'profile', 'period_from', 'period_to', 'submitted_on', 'rows')
     list_filter = ('profile',)
+
+
+@admin.register(Vermittlungsvorschlag)
+class VermittlungsvorschlagAdmin(ModelAdmin):
+    list_display = (
+        'employer_name', 'job_title', 'user', 'received_on', 'apply_by',
+        'status', 'has_rechtsfolgenbelehrung',
+    )
+    list_filter = ('status', 'has_rechtsfolgenbelehrung')
+    search_fields = ('employer_name', 'job_title', 'user__username')
+    date_hierarchy = 'received_on'
+
+
+@admin.register(Absence)
+class AbsenceAdmin(ModelAdmin):
+    list_display = ('user', 'from_date', 'to_date', 'destination', 'approval_status', 'notified_on')
+    list_filter = ('approval_status',)
+    search_fields = ('destination', 'user__username')
+
+
+@admin.register(Obstacle)
+class ObstacleAdmin(ModelAdmin):
+    list_display = ('user', 'date', 'kind', 'note')
+    list_filter = ('kind',)
+    search_fields = ('note', 'user__username')
