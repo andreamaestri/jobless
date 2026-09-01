@@ -3,7 +3,6 @@
 {% load static %}
 {% load widget_tweaks %}
 {% load account %}
-{% load socialaccount %}
 
 {% block head_title %}{% translate "Sign In" %}{% endblock %}
 
@@ -18,44 +17,12 @@
             <div>
                 <p class="text-xs uppercase tracking-widest text-base-content/60 font-medium">{% translate "Welcome back" %}</p>
                 <h1 class="mt-1 text-3xl font-bold text-base-content">{% translate "Sign in to Jobless" %}</h1>
+                <p class="mt-2 text-sm text-base-content/60">{% translate "Use the email or username you registered with." %}</p>
             </div>
         </div>
 
         <!-- Card -->
-        <div class="bg-base-100 rounded-3xl border border-base-content/5 shadow-xl p-6 sm:p-8 space-y-6">
-            <!-- Social login -->
-            <div class="space-y-2.5">
-                <a href="{% provider_login_url 'github' process='login' %}"
-                    class="group social-auth-btn btn w-full justify-start gap-3 rounded-xl bg-neutral text-neutral-content border-0 transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-                    onclick="handleSocialClick(this)">
-                    <iconify-icon class="w-5 h-5 flex-shrink-0" icon="mdi:github"></iconify-icon>
-                    <span class="flex-1 text-left">{% translate "Continue with GitHub" %}</span>
-                    <span class="loading loading-spinner loading-sm hidden"></span>
-                </a>
-                <a href="{% provider_login_url 'openid_connect' associate_provider_id='linkedin' process='login' %}"
-                    class="group social-auth-btn btn w-full justify-start gap-3 rounded-xl bg-[#0A66C2] text-white border-0 transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-                    onclick="handleSocialClick(this)">
-                    <iconify-icon class="w-5 h-5 flex-shrink-0" icon="mdi:linkedin"></iconify-icon>
-                    <span class="flex-1 text-left">{% translate "Continue with LinkedIn" %}</span>
-                    <span class="loading loading-spinner loading-sm hidden"></span>
-                </a>
-                <a href="{% provider_login_url 'google' process='login' %}"
-                    class="group social-auth-btn btn w-full justify-start gap-3 rounded-xl bg-base-100 text-base-content border border-base-300 transition-all hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-                    onclick="handleSocialClick(this)">
-                    <iconify-icon class="w-5 h-5 flex-shrink-0" icon="logos:google-icon"></iconify-icon>
-                    <span class="flex-1 text-left">{% translate "Continue with Google" %}</span>
-                    <span class="loading loading-spinner loading-sm hidden"></span>
-                </a>
-            </div>
-
-            <!-- Divider -->
-            <div class="flex items-center gap-3 text-sm text-base-content/50">
-                <div class="h-px flex-1 bg-base-content/10"></div>
-                <span>{% translate "or" %}</span>
-                <div class="h-px flex-1 bg-base-content/10"></div>
-            </div>
-
-            <!-- Form -->
+        <div class="bg-base-100 rounded-3xl border border-base-content/5 shadow-xl p-6 sm:p-8 space-y-5">
             <form method="POST" action="{% url 'account_login' %}" class="space-y-4">
                 {% csrf_token %}
 
@@ -63,7 +30,7 @@
                     <label for="{{ form.login.id_for_label }}" class="block text-sm font-medium text-base-content/70 mb-1.5">
                         {% translate "Your email" %}
                     </label>
-                    {% translate "Enter your email or username" as login_placeholder %}{% render_field form.login type="text" placeholder=login_placeholder autofocus=True class="input w-full" %}
+                    {% translate "Enter your email or username" as login_placeholder %}{% render_field form.login type="text" placeholder=login_placeholder autofocus=True autocomplete="username" class="input w-full" %}
                     {% if form.login.errors %}
                     <p class="mt-1.5 text-sm text-error">{{ form.login.errors|first }}</p>
                     {% endif %}
@@ -75,8 +42,8 @@
                     </label>
                     {% translate "Enter your password" as password_placeholder %}
                     <div class="relative">
-                        {% render_field form.password type="password" placeholder=password_placeholder class="input w-full pr-10" %}
-                        <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content/70">
+                        {% render_field form.password type="password" placeholder=password_placeholder autocomplete="current-password" class="input w-full pr-10" %}
+                        <button type="button" onclick="togglePasswordVisibility(this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content/70" aria-label="{% translate 'Show password' %}">
                             <iconify-icon class="w-5 h-5" icon="mdi:eye"></iconify-icon>
                         </button>
                     </div>
@@ -109,17 +76,6 @@
 </div>
 
 <script>
-function handleSocialClick(button) {
-    const allButtons = document.querySelectorAll('.social-auth-btn');
-    allButtons.forEach(btn => {
-        btn.disabled = true;
-        btn.classList.add('opacity-70', 'cursor-not-allowed');
-    });
-    const spinner = button.querySelector('.loading-spinner');
-    if (spinner) spinner.classList.remove('hidden');
-    window.location.href = button.href;
-}
-
 function togglePasswordVisibility(button) {
     const input = button.parentElement.querySelector('input');
     const icon = button.querySelector('iconify-icon');
