@@ -25,9 +25,22 @@
             <form method="POST" action="{% url 'account_signup' %}" class="space-y-4">
                 {% csrf_token %}
 
-                {% for field in form %}
+                 {% for field in form %}
                 <div>
-                    {% if field.name == 'email' %}
+                    {% if field.name == 'first_name' %}
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-base-content/70 mb-1.5">
+                        {% translate "First name" %}
+                    </label>
+                    {% translate "Your first name" as first_name_placeholder %}
+                    {% render_field field type="text" placeholder=first_name_placeholder autocomplete="given-name" class="input w-full" %}
+                    {% elif field.name == 'last_name' %}
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-base-content/70 mb-1.5">
+                        {% translate "Surname" %}
+                    </label>
+                    {% translate "Your surname" as last_name_placeholder %}
+                    {% render_field field type="text" placeholder=last_name_placeholder autocomplete="family-name" class="input w-full" %}
+                    <p class="mt-1 text-xs text-base-content/50">{% translate "Optional" %}</p>
+                    {% elif field.name == 'email' %}
                     <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-base-content/70 mb-1.5">
                         {% translate "Email" %}
                     </label>

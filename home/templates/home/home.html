@@ -33,7 +33,7 @@
         <header class="min-w-0">
             <p class="text-xs font-semibold uppercase tracking-widest text-base-content/40">{% translate "Dashboard" %}</p>
             <h1 class="mt-1 truncate text-2xl font-bold tracking-tight sm:text-3xl">
-                {% blocktranslate %}Hi <span class="text-primary">{{ user.username }}</span>, welcome back.{% endblocktranslate %}
+                {% blocktranslate with name=user.first_name|default:user.username %}{{ greeting }}, <span class="text-primary">{{ name }}</span>.{% endblocktranslate %}
             </h1>
             <p class="mt-1 text-sm text-base-content/60 sm:text-base">{% translate "Here's how your job search is going." %}</p>
         </header>
@@ -79,7 +79,7 @@
                         <iconify-icon class="size-5 sm:size-6" icon="octicon:graph-24"></iconify-icon>
                     </span>
                     <span class="min-w-0">
-                        <span class="block text-xl font-bold leading-tight tabular-nums sm:text-2xl">{{ success_rate }}%</span>
+                        <span class="block text-xl font-bold leading-tight tabular-nums sm:text-2xl">{% if total_applications %}{{ success_rate }}%{% else %}–{% endif %}</span>
                         <span class="block truncate text-xs text-base-content/60 sm:text-sm">{% translate "Overall success" %}</span>
                     </span>
                 </div>
@@ -91,7 +91,7 @@
             <div class="card-body p-5 sm:p-6">
                 <div class="flex items-center justify-between gap-3">
                     <h2 class="text-base font-semibold sm:text-lg">{% translate "Your application progress" %}</h2>
-                    <span class="badge badge-neutral badge-sm tabular-nums">{% blocktranslate %}{{ success_rate }}% success{% endblocktranslate %}</span>
+                    <span class="badge badge-neutral badge-sm tabular-nums">{% if total_applications %}{% blocktranslate %}{{ success_rate }}% success{% endblocktranslate %}{% else %}{% translate "No applications yet" %}{% endif %}</span>
                 </div>
                 {% if total_jobs %}
                 <div class="mt-5 space-y-3">
@@ -111,7 +111,7 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="mt-4 text-sm text-base-content/60">{% translate "Add a job to start tracking your progress." %}</p>
+                <p class="mt-4 text-sm text-base-content/60">{% translate "Start tracking your first application to see your progress here." %}</p>
                 <div class="mt-4">
                     <a href="{% url 'jobs:add' %}" class="btn btn-primary btn-sm gap-1.5">
                         <iconify-icon icon="octicon:plus-16"></iconify-icon>
