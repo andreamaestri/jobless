@@ -209,13 +209,13 @@ class JobPosting(models.Model):
         """Check if job is favorited by user"""
         if not user.is_authenticated:
             return False
-        return self.jobfavorite_set.filter(user=user).exists()
+        return self.favorites.filter(pk=user.pk).exists()
 
     def toggle_favorite(self, user):
         """Toggle favorite status for user"""
         if not user.is_authenticated:
             return False
-        favorite, created = self.jobfavorite_set.get_or_create(user=user)
+        favorite, created = self.favorites_set.get_or_create(user=user)
         if not created:
             favorite.delete()
         return created

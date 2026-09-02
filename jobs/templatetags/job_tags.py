@@ -15,8 +15,8 @@ def json(obj):
 
 
 @register.filter
-def get_skill_icon(skill, variant=None):
-    """Get the icon for a skill (variant arg accepted for call-site compat)."""
+def get_skill_icon(skill):
+    """Get the icon for a skill."""
     try:
         if hasattr(skill, 'get_icon'):
             icon = skill.get_icon()
@@ -102,7 +102,7 @@ def get_skill_icons_json():
 
 
 @register.filter(name='dark_variants')
-def get_dark_variants():
+def get_dark_variants(value):
     """Get dark variant icon mappings as JSON"""
     return mark_safe(json_lib.dumps(DARK_VARIANTS))
 

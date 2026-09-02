@@ -108,7 +108,7 @@ class JobListView(LoginRequiredMixin, ListView):
         ).order_by('-created_at')
         
         if filter_param == 'favorites':
-            jobs = jobs.filter(favorited_by=self.request.user)
+            jobs = jobs.filter(favorites=self.request.user).distinct()
         elif filter_param == 'recent':
             jobs = jobs.order_by('-updated_at')[:10]
         elif filter_param == 'active':
@@ -164,8 +164,8 @@ class JobPostingDetailView(LoginRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        is_favorite = self.request.user in context['job'].favorited_by.all()
-        
+        is_favorite = context['job'].is_favorited_by(self.request.user)
+
         job_detail_component = JobDetailComponent()
         component_context = job_detail_component.get_context_data(
             job=context['job'],
@@ -223,15 +223,19 @@ class JobPostingDeleteView(LoginRequiredMixin, DeleteView):
 class JobFavoritesView(LoginRequiredMixin, ListView):
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
-    
+
     def get_queryset(self):
-        return JobPosting.objects.filter(favorited_by=self.request.user)
+        return JobPosting.objects.filter(favorites=self.request.user).distinct()
 
 
 class ToggleFavoriteView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        job = get_object_or_404(JobPosting, pk=pk)
-        if job.toggle_favorite(request.user):
+        job = get_object_or_404(JobPosting, pk=pk, user=request.user)
+        created = job.toggle_favorite(request.user)
+        is_favorite = job.is_favorited_by(request.user)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'is_favorite': is_favorite})
+        if created:
             messages.success(request, 'Job added to favorites.')
         else:
             messages.success(request, 'Job removed from favorites.')

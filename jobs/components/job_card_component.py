@@ -5,25 +5,36 @@ class JobCardComponent(component.Component):
     template = """
     {% load job_tags %}
     <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 group relative overflow-hidden"
-         x-data="{ 
+         x-data="{
              isFavorite: {{ is_favorite|yesno:'true,false' }},
              toggleFavorite(jobId) {
-                 this.isFavorite = !this.isFavorite;
-                 fetch(`/jobs/toggle_favorite/${jobId}/`, {
+                 fetch(`/jobs/job/${jobId}/toggle-favorite/`, {
                      method: 'POST',
                      headers: {
-                         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                         'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                         'X-Requested-With': 'XMLHttpRequest'
                      }
+                 })
+                 .then(response => {
+                     if (!response.ok) {
+                         throw new Error('Favorite update failed');
+                     }
+                     return response.json();
+                 })
+                 .then(data => {
+                     this.isFavorite = data.is_favorite;
+                 })
+                 .catch(() => {
+                     this.isFavorite = !this.isFavorite;
                  });
              }
          }">
         <div class="absolute top-4 right-4 z-10">
             <button @click="toggleFavorite({{ job.pk }})"
                     class="btn btn-circle btn-ghost btn-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <iconify-icon 
-                    :icon="isFavorite ? 'octicon:star-fill-24' : 'octicon:star-24'" 
-                    class="text-warning"
-                    :class="{ 'text-warning': isFavorite }">
+                <iconify-icon
+                    :icon="isFavorite ? 'octicon:star-fill-24' : 'octicon:star-24'"
+                    :class="isFavorite ? 'text-warning' : 'text-base-content/40'">
                 </iconify-icon>
             </button>
         </div>
