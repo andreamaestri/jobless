@@ -1,13 +1,67 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count
+from django.http import JsonResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
 from jobs.models import JobPosting
 from events.models import Event
 from contacts.models import Contact
-from .forms import SearchFilterForm
+
+
+@login_required
+def api_search(request):
+    """Global search API for the dashboard search modal.
+
+    Searches the current user's jobs, events, and contacts and returns
+    at most eight combined results as JSON.
+    """
+    query = request.GET.get("q", "").strip()
+
+    if not query or len(query) < 2:
+        return JsonResponse([], safe=False)
+
+    results = []
+
+    jobs = JobPosting.objects.filter(user=request.user).filter(
+        Q(title__icontains=query) | Q(company__icontains=query)
+    )[:8]
+    for job in jobs:
+        results.append({
+            "icon": "octicon:briefcase-24",
+            "title": job.title,
+            "subtitle": job.company,
+            "url": reverse("jobs:detail", args=[job.pk]),
+        })
+
+    events = Event.objects.filter(user=request.user).filter(
+        Q(title__icontains=query) | Q(location__icontains=query)
+    )[:8]
+    for event in events:
+        results.append({
+            "icon": "octicon:calendar-24",
+            "title": event.title,
+            "subtitle": event.location,
+            "url": reverse("events:detail", args=[event.pk]),
+        })
+
+    contacts = Contact.objects.filter(user=request.user).filter(
+        Q(name__icontains=query)
+        | Q(company__icontains=query)
+        | Q(email__icontains=query)
+    )[:8]
+    for contact in contacts:
+        results.append({
+            "icon": "octicon:person-24",
+            "title": contact.name,
+            "subtitle": contact.company or contact.email,
+            "url": reverse("contacts:detail", args=[contact.pk]),
+        })
+
+    return JsonResponse(results[:8], safe=False)
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "home/home.html"
@@ -41,53 +95,13 @@ class HomeView(LoginRequiredMixin, TemplateView):
             return _("Good afternoon")
         return _("Good evening")
 
-    def get_job_status_chart_data(self, jobs):
-        """Get job status data for charts"""
-        status_counts = dict(jobs.values_list('status').annotate(count=Count('status')))
-        colors = {
-            'interested': '#36D399',  # success
-            'applied': '#3ABFF8',     # primary
-            'interviewing': '#FBBD23', # warning
-            'rejected': '#F87272',     # error
-            'offered': '#6419E6',      # secondary
-        }
-        return {
-            'labels': list(status_counts.keys()),
-            'data': list(status_counts.values()),
-            'colors': [colors.get(status, '#666') for status in status_counts.keys()]
-        }
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # Get search query from GET parameters
-        search_query = self.request.GET.get('search', '')
-        status_filter = self.request.GET.get('status', '')
-        
+
         # Base querysets filtered by user
         jobs = JobPosting.objects.filter(user=self.request.user)
         events = Event.objects.filter(user=self.request.user)
         contacts = Contact.objects.filter(user=self.request.user)
-        
-        # Apply search if query exists
-        if search_query:
-            jobs = jobs.filter(
-                Q(title__icontains=search_query) |
-                Q(company__icontains=search_query) |
-                Q(description__icontains=search_query)
-            )
-            events = events.filter(
-                Q(title__icontains=search_query) |
-                Q(location__icontains=search_query)
-            )
-            contacts = contacts.filter(
-                Q(name__icontains=search_query) |
-                Q(company__icontains=search_query)
-            )
-            
-        # Apply status filter for jobs if specified
-        if status_filter:
-            jobs = jobs.filter(status=status_filter)
 
         # Calculate statistics
         context['active_jobs_count'] = self.get_active_jobs_count(jobs)
@@ -98,23 +112,18 @@ class HomeView(LoginRequiredMixin, TemplateView):
             status__in=['applied', 'interviewing', 'rejected', 'accepted']
         ).count()
         context['greeting'] = self.get_greeting()
-            
+
         # Add to context with ordering
         context['recent_jobs'] = jobs.order_by('-updated_at')[:5]
         context['upcoming_events'] = events.filter(
             date__gte=timezone.now()
         ).order_by('date')[:5]
         context['recent_contacts'] = contacts.order_by('-created_at')[:5]
-        
-        # Add filter options to context
-        context['search_query'] = search_query
-        context['status_filter'] = status_filter
-        context['status_choices'] = JobPosting.STATUS_CHOICES
 
         # Add total jobs count for percentage calculations
         context['total_jobs'] = jobs.count()
 
-        # Add job status counts for potential chart/stats
+        # Add job status counts for stats
         status_counts = dict(jobs.values_list('status').annotate(count=Count('status')))
         context['status_counts'] = status_counts
 
@@ -130,39 +139,4 @@ class HomeView(LoginRequiredMixin, TemplateView):
             for key, label in JobPosting.STATUS_CHOICES
         ]
 
-        # Add chart data
-        context['job_status_chart'] = self.get_job_status_chart_data(jobs)
-        
-        # Add activity timeline
-        context['recent_activity'] = self.get_recent_activity()
-        
-        # Add search form to context
-        initial_data = {
-            'search': self.request.GET.get('search', ''),
-            'status': self.request.GET.get('status', ''),
-            'type': self.request.GET.get('type', '')
-        }
-        context['search_form'] = SearchFilterForm(initial=initial_data)
-        
         return context
-
-    def get_recent_activity(self):
-        """Get recent activity across all models"""
-        recent = []
-        user = self.request.user
-        
-        # Get recent jobs
-        jobs = JobPosting.objects.filter(user=user).order_by('-updated_at')[:5]
-        for job in jobs:
-            recent.append({
-                'type': 'job',
-                'action': f"Updated job application for {job.title}",
-                'date': job.updated_at,
-                'url': job.get_absolute_url()
-            })
-        
-        # Get recent events
-        events = Event.objects.filter(user=user).order_by('-created_at')[:5]
-        # ...similar for events and contacts...
-        
-        return sorted(recent, key=lambda x: x['date'], reverse=True)[:5]

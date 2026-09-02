@@ -47,7 +47,7 @@
                 <div class="flex flex-wrap gap-2">
                     {% for skill in job.skills.all %}
                     <span class="badge badge-accent gap-2">
-                        <iconify-icon icon="{{ skill|get_skill_icon:True }}"></iconify-icon>
+                        <iconify-icon icon="{{ skill|get_skill_icon }}"></iconify-icon>
                         {{ skill.name|default:skill }}
                     </span>
                     {% endfor %}

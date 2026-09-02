@@ -54,7 +54,7 @@
                             {% for skill in object.skills.all %}
                             <a href="{% url 'jobs:list' %}?skill={{ skill.name|urlencode }}"
                                class="badge badge-accent gap-2 hover:badge-primary">
-                                <iconify-icon icon="{{ skill|get_skill_icon:True }}"></iconify-icon>
+                                <iconify-icon icon="{{ skill|get_skill_icon }}"></iconify-icon>
                                 {{ skill.name|default:skill }}
                             </a>
                             {% endfor %}

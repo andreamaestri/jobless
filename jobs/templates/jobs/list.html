@@ -64,6 +64,10 @@
                                        class="btn btn-sm {% if active_filter == 'rejected' %}btn-primary{% else %}btn-outline{% endif %}">
                                         {% translate "Rejected" %}
                                     </a>
+                                    <a href="{% url 'jobs:list' %}?filter=accepted"
+                                       class="btn btn-sm {% if active_filter == 'accepted' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        {% translate "Accepted" %}
+                                    </a>
                                     <a href="{% url 'jobs:list' %}?filter=favorites"
                                        class="btn btn-sm {% if active_filter == 'favorites' %}btn-primary{% else %}btn-outline{% endif %}">
                                         <iconify-icon icon="octicon:star-24"></iconify-icon>

@@ -1,8 +1,10 @@
 {% load i18n %}
 <!-- Enhanced Skill Selection Modal -->
 <div x-data="skillSelector"
+     x-cloak
      x-show="$store.app.skills.modal.open"
-     class="modal modal-open"
+     class="modal"
+     :class="{ 'modal-open': $store.app.skills.modal.open }"
      @keydown.escape.window="$store.app.skills.closeModal()"
      @click.self="$store.app.skills.closeModal()">
     
