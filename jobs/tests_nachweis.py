@@ -557,3 +557,110 @@ class ComplianceFeatureTests(SecureClientMixin, NachweisDataMixin, TestCase):
         self.assertEqual(response.status_code, 302)
         from .models import Obstacle
         self.assertTrue(Obstacle.objects.filter(user=self.user).exists())
+
+
+class JobIntegrationTests(SecureClientMixin, TestCase):
+    """Tests for linking JobPosting (jobs app) with Application (Nachweis)."""
+
+    @classmethod
+    def setUpTestData(cls):
+        from .models import JobPosting, SkillTreeModel, JobSkill
+        cls.user = User.objects.create_user(username="joblink", password="pw12345")
+        cls.job = JobPosting.objects.create(
+            user=cls.user, title="Backend Engineer", company="Acme",
+            location="Berlin", description="desc", status="applied",
+        )
+        cls.skill = SkillTreeModel.objects.create(name="python", label="Python", icon="")
+        JobSkill.objects.create(job=cls.job, skill=cls.skill, proficiency="required")
+
+    def test_application_links_to_job_posting(self):
+        from .models import Application
+        app = Application.objects.create(
+            user=self.user, applied_on=date(2026, 8, 3),
+            employer_name="Acme", job_title="Backend Engineer",
+            channel=4, job_posting=self.job,
+        )
+        self.assertIn(app, self.job.eigenbemuehungen.all())
+
+    def test_application_tags_are_tagulous(self):
+        from .models import Application, ApplicationTag
+        app = Application.objects.create(
+            user=self.user, applied_on=date(2026, 8, 3),
+            employer_name="Acme", job_title="Backend Engineer", channel=4,
+        )
+        app.tags = "remote, handwerk"
+        app.save()
+        self.assertEqual(app.tags.count(), 2)
+        self.assertEqual(ApplicationTag.objects.filter(name="remote").count(), 1)
+
+    def test_application_add_prefills_from_job(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:application_add"), {"job_posting": self.job.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'value="Acme"')
+        self.assertContains(response, 'value="Backend Engineer"')
+
+    def test_application_add_creates_linked_effort(self):
+        self.client.force_login(self.user)
+        response = self.post(
+            reverse("jobs:application_add"),
+            {
+                "applied_on": "2026-08-03",
+                "employer_name": "Acme",
+                "job_title": "Backend Engineer",
+                "job_posting": str(self.job.pk),
+                "channel": "4",
+                "result": "OFFEN",
+                "tags": "remote",
+                "source": "",
+                "source_ref": "",
+                "effort_type": "BEWERBUNG",
+                "costs_cents": "0",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        from .models import Application
+        app = Application.objects.get(user=self.user, employer_name="Acme")
+        self.assertEqual(app.job_posting, self.job)
+
+    def test_job_detail_shows_proof_panel_and_warning(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:detail", kwargs={"pk": self.job.pk}))
+        self.assertContains(response, "Proof of effort")
+        self.assertContains(response, "Record as effort")
+        # status applied + no effort recorded => warning
+        self.assertContains(response, "no effort with date, employer and job title is recorded yet")
+
+    def test_job_detail_warning_clears_after_effort(self):
+        from .models import Application
+        Application.objects.create(
+            user=self.user, applied_on=date(2026, 8, 3),
+            employer_name="Acme", job_title="Backend Engineer", channel=4,
+            job_posting=self.job,
+        )
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:detail", kwargs={"pk": self.job.pk}))
+        self.assertContains(response, "Proof of effort")
+        self.assertNotContains(response, "no effort with date, employer and job title is recorded yet")
+
+    def test_job_list_filters_by_skill_tag(self):
+        from .models import JobPosting
+        other = JobPosting.objects.create(
+            user=self.user, title="Sales", company="Beta",
+            location="Hamburg", description="d", status="interested",
+        )
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:list"), {"skill": "python"})
+        self.assertContains(response, "Backend Engineer")
+        self.assertNotContains(response, ">Sales<")
+
+    def test_job_list_status_filter_applied(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:list"), {"filter": "applied"})
+        self.assertContains(response, "Backend Engineer")
+
+    def test_tagulous_autocomplete_endpoint(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:application_tags_autocomplete"), {"q": "rem"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"].split(";")[0], "application/json")

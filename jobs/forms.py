@@ -188,6 +188,7 @@ class ApplicationForm(forms.ModelForm):
         model = Application
         fields = [
             'applied_on', 'employer_name', 'job_title', 'channel', 'result',
+            'job_posting', 'tags',
             'employer_address', 'employer_phone', 'employer_email',
             'contact_person', 'source', 'source_ref', 'result_date',
             'result_note', 'effort_type', 'related_to_vermittlungsvorschlag',
@@ -202,6 +203,10 @@ class ApplicationForm(forms.ModelForm):
             'job_title': forms.TextInput(attrs={'class': 'input w-full'}),
             'channel': forms.Select(attrs={'class': 'select w-full'}),
             'result': forms.Select(attrs={'class': 'select w-full'}),
+            'job_posting': forms.Select(attrs={'class': 'select w-full'}),
+            'tags': forms.TextInput(
+                attrs={'class': 'input w-full', 'placeholder': 'remote, handwerk, …'}
+            ),
             'employer_address': forms.TextInput(attrs={'class': 'input w-full'}),
             'employer_phone': forms.TextInput(attrs={'class': 'input w-full'}),
             'employer_email': forms.EmailInput(attrs={'class': 'input w-full'}),
@@ -225,6 +230,8 @@ class ApplicationForm(forms.ModelForm):
             'job_title': _('Job title'),
             'channel': _('How applied'),
             'result': _('Status'),
+            'job_posting': _('Linked job posting'),
+            'tags': _('Tags'),
             'employer_address': _('Employer address'),
             'employer_phone': _('Employer phone'),
             'employer_email': _('Employer e-mail'),
@@ -237,6 +244,11 @@ class ApplicationForm(forms.ModelForm):
             'related_to_vermittlungsvorschlag': _('Related to placement proposal'),
             'costs_cents': _('Costs (cents)'),
         }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if user is not None:
+            self.fields['job_posting'].queryset = JobPosting.objects.filter(user=user)
 
 
 class ObligationPlanForm(forms.ModelForm):

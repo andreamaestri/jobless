@@ -200,6 +200,11 @@ class JobPosting(models.Model):
         """Get the number of users who favorited this job"""
         return self.favorites.count()
 
+    @property
+    def favorited_by(self):
+        """Users who favorited this job (queryset of AUTH_USER_MODEL)."""
+        return self.favorites.all()
+
     def is_favorited_by(self, user):
         """Check if job is favorited by user"""
         if not user.is_authenticated:
@@ -430,6 +435,18 @@ class ObligationPlan(models.Model):
         return [key for key, present in self.proof_components if not present]
 
 
+class ApplicationTag(django_tagulous.models.TagModel):
+    class TagMeta:
+        force_lowercase = True
+        space_delimiter = False
+        autocomplete_view = "jobs:application_tags_autocomplete"
+        case_sensitive = False
+        protected = False
+
+    def __str__(self):
+        return self.name
+
+
 class Application(models.Model):
     class Channel(models.IntegerChoices):
         PERSOENLICH = 1, _("In person")
@@ -468,6 +485,19 @@ class Application(models.Model):
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="applications"
+    )
+    job_posting = models.ForeignKey(
+        JobPosting,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="eigenbemuehungen",
+        verbose_name=_("Linked job posting"),
+    )
+    tags = django_tagulous.models.TagField(
+        to=ApplicationTag,
+        blank=True,
+        help_text=_("Tags, comma-separated (e.g. remote, handwerk, vertrieb)"),
     )
     applied_on = models.DateField(_("Applied on"))
     employer_name = models.CharField(_("Employer"), max_length=200, blank=True)

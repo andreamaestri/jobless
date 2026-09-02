@@ -1,7 +1,7 @@
 from django.urls import path
 import django_tagulous.views
 from . import views
-from .models import SkillTag
+from .models import SkillTag, ApplicationTag
 
 app_name = 'jobs'
 
@@ -21,6 +21,12 @@ urlpatterns = [
         django_tagulous.views.autocomplete,
         {'tag_model': SkillTag},
         name='skill_tags_autocomplete'  # Matches the TagMeta autocomplete_view
+    ),
+    path(
+        'application-tags-autocomplete/',
+        django_tagulous.views.autocomplete,
+        {'tag_model': ApplicationTag},
+        name='application_tags_autocomplete'
     ),
     # Nachweis von Eigenbemühungen
     path('nachweis/', views.NachweisDashboardView.as_view(), name='nachweis'),

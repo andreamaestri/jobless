@@ -40,10 +40,53 @@
                 <div class="bg-base-200/50 backdrop-blur-sm rounded-3xl shadow-xl relative overflow-hidden animate-in fade-in duration-700">
                     <!-- Quick Filters Section -->
                     <div class="p-4 sm:p-8 form-section bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-t-3xl">
-                        <!-- Existing filter buttons -->
                         <div class="relative -mx-4 sm:mx-0">
-                            <div class="flex gap-2 overflow-x-auto px-4 sm:px-0 sm:flex-wrap scrollbar-none pb-4 sm:pb-0">
-                                <!-- Filter buttons remain the same -->
+                            <div class="flex flex-col lg:flex-row gap-3 px-4 sm:px-0">
+                                <!-- Status filter -->
+                                <div class="flex gap-2 overflow-x-auto scrollbar-none pb-1 lg:pb-0">
+                                    <a href="{% url 'jobs:list' %}"
+                                       class="btn btn-sm {% if active_filter == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        {% translate "All" %}
+                                    </a>
+                                    <a href="{% url 'jobs:list' %}?filter=interested"
+                                       class="btn btn-sm {% if active_filter == 'interested' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        {% translate "Interested" %}
+                                    </a>
+                                    <a href="{% url 'jobs:list' %}?filter=applied"
+                                       class="btn btn-sm {% if active_filter == 'applied' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        {% translate "Applied" %}
+                                    </a>
+                                    <a href="{% url 'jobs:list' %}?filter=interviewing"
+                                       class="btn btn-sm {% if active_filter == 'interviewing' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        {% translate "Interviewing" %}
+                                    </a>
+                                    <a href="{% url 'jobs:list' %}?filter=rejected"
+                                       class="btn btn-sm {% if active_filter == 'rejected' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        {% translate "Rejected" %}
+                                    </a>
+                                    <a href="{% url 'jobs:list' %}?filter=favorites"
+                                       class="btn btn-sm {% if active_filter == 'favorites' %}btn-primary{% else %}btn-outline{% endif %}">
+                                        <iconify-icon icon="octicon:star-24"></iconify-icon>
+                                        {% translate "Favorites" %}
+                                    </a>
+                                </div>
+                                <!-- Skill-tag filter (tagulous) -->
+                                {% if skill_names %}
+                                <form method="get" class="flex gap-2">
+                                    {% if active_filter != 'all' %}<input type="hidden" name="filter" value="{{ active_filter }}" />{% endif %}
+                                    <select name="skill" class="select select-sm w-full lg:w-64"
+                                            onchange="this.form.submit()">
+                                        <option value="">{% translate "All skills" %}</option>
+                                        {% for s in skill_names %}
+                                        <option value="{{ s }}" {% if active_skill == s %}selected{% endif %}>{{ s }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if active_skill %}
+                                    <a href="{% url 'jobs:list' %}{% if active_filter != 'all' %}?filter={{ active_filter }}{% endif %}"
+                                       class="btn btn-sm btn-ghost">✕</a>
+                                    {% endif %}
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

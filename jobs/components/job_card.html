@@ -39,6 +39,14 @@
                 <div class="flex items-center text-base-content/70 text-sm gap-2 mb-2">
                     <iconify-icon icon="heroicons:map-pin" class="text-base"></iconify-icon>
                     {{ job.location }}
+                    {% for eb in job.eigenbemuehungen.all|slice:":1" %}
+                    {% if eb.is_nachweisbar %}
+                    <span class="badge badge-success badge-xs gap-1">
+                        <iconify-icon icon="octicon:check-circle-fill-16"></iconify-icon>
+                        {{ eb.applied_on|date:"d.m.Y" }}
+                    </span>
+                    {% endif %}
+                    {% endfor %}
                 </div>
                 
                 {% if job.skills.count > 0 %}

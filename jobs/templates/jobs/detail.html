@@ -52,10 +52,11 @@
                     <div class="col-span-2">
                         <div class="flex flex-wrap gap-2">
                             {% for skill in object.skills.all %}
-                            <span class="badge badge-accent gap-2">
+                            <a href="{% url 'jobs:list' %}?skill={{ skill.name|urlencode }}"
+                               class="badge badge-accent gap-2 hover:badge-primary">
                                 <iconify-icon icon="{{ skill|get_skill_icon:True }}"></iconify-icon>
                                 {{ skill.name|default:skill }}
-                            </span>
+                            </a>
                             {% endfor %}
                         </div>
                     </div>
@@ -80,6 +81,70 @@
                     <div class="text-sm font-semibold text-base-content">{% translate "Last Updated" %}</div>
                     <div class="col-span-2 text-base-content">{{ object.updated_at|date:"F j, Y" }}</div>
                 </div>
+            </div>
+
+            <!-- Proof of effort (Nachweis) -->
+            <div class="border-t border-base-300 mt-6 pt-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-base-content">{% translate "Proof of effort (Eigenbemühung)" %}</h2>
+                        <p class="text-sm text-base-content/70">
+                            {% translate "Linking a job posting to an effort makes it part of your Nachweis." %}
+                        </p>
+                    </div>
+                    <a href="{% url 'jobs:application_add' %}?job_posting={{ object.pk }}"
+                       class="btn btn-primary btn-sm">
+                        <iconify-icon icon="octicon:check-circle-16"></iconify-icon>
+                        {% translate "Record as effort" %}
+                    </a>
+                </div>
+
+                {% if object.status == 'applied' and linked_count == 0 %}
+                <div class="alert alert-warning text-sm mb-4">
+                    <iconify-icon icon="octicon:alert-16"></iconify-icon>
+                    <span>
+                        {% translate "This job is marked as applied, but no effort with date, employer and job title is recorded yet. Only recorded efforts count toward your Nachweis." %}
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if linked_applications %}
+                <div class="overflow-x-auto rounded-xl border border-base-200">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>{% translate "Date" %}</th>
+                                <th>{% translate "Job title" %}</th>
+                                <th>{% translate "How applied" %}</th>
+                                <th>{% translate "Status" %}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in linked_applications %}
+                            <tr>
+                                <td>{{ a.applied_on|date:"d.m.Y" }}</td>
+                                <td>{{ a.job_title }}</td>
+                                <td>{{ a.get_channel_display|default:"—" }}</td>
+                                <td>{{ a.get_result_display }}</td>
+                                <td class="text-right whitespace-nowrap">
+                                    {% if a.is_nachweisbar %}
+                                        <a href="{% url 'jobs:application_detail' a.pk %}" class="btn btn-ghost btn-xs">{% translate "View" %}</a>
+                                    {% else %}
+                                        <span class="badge badge-warning badge-xs">{% translate "incomplete" %}</span>
+                                        <a href="{% url 'jobs:application_edit' a.pk %}" class="btn btn-ghost btn-xs">{% translate "Complete" %}</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-sm text-base-content/60">
+                    {% translate "No effort linked to this job posting yet." %}
+                </p>
+                {% endif %}
             </div>
 
             <!-- Action Buttons -->

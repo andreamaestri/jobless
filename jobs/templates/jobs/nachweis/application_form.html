@@ -57,12 +57,44 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {% for field in form %}
                   {% if field.name not in 'applied_on,employer_name,job_title,channel,result' %}
-                  <div class="{% if field.name == 'result_note' or field.name == 'source_ref' %}sm:col-span-2{% endif %}">
+                  <div class="{% if field.name == 'result_note' or field.name == 'source_ref' %}sm:col-span-2{% endif %}"
+                       {% if field.name == 'tags' %}x-data="tagEditor($refs.input)"{% endif %}>
                     <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-1">
                       {{ field.label }}
                       {% if field.field.required %}<span class="text-error">*</span>{% endif %}
                     </label>
+                    {% if field.name == 'tags' %}
+                    <div class="flex flex-wrap items-center gap-1.5 border border-base-300 rounded-lg px-2 py-1.5 bg-base-100"
+                         @click="$refs.input.focus()">
+                      <template x-for="(t, i) in tags" :key="i">
+                        <span class="badge badge-outline gap-1">
+                          <span x-text="t"></span>
+                          <button type="button" @click="remove(i)" class="cursor-pointer" aria-label="remove">×</button>
+                        </span>
+                      </template>
+                      <input
+                        type="text"
+                        class="input input-ghost w-32 flex-1 min-w-[8rem] px-1"
+                        x-ref="input"
+                        placeholder="{% translate 'add tag, comma' %}"
+                        x-model="query"
+                        @input="suggest"
+                        @keydown.enter.prevent="add()"
+                        @keydown.2.prevent="add()"
+                        @keydown.","="add()"
+                        @keydown.backspace="back()" />
+                    </div>
+                    <input type="hidden" id="{{ field.id_for_label }}" name="tags" x-ref="hidden" :value="tags.join(', ')" />
+                    {% if suggestions.length %}
+                    <ul class="menu menu-xs bg-base-200 rounded-lg mt-1 p-1">
+                      <template x-for="s in suggestions" :key="s">
+                        <li><button type="button" class="w-full text-left" @click="pick(s)" x-text="s"></button></li>
+                      </template>
+                    </ul>
+                    {% endif %}
+                    {% else %}
                     {% render_field field %}
+                    {% endif %}
                     {% if field.help_text %}<p class="text-xs text-base-content/60 mt-1">{{ field.help_text }}</p>{% endif %}
                     {% for e in field.errors %}<p class="text-error text-xs mt-1">{{ e }}</p>{% endfor %}
                   </div>
@@ -82,3 +114,52 @@
   </div>
 </div>
 {% endblock content %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+  function tagEditor(inputRef) {
+    return {
+      tags: [],
+      query: '',
+      suggestions: [],
+      init() {
+        if (this.$refs.hidden && this.$refs.hidden.value) {
+          this.tags = this.$refs.hidden.value.split(',').map(t => t.trim()).filter(Boolean);
+        }
+      },
+      sync() {
+        if (this.$refs.hidden) this.$refs.hidden.value = this.tags.join(', ');
+      },
+      add() {
+        const v = this.query.trim().replace(/,+$/, '');
+        if (v && !this.tags.includes(v)) {
+          this.tags.push(v);
+          this.sync();
+        }
+        this.query = '';
+        this.suggestions = [];
+      },
+      remove(i) { this.tags.splice(i, 1); this.sync(); },
+      back() {
+        if (!this.query && this.tags.length) { this.remove(this.tags.length - 1); }
+      },
+      pick(s) {
+        if (!this.tags.includes(s)) { this.tags.push(s); this.sync(); }
+        this.query = ''; this.suggestions = [];
+      },
+      suggest() {
+        const q = this.query.trim();
+        if (!q) { this.suggestions = []; return; }
+        fetch(`{% url 'jobs:application_tags_autocomplete' %}?q=${encodeURIComponent(q)}`)
+          .then(r => r.json())
+          .then(data => {
+            const list = Array.isArray(data) ? data : (data.results || []);
+            this.suggestions = list.map(x => x.name || x).filter(x => !this.tags.includes(x)).slice(0, 6);
+          })
+          .catch(() => { this.suggestions = []; });
+      }
+    };
+  }
+</script>
+{% endblock %}

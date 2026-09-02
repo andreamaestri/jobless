@@ -65,6 +65,19 @@
                         <span class="icon" data-icon="{{ job.status|status_icon }}"></span>
                         {{ job.get_status_display }}
                     </span>
+                    {% if job.eigenbemuehungen.all %}
+                    <div class="mt-1">
+                        {% for eb in job.eigenbemuehungen.all|slice:":1" %}
+                        {% if eb.is_nachweisbar %}
+                        <a href="{% url 'jobs:application_detail' eb.pk %}"
+                           class="badge badge-success badge-xs gap-1 hover:badge-primary">
+                            <iconify-icon icon="octicon:check-circle-fill-16"></iconify-icon>
+                            {{ eb.applied_on|date:"d.m.Y" }}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </td>
                 <td>
                     <div class="flex items-center gap-2">
