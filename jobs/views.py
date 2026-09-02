@@ -102,6 +102,7 @@ class JobListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         filter_param = self.request.GET.get('filter', 'all')
+        skill_name = self.request.GET.get('skill', '')
         jobs = JobPosting.objects.filter(
             user=self.request.user
         ).order_by('-created_at')
@@ -111,12 +112,23 @@ class JobListView(LoginRequiredMixin, ListView):
         elif filter_param == 'recent':
             jobs = jobs.order_by('-updated_at')[:10]
         elif filter_param == 'active':
-            jobs = jobs.filter(status__in=['APPLIED', 'INTERVIEWING'])
+            jobs = jobs.filter(status__in=['applied', 'interviewing'])
         elif filter_param == 'interviewing':
-            jobs = jobs.filter(status='INTERVIEWING')
+            jobs = jobs.filter(status='interviewing')
+        elif filter_param == 'applied':
+            jobs = jobs.filter(status='applied')
+        elif filter_param == 'rejected':
+            jobs = jobs.filter(status='rejected')
+        elif filter_param == 'accepted':
+            jobs = jobs.filter(status='accepted')
+        elif filter_param == 'interested':
+            jobs = jobs.filter(status='interested')
             
-        return jobs
-    
+        if skill_name:
+            jobs = jobs.filter(skills__name__icontains=skill_name)
+            
+        return jobs.prefetch_related('eigenbemuehungen', 'skills')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         favorite_job_ids = []
@@ -124,13 +136,19 @@ class JobListView(LoginRequiredMixin, ListView):
             favorite_job_ids = list(
                 self.request.user.favorited_jobs.values_list('id', flat=True)
             )
-        
         job_list_component = JobListComponent()
         component_context = job_list_component.get_context_data(
             jobs=context['jobs'],
             favorite_job_ids=favorite_job_ids
         )
         context.update(component_context)
+        context['active_filter'] = self.request.GET.get('filter', 'all')
+        context['active_skill'] = self.request.GET.get('skill', '')
+        context['skill_names'] = list(
+            SkillTreeModel.objects.filter(
+                jobs__user=self.request.user
+            ).values_list('name', flat=True).distinct()[:50]
+        )
         return context
 
 
@@ -140,7 +158,9 @@ class JobPostingDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'job'
     
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+        return super().get_queryset().filter(user=self.request.user).prefetch_related(
+            'eigenbemuehungen', 'skills'
+        )
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -152,6 +172,9 @@ class JobPostingDetailView(LoginRequiredMixin, DetailView):
             is_favorite=is_favorite
         )
         context.update(component_context)
+        linked = list(context['job'].eigenbemuehungen.all())
+        context['linked_applications'] = linked
+        context['linked_count'] = sum(1 for a in linked if a.is_nachweisbar)
         return context
 
 
@@ -226,6 +249,7 @@ from django.http import HttpResponse
 from django.utils.translation import gettext as _
 
 from .models import (
+    JobPosting,
     UserProfile,
     ObligationPlan,
     Application,
@@ -394,8 +418,26 @@ class ApplicationCreateView(LoginRequiredMixin, CreateView):
     form_class = ApplicationForm
     template_name = "jobs/nachweis/application_form.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_initial(self):
-        return {"applied_on": date.today()}
+        initial = {"applied_on": date.today()}
+        job_pk = self.request.GET.get("job_posting")
+        if job_pk:
+            job = JobPosting.objects.filter(pk=job_pk, user=self.request.user).first()
+            if job:
+                initial.update(
+                    {
+                        "employer_name": job.company,
+                        "job_title": job.title,
+                        "job_posting": job.pk,
+                        "source": Application.Source.COMPANY_SITE,
+                    }
+                )
+        return initial
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -425,6 +467,11 @@ class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Application.objects.filter(user=self.request.user)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         changed_date = (

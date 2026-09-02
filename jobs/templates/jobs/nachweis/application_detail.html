@@ -32,6 +32,22 @@
             <div><dt class="text-base-content/60">{% translate "Employer phone" %}</dt><dd class="font-medium">{{ application.employer_phone|default:"—" }}</dd></div>
             <div><dt class="text-base-content/60">{% translate "Employer e-mail" %}</dt><dd class="font-medium">{{ application.employer_email|default:"—" }}</dd></div>
             <div><dt class="text-base-content/60">{% translate "Costs (cents)" %}</dt><dd class="font-medium">{{ application.costs_cents }}</dd></div>
+            {% if application.job_posting %}
+            <div><dt class="text-base-content/60">{% translate "Linked job posting" %}</dt>
+              <dd class="font-medium"><a class="link" href="{% url 'jobs:detail' application.job_posting.pk %}">{{ application.job_posting.title }} — {{ application.job_posting.company }}</a></dd>
+            </div>
+            {% endif %}
+            {% if application.tags.all %}
+            <div><dt class="text-base-content/60">{% translate "Tags" %}</dt>
+              <dd>
+                <div class="flex flex-wrap gap-1.5">
+                  {% for t in application.tags.all %}
+                  <span class="badge badge-outline badge-sm">{{ t }}</span>
+                  {% endfor %}
+                </div>
+              </dd>
+            </div>
+            {% endif %}
             {% if application.result_note %}
             <div class="sm:col-span-2"><dt class="text-base-content/60">{% translate "Result note" %}</dt><dd>{{ application.result_note }}</dd></div>
             {% endif %}

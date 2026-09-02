@@ -15,8 +15,8 @@ def json(obj):
 
 
 @register.filter
-def get_skill_icon(skill):
-    """Get the icon for a skill"""
+def get_skill_icon(skill, variant=None):
+    """Get the icon for a skill (variant arg accepted for call-site compat)."""
     try:
         if hasattr(skill, 'get_icon'):
             icon = skill.get_icon()

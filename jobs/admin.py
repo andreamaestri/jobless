@@ -232,7 +232,14 @@ from .models import (
     Vermittlungsvorschlag,
     Absence,
     Obstacle,
+    ApplicationTag,
 )
+import django_tagulous.admin
+
+
+@admin.register(ApplicationTag)
+class ApplicationTagAdmin(django_tagulous.admin.TagModelAdmin):
+    pass
 
 
 @admin.register(UserProfile)
