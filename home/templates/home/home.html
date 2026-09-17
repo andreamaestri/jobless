@@ -6,12 +6,12 @@
 {% block content %}
 <div class="min-h-screen bg-base-200/50">
     <!-- Action bar -->
-    <div class="navbar sticky top-0 z-50 min-h-14 border-b border-base-content/5 bg-base-100/80 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+    <div class="navbar sticky top-0 z-50 min-h-14 border-b border-base-content/5 bg-base-100/90 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
         <div class="navbar-end ml-auto flex-none gap-2">
             <button
                 type="button"
                 aria-label="{% translate 'Search' %}"
-                class="btn btn-ghost btn-sm btn-square sm:w-auto sm:px-3"
+                class="btn btn-ghost btn-sm gap-2"
                 onclick="document.getElementById('searchFilters').showModal()"
             >
                 <iconify-icon class="size-4" icon="octicon:search-24"></iconify-icon>
@@ -19,7 +19,7 @@
             </button>
             <button
                 type="button"
-                class="btn btn-primary btn-sm gap-1.5 shadow-sm shadow-primary/25"
+                class="btn btn-primary btn-sm gap-2 shadow-lg shadow-primary/20"
                 onclick="document.getElementById('quickAdd').showModal()"
             >
                 <iconify-icon icon="octicon:plus-16"></iconify-icon>
@@ -28,59 +28,59 @@
         </div>
     </div>
 
-    <div class="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:space-y-8 lg:px-8 lg:py-8">
+    <div class="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <!-- Greeting -->
         <header class="min-w-0">
             <p class="text-xs font-semibold uppercase tracking-widest text-base-content/40">{% translate "Dashboard" %}</p>
-            <h1 class="mt-1 truncate text-2xl font-bold tracking-tight sm:text-3xl">
+            <h1 class="mt-2 truncate text-3xl font-bold tracking-tight sm:text-4xl">
                 {% blocktranslate with name=user.first_name|default:user.username %}{{ greeting }}, <span class="text-primary">{{ name }}</span>.{% endblocktranslate %}
             </h1>
-            <p class="mt-1 text-sm text-base-content/60 sm:text-base">{% translate "Here's how your job search is going." %}</p>
+            <p class="mt-2 text-sm text-base-content/60 sm:text-base">{% translate "Here's how your job search is going." %}</p>
         </header>
 
         <!-- Stats -->
-        <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-            <a href="{% url 'jobs:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-primary/30">
-                <div class="card-body flex-row items-center gap-3 p-4 sm:p-5">
-                    <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary sm:size-11">
-                        <iconify-icon class="size-5 sm:size-6" icon="octicon:briefcase-24"></iconify-icon>
+        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <a href="{% url 'jobs:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:ring-primary/20">
+                <div class="card-body grid grid-cols-[auto_1fr] items-center gap-4 p-5">
+                    <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
+                        <iconify-icon class="size-6" icon="octicon:briefcase-24"></iconify-icon>
                     </span>
                     <span class="min-w-0">
-                        <span class="block text-xl font-bold leading-tight tabular-nums sm:text-2xl">{{ active_jobs_count }}</span>
-                        <span class="block truncate text-xs text-base-content/60 sm:text-sm">{% translate "Active applications" %}</span>
+                        <span class="block text-2xl font-bold leading-none tabular-nums">{{ active_jobs_count }}</span>
+                        <span class="mt-1.5 block truncate text-xs text-base-content/60">{% translate "Active applications" %}</span>
                     </span>
                 </div>
             </a>
-            <a href="{% url 'events:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-secondary/40">
-                <div class="card-body flex-row items-center gap-3 p-4 sm:p-5">
-                    <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-secondary/15 text-secondary sm:size-11">
-                        <iconify-icon class="size-5 sm:size-6" icon="octicon:calendar-24"></iconify-icon>
+            <a href="{% url 'events:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:ring-secondary/20">
+                <div class="card-body grid grid-cols-[auto_1fr] items-center gap-4 p-5">
+                    <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary/10 text-secondary">
+                        <iconify-icon class="size-6" icon="octicon:calendar-24"></iconify-icon>
                     </span>
                     <span class="min-w-0">
-                        <span class="block text-xl font-bold leading-tight tabular-nums sm:text-2xl">{{ upcoming_events_count }}</span>
-                        <span class="block truncate text-xs text-base-content/60 sm:text-sm">{% translate "Upcoming events" %}</span>
+                        <span class="block text-2xl font-bold leading-none tabular-nums">{{ upcoming_events_count }}</span>
+                        <span class="mt-1.5 block truncate text-xs text-base-content/60">{% translate "Upcoming events" %}</span>
                     </span>
                 </div>
             </a>
-            <a href="{% url 'contacts:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-accent/40">
-                <div class="card-body flex-row items-center gap-3 p-4 sm:p-5">
-                    <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-accent/10 text-accent sm:size-11">
-                        <iconify-icon class="size-5 sm:size-6" icon="octicon:people-24"></iconify-icon>
+            <a href="{% url 'contacts:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:ring-accent/20">
+                <div class="card-body grid grid-cols-[auto_1fr] items-center gap-4 p-5">
+                    <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent">
+                        <iconify-icon class="size-6" icon="octicon:people-24"></iconify-icon>
                     </span>
                     <span class="min-w-0">
-                        <span class="block text-xl font-bold leading-tight tabular-nums sm:text-2xl">{{ total_contacts }}</span>
-                        <span class="block truncate text-xs text-base-content/60 sm:text-sm">{% translate "Your network" %}</span>
+                        <span class="block text-2xl font-bold leading-none tabular-nums">{{ total_contacts }}</span>
+                        <span class="mt-1.5 block truncate text-xs text-base-content/60">{% translate "Your network" %}</span>
                     </span>
                 </div>
             </a>
-            <a href="{% url 'jobs:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-success/40">
-                <div class="card-body flex-row items-center gap-3 p-4 sm:p-5">
-                    <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-success/10 text-success sm:size-11">
-                        <iconify-icon class="size-5 sm:size-6" icon="octicon:graph-24"></iconify-icon>
+            <a href="{% url 'jobs:list' %}" class="card bg-base-100 shadow-sm ring-1 ring-base-content/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:ring-success/20">
+                <div class="card-body grid grid-cols-[auto_1fr] items-center gap-4 p-5">
+                    <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-success/10 text-success">
+                        <iconify-icon class="size-6" icon="octicon:graph-24"></iconify-icon>
                     </span>
                     <span class="min-w-0">
-                        <span class="block text-xl font-bold leading-tight tabular-nums sm:text-2xl">{% if total_applications %}{{ success_rate }}%{% else %}–{% endif %}</span>
-                        <span class="block truncate text-xs text-base-content/60 sm:text-sm">{% translate "Overall success" %}</span>
+                        <span class="block text-2xl font-bold leading-none tabular-nums">{% if total_applications %}{{ success_rate }}%{% else %}–{% endif %}</span>
+                        <span class="mt-1.5 block truncate text-xs text-base-content/60">{% translate "Overall success" %}</span>
                     </span>
                 </div>
             </a>
@@ -88,32 +88,32 @@
 
         <!-- Progress -->
         <section class="card bg-base-100 shadow-sm ring-1 ring-base-content/5">
-            <div class="card-body p-5 sm:p-6">
-                <div class="flex items-center justify-between gap-3">
-                    <h2 class="text-base font-semibold sm:text-lg">{% translate "Your application progress" %}</h2>
+            <div class="card-body p-6">
+                <div class="flex items-center justify-between gap-4">
+                    <h2 class="text-lg font-semibold">{% translate "Your application progress" %}</h2>
                     <span class="badge badge-neutral badge-sm tabular-nums">{% if total_applications %}{% blocktranslate %}{{ success_rate }}% success{% endblocktranslate %}{% else %}{% translate "No applications yet" %}{% endif %}</span>
                 </div>
                 {% if total_jobs %}
-                <div class="mt-5 space-y-3">
+                <div class="mt-6 space-y-4">
                     {% for row in status_rows %}
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <span class="flex w-28 shrink-0 items-center gap-2 text-sm sm:w-40">
-                            <span class="size-2 shrink-0 rounded-full {% if row.key == 'interested' %}bg-info{% elif row.key == 'applied' %}bg-warning{% elif row.key == 'interviewing' %}bg-success{% elif row.key == 'rejected' %}bg-error{% else %}bg-primary{% endif %}"></span>
+                    <div class="grid grid-cols-[7rem_1fr_3rem] items-center gap-4 sm:grid-cols-[10rem_1fr_3rem]">
+                        <span class="flex items-center gap-2.5 text-sm">
+                            <span class="size-2.5 shrink-0 rounded-full {% if row.key == 'interested' %}bg-info{% elif row.key == 'applied' %}bg-warning{% elif row.key == 'interviewing' %}bg-success{% elif row.key == 'rejected' %}bg-error{% else %}bg-primary{% endif %}"></span>
                             <span class="truncate">{{ row.label }}</span>
                         </span>
                         <progress
-                            class="progress w-full flex-1 {% if row.key == 'interested' %}progress-info{% elif row.key == 'applied' %}progress-warning{% elif row.key == 'interviewing' %}progress-success{% elif row.key == 'rejected' %}progress-error{% else %}progress-primary{% endif %}"
+                            class="progress {% if row.key == 'interested' %}progress-info{% elif row.key == 'applied' %}progress-warning{% elif row.key == 'interviewing' %}progress-success{% elif row.key == 'rejected' %}progress-error{% else %}progress-primary{% endif %}"
                             value="{{ row.count }}"
                             max="{{ total_jobs }}">
                         </progress>
-                        <span class="w-10 shrink-0 text-right text-xs tabular-nums text-base-content/60 sm:text-sm">{{ row.pct }}%</span>
+                        <span class="text-right text-sm tabular-nums text-base-content/60">{{ row.pct }}%</span>
                     </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="mt-4 text-sm text-base-content/60">{% translate "Start tracking your first application to see your progress here." %}</p>
-                <div class="mt-4">
-                    <a href="{% url 'jobs:add' %}" class="btn btn-primary btn-sm gap-1.5">
+                <div class="mt-6 rounded-2xl border border-dashed border-base-content/10 bg-base-200/40 p-8 text-center">
+                    <p class="text-sm text-base-content/60">{% translate "Start tracking your first application to see your progress here." %}</p>
+                    <a href="{% url 'jobs:add' %}" class="btn btn-primary btn-sm mt-4 gap-2">
                         <iconify-icon icon="octicon:plus-16"></iconify-icon>
                         {% translate "Add job application" %}
                     </a>
@@ -123,44 +123,42 @@
         </section>
 
         <!-- Activity -->
-        <div class="flex flex-col gap-6 xl:flex-row xl:items-start">
+        <div class="grid grid-cols-1 gap-8 xl:grid-cols-[2fr_1fr]">
             <!-- Recent applications -->
-            <section class="card w-full min-w-0 bg-base-100 shadow-sm ring-1 ring-base-content/5 xl:flex-[3]">
-                <div class="flex items-start justify-between gap-4 px-5 py-4 sm:px-6">
-                    <div class="min-w-0">
-                        <h2 class="text-base font-semibold sm:text-lg">{% translate "Recent applications" %}</h2>
-                        <p class="mt-0.5 text-xs text-base-content/50 sm:text-sm">{% translate "Track your latest updates" %}</p>
-                    </div>
+            <section class="card min-w-0 bg-base-100 shadow-sm ring-1 ring-base-content/5">
+                <div class="px-6 py-5">
+                    <h2 class="text-lg font-semibold">{% translate "Recent applications" %}</h2>
+                    <p class="mt-1 text-sm text-base-content/50">{% translate "Track your latest updates" %}</p>
                 </div>
                 {% if recent_jobs %}
                 <div class="divide-y divide-base-content/5 border-t border-base-content/5">
                     {% for job in recent_jobs %}
-                    <a href="{{ job.get_absolute_url }}" class="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-base-200/60 sm:px-6">
-                        <span class="min-w-0 flex-1">
-                            <span class="block truncate text-sm font-medium sm:text-base">{{ job.title }}</span>
-                            <span class="mt-0.5 block truncate text-xs text-base-content/50 sm:text-sm">{{ job.company }}{% if job.location %} · {{ job.location }}{% endif %}</span>
+                    <a href="{{ job.get_absolute_url }}" class="grid grid-cols-[1fr_auto] items-center gap-4 px-6 py-4 transition-colors hover:bg-base-200/60">
+                        <span class="min-w-0">
+                            <span class="block truncate text-base font-medium">{{ job.title }}</span>
+                            <span class="mt-1 block truncate text-sm text-base-content/50">{{ job.company }}{% if job.location %} · {{ job.location }}{% endif %}</span>
                         </span>
-                        <span class="flex shrink-0 items-center gap-3">
+                        <span class="flex shrink-0 items-center gap-4">
                             <span class="badge badge-sm {% if job.status == 'interested' %}badge-info{% elif job.status == 'applied' %}badge-warning{% elif job.status == 'interviewing' %}badge-success{% elif job.status == 'rejected' %}badge-error{% else %}badge-primary{% endif %}">{{ job.get_status_display }}</span>
-                            <span class="hidden w-20 text-right text-xs tabular-nums text-base-content/50 sm:block">{{ job.updated_at|date:"SHORT_DATE_FORMAT" }}</span>
+                            <span class="hidden w-20 text-right text-sm tabular-nums text-base-content/50 lg:block">{{ job.updated_at|date:"SHORT_DATE_FORMAT" }}</span>
                         </span>
                     </a>
                     {% endfor %}
                 </div>
                 <div class="border-t border-base-content/5 p-3">
-                    <a href="{% url 'jobs:list' %}" class="btn btn-ghost btn-sm w-full justify-center gap-1.5">
+                    <a href="{% url 'jobs:list' %}" class="btn btn-ghost btn-sm w-full justify-center gap-2">
                         {% translate "Explore all jobs" %}
                         <iconify-icon icon="octicon:arrow-right-16"></iconify-icon>
                     </a>
                 </div>
                 {% else %}
-                <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
-                    <span class="grid size-12 place-items-center rounded-full bg-primary/10 text-primary">
-                        <iconify-icon class="size-6" icon="octicon:briefcase-24"></iconify-icon>
+                <div class="flex flex-col items-center justify-center border-t border-base-content/5 px-6 py-16 text-center">
+                    <span class="grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
+                        <iconify-icon class="size-7" icon="octicon:briefcase-24"></iconify-icon>
                     </span>
-                    <p class="mt-4 text-sm font-medium sm:text-base">{% translate "No applications yet" %}</p>
-                    <p class="mt-1 text-xs text-base-content/50 sm:text-sm">{% translate "Add your first job to get started." %}</p>
-                    <a href="{% url 'jobs:add' %}" class="btn btn-primary btn-sm mt-5 gap-1.5">
+                    <p class="mt-5 text-base font-medium">{% translate "No applications yet" %}</p>
+                    <p class="mt-1.5 text-sm text-base-content/50">{% translate "Add your first job to get started." %}</p>
+                    <a href="{% url 'jobs:add' %}" class="btn btn-primary btn-sm mt-6 gap-2">
                         <iconify-icon icon="octicon:plus-16"></iconify-icon>
                         {% translate "Add job application" %}
                     </a>
@@ -168,43 +166,43 @@
                 {% endif %}
             </section>
 
-            <div class="flex w-full min-w-0 flex-col gap-6 xl:flex-[2]">
+            <div class="grid grid-cols-1 gap-8">
                 <!-- Upcoming events -->
                 <section class="card bg-base-100 shadow-sm ring-1 ring-base-content/5">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-base font-semibold sm:text-lg">{% translate "Upcoming events" %}</h2>
-                        <p class="mt-0.5 text-xs text-base-content/50 sm:text-sm">{% translate "Interviews and meetings" %}</p>
+                    <div class="px-6 py-5">
+                        <h2 class="text-lg font-semibold">{% translate "Upcoming events" %}</h2>
+                        <p class="mt-1 text-sm text-base-content/50">{% translate "Interviews and meetings" %}</p>
                     </div>
                     {% if upcoming_events %}
                     <div class="divide-y divide-base-content/5 border-t border-base-content/5">
                         {% for event in upcoming_events %}
-                        <a href="{{ event.get_absolute_url }}" class="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-base-200/60 sm:px-6">
-                            <span class="w-12 shrink-0 rounded-field border border-base-content/5 bg-base-200/70 py-1 text-center">
-                                <span class="block text-[10px] font-semibold uppercase tracking-wide text-primary">{{ event.date|date:"M" }}</span>
-                                <span class="block text-base font-bold leading-tight tabular-nums">{{ event.date|date:"j" }}</span>
+                        <a href="{{ event.get_absolute_url }}" class="grid grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4 transition-colors hover:bg-base-200/60">
+                            <span class="grid size-14 shrink-0 place-items-center rounded-2xl border border-base-content/5 bg-base-200/70">
+                                <span class="block text-[10px] font-bold uppercase leading-none tracking-wide text-primary">{{ event.date|date:"M" }}</span>
+                                <span class="mt-0.5 block text-lg font-bold leading-none tabular-nums">{{ event.date|date:"j" }}</span>
                             </span>
-                            <span class="min-w-0 flex-1">
-                                <span class="block truncate text-sm font-medium">{{ event.title }}</span>
-                                <span class="mt-0.5 block truncate text-xs text-base-content/50">{{ event.date|date:"H:i" }}{% if event.location %} · {{ event.location }}{% endif %}</span>
+                            <span class="min-w-0">
+                                <span class="block truncate text-base font-medium">{{ event.title }}</span>
+                                <span class="mt-1 block truncate text-sm text-base-content/50">{{ event.date|date:"H:i" }}{% if event.location %} · {{ event.location }}{% endif %}</span>
                             </span>
                             <span class="badge badge-sm badge-outline shrink-0 {% if event.event_type == 'interview' %}badge-primary{% elif event.event_type == 'meeting' %}badge-secondary{% elif event.event_type == 'followup' %}badge-accent{% else %}badge-info{% endif %}">{{ event.get_type_display }}</span>
                         </a>
                         {% endfor %}
                     </div>
                     <div class="border-t border-base-content/5 p-3">
-                        <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm w-full justify-center gap-1.5">
+                        <a href="{% url 'events:list' %}" class="btn btn-ghost btn-sm w-full justify-center gap-2">
                             {% translate "Explore all events" %}
                             <iconify-icon icon="octicon:arrow-right-16"></iconify-icon>
                         </a>
                     </div>
                     {% else %}
-                    <div class="flex flex-col items-center justify-center px-6 py-10 text-center">
-                        <span class="grid size-12 place-items-center rounded-full bg-secondary/15 text-secondary">
-                            <iconify-icon class="size-6" icon="octicon:calendar-24"></iconify-icon>
+                    <div class="flex flex-col items-center justify-center border-t border-base-content/5 px-6 py-12 text-center">
+                        <span class="grid size-14 place-items-center rounded-2xl bg-secondary/10 text-secondary">
+                            <iconify-icon class="size-7" icon="octicon:calendar-24"></iconify-icon>
                         </span>
-                        <p class="mt-4 text-sm font-medium sm:text-base">{% translate "No upcoming events" %}</p>
-                        <p class="mt-1 text-xs text-base-content/50 sm:text-sm">{% translate "Add an event to schedule an interview." %}</p>
-                        <a href="{% url 'events:add' %}" class="btn btn-primary btn-sm mt-5 gap-1.5">
+                        <p class="mt-5 text-base font-medium">{% translate "No upcoming events" %}</p>
+                        <p class="mt-1.5 text-sm text-base-content/50">{% translate "Add an event to schedule an interview." %}</p>
+                        <a href="{% url 'events:add' %}" class="btn btn-primary btn-sm mt-6 gap-2">
                             <iconify-icon icon="octicon:plus-16"></iconify-icon>
                             {% translate "Add event" %}
                         </a>
@@ -214,37 +212,37 @@
 
                 <!-- Recent contacts -->
                 <section class="card bg-base-100 shadow-sm ring-1 ring-base-content/5">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-base font-semibold sm:text-lg">{% translate "Recent contacts" %}</h2>
-                        <p class="mt-0.5 text-xs text-base-content/50 sm:text-sm">{% translate "Your professional network" %}</p>
+                    <div class="px-6 py-5">
+                        <h2 class="text-lg font-semibold">{% translate "Recent contacts" %}</h2>
+                        <p class="mt-1 text-sm text-base-content/50">{% translate "Your professional network" %}</p>
                     </div>
                     {% if recent_contacts %}
                     <div class="divide-y divide-base-content/5 border-t border-base-content/5">
                         {% for contact in recent_contacts %}
-                        <a href="{{ contact.get_absolute_url }}" class="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-base-200/60 sm:px-6">
-                            <span class="grid size-10 shrink-0 place-items-center rounded-full bg-accent/15 text-sm font-semibold text-accent">{{ contact.name|first|upper }}</span>
-                            <span class="min-w-0 flex-1">
-                                <span class="block truncate text-sm font-medium">{{ contact.name }}</span>
-                                <span class="mt-0.5 block truncate text-xs text-base-content/50">{% if contact.company %}{{ contact.company }}{% endif %}{% if contact.company and contact.position %} · {% endif %}{% if contact.position %}{{ contact.position }}{% endif %}{% if not contact.company and not contact.position %}{{ contact.email|default:contact.phone }}{% endif %}</span>
+                        <a href="{{ contact.get_absolute_url }}" class="grid grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4 transition-colors hover:bg-base-200/60">
+                            <span class="grid size-11 shrink-0 place-items-center rounded-full bg-accent/10 text-sm font-semibold text-accent">{{ contact.name|first|upper }}</span>
+                            <span class="min-w-0">
+                                <span class="block truncate text-base font-medium">{{ contact.name }}</span>
+                                <span class="mt-1 block truncate text-sm text-base-content/50">{% if contact.company %}{{ contact.company }}{% endif %}{% if contact.company and contact.position %} · {% endif %}{% if contact.position %}{{ contact.position }}{% endif %}{% if not contact.company and not contact.position %}{{ contact.email|default:contact.phone }}{% endif %}</span>
                             </span>
-                            <iconify-icon class="size-4 shrink-0 text-base-content/30" icon="octicon:chevron-right-16"></iconify-icon>
+                            <iconify-icon class="size-5 shrink-0 text-base-content/30" icon="octicon:chevron-right-16"></iconify-icon>
                         </a>
                         {% endfor %}
                     </div>
                     <div class="border-t border-base-content/5 p-3">
-                        <a href="{% url 'contacts:list' %}" class="btn btn-ghost btn-sm w-full justify-center gap-1.5">
+                        <a href="{% url 'contacts:list' %}" class="btn btn-ghost btn-sm w-full justify-center gap-2">
                             {% translate "Explore all contacts" %}
                             <iconify-icon icon="octicon:arrow-right-16"></iconify-icon>
                         </a>
                     </div>
                     {% else %}
-                    <div class="flex flex-col items-center justify-center px-6 py-10 text-center">
-                        <span class="grid size-12 place-items-center rounded-full bg-accent/15 text-accent">
-                            <iconify-icon class="size-6" icon="octicon:people-24"></iconify-icon>
+                    <div class="flex flex-col items-center justify-center border-t border-base-content/5 px-6 py-12 text-center">
+                        <span class="grid size-14 place-items-center rounded-2xl bg-accent/10 text-accent">
+                            <iconify-icon class="size-7" icon="octicon:people-24"></iconify-icon>
                         </span>
-                        <p class="mt-4 text-sm font-medium sm:text-base">{% translate "No contacts yet" %}</p>
-                        <p class="mt-1 text-xs text-base-content/50 sm:text-sm">{% translate "Start building your network." %}</p>
-                        <a href="{% url 'contacts:add' %}" class="btn btn-primary btn-sm mt-5 gap-1.5">
+                        <p class="mt-5 text-base font-medium">{% translate "No contacts yet" %}</p>
+                        <p class="mt-1.5 text-sm text-base-content/50">{% translate "Start building your network." %}</p>
+                        <a href="{% url 'contacts:add' %}" class="btn btn-primary btn-sm mt-6 gap-2">
                             <iconify-icon icon="octicon:plus-16"></iconify-icon>
                             {% translate "Add contact" %}
                         </a>
@@ -256,21 +254,21 @@
     </div>
 </div>
 
-<!-- Modals with updated styling -->
+<!-- Modals -->
 <dialog id="quickAdd" class="modal">
-    <div class="modal-box bg-base-100 text-base-content">
-        <h3 class="font-bold text-lg mb-4">{% translate "Quick add" %}</h3>
-        <div class="flex flex-col gap-2">
-            <a href="{% url 'jobs:add' %}" class="btn btn-neutral justify-start gap-3">
-                <iconify-icon icon="octicon:briefcase-24"></iconify-icon>
+    <div class="modal-box">
+        <h3 class="text-lg font-bold">{% translate "Quick add" %}</h3>
+        <div class="mt-6 grid gap-3">
+            <a href="{% url 'jobs:add' %}" class="btn btn-neutral justify-start gap-3 text-left">
+                <iconify-icon class="size-5" icon="octicon:briefcase-24"></iconify-icon>
                 {% translate "Add job application" %}
             </a>
-            <a href="{% url 'events:add' %}" class="btn btn-neutral justify-start gap-3">
-                <iconify-icon icon="octicon:calendar-24"></iconify-icon>
+            <a href="{% url 'events:add' %}" class="btn btn-neutral justify-start gap-3 text-left">
+                <iconify-icon class="size-5" icon="octicon:calendar-24"></iconify-icon>
                 {% translate "Add event" %}
             </a>
-            <a href="{% url 'contacts:add' %}" class="btn btn-neutral justify-start gap-3">
-                <iconify-icon icon="octicon:people-24"></iconify-icon>
+            <a href="{% url 'contacts:add' %}" class="btn btn-neutral justify-start gap-3 text-left">
+                <iconify-icon class="size-5" icon="octicon:people-24"></iconify-icon>
                 {% translate "Add contact" %}
             </a>
         </div>
@@ -287,58 +285,57 @@
 
 <!-- Search Modal -->
 <dialog id="searchFilters" class="modal">
-    <div class="modal-box max-w-2xl relative bg-base-100 text-base-content">
-        <!-- Close Button at Top-Right -->
-        <button type="button" class="btn btn-sm btn-ghost absolute top-2 right-2"
+    <div class="modal-box max-w-2xl">
+        <button type="button" class="btn btn-sm btn-ghost btn-circle absolute right-4 top-4"
                 onclick="document.getElementById('searchFilters').close()">
             <iconify-icon icon="octicon:x-16"></iconify-icon>
         </button>
 
-        <h3 class="font-bold text-lg mb-4">{% translate "Find what you need" %}</h3>
-        <form method="GET" class="space-y-4" id="searchForm">
-            <!-- Search Input with Widget Tweaks -->
-            <div class="form-control">
+        <h3 class="text-lg font-bold">{% translate "Find what you need" %}</h3>
+        <form method="GET" class="mt-6 space-y-6" id="searchForm">
+            <!-- Search Input -->
+            <fieldset>
                 <div class="relative">
-                    <label class="input flex items-center gap-2 pr-2">
-                        {% render_field search_form.search %}
+                    <label class="input flex items-center gap-2">
+                        {% render_field search_form.search class="grow" %}
                         <span id="searchLoading" class="loading loading-spinner loading-sm hidden"></span>
-                        <iconify-icon class="h-4 w-4 opacity-70" icon="octicon:search-16"></iconify-icon>
+                        <iconify-icon class="size-4 opacity-70" icon="octicon:search-16"></iconify-icon>
                     </label>
                     <!-- Live Search Results -->
                     <div id="searchResults" 
-                         class="hidden absolute top-full left-0 right-0 mt-1 bg-base-100 rounded-box shadow-lg border border-base-300 max-h-64 overflow-y-auto z-50"
+                         class="absolute left-0 right-0 top-full z-50 mt-2 hidden max-h-64 overflow-y-auto rounded-box border border-base-300 bg-base-100 shadow-lg"
                          role="listbox"
                          aria-label="{% translate "Search suggestions" %}">
                     </div>
                 </div>
-            </div>
+            </fieldset>
 
-            <!-- Filter Section with Widget Tweaks -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="form-control">
+            <!-- Filters -->
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <fieldset>
                     <label class="label">
-                        <span class="label-text">{% translate "Status" %}</span>
+                        <span class="label-text font-medium">{% translate "Status" %}</span>
                     </label>
                     {% render_field search_form.status class="select w-full" %}
-                </div>
+                </fieldset>
                 
-                <div class="form-control">
+                <fieldset>
                     <label class="label">
-                        <span class="label-text">{% translate "Type" %}</span>
+                        <span class="label-text font-medium">{% translate "Type" %}</span>
                     </label>
                     {% render_field search_form.type class="select w-full" %}
-                </div>
+                </fieldset>
             </div>
             
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-2">
-                <button type="submit" class="btn btn-primary flex-1">
-                    <iconify-icon icon="octicon:filter-16" class="mr-2"></iconify-icon>
+            <!-- Actions -->
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button type="submit" class="btn btn-primary gap-2">
+                    <iconify-icon icon="octicon:filter-16"></iconify-icon>
                     {% translate "Apply filters" %}
                 </button>
                 {% if search_query or status_filter %}
-                    <a href="{% url 'home:home' %}" class="btn btn-ghost">
-                        <iconify-icon icon="octicon:x-16" class="mr-2"></iconify-icon>
+                    <a href="{% url 'home:home' %}" class="btn btn-ghost gap-2">
+                        <iconify-icon icon="octicon:x-16"></iconify-icon>
                         {% translate "Clear all" %}
                     </a>
                 {% endif %}
