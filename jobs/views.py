@@ -9,22 +9,99 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     TemplateView,
+    View,
 )
 from django.views.generic.edit import FormMixin
-from django.views import View
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from openai import OpenAI
 import json
+from datetime import date, timedelta
 
-from .models import JobPosting, SkillTreeModel
+from .models import (
+    JobPosting,
+    SkillTreeModel,
+    UserProfile,
+    ObligationPlan,
+    Application,
+    EvidenceFile,
+    Submission,
+    Vermittlungsvorschlag,
+    Absence,
+    Obstacle,
+)
+from events.models import Event
+from . import pdf as nachweis_pdf
+from . import exports as nachweis_exports
 from .forms import JobPostingForm
 from .components.job_list_component import JobListComponent
 from .components.job_detail_component import JobDetailComponent
 
+
+EXPORT_PROFILES = {
+    "BA_MINIMAL": _("BA-Minimal (official form orientation)"),
+    "JOBCENTER_LIST": _("Jobcenter list"),
+    "CUSTOM_COLUMNS": _("Consultation overview (internal)"),
+    "KOSTENBELEG": _("Costs of efforts (Kostenbeleg)"),
+}
+
+def _get_profile(user):
+    profile, _created = UserProfile.objects.get_or_create(user=user)
+    return profile
+
+def _get_active_plan(user):
+    return (
+        ObligationPlan.objects.filter(user=user, is_active=True)
+        .order_by("-valid_from", "-created_at")
+        .first()
+    )
+
+def _parse_period(request, default_month=None):
+    """Return (start, end, label) from GET params: month / rolling / custom."""
+    month = request.GET.get("month") or default_month
+    if request.GET.get("period") == "rolling":
+        end = date.today()
+        return end - timedelta(days=29), end, _("Last 30 days")
+    if request.GET.get("period") == "custom":
+        try:
+            start = date.fromisoformat(request.GET.get("start"))
+            end = date.fromisoformat(request.GET.get("end"))
+            return start, end, f"{start:%d.%m.%Y} – {end:%d.%m.%Y}"
+        except (ValueError, TypeError):
+            pass
+    if month:
+        try:
+            year, mon = (int(part) for part in month.split("-"))
+            start = date(year, mon, 1)
+            if mon == 12:
+                end = date(year + 1, 1, 1) - timedelta(days=1)
+            else:
+                end = date(year, mon + 1, 1) - timedelta(days=1)
+            return start, end, start.strftime("%Y-%m")
+        except (ValueError, TypeError):
+            pass
+    today = date.today()
+    start = today.replace(day=1)
+    if today.month == 12:
+        end = date(today.year + 1, 1, 1) - timedelta(days=1)
+    else:
+        end = date(today.year, today.month + 1, 1) - timedelta(days=1)
+    return start, end, start.strftime("%Y-%m")
+
+def _nachweisbar_qs(user, start, end):
+    return Application.objects.filter(
+        user=user,
+        applied_on__gte=start,
+        applied_on__lte=end,
+    ).exclude(job_title="").exclude(employer_name="").order_by("applied_on")
+
+def _export_profile(request):
+    raw = request.GET.get("profile", "")
+    return raw if raw in EXPORT_PROFILES else nachweis_pdf.JOBCENTER_LIST
 
 def api_skills(request):
     """API endpoint to get all skills"""
@@ -99,7 +176,7 @@ JOB POSTING:
 class JobListView(LoginRequiredMixin, ListView):
     template_name = 'jobs/list.html'
     context_object_name = 'jobs'
-    
+
     def get_queryset(self):
         filter_param = self.request.GET.get('filter', 'all')
         skill_name = self.request.GET.get('skill', '')
@@ -149,6 +226,151 @@ class JobListView(LoginRequiredMixin, ListView):
                 jobs__user=self.request.user
             ).values_list('name', flat=True).distinct()[:50]
         )
+        return context
+
+
+class JobDashboardView(LoginRequiredMixin, TemplateView):
+    """Unified Jobs + Nachweis dashboard."""
+    template_name = 'jobs/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        start, end, label = _parse_period(self.request)
+        profile = _get_profile(user)
+        plan = _get_active_plan(user)
+        all_in_range = Application.objects.filter(
+            user=user,
+            applied_on__gte=start,
+            applied_on__lte=end,
+        ).order_by("applied_on", "employer_name")
+        nachweisbar = [a for a in all_in_range if a.is_nachweisbar]
+        blockers = [a for a in all_in_range if not a.is_nachweisbar]
+        target = plan.required_count if plan else None
+        due_on = plan.next_due_on() if plan else None
+        next_appointment = (
+            Event.objects.filter(user=user, date__gte=timezone.now())
+            .order_by("date")
+            .first()
+        )
+        export_profile = _export_profile(self.request)
+        open_vvs = Vermittlungsvorschlag.objects.filter(
+            user=user, status=Vermittlungsvorschlag.Status.OPEN
+        )
+        unreported_absences = Absence.objects.filter(
+            user=user, approval_status=Absence.ApprovalStatus.PENDING
+        )
+        recent_obstacles = Obstacle.objects.filter(user=user)[:10]
+        last_submission = Submission.objects.filter(user=user).first()
+        
+        # Compliance timeline, newest first
+        timeline_items = []
+        for app in nachweisbar:
+            timeline_items.append({
+                'type': 'application',
+                'title': f"{app.employer_name} — {app.job_title}",
+                'subtitle': app.get_channel_display() or '',
+                'date': app.applied_on,
+                'badge': None,
+                'badge_type': None,
+                'edit_url': reverse('jobs:application_edit', kwargs={'pk': app.pk}),
+            })
+        for vv in open_vvs:
+            timeline_items.append({
+                'type': 'vv',
+                'title': f"{vv.employer_name} — {vv.job_title or ''}",
+                'subtitle': _("Placement proposal"),
+                'date': vv.received_on,
+                'badge': _("overdue") if vv.is_overdue else None,
+                'badge_type': 'error' if vv.is_overdue else None,
+                'edit_url': reverse('jobs:vv_edit', kwargs={'pk': vv.pk}),
+            })
+        for absence in unreported_absences:
+            timeline_items.append({
+                'type': 'absence',
+                'title': _("Absence (Ortsabwesenheit)"),
+                'subtitle': (
+                    f"{absence.from_date:%d.%m.}–{absence.to_date:%d.%m.%Y}"
+                    f" — {absence.destination or ''}"
+                ),
+                'date': absence.from_date,
+                'badge': _("not reported"),
+                'badge_type': 'error',
+                'edit_url': reverse('jobs:absence_edit', kwargs={'pk': absence.pk}),
+            })
+        for o in recent_obstacles:
+            timeline_items.append({
+                'type': 'obstacle',
+                'title': _("Obstacle (wichtiger Grund)"),
+                'subtitle': f"{o.get_kind_display()} — {o.note or ''}",
+                'date': o.date,
+                'badge': None,
+                'badge_type': None,
+                'edit_url': reverse('jobs:obstacle_edit', kwargs={'pk': o.pk}),
+            })
+        timeline_items.sort(key=lambda item: item['date'], reverse=True)
+
+        # Job postings with the same filters as the former job list
+        active_filter = self.request.GET.get('filter', 'all')
+        active_skill = self.request.GET.get('skill', '')
+        jobs = JobPosting.objects.filter(user=user).order_by('-created_at')
+        if active_filter == 'favorites':
+            jobs = jobs.filter(favorites=user).distinct()
+        elif active_filter == 'recent':
+            jobs = jobs.order_by('-updated_at')[:10]
+        elif active_filter == 'active':
+            jobs = jobs.filter(status__in=['applied', 'interviewing'])
+        elif active_filter == 'interviewing':
+            jobs = jobs.filter(status='interviewing')
+        elif active_filter == 'applied':
+            jobs = jobs.filter(status='applied')
+        elif active_filter == 'rejected':
+            jobs = jobs.filter(status='rejected')
+        elif active_filter == 'accepted':
+            jobs = jobs.filter(status='accepted')
+        elif active_filter == 'interested':
+            jobs = jobs.filter(status='interested')
+        if active_skill:
+            jobs = jobs.filter(skills__name__icontains=active_skill)
+        jobs = jobs.prefetch_related('eigenbemuehungen', 'skills')
+        favorite_job_ids = list(
+            user.favorited_jobs.values_list('id', flat=True)
+        )
+        skill_names = list(
+            SkillTreeModel.objects.filter(jobs__user=user)
+            .values_list('name', flat=True).distinct()[:50]
+        )
+        
+        context.update({
+            'profile': profile,
+            'plan': plan,
+            'plan_is_vague': plan.is_vague if plan else False,
+            'plan_missing': plan.missing_components if plan else [],
+            'period_label': label,
+            'period_start': start,
+            'period_end': end,
+            'count': len(nachweisbar),
+            'target': target,
+            'due_on': due_on,
+            'days_until_due': (due_on - date.today()).days if due_on else None,
+            'last_submitted_on': plan.last_submitted_on if plan else None,
+            'last_submission': last_submission,
+            'blockers': blockers,
+            'export_profile': export_profile,
+            'export_profiles': EXPORT_PROFILES,
+            'current_month': date.today().strftime("%Y-%m"),
+            'next_appointment': next_appointment,
+            'open_vvs': open_vvs,
+            'unreported_absences': unreported_absences,
+            'recent_obstacles': recent_obstacles,
+            'applications': nachweisbar,
+            'timeline_items': timeline_items,
+            'jobs': jobs,
+            'favorite_job_ids': favorite_job_ids,
+            'active_filter': active_filter,
+            'active_skill': active_skill,
+            'skill_names': skill_names,
+        })
         return context
 
 
@@ -248,21 +470,7 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 # Nachweis von Eigenbemühungen (Agentur für Arbeit / Jobcenter)
 # ---------------------------------------------------------------------------
 
-from datetime import date, timedelta
 from django.http import HttpResponse
-from django.utils.translation import gettext as _
-
-from .models import (
-    JobPosting,
-    UserProfile,
-    ObligationPlan,
-    Application,
-    EvidenceFile,
-    Submission,
-    Vermittlungsvorschlag,
-    Absence,
-    Obstacle,
-)
 from .forms import (
     ApplicationForm,
     ObligationPlanForm,
@@ -271,28 +479,6 @@ from .forms import (
     AbsenceForm,
     ObstacleForm,
 )
-from . import pdf as nachweis_pdf
-from . import exports as nachweis_exports
-
-EXPORT_PROFILES = {
-    "BA_MINIMAL": _("BA-Minimal (official form orientation)"),
-    "JOBCENTER_LIST": _("Jobcenter list"),
-    "CUSTOM_COLUMNS": _("Consultation overview (internal)"),
-    "KOSTENBELEG": _("Costs of efforts (Kostenbeleg)"),
-}
-
-
-def _get_profile(user):
-    profile, _created = UserProfile.objects.get_or_create(user=user)
-    return profile
-
-
-def _get_active_plan(user):
-    return (
-        ObligationPlan.objects.filter(user=user, is_active=True)
-        .order_by("-valid_from", "-created_at")
-        .first()
-    )
 
 
 def _parse_period(request, default_month=None):

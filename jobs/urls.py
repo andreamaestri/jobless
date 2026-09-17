@@ -7,7 +7,7 @@ app_name = 'jobs'
 
 urlpatterns = [
     path('api/skills/', views.api_skills, name='api_skills'),
-    path('', views.JobListView.as_view(), name='list'),
+    path('', views.JobDashboardView.as_view(), name='list'),
     path('add/', views.JobCreateView.as_view(), name='add'),
     path('<int:pk>/', views.JobPostingDetailView.as_view(), name='detail'),
     path('<int:pk>/edit/', views.JobPostingUpdateView.as_view(), name='edit'),
@@ -20,7 +20,7 @@ urlpatterns = [
         'skill-tags-autocomplete/',
         django_tagulous.views.autocomplete,
         {'tag_model': SkillTag},
-        name='skill_tags_autocomplete'  # Matches the TagMeta autocomplete_view
+        name='skill_tags_autocomplete'
     ),
     path(
         'application-tags-autocomplete/',
@@ -28,7 +28,7 @@ urlpatterns = [
         {'tag_model': ApplicationTag},
         name='application_tags_autocomplete'
     ),
-    # Nachweis von Eigenbemühungen
+    # Nachweis von Eigenbemühungen (kept for backward compatibility)
     path('nachweis/', views.NachweisDashboardView.as_view(), name='nachweis'),
     path('nachweis/add/', views.ApplicationCreateView.as_view(), name='application_add'),
     path('nachweis/<int:pk>/', views.ApplicationDetailView.as_view(), name='application_detail'),
