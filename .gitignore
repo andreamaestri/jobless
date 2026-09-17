@@ -69,3 +69,6 @@ dist-ssr
 # Project-specific
 cloudinary_python.txt
 heroku.txt
+
+# Added by ggshield
+.cache_ggshield
