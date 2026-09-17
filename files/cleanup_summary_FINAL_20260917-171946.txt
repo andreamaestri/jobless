@@ -1,0 +1,25 @@
+Secret cleanup performed (automated run):
+
+Files removed from git history and from current tree:
+- .vscode/uptime.sh
+- key.txt
+Also removed from history: .vscode/arctictern.py, .vscode/heroku_config.sh, .vscode/init_tasks.sh, .vscode/make_url.py, .vscode/settings.json
+
+Backup tag created and pushed: backup-before-secret-cleanup-$TS (if tag push existed earlier the remote may already have a tag with similar name)
+Repository branch cleaned and force-pushed: main (forced update)
+Origin: https://github.com/andreamaestri/jobless.git
+Server repo updated at /srv/django/jobless on host 'oci-django' (reset to origin/main)
+
+Files not committed (left local): files/server_jobless.env (copied from server; DO NOT commit)
+
+Immediate remediation checklist (ACTION REQUIRED):
+1) Revoke and replace any SSH private keys found (private key contents were detected in key.txt). If those keys were used on servers, rotate and remove old keys from authorized_keys.
+2) Rotate any API keys or tokens found in .vscode/uptime.sh or other scripts (recreate tokens and update services).
+3) Notify all collaborators: this repo history was rewritten and main was force-pushed; they must re-clone or run the recovery steps (git fetch && git reset --hard origin/main).
+4) Verify CI/CD and deploy keys, then run full test suite and smoke tests on the server.
+
+If you want, I can:
+- generate a git-filter-repo command log and SAFETY snapshot (reflogs) for audit
+- open a PR with suggested .gitignore additions (already committed)
+- help create replacement keys and rotate specific services if credentials and access are provided
+

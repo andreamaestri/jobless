@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load widget_tweaks %}
+
+<div class="p-4">
+  <h2 class="text-lg font-semibold mb-2">{% translate "My data" %}</h2>
+  <p class="text-sm text-base-content/70 mb-4">{% translate "Edit your contact and official profile information." %}</p>
+
+  <form method="post" action="{% url 'jobs:profile_edit' %}" hx-post="{% url 'jobs:profile_drawer' %}" hx-target="#drawer-content" hx-swap="innerHTML" class="bg-base-100/80 shadow rounded-lg p-4">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 gap-3">
+      {% for field in form %}
+      <div>
+        <label class="label text-sm mb-1" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="text-error">*</span>{% endif %}</label>
+        {% render_field field %}
+        {% if field.help_text %}<p class="text-xs text-base-content/60 mt-1">{{ field.help_text }}</p>{% endif %}
+        {% for e in field.errors %}<p class="text-error text-xs mt-1">{{ e }}</p>{% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4 flex justify-end gap-2">
+      <button type="button" @click="$dispatch('close-drawer')" class="btn btn-ghost">{% translate "Cancel" %}</button>
+      <button type="submit" class="btn btn-primary">{% translate "Save" %}</button>
+    </div>
+  </form>
+</div>

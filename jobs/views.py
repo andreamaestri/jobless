@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db.models import Q
@@ -370,6 +370,8 @@ class JobDashboardView(LoginRequiredMixin, TemplateView):
             'active_filter': active_filter,
             'active_skill': active_skill,
             'skill_names': skill_names,
+            # expose Application result choices for inline select
+            'application_result_choices': list(Application.Result.choices),
         })
         return context
 
@@ -761,6 +763,129 @@ class UserProfileEditView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("jobs:nachweis")
+
+
+@login_required
+def plan_drawer(request):
+    user = request.user
+    plan = _get_active_plan(user)
+    if request.method == 'POST':
+        form = ObligationPlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            inst = form.save(commit=False)
+            inst.user = user
+            inst.save()
+            # Return a small success fragment for HTMX and signal the client to close the drawer
+            return HttpResponse('<div class="p-4"><div class="text-sm text-success">' + _('Obligation plan saved.') + '</div><script>window.dispatchEvent(new Event("close-drawer"));</script></div>')
+        else:
+            return render(request, 'jobs/partials/plan_drawer.html', {'form': form})
+    form = ObligationPlanForm(instance=plan)
+    return render(request, 'jobs/partials/plan_drawer.html', {'form': form})
+
+
+@login_required
+def profile_drawer(request):
+    user = request.user
+    profile = _get_profile(user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            inst = form.save(commit=False)
+            inst.user = user
+            inst.save()
+            # Return a small success fragment for HTMX and signal the client to close the drawer
+            return HttpResponse('<div class="p-4"><div class="text-sm text-success">' + _('Profile saved.') + '</div><script>window.dispatchEvent(new Event("close-drawer"));</script></div>')
+        else:
+            return render(request, 'jobs/partials/profile_drawer.html', {'form': form})
+    form = UserProfileForm(instance=profile)
+    return render(request, 'jobs/partials/profile_drawer.html', {'form': form})
+
+
+@login_required
+def application_drawer(request):
+    """Render or process the quick-add/edit drawer for Applications.
+    Accepts optional GET/POST 'pk' for editing an existing Application.
+    """
+    pk = request.GET.get('pk') or request.POST.get('pk')
+    instance = None
+    if pk:
+        instance = get_object_or_404(Application, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST, instance=instance, user=request.user)
+        if form.is_valid():
+            app = form.save(commit=False)
+            app.user = request.user
+            app.save()
+            # warn if date changed (maintain existing UX)
+            if 'applied_on' in form.changed_data:
+                msg = _('Job search effort updated.')
+            else:
+                msg = _('Job search effort saved.')
+            # Return a small success fragment for HTMX and signal the client to close the drawer
+            return HttpResponse('<div class="p-4"><div class="text-sm text-success">' + msg + '</div><script>window.dispatchEvent(new Event("close-drawer"));</script></div>')
+        else:
+            return render(request, 'jobs/partials/application_drawer.html', {'form': form})
+    form = ApplicationForm(instance=instance, user=request.user)
+    return render(request, 'jobs/partials/application_drawer.html', {'form': form})
+
+
+@login_required
+def application_inline_update(request, pk):
+    """JSON endpoint for inline edits (date/status) on Application rows.
+    Performs a minimal, safe partial update on allowed fields and preserves
+    Application.save() (and its AuditLog behaviour) by updating the instance
+    and calling full_clean()/save().
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    app = get_object_or_404(Application, pk=pk, user=request.user)
+    # Accept JSON or form-encoded
+    data = {}
+    if request.content_type == 'application/json':
+        try:
+            data = json.loads(request.body.decode('utf-8') or '{}')
+        except Exception:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        data = request.POST.dict()
+    # Allowed fields for inline update
+    allowed = {'applied_on', 'result', 'result_date'}
+    updates = {k: v for k, v in data.items() if k in allowed}
+    if not updates:
+        return JsonResponse({'error': 'No updatable field provided'}, status=400)
+    # Parse and apply values
+    from django.core.exceptions import ValidationError
+    from django.utils.dateparse import parse_date
+    try:
+        if 'applied_on' in updates:
+            parsed = parse_date(updates['applied_on'])
+            if not parsed:
+                raise ValidationError({'applied_on': ['Invalid date format']})
+            app.applied_on = parsed
+        if 'result_date' in updates:
+            parsed = parse_date(updates['result_date'])
+            if not parsed:
+                raise ValidationError({'result_date': ['Invalid date format']})
+            app.result_date = parsed
+        if 'result' in updates:
+            app.result = updates['result']
+        # Validate model instance (will use existing field values for required fields)
+        app.full_clean()
+        app.save()
+        # Prepare response with updated values
+        resp = {}
+        for f in updates:
+            val = getattr(app, f)
+            if hasattr(val, 'isoformat'):
+                resp[f] = val.isoformat()
+            else:
+                resp[f] = val
+        return JsonResponse({'success': True, 'updated': resp})
+    except ValidationError as e:
+        # Return field errors
+        return JsonResponse({'success': False, 'errors': e.message_dict}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 class NachweisExportView(LoginRequiredMixin, TemplateView):

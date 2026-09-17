@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+{% load static %}
+{% load job_tags %}
+{% load component_tags %}
+{% load i18n %}
+
+{% block title %}{% translate "Jobs" %} — Jobless{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col page-transition-wrapper"
+     x-data="{ favoriteJobs: new Set([{% for id in favorite_job_ids %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}]), drawerOpen: false, drawerContentUrl: '', drawerTitle: '', openDrawer(url, title){ this.drawerContentUrl = url; this.drawerTitle = title || ''; this.drawerOpen = true; this.$nextTick(()=>{ /* htmx will fill content */ }); }, closeDrawer(){ this.drawerOpen = false; this.drawerContentUrl = ''; this.drawerTitle = ''; } }"
+     x-on:close-drawer.window="closeDrawer()">
+  <div class="flex-1 page-enter">
+    <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
+      <div class="max-w-6xl mx-auto">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+          <div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">{% translate "Jobs" %}</h1>
+            <p class="text-base-content/70 mt-2 text-sm sm:text-base">{% translate "Track applications and document your job search efforts" %}</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <a href="{% url 'jobs:add' %}" class="btn btn-primary">
+              <iconify-icon icon="octicon:plus-16"></iconify-icon>
+              {% translate "Add job" %}
+            </a>
+            <a href="{% url 'jobs:application_add' %}" class="btn btn-outline">
+              <iconify-icon icon="octicon:plus-16"></iconify-icon>
+              {% translate "Add effort" %}
+            </a>
+            <button type="button" class="btn btn-outline" @click="openDrawer('{% url 'jobs:application_drawer' %}', '{% translate "Add effort" %}')" hx-get="{% url 'jobs:application_drawer' %}" hx-target="#drawer-content" hx-swap="innerHTML">
+              <iconify-icon icon="octicon:plus-16"></iconify-icon>
+              {% translate "Add (drawer)" %}
+            </button>
+            <details class="dropdown dropdown-end">
+              <summary class="btn btn-outline">
+                <iconify-icon icon="octicon:download-16"></iconify-icon>
+                {% translate "Export" %}
+              </summary>
+              <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-56 p-2 shadow">
+                <li><a href="{% url 'jobs:nachweis_pdf' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">PDF</a></li>
+                <li><a href="{% url 'jobs:nachweis_preview' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">{% translate "Preview" %}</a></li>
+                <li><a href="{% url 'jobs:nachweis_csv' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">CSV</a></li>
+                <li><a href="{% url 'jobs:nachweis_json' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">JSON</a></li>
+                <li><a href="{% url 'jobs:nachweis_zip' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">ZIP</a></li>
+              </ul>
+            </details>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert mb-6 text-sm">
+          <iconify-icon icon="octicon:info-16"></iconify-icon>
+          <span>{% translate "For documentation purposes only. The binding requirements are your Kooperationsplan / Eingliederungsvereinbarung / Bescheid." %}</span>
+        </div>
+
+        <!-- Vague plan banner -->
+        {% if plan and plan_is_vague %}
+        <div class="alert alert-warning mb-6">
+          <iconify-icon icon="octicon:alert-16"></iconify-icon>
+          <div>
+            <div class="font-semibold">{% translate "Your plan does not yet pin down all four required components" %}</div>
+            <div class="text-sm">
+              {% translate "The office must state WHICH efforts, HOW MANY, in WHICH FORM and BY WHICH DEADLINE — otherwise a Bescheid can be legally attackable. There is no nationwide number." %}
+              <a class="link" href="{% url 'jobs:plan_edit' %}">{% translate "Edit plan" %}</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Recorded" %} ({{ period_label }})</div>
+            <div class="stat-value text-primary">
+              {{ count }}{% if target %} / {{ target }}{% endif %}
+            </div>
+            <div class="stat-desc">
+              {% if target %}
+                {% translate "Target from your plan — not a legal nationwide number" %}
+              {% else %}
+                {% translate "No target configured" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Due" %}</div>
+            <div class="stat-value text-base-content">{{ due_on|date:"d.m.Y"|default:"—" }}</div>
+            <div class="stat-desc">
+              {% if days_until_due is not None %}
+                {% blocktranslate with n=days_until_due %}in {{ n }} days{% endblocktranslate %}
+              {% else %}
+                {% translate "see your plan / appointment" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Last submitted" %}</div>
+            <div class="stat-value text-base-content">{{ last_submitted_on|date:"d.m.Y"|default:"—" }}</div>
+            <div class="stat-desc">
+              {% if last_submission %}
+                {{ last_submission.get_profile_display }}
+              {% else %}
+                {% translate "no export yet" %}
+              {% endif %}
+            </div>
+          </div>
+          <div class="stat bg-base-200/60 rounded-2xl shadow">
+            <div class="stat-title text-sm">{% translate "Next appointment" %}</div>
+            <div class="stat-value text-base-content">
+              {{ next_appointment.date|date:"d.m."|default:"—" }}
+            </div>
+            <div class="stat-desc">{{ next_appointment.title|default:"—" }}</div>
+          </div>
+        </div>
+
+        <!-- Period filter -->
+        <div class="bg-base-200/40 rounded-2xl p-4 mb-6">
+          <form method="get" class="flex flex-wrap items-end gap-3">
+            <div>
+              <label class="label text-sm pb-1" for="month">{% translate "Calendar month" %}</label>
+              <input type="month" id="month" name="month" value="{{ request.GET.month|default:current_month }}"
+                     class="input input-sm w-44" />
+            </div>
+            <div>
+              <label class="label text-sm pb-1" for="period">{% translate "Or range" %}</label>
+              <select id="period" name="period" class="select select-sm w-44">
+                <option value="">{% translate "Calendar month" %}</option>
+                <option value="rolling" {% if request.GET.period == 'rolling' %}selected{% endif %}>{% translate "Last 30 days" %}</option>
+                <option value="custom" {% if request.GET.period == 'custom' %}selected{% endif %}>{% translate "Custom range" %}</option>
+              </select>
+            </div>
+            <div>
+              <label class="label text-sm pb-1 opacity-0" for="start">{% translate "From" %}</label>
+              <input type="date" id="start" name="start" value="{{ request.GET.start }}" class="input input-sm w-40" />
+            </div>
+            <div>
+              <label class="label text-sm pb-1 opacity-0" for="end">{% translate "To" %}</label>
+              <input type="date" id="end" name="end" value="{{ request.GET.end }}" class="input input-sm w-40" />
+            </div>
+            {% if active_filter != 'all' %}<input type="hidden" name="filter" value="{{ active_filter }}" />{% endif %}
+            {% if active_skill %}<input type="hidden" name="skill" value="{{ active_skill }}" />{% endif %}
+            <button type="submit" class="btn btn-sm btn-outline">{% translate "Filter" %}</button>
+          </form>
+        </div>
+
+        <!-- Blockers -->
+        {% if blockers %}
+        <div class="alert alert-warning mb-6">
+          <div>
+            <div class="font-semibold">{% translate "Not yet exportable (missing job title or employer):" %}</div>
+            {% for a in blockers %}
+              <div class="text-sm">
+                <a class="link" href="{% url 'jobs:application_edit' a.pk %}">{{ a.applied_on|date:"d.m.Y" }} — {{ a.employer_name|default:"?" }}</a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Tabs: job postings / efforts / timeline -->
+        <div role="tablist" class="tabs tabs-box mb-8">
+          <input type="radio" name="dashboard_tabs" role="tab" class="tab"
+                 aria-label="{% translate 'Job postings' %}" checked="checked" />
+          <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-4 sm:p-6">
+            <!-- Quick filters -->
+            <div class="flex flex-col lg:flex-row gap-3 mb-4">
+              <div class="flex gap-2 overflow-x-auto scrollbar-none pb-1 lg:pb-0">
+                <a href="{% url 'jobs:list' %}"
+                   class="btn btn-sm {% if active_filter == 'all' %}btn-primary{% else %}btn-outline{% endif %}">
+                  {% translate "All" %}
+                </a>
+                <a href="{% url 'jobs:list' %}?filter=interested"
+                   class="btn btn-sm {% if active_filter == 'interested' %}btn-primary{% else %}btn-outline{% endif %}">
+                  {% translate "Interested" %}
+                </a>
+                <a href="{% url 'jobs:list' %}?filter=applied"
+                   class="btn btn-sm {% if active_filter == 'applied' %}btn-primary{% else %}btn-outline{% endif %}">
+                  {% translate "Applied" %}
+                </a>
+                <a href="{% url 'jobs:list' %}?filter=interviewing"
+                   class="btn btn-sm {% if active_filter == 'interviewing' %}btn-primary{% else %}btn-outline{% endif %}">
+                  {% translate "Interviewing" %}
+                </a>
+                <a href="{% url 'jobs:list' %}?filter=rejected"
+                   class="btn btn-sm {% if active_filter == 'rejected' %}btn-primary{% else %}btn-outline{% endif %}">
+                  {% translate "Rejected" %}
+                </a>
+                <a href="{% url 'jobs:list' %}?filter=accepted"
+                   class="btn btn-sm {% if active_filter == 'accepted' %}btn-primary{% else %}btn-outline{% endif %}">
+                  {% translate "Accepted" %}
+                </a>
+                <a href="{% url 'jobs:list' %}?filter=favorites"
+                   class="btn btn-sm {% if active_filter == 'favorites' %}btn-primary{% else %}btn-outline{% endif %}">
+                  <iconify-icon icon="octicon:star-24"></iconify-icon>
+                  {% translate "Favorites" %}
+                </a>
+              </div>
+              {% if skill_names %}
+              <form method="get" class="flex gap-2">
+                {% if active_filter != 'all' %}<input type="hidden" name="filter" value="{{ active_filter }}" />{% endif %}
+                <select name="skill" class="select select-sm w-full lg:w-64"
+                        onchange="this.form.submit()">
+                  <option value="">{% translate "All skills" %}</option>
+                  {% for s in skill_names %}
+                  <option value="{{ s }}" {% if active_skill == s %}selected{% endif %}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+                {% if active_skill %}
+                <a href="{% url 'jobs:list' %}{% if active_filter != 'all' %}?filter={{ active_filter }}{% endif %}"
+                   class="btn btn-sm btn-ghost">✕</a>
+                {% endif %}
+              </form>
+              {% endif %}
+            </div>
+
+            {% if jobs %}
+            {% component "job_list" jobs=jobs favorite_job_ids=favorite_job_ids %}
+            {% endcomponent %}
+            {% else %}
+            <div class="flex items-center justify-center flex-col gap-6 py-16">
+              <div class="text-center max-w-md">
+                <div class="p-4 rounded-full bg-primary/10 inline-block mb-4">
+                  <iconify-icon icon="heroicons:document-plus" class="text-6xl text-primary"></iconify-icon>
+                </div>
+                <h3 class="text-2xl font-semibold text-base-content mb-2">{% translate "No jobs added yet" %}</h3>
+                <p class="text-base-content/70 mb-4">{% translate "Start tracking your applications and organize everything in one place" %}</p>
+              </div>
+              <a href="{% url 'jobs:add' %}" class="btn btn-primary gap-2">
+                <iconify-icon icon="octicon:plus-16"></iconify-icon>
+                {% translate "Add your first job" %}
+              </a>
+            </div>
+            {% endif %}
+          </div>
+
+          <input type="radio" name="dashboard_tabs" role="tab" class="tab"
+                 aria-label="{% translate 'Efforts' %}" />
+          <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-0 sm:p-2">
+            {% if applications %}
+            <div class="overflow-x-auto">
+              <table class="table table-zebra">
+                <thead>
+                  <tr>
+                    <th>{% translate "Date" %}</th>
+                    <th>{% translate "Employer" %}</th>
+                    <th>{% translate "Job title" %}</th>
+                    <th>{% translate "How applied" %}</th>
+                    <th>{% translate "Status" %}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for a in applications %}
+                  <tr x-data="{editingDate:false, dateVal: '{{ a.applied_on|date:"Y-m-d" }}', resultVal: '{{ a.result }}', saving:false, errors: {}, success:false, async save(fields){ this.saving=true; this.errors={}; this.success=false; try{ const body = new URLSearchParams(); for(const k in fields) body.append(k, fields[k]); const csrftoken = (document.cookie.match(/(^|; )csrftoken=([^;]+)/)||[])[2] || ''; const res = await fetch('{% url "jobs:application_inline_update" a.pk %}', {method:'POST', headers:{'X-CSRFToken': csrftoken,'X-Requested-With': 'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}, body: body}); const json = await res.json(); if(json.success){ if(json.updated.applied_on) this.dateVal = json.updated.applied_on; if(json.updated.result) this.resultVal = json.updated.result; this.success=true; setTimeout(()=>this.success=false,2000); this.errors={}; } else if(json.errors){ this.errors = json.errors; } else if(json.error){ this.errors = {'__all__':[json.error]}; } }catch(e){ this.errors = {'__all__':['Network error']}; }finally{ this.saving=false; this.editingDate=false } } }">
+                    <td class="align-top">
+                      <div x-show="!editingDate" class="cursor-pointer" @click="editingDate=true">
+                        <span x-text="dateVal ? (new Date(dateVal).toLocaleDateString('de-DE')) : '—'"></span>
+                      </div>
+                      <div x-show="editingDate" class="flex items-center gap-2">
+                        <div>
+                          <input type="date" x-model="dateVal" @change="save({applied_on: dateVal})" class="input input-sm" />
+                          <template x-if="errors.applied_on">
+                            <div class="text-xs text-error mt-1" x-text="errors.applied_on.join(', ')"></div>
+                          </template>
+                          <template x-if="errors.__all__">
+                            <div class="text-xs text-error mt-1" x-text="errors.__all__.join(', ')"></div>
+                          </template>
+                          <template x-if="success">
+                            <div class="text-xs text-success mt-1">{% translate "Saved" %}</div>
+                          </template>
+                        </div>
+                        <button type="button" class="btn btn-sm" @click="save({applied_on: dateVal})" :disabled="saving">Save</button>
+                        <button type="button" class="btn btn-sm btn-ghost" @click="editingDate=false">Cancel</button>
+                      </div>
+                    </td>
+                    <td>
+                      <a class="link link-hover font-medium" href="{% url 'jobs:application_detail' a.pk %}">
+                        {{ a.employer_name|default:"—" }}
+                      </a>
+                    </td>
+                    <td>{{ a.job_title|default:"—" }}</td>
+                    <td>{{ a.get_channel_display|default:"—" }}</td>
+                    <td>
+                      <div>
+                        <select x-model="resultVal" @change="save({result: resultVal})" class="select select-sm">
+                          {% for val,label in application_result_choices %}
+                          <option value="{{ val }}" {% if a.result == val %}selected{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                        <template x-if="errors.result">
+                          <div class="text-xs text-error mt-1" x-text="errors.result.join(', ')"></div>
+                        </template>
+                      </div>
+                        {% for val,label in application_result_choices %}
+                        <option value="{{ val }}" {% if a.result == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+                    <td class="text-right whitespace-nowrap">
+                      <a href="{% url 'jobs:application_edit' a.pk %}" class="btn btn-ghost btn-xs">{% translate "Edit" %}</a>
+                      <a href="{% url 'jobs:application_delete' a.pk %}" class="btn btn-ghost btn-xs text-error">{% translate "Delete" %}</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="p-10 text-center text-base-content/60">
+              <p class="mb-4">{% translate "No efforts recorded for this period yet." %}</p>
+              <a href="{% url 'jobs:application_add' %}" class="btn btn-primary btn-sm">
+                <iconify-icon icon="octicon:plus-16"></iconify-icon>
+                {% translate "Add effort" %}
+              </a>
+            </div>
+            {% endif %}
+          </div>
+
+          <input type="radio" name="dashboard_tabs" role="tab" class="tab"
+                 aria-label="{% translate 'Timeline' %}" />
+          <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-4 sm:p-6">
+            {% if timeline_items %}
+            <ul class="timeline timeline-vertical">
+              {% for item in timeline_items %}
+              <li>
+                <div class="timeline-start text-sm text-base-content/70">{{ item.date|date:"d.m.Y" }}</div>
+                <div class="timeline-middle">
+                  <iconify-icon icon="octicon:dot-fill-16" class="text-primary"></iconify-icon>
+                </div>
+                <div class="timeline-end timeline-box w-full mb-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-medium">{{ item.title }}</span>
+                    {% if item.badge %}<span class="badge badge-{{ item.badge_type }} badge-sm">{{ item.badge }}</span>{% endif %}
+                  </div>
+                  {% if item.subtitle %}<div class="text-sm text-base-content/60">{{ item.subtitle }}</div>{% endif %}
+                  <div class="text-right">
+                    <a class="link text-xs" href="{{ item.edit_url }}">{% translate "Edit" %}</a>
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="p-10 text-center text-base-content/60">
+              {% translate "No timeline entries yet." %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Compliance panels -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+          <!-- Vermittlungsvorschläge -->
+          <div class="bg-base-200/40 rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="font-semibold">{% translate "Vermittlungsvorschläge" %}</h2>
+              <span>
+                <a href="{% url 'jobs:vv_list' %}" class="btn btn-xs btn-ghost">{% translate "All" %}</a>
+                <a href="{% url 'jobs:vv_add' %}" class="btn btn-xs btn-primary">+</a>
+              </span>
+            </div>
+            {% if open_vvs %}
+            <ul class="space-y-2 text-sm">
+              {% for vv in open_vvs %}
+              <li class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="font-medium">{{ vv.employer_name }}</div>
+                  <div class="text-xs text-base-content/60">
+                    {{ vv.job_title|default:"—" }}
+                    {% if vv.has_rechtsfolgenbelehrung %} · <span class="badge badge-ghost badge-xs">RFB</span>{% endif %}
+                  </div>
+                </div>
+                <div class="text-right text-xs whitespace-nowrap">
+                  {% if vv.is_overdue %}
+                    <span class="text-error font-semibold">{% translate "overdue" %}</span>
+                  {% else %}
+                    {{ vv.apply_by|date:"d.m.Y" }}
+                    {% if vv.days_left is not None %}({{ vv.days_left }} {% translate "days" %}){% endif %}
+                  {% endif %}
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-sm text-base-content/60">{% translate "No open Vermittlungsvorschläge." %}</p>
+            {% endif %}
+          </div>
+
+          <!-- Absences -->
+          <div class="bg-base-200/40 rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="font-semibold">{% translate "Absences (Ortsabwesenheit)" %}</h2>
+              <a href="{% url 'jobs:absence_add' %}" class="btn btn-xs btn-primary">+</a>
+            </div>
+            {% if unreported_absences %}
+            <ul class="space-y-2 text-sm">
+              {% for absence in unreported_absences %}
+              <li class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="font-medium">{{ absence.from_date|date:"d.m." }}–{{ absence.to_date|date:"d.m.Y" }}</div>
+                  <div class="text-xs text-base-content/60">{{ absence.destination|default:"—" }}</div>
+                </div>
+                <a href="{% url 'jobs:absence_edit' absence.pk %}" class="btn btn-xs btn-ghost text-error">{% translate "not reported" %}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-sm text-base-content/60">{% translate "No unreported absences." %}</p>
+            {% endif %}
+          </div>
+
+          <!-- Obstacles / wichtiger Grund -->
+          <div class="bg-base-200/40 rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="font-semibold">{% translate "Obstacles / wichtiger Grund" %}</h2>
+              <a href="{% url 'jobs:obstacle_add' %}" class="btn btn-xs btn-primary">+</a>
+            </div>
+            {% if recent_obstacles %}
+            <ul class="space-y-2 text-sm">
+              {% for o in recent_obstacles %}
+              <li class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="font-medium">{{ o.get_kind_display }}</div>
+                  <div class="text-xs text-base-content/60">{{ o.date|date:"d.m.Y" }}</div>
+                </div>
+                <a href="{% url 'jobs:obstacle_edit' o.pk %}" class="btn btn-xs btn-ghost">{% translate "Edit" %}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-sm text-base-content/60">{% translate "No obstacles logged." %}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Settings links -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <a href="{% url 'jobs:plan_edit' %}" class="btn btn-sm btn-ghost">
+            <iconify-icon icon="octicon:checklist-16"></iconify-icon>
+            {% translate "Obligation plan" %}
+          </a>
+          <button type="button" class="btn btn-sm btn-outline" @click="openDrawer('{% url 'jobs:plan_drawer' %}', '{% translate "Obligation plan" %}')" hx-get="{% url 'jobs:plan_drawer' %}" hx-target="#drawer-content" hx-swap="innerHTML">{% translate "Edit (drawer)" %}</button>
+
+          <a href="{% url 'jobs:profile_edit' %}" class="btn btn-sm btn-ghost">
+            <iconify-icon icon="octicon:id-badge-16"></iconify-icon>
+            {% translate "My data" %}
+          </a>
+          <button type="button" class="btn btn-sm btn-outline" @click="openDrawer('{% url 'jobs:profile_drawer' %}', '{% translate "My data" %}')" hx-get="{% url 'jobs:profile_drawer' %}" hx-target="#drawer-content" hx-swap="innerHTML">{% translate "Edit (drawer)" %}</button>
+        </div>
+
+      </div>
+    <!-- Drawer container -->
+    <div x-show="drawerOpen" x-cloak class="fixed inset-0 z-50 pointer-events-none">
+      <div class="absolute inset-0 bg-black/40" @click="closeDrawer()" aria-hidden="true"></div>
+      <aside class="absolute right-0 top-0 h-full w-full sm:w-96 bg-base-100 shadow-lg p-0 pointer-events-auto" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-between border-b px-4 py-3">
+          <h3 class="font-semibold" x-text="drawerTitle"></h3>
+          <button type="button" class="btn btn-ghost btn-sm" @click="closeDrawer()">✕</button>
+        </div>
+        <div id="drawer-content" class="overflow-auto p-4">
+          <!-- HTMX will load partial here -->
+        </div>
+      </aside>
+    </div>
+  </div>
+  <script>
+    // Focus first input inside drawer after HTMX swap and close on Escape
+    document.body.addEventListener('htmx:afterSwap', function(evt){
+      try{
+        if(evt.detail && evt.detail.target && evt.detail.target.id === 'drawer-content'){
+          const first = evt.detail.target.querySelector('input,select,button,textarea,[tabindex]:not([tabindex="-1"])');
+          if(first) first.focus();
+        }
+      }catch(e){ /* ignore */ }
+    });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ window.dispatchEvent(new Event('close-drawer')); }});
+  </script>
+  {% endblock content %}
+
+  {% block modal %}
+{% include "jobs/modals/skills_modal.html" %}
+{% endblock %}
