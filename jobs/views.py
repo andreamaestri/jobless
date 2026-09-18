@@ -602,7 +602,7 @@ class ApplicationCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
@@ -632,7 +632,7 @@ class ApplicationUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class ApplicationDeleteView(LoginRequiredMixin, DeleteView):
@@ -643,7 +643,7 @@ class ApplicationDeleteView(LoginRequiredMixin, DeleteView):
         return Application.objects.filter(user=self.request.user)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class ApplicationDetailView(LoginRequiredMixin, DetailView):
@@ -699,7 +699,7 @@ class ObligationPlanEditView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class UserProfileEditView(LoginRequiredMixin, UpdateView):
@@ -715,7 +715,7 @@ class UserProfileEditView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 @login_required
@@ -989,7 +989,7 @@ class VermittlungsvorschlagCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class VermittlungsvorschlagUpdateView(LoginRequiredMixin, UpdateView):
@@ -1010,7 +1010,7 @@ class VermittlungsvorschlagUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class VermittlungsvorschlagDeleteView(LoginRequiredMixin, DeleteView):
@@ -1021,7 +1021,7 @@ class VermittlungsvorschlagDeleteView(LoginRequiredMixin, DeleteView):
         return Vermittlungsvorschlag.objects.filter(user=self.request.user)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class VermittlungsvorschlagListView(LoginRequiredMixin, ListView):
@@ -1046,7 +1046,7 @@ class AbsenceCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class AbsenceUpdateView(LoginRequiredMixin, UpdateView):
@@ -1062,7 +1062,7 @@ class AbsenceUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class AbsenceDeleteView(LoginRequiredMixin, DeleteView):
@@ -1073,7 +1073,7 @@ class AbsenceDeleteView(LoginRequiredMixin, DeleteView):
         return Absence.objects.filter(user=self.request.user)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 # --- Obstacle (wichtiger Grund) CRUD ---
@@ -1094,7 +1094,7 @@ class ObstacleCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class ObstacleUpdateView(LoginRequiredMixin, UpdateView):
@@ -1115,7 +1115,7 @@ class ObstacleUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 class ObstacleDeleteView(LoginRequiredMixin, DeleteView):
@@ -1126,7 +1126,7 @@ class ObstacleDeleteView(LoginRequiredMixin, DeleteView):
         return Obstacle.objects.filter(user=self.request.user)
 
     def get_success_url(self):
-        return reverse("jobs:nachweis")
+        return reverse("jobs:list")
 
 
 # --- ZIP + Kostenbeleg exports ---

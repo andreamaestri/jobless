@@ -25,13 +25,9 @@
               <iconify-icon icon="octicon:plus-16"></iconify-icon>
               {% translate "Add job" %}
             </a>
-            <a href="{% url 'jobs:application_add' %}" class="btn btn-outline">
-              <iconify-icon icon="octicon:plus-16"></iconify-icon>
-              {% translate "Add effort" %}
-            </a>
             <button type="button" class="btn btn-outline" @click="openDrawer('{% url 'jobs:application_drawer' %}', '{% translate "Add effort" %}')" hx-get="{% url 'jobs:application_drawer' %}" hx-target="#drawer-content" hx-swap="innerHTML">
               <iconify-icon icon="octicon:plus-16"></iconify-icon>
-              {% translate "Add (drawer)" %}
+              {% translate "Add effort" %}
             </button>
             <details class="dropdown dropdown-end">
               <summary class="btn btn-outline">
@@ -310,10 +306,10 @@
             {% else %}
             <div class="p-10 text-center text-base-content/60">
               <p class="mb-4">{% translate "No efforts recorded for this period yet." %}</p>
-              <a href="{% url 'jobs:application_add' %}" class="btn btn-primary btn-sm">
+              <button type="button" class="btn btn-primary btn-sm" @click="openDrawer('{% url 'jobs:application_drawer' %}', '{% translate "Add effort" %}')" hx-get="{% url 'jobs:application_drawer' %}" hx-target="#drawer-content" hx-swap="innerHTML">
                 <iconify-icon icon="octicon:plus-16"></iconify-icon>
                 {% translate "Add effort" %}
-              </a>
+              </button>
             </div>
             {% endif %}
           </div>
