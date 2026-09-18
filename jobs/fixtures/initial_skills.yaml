@@ -486,3 +486,284 @@
     icon: "skill-icons:unrealengine"
     description: ""
     tags: "game-development/engines/unreal-engine"
+
+# Occupation domains beyond technology
+- model: jobs.skilltreemodel
+  fields:
+    name: "accounting"
+    label: "Accounting"
+    icon: "heroicons:calculator"
+    description: "Bookkeeping, reporting, and financial record keeping"
+    tags: "business-finance/accounting"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "financial-analysis"
+    label: "Financial Analysis"
+    icon: "heroicons:chart-bar"
+    description: "Budgeting, forecasting, and financial analysis"
+    tags: "business-finance/finance/financial-analysis"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "project-management"
+    label: "Project Management"
+    icon: "heroicons:clipboard-document-check"
+    description: "Planning, delivery, and coordination of projects"
+    tags: "business-finance/management/project-management"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "customer-service"
+    label: "Customer Service"
+    icon: "heroicons:chat-bubble-left-right"
+    description: "Customer support, service communication, and issue resolution"
+    tags: "office-customer-support/service/customer-service"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "sales"
+    label: "Sales"
+    icon: "heroicons:banknotes"
+    description: "Consultative selling, account development, and negotiation"
+    tags: "sales-marketing/sales"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "digital-marketing"
+    label: "Digital Marketing"
+    icon: "heroicons:megaphone"
+    description: "Campaigns, content, and performance marketing"
+    tags: "sales-marketing/marketing/digital-marketing"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "recruiting"
+    label: "Recruiting"
+    icon: "heroicons:user-group"
+    description: "Candidate sourcing, interviews, and hiring coordination"
+    tags: "business-finance/human-resources/recruiting"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "nursing"
+    label: "Nursing"
+    icon: "heroicons:heart"
+    description: "Patient care, clinical documentation, and health support"
+    tags: "healthcare/care/nursing"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "medical-assistance"
+    label: "Medical Assistance"
+    icon: "heroicons:plus-circle"
+    description: "Clinical assistance, appointments, and patient administration"
+    tags: "healthcare/care/medical-assistance"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "physiotherapy"
+    label: "Physiotherapy"
+    icon: "heroicons:bolt"
+    description: "Movement therapy, rehabilitation, and patient guidance"
+    tags: "healthcare/therapy/physiotherapy"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "teaching"
+    label: "Teaching"
+    icon: "heroicons:book-open"
+    description: "Instruction, lesson planning, and learner support"
+    tags: "education/teaching"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "early-childhood-education"
+    label: "Early Childhood Education"
+    icon: "heroicons:sparkles"
+    description: "Early learning, childcare, and child development"
+    tags: "education/childcare/early-childhood-education"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "curriculum-development"
+    label: "Curriculum Development"
+    icon: "heroicons:document-text"
+    description: "Learning materials, curriculum design, and assessment"
+    tags: "education/teaching/curriculum-development"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "electrical-installation"
+    label: "Electrical Installation"
+    icon: "heroicons:bolt"
+    description: "Electrical installation, maintenance, and safety"
+    tags: "engineering-trades/electrical/electrical-installation"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "mechanical-maintenance"
+    label: "Mechanical Maintenance"
+    icon: "heroicons:wrench-screwdriver"
+    description: "Repair, maintenance, and troubleshooting of machinery"
+    tags: "engineering-trades/mechanical/mechanical-maintenance"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "welding"
+    label: "Welding"
+    icon: "heroicons:fire"
+    description: "Metal joining, fabrication, and workshop safety"
+    tags: "engineering-trades/manufacturing/welding"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "carpentry"
+    label: "Carpentry"
+    icon: "heroicons:home-modern"
+    description: "Woodwork, construction, and practical building skills"
+    tags: "engineering-trades/construction/carpentry"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "warehouse-operations"
+    label: "Warehouse Operations"
+    icon: "heroicons:building-storefront"
+    description: "Goods receiving, storage, picking, and inventory processes"
+    tags: "logistics-operations/warehouse/warehouse-operations"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "supply-chain"
+    label: "Supply Chain"
+    icon: "heroicons:arrow-path-rounded-square"
+    description: "Purchasing, planning, and supply chain coordination"
+    tags: "logistics-operations/supply-chain"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "driving"
+    label: "Driving"
+    icon: "heroicons:truck"
+    description: "Safe vehicle operation, route planning, and delivery"
+    tags: "logistics-operations/transport/driving"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "food-safety"
+    label: "Food Safety"
+    icon: "heroicons:shield-check"
+    description: "Food hygiene, safe preparation, and compliance"
+    tags: "hospitality-tourism/food-service/food-safety"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "front-office"
+    label: "Front Office"
+    icon: "heroicons:building-office"
+    description: "Reception, reservations, and guest communication"
+    tags: "hospitality-tourism/hotels/front-office"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "event-coordination"
+    label: "Event Coordination"
+    icon: "heroicons:calendar-days"
+    description: "Planning, logistics, and delivery of events"
+    tags: "hospitality-tourism/events/event-coordination"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "case-management"
+    label: "Case Management"
+    icon: "heroicons:folder-open"
+    description: "Client support, referrals, documentation, and case coordination"
+    tags: "public-social-services/social-work/case-management"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "public-administration"
+    label: "Public Administration"
+    icon: "heroicons:building-library"
+    description: "Public services, records, procedures, and citizen support"
+    tags: "public-social-services/public-administration"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "legal-research"
+    label: "Legal Research"
+    icon: "heroicons:scale"
+    description: "Legal research, case preparation, and document review"
+    tags: "public-social-services/legal/legal-research"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "graphic-design"
+    label: "Graphic Design"
+    icon: "heroicons:paint-brush"
+    description: "Visual concepts, layouts, and brand assets"
+    tags: "creative-media/design/graphic-design"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "copywriting"
+    label: "Copywriting"
+    icon: "heroicons:pencil-square"
+    description: "Writing clear persuasive copy for print and digital channels"
+    tags: "creative-media/writing/copywriting"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "video-production"
+    label: "Video Production"
+    icon: "heroicons:video-camera"
+    description: "Filming, editing, and publishing video content"
+    tags: "creative-media/video/video-production"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "laboratory-techniques"
+    label: "Laboratory Techniques"
+    icon: "heroicons:beaker"
+    description: "Laboratory procedures, measurement, and sample handling"
+    tags: "science-environment/laboratory/laboratory-techniques"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "data-analysis"
+    label: "Data Analysis"
+    icon: "heroicons:chart-pie"
+    description: "Interpreting data, reporting findings, and using analytical tools"
+    tags: "science-environment/analysis/data-analysis"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "environmental-management"
+    label: "Environmental Management"
+    icon: "heroicons:globe-europe-africa"
+    description: "Environmental compliance, sustainability, and conservation"
+    tags: "science-environment/environment/environmental-management"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "office-administration"
+    label: "Office Administration"
+    icon: "heroicons:inbox"
+    description: "Scheduling, correspondence, records, and office coordination"
+    tags: "office-customer-support/administration/office-administration"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "technical-writing"
+    label: "Technical Writing"
+    icon: "heroicons:document-text"
+    description: "Clear documentation, procedures, and knowledge-base content"
+    tags: "office-customer-support/communication/technical-writing"
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "quality-assurance"
+    label: "Quality Assurance"
+    icon: "heroicons:check-badge"
+    description: "Quality checks, corrective actions, and process improvement"
+    tags: "engineering-trades/quality/quality-assurance"

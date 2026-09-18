@@ -1,19 +1,21 @@
 
 from django.core.management.base import BaseCommand
-from jobs.models import Skill
-from jobs.models import SKILL_ICONS
+from django.utils.text import slugify
+from jobs.models import SkillTreeModel
+from jobs.utils.skill_icons import SKILL_ICONS
 from jobs.utils.skill_icons import DARK_VARIANTS
 
 class Command(BaseCommand):
-    help = 'Populate skills from SKILL_ICONS'
+    help = 'Populate skills from the shared icon catalogue'
 
     def handle(self, *args, **kwargs):
         for icon, name in SKILL_ICONS:
-            Skill.objects.get_or_create(
-                name=name,
+            SkillTreeModel.objects.get_or_create(
+                name=slugify(name),
                 defaults={
+                    'label': name,
                     'icon': icon,
-                    'icon_dark': DARK_VARIANTS.get(icon, icon)
+                    'tags': slugify(name),
                 }
             )
         self.stdout.write(self.style.SUCCESS('Successfully populated skills'))

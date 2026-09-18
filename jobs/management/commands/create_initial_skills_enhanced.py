@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from jobs.models import SkillsTagModel
-from jobs.utils.skill_icons import SKILL_ICONS, DARK_VARIANTS
+from django.utils.text import slugify
+from jobs.models import SkillTreeModel
+from jobs.utils.skill_icons import SKILL_ICONS
 import logging
 
 logger = logging.getLogger('jobs.skills')
@@ -16,11 +17,12 @@ class Command(BaseCommand):
         
         for icon, name in SKILL_ICONS:
             try:
-                skill, created = SkillsTagModel.objects.get_or_create(
-                    name=name.lower(),
+                skill, created = SkillTreeModel.objects.get_or_create(
+                    name=slugify(name),
                     defaults={
+                        'label': name,
                         'icon': icon,
-                        'icon_dark': DARK_VARIANTS.get(icon, icon)
+                        'tags': slugify(name),
                     }
                 )
                 
@@ -29,9 +31,9 @@ class Command(BaseCommand):
                     logger.info(f"Created skill: {name} with icon {icon}")
                 else:
                     # Update existing skill if needed
-                    if skill.icon != icon or skill.icon_dark != DARK_VARIANTS.get(icon, icon):
+                    if skill.icon != icon or skill.label != name:
                         skill.icon = icon
-                        skill.icon_dark = DARK_VARIANTS.get(icon, icon)
+                        skill.label = name
                         skill.save()
                         updated_count += 1
                         logger.info(f"Updated skill: {name} with new icon {icon}")
@@ -46,7 +48,7 @@ class Command(BaseCommand):
             f"Created: {created_count}\n"
             f"Updated: {updated_count}\n"
             f"Errors: {error_count}\n"
-            f"Total skills: {SkillsTagModel.objects.count()}"
+            f"Total skills: {SkillTreeModel.objects.count()}"
         )
         
         if error_count:

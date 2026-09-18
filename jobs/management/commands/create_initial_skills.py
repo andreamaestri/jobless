@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from jobs.models import SkillsTagModel
-from jobs.utils.skill_icons import SKILL_ICONS, DARK_VARIANTS
+from django.utils.text import slugify
+from jobs.models import SkillTreeModel
+from jobs.utils.skill_icons import SKILL_ICONS
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,14 +18,15 @@ class Command(BaseCommand):
         for icon, name in SKILL_ICONS:
             try:
                 # Normalize the name to lowercase
-                normalized_name = name.lower()
+                normalized_name = slugify(name)
                 
                 # Get or create the skill
-                skill, created = SkillsTagModel.objects.get_or_create(
+                skill, created = SkillTreeModel.objects.get_or_create(
                     name=normalized_name,
                     defaults={
+                        'label': name,
                         'icon': icon,
-                        'icon_dark': DARK_VARIANTS.get(icon, icon)
+                        'tags': normalized_name,
                     }
                 )
 
@@ -33,9 +35,9 @@ class Command(BaseCommand):
                     logger.info(f"Created skill: {normalized_name} with icon {icon}")
                 else:
                     # Update existing skill's icons if they've changed
-                    if skill.icon != icon or skill.icon_dark != DARK_VARIANTS.get(icon, icon):
+                    if skill.icon != icon or skill.label != name:
                         skill.icon = icon
-                        skill.icon_dark = DARK_VARIANTS.get(icon, icon)
+                        skill.label = name
                         skill.save()
                         updated_count += 1
                         logger.info(f"Updated skill: {normalized_name} with icon {icon}")
@@ -50,5 +52,5 @@ class Command(BaseCommand):
             f'- Created: {created_count}\n'
             f'- Updated: {updated_count}\n'
             f'- Errors: {error_count}\n'
-            f'- Total skills in database: {SkillsTagModel.objects.count()}'
+            f'- Total skills in database: {SkillTreeModel.objects.count()}'
         ))

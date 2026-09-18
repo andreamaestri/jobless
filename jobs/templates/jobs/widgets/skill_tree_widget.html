@@ -13,7 +13,7 @@
     </div>
 
     <!-- Search/Tree Mode Toggle -->
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div class="flex items-center space-x-4">
             <div class="tabs tabs-box bg-base-200">
                 <button class="tab" 
@@ -31,22 +31,37 @@
             </div>
         </div>
         <div class="text-sm text-base-content/70"
+             :aria-label="selectedSkills.length + ' selected'"
              x-text="selectedSkills.length + ' selected'">
         </div>
+    </div>
+
+    <div x-show="selectedSkills.length > 0" class="flex flex-wrap gap-2 mb-4" aria-live="polite">
+        <template x-for="skill in selectedSkills" :key="skill.id">
+            <button type="button"
+                    class="badge badge-primary badge-outline gap-1"
+                    @click="removeSkill(skill); updateFormField(); dispatchSkillUpdate()"
+                    :aria-label="`${gettext('Remove')} ${skill.label}`">
+                <span x-text="skill.label"></span>
+                <iconify-icon icon="heroicons:x-mark" aria-hidden="true"></iconify-icon>
+            </button>
+        </template>
     </div>
 
     <!-- Search View -->
     <div x-show="viewMode === 'search'" class="space-y-4">
         <div class="join w-full">
-            <input type="text"
+            <input type="search"
                    placeholder="{% translate 'Search skills ...' %}"
                    class="input join-item grow"
-                   x-model="searchQuery">
-            <button class="btn btn-square join-item">
+                   x-model.trim="searchQuery"
+                   aria-controls="skill-search-results">
+            <button type="button" class="btn btn-square join-item" @click="searchQuery = ''"
+                    x-show="searchQuery" :aria-label="gettext('Clear search')">
                 <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
             </button>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"
+        <div id="skill-search-results" class="grid grid-cols-1 sm:grid-cols-2 gap-2"
              x-show="filteredSkills.length > 0">
             <template x-for="skill in filteredSkills" :key="skill.id">
                 <div class="dropdown dropdown-hover">
@@ -94,13 +109,17 @@
         <template x-for="category in categories" :key="category.path">
             <div class="card bg-base-200">
                 <div class="card-body p-4">
-                    <div class="flex items-center gap-2 cursor-pointer"
-                         @click="toggleCategory(category)">
+                    <button type="button" class="flex items-center gap-2 w-full text-left"
+                            @click="toggleCategory(category)"
+                            :aria-expanded="category.expanded"
+                            :aria-controls="`category-${category.path.replaceAll('/', '-')}`">
                         <iconify-icon :icon="category.expanded ? 'heroicons:chevron-down' : 'heroicons:chevron-right'"
-                                    class="text-lg"></iconify-icon>
+                                    class="text-lg" aria-hidden="true"></iconify-icon>
                         <h3 class="card-title text-base" x-text="category.label"></h3>
-                    </div>
-                    <div x-show="category.expanded" x-collapse>
+                        <span class="badge badge-ghost badge-sm ml-auto" x-text="category.count"></span>
+                    </button>
+                    <div x-show="category.expanded" x-collapse
+                         :id="`category-${category.path.replaceAll('/', '-')}`">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
                             <template x-for="skill in category.skills" :key="skill.id">
                                 <button class="btn btn-sm justify-start gap-2 normal-case"

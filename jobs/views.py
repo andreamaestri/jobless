@@ -105,8 +105,14 @@ def _export_profile(request):
 
 def api_skills(request):
     """API endpoint to get all skills"""
-    skills = SkillTreeModel.objects.values('id', 'name', 'label', 'icon')
-    return JsonResponse({'skills': list(skills)})
+    skills = [
+        {
+            **skill.to_dict(),
+            'icon': skill.get_icon(),
+        }
+        for skill in SkillTreeModel.objects.all()
+    ]
+    return JsonResponse({'skills': skills})
 
 
 def skills_autocomplete(request):
@@ -351,6 +357,10 @@ class JobDashboardView(LoginRequiredMixin, TemplateView):
             'period_end': end,
             'count': len(nachweisbar),
             'target': target,
+            'progress_percent': (
+                min(100, round(len(nachweisbar) / target * 100))
+                if target else None
+            ),
             'due_on': due_on,
             'days_until_due': (due_on - date.today()).days if due_on else None,
             'last_submitted_on': plan.last_submitted_on if plan else None,

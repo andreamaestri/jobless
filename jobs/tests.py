@@ -68,6 +68,14 @@ class JobViewTests(SecureClientMixin, TestCase):
         self.assertContains(response, "drawer-content")
         self.assertContains(response, "inline-update")
 
+    def test_dashboard_integrates_effort_documentation_hub(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:list"))
+
+        self.assertContains(response, "Proof of job-search efforts")
+        self.assertContains(response, "Prepare export")
+        self.assertContains(response, 'id="efforts"')
+
     def test_drawer_endpoints_require_login(self):
         for name in ("plan_drawer", "profile_drawer", "application_drawer"):
             with self.subTest(name=name):

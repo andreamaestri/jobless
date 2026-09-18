@@ -111,6 +111,83 @@
           </div>
         </div>
 
+        <!-- Documentation hub -->
+        <section class="card bg-base-200/50 border border-base-300/70 shadow-sm mb-8"
+                 aria-labelledby="documentation-heading">
+          <div class="card-body gap-5 p-5 sm:p-6">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <iconify-icon icon="heroicons:clipboard-document-check" class="text-2xl text-primary"></iconify-icon>
+                  <h2 id="documentation-heading" class="card-title">{% translate "Proof of job-search efforts" %}</h2>
+                </div>
+                <p class="mt-1 text-sm text-base-content/70">
+                  {% translate "Your recorded efforts, compliance notes, and export-ready documentation in one place." %}
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn btn-primary btn-sm"
+                        @click="openDrawer('{% url 'jobs:application_drawer' %}', '{% translate "Add effort" %}')"
+                        hx-get="{% url 'jobs:application_drawer' %}"
+                        hx-target="#drawer-content" hx-swap="innerHTML">
+                  <iconify-icon icon="octicon:plus-16"></iconify-icon>
+                  {% translate "Add effort" %}
+                </button>
+                <a href="{% url 'jobs:nachweis_export' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+                   class="btn btn-outline btn-sm">
+                  <iconify-icon icon="octicon:download-16"></iconify-icon>
+                  {% translate "Prepare export" %}
+                </a>
+              </div>
+            </div>
+            <div class="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+              <div>
+                <div class="mb-2 flex items-center justify-between gap-3 text-sm">
+                  <span class="font-medium">{% translate "This period" %}</span>
+                  <span class="text-base-content/70">
+                    {{ count }}{% if target %} / {{ target }} {% translate "recorded" %}{% else %} {% translate "recorded" %}{% endif %}
+                  </span>
+                </div>
+                {% if target %}
+                <progress class="progress progress-primary w-full" value="{{ count }}" max="{{ target }}"
+                          aria-label="{% translate 'Recorded efforts toward plan target' %}"></progress>
+                <p class="mt-2 text-xs text-base-content/60">
+                  {% translate "The target comes from your plan and is not a nationwide legal requirement." %}
+                </p>
+                {% else %}
+                <div class="alert alert-info py-3 text-sm">
+                  <iconify-icon icon="octicon:info-16"></iconify-icon>
+                  <span>{% translate "Set a plan target to track progress for this period." %}</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="flex flex-wrap gap-2 md:justify-end">
+                <button type="button" class="btn btn-ghost btn-sm"
+                        @click="openDrawer('{% url 'jobs:plan_drawer' %}', '{% translate "Obligation plan" %}')"
+                        hx-get="{% url 'jobs:plan_drawer' %}"
+                        hx-target="#drawer-content" hx-swap="innerHTML">
+                  <iconify-icon icon="octicon:checklist-16"></iconify-icon>
+                  {% translate "Plan" %}
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm"
+                        @click="openDrawer('{% url 'jobs:profile_drawer' %}', '{% translate "My data" %}')"
+                        hx-get="{% url 'jobs:profile_drawer' %}"
+                        hx-target="#drawer-content" hx-swap="innerHTML">
+                  <iconify-icon icon="octicon:id-badge-16"></iconify-icon>
+                  {% translate "My data" %}
+                </button>
+              </div>
+            </div>
+            {% if blockers %}
+            <div class="alert alert-warning py-3 text-sm">
+              <iconify-icon icon="octicon:alert-16"></iconify-icon>
+              <span>{% blocktranslate with count=blockers|length %}{{ count }} effort(s) need an employer and job title before they can be exported.{% endblocktranslate %}</span>
+              <a href="#efforts" class="link whitespace-nowrap">{% translate "Review below" %}</a>
+            </div>
+            {% endif %}
+          </div>
+        </section>
+
         <!-- Period filter -->
         <div class="bg-base-200/40 rounded-2xl p-4 mb-6">
           <form method="get" class="flex flex-wrap items-end gap-3">
@@ -233,7 +310,7 @@
 
           <input type="radio" name="dashboard_tabs" role="tab" class="tab"
                  aria-label="{% translate 'Efforts' %}" />
-          <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-0 sm:p-2">
+          <div id="efforts" role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-0 sm:p-2">
             {% if applications %}
             <div class="overflow-x-auto">
               <table class="table table-zebra">
@@ -289,10 +366,6 @@
                           <div class="text-xs text-error mt-1" x-text="errors.result.join(', ')"></div>
                         </template>
                       </div>
-                        {% for val,label in application_result_choices %}
-                        <option value="{{ val }}" {% if a.result == val %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                      </select>
                     </td>
                     <td class="text-right whitespace-nowrap">
                       <a href="{% url 'jobs:application_edit' a.pk %}" class="btn btn-ghost btn-xs">{% translate "Edit" %}</a>

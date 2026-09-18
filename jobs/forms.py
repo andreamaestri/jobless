@@ -28,41 +28,38 @@ class SkillTreeWidget(forms.SelectMultiple):
         def build_category_tree(skills):
             categories = {}
             for skill in skills:
-                path_parts = skill.path.split(":")
+                path_parts = [
+                    part for part in skill.taxonomy_path.split("/") if part
+                ]
+                if len(path_parts) < 2:
+                    continue
+
                 current_level = categories
+                for part in path_parts[:-1]:
+                    category = current_level.setdefault(
+                        part,
+                        {
+                            "label": part.replace("-", " ").title(),
+                            "icon": "",
+                            "children": {},
+                            "skills": [],
+                            "proficiency_levels": dict(JobSkill.PROFICIENCY_LEVELS),
+                        },
+                    )
+                    current_level = category["children"]
 
-                for i, part in enumerate(path_parts):
-                    if part not in current_level:
-                        current_level[part] = {
-                            "label": (
-                                skill.label if i == len(path_parts) - 1 else ""
-                            ),
-                            "icon": (
-                                skill.icon if i == len(path_parts) - 1 else ""
-                            ),
-                            "skills": (
-                                [] if i == len(path_parts) - 1 else {}
-                            ),
-                            "id": (
-                                skill.pk if i == len(path_parts) - 1 else None
-                            ),
-                            "proficiency_levels": dict(JobSkill.PROFICIENCY_LEVELS)
-                        }
-
-                    if i == len(path_parts) - 1:
-                        current_level[part]["skills"].append(
-                            {
-                                "id": skill.pk,
-                                "label": skill.label,
-                                "icon": skill.get_icon(),
-                                "path": skill.path,
-                                "proficiency_levels": dict(JobSkill.PROFICIENCY_LEVELS)
-                            }
-                        )
-                    else:
-                        is_second_to_last = i == len(path_parts) - 2
-                        key = "skills" if is_second_to_last else "children"
-                        current_level = current_level[part][key]
+                parent_category = categories
+                for part in path_parts[:-2]:
+                    parent_category = parent_category[part]["children"]
+                parent_category[path_parts[-2]]["skills"].append(
+                    {
+                        "id": skill.pk,
+                        "label": skill.label,
+                        "icon": skill.get_icon(),
+                        "path": skill.taxonomy_path,
+                        "proficiency_levels": dict(JobSkill.PROFICIENCY_LEVELS),
+                    }
+                )
 
             return categories
 

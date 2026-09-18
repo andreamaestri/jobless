@@ -50,6 +50,11 @@ class SkillTreeModel(models.Model):
         """Expose a stable path for the skill selector and serializers."""
         return self.name
 
+    @property
+    def taxonomy_path(self):
+        """Return the human-readable Tagulous hierarchy for API consumers."""
+        return str(self.tags) if self.tags else self.name.replace(":", "/")
+
     class Meta:
         verbose_name = _("Skill")
         verbose_name_plural = _("Skills")
@@ -78,6 +83,7 @@ class SkillTreeModel(models.Model):
             'name': self.name,
             'label': self.label,
             'path': self.path,
+            'taxonomy_path': self.taxonomy_path,
             'icon': self.get_icon(),
             'description': self.description or '',
             'proficiency_levels': dict(JobSkill.PROFICIENCY_LEVELS)

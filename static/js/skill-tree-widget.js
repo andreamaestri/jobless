@@ -67,7 +67,8 @@ document.addEventListener("alpine:init", () => {
           id: skill.id,
           label: skill.label || skill.name,
           icon: skill.icon || window.MODAL_ICON_MAPPING?.[skill.name.toLowerCase()] || "heroicons:academic-cap",
-          path: skill.name || "",
+          path: skill.taxonomy_path || skill.path || skill.name || "",
+          description: skill.description || "",
           proficiency: "required"
         }));
 
@@ -82,25 +83,30 @@ document.addEventListener("alpine:init", () => {
       const categoryMap = new Map();
 
       this.allSkills.forEach(skill => {
-        const pathParts = skill.path.split(":");
+        const pathParts = skill.path.split("/").filter(Boolean);
         
         if (pathParts.length > 1) {
-          const categoryPath = pathParts.slice(0, -1).join(":");
-          const categoryLabel = pathParts[pathParts.length - 2] || gettext("Uncategorized");
+          const categoryPath = pathParts.slice(0, -1).join("/");
+          const categoryLabel = (pathParts[pathParts.length - 2] || gettext("Uncategorized"))
+            .replace(/[-_]/g, " ")
+            .replace(/\b\w/g, letter => letter.toUpperCase());
 
           if (!categoryMap.has(categoryPath)) {
             categoryMap.set(categoryPath, {
               path: categoryPath,
               label: categoryLabel,
               skills: [],
-              expanded: false
+              expanded: false,
+              count: 0
             });
           }
           categoryMap.get(categoryPath).skills.push(skill);
+          categoryMap.get(categoryPath).count += 1;
         }
       });
 
-      this.categories = Array.from(categoryMap.values());
+      this.categories = Array.from(categoryMap.values())
+        .sort((a, b) => a.label.localeCompare(b.label));
     },
 
     loadInitialSkills(initialTags) {
@@ -160,7 +166,8 @@ document.addEventListener("alpine:init", () => {
       
       const query = this.searchQuery.toLowerCase();
       return this.allSkills.filter(
-        skill => skill.label.toLowerCase().includes(query)
+        skill => [skill.label, skill.description, skill.path]
+          .some(value => value.toLowerCase().includes(query))
       );
     },
 
