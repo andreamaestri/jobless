@@ -63,7 +63,7 @@ document.addEventListener("alpine:init", () => {
         const response = await fetch('/jobs/api/skills/');
         if (!response.ok) throw new Error(`Skills request failed: ${response.status}`);
         const data = await response.json();
-        this.allSkills = (data.skills || []).map(skill => ({
+        const skills = (data.skills || []).map(skill => ({
           id: skill.id,
           label: skill.label || skill.name,
           icon: skill.icon || window.MODAL_ICON_MAPPING?.[skill.name.toLowerCase()] || "heroicons:academic-cap",
@@ -72,6 +72,10 @@ document.addEventListener("alpine:init", () => {
           proficiency: "required"
         }));
 
+        const paths = skills.map(skill => skill.path);
+        this.allSkills = skills.filter(skill =>
+          !paths.some(path => path !== skill.path && path.startsWith(`${skill.path}/`))
+        );
         this.buildCategoryTree();
       } catch (error) {
         console.error("Error loading skills data:", error);
@@ -84,25 +88,21 @@ document.addEventListener("alpine:init", () => {
 
       this.allSkills.forEach(skill => {
         const pathParts = skill.path.split("/").filter(Boolean);
-        
-        if (pathParts.length > 1) {
-          const categoryPath = pathParts.slice(0, -1).join("/");
-          const categoryLabel = (pathParts[pathParts.length - 2] || gettext("Uncategorized"))
-            .replace(/[-_]/g, " ")
-            .replace(/\b\w/g, letter => letter.toUpperCase());
-
-          if (!categoryMap.has(categoryPath)) {
-            categoryMap.set(categoryPath, {
-              path: categoryPath,
-              label: categoryLabel,
-              skills: [],
-              expanded: false,
-              count: 0
-            });
-          }
-          categoryMap.get(categoryPath).skills.push(skill);
-          categoryMap.get(categoryPath).count += 1;
+        const categoryPath = pathParts.length > 1 ? pathParts[0] : "other";
+        const categoryLabel = (pathParts.length > 1 ? pathParts[0] : gettext("Other"))
+          .replace(/[-_]/g, " ")
+          .replace(/\b\w/g, letter => letter.toUpperCase());
+        if (!categoryMap.has(categoryPath)) {
+          categoryMap.set(categoryPath, {
+            path: categoryPath,
+            label: categoryLabel,
+            skills: [],
+            expanded: false,
+            count: 0
+          });
         }
+        categoryMap.get(categoryPath).skills.push(skill);
+        categoryMap.get(categoryPath).count += 1;
       });
 
       this.categories = Array.from(categoryMap.values())

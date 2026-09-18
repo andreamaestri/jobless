@@ -16,13 +16,13 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div class="flex items-center space-x-4">
             <div class="tabs tabs-box bg-base-200">
-                <button class="tab" 
+                <button type="button" class="tab"
                         :class="{ 'tab-active': viewMode === 'search' }"
                         @click="viewMode = 'search'">
                     <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
                     <span class="ml-2">{% translate "Search" %}</span>
                 </button>
-                <button class="tab" 
+                <button type="button" class="tab"
                         :class="{ 'tab-active': viewMode === 'tree' }"
                         @click="viewMode = 'tree'">
                     <iconify-icon icon="heroicons:squares-2x2" class="text-lg"></iconify-icon>
@@ -65,7 +65,8 @@
              x-show="filteredSkills.length > 0">
             <template x-for="skill in filteredSkills" :key="skill.id">
                 <div class="dropdown dropdown-hover">
-                    <button class="btn btn-sm justify-start gap-2 normal-case w-full"
+                    <button type="button" class="btn btn-sm justify-start gap-2 normal-case w-full"
+                            @click="toggleSkill(skill)"
                             :class="{
                                 'btn-primary': isSelected(skill.id),
                                 'btn-ghost': !isSelected(skill.id)
@@ -81,7 +82,7 @@
                          x-show="isSelected(skill.id)">
                         <div class="mb-2 text-sm font-medium text-base-content/70">{% translate "Proficiency Level" %}</div>
                         <template x-for="level in proficiencyLevels" :key="level.value">
-                            <button class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
+                            <button type="button" class="btn btn-sm justify-start gap-2 normal-case w-full mb-1"
                                     :class="{'btn-primary': getSkillProficiency(skill.id) === level.value}"
                                     @click.stop="updateSkill({...skill, proficiency: level.value})">
                                 <iconify-icon :icon="level.icon" class="text-lg"></iconify-icon>
@@ -89,7 +90,7 @@
                             </button>
                         </template>
                         <div class="divider my-1"></div>
-                        <button class="btn btn-sm btn-error justify-start gap-2 normal-case w-full"
+                        <button type="button" class="btn btn-sm btn-error justify-start gap-2 normal-case w-full"
                                 @click.stop="removeSkill(skill)">
                             <iconify-icon icon="heroicons:trash" class="text-lg"></iconify-icon>
                             <span>{% translate "Remove" %}</span>
@@ -122,7 +123,7 @@
                          :id="`category-${category.path.replaceAll('/', '-')}`">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
                             <template x-for="skill in category.skills" :key="skill.id">
-                                <button class="btn btn-sm justify-start gap-2 normal-case"
+                                <button type="button" class="btn btn-sm justify-start gap-2 normal-case"
                                         :class="isSelected(skill.id) ? 'btn-primary' : 'btn-ghost'"
                                         @click="toggleSkill(skill)">
                                     <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
