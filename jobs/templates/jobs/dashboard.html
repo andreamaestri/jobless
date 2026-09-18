@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="min-h-screen flex flex-col page-transition-wrapper"
-     x-data="{ favoriteJobs: new Set([{% for id in favorite_job_ids %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}]), drawerOpen: false, drawerContentUrl: '', drawerTitle: '', openDrawer(url, title){ this.drawerContentUrl = url; this.drawerTitle = title || ''; this.drawerOpen = true; this.$nextTick(()=>{ /* htmx will fill content */ }); }, closeDrawer(){ this.drawerOpen = false; this.drawerContentUrl = ''; this.drawerTitle = ''; } }"
+     x-data="{ favoriteJobs: new Set([{% for id in favorite_job_ids %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}]), drawerOpen: false, drawerContentUrl: '', drawerTitle: '', lastFocused: null, openDrawer(url, title){ this.lastFocused = document.activeElement; this.drawerContentUrl = url; this.drawerTitle = title || ''; this.drawerOpen = true; }, closeDrawer(){ this.drawerOpen = false; this.drawerContentUrl = ''; this.drawerTitle = ''; this.$nextTick(()=>{ if(this.lastFocused) this.lastFocused.focus(); }); }, trapFocus(event){ if(event.key !== 'Tab') return; const focusable = [...this.$refs.drawerPanel.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex=\"-1\"])')]; if(!focusable.length) return; const first = focusable[0], last = focusable[focusable.length - 1]; if(event.shiftKey && document.activeElement === first){ event.preventDefault(); last.focus(); } else if(!event.shiftKey && document.activeElement === last){ event.preventDefault(); first.focus(); } } }"
      x-on:close-drawer.window="closeDrawer()">
   <div class="flex-1 page-enter">
     <div class="p-4 sm:p-6 md:p-8 lg:py-12 lg:px-8">
@@ -454,9 +454,9 @@
     <!-- Drawer container -->
     <div x-show="drawerOpen" x-cloak class="fixed inset-0 z-50 pointer-events-none">
       <div class="absolute inset-0 bg-black/40" @click="closeDrawer()" aria-hidden="true"></div>
-      <aside class="absolute right-0 top-0 h-full w-full sm:w-96 bg-base-100 shadow-lg p-0 pointer-events-auto" role="dialog" aria-modal="true">
+      <aside x-ref="drawerPanel" @keydown="trapFocus($event)" class="absolute right-0 top-0 h-full w-full sm:w-96 bg-base-100 shadow-lg p-0 pointer-events-auto" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <div class="flex items-center justify-between border-b px-4 py-3">
-          <h3 class="font-semibold" x-text="drawerTitle"></h3>
+          <h3 id="drawer-title" class="font-semibold" x-text="drawerTitle"></h3>
           <button type="button" class="btn btn-ghost btn-sm" @click="closeDrawer()">✕</button>
         </div>
         <div id="drawer-content" class="overflow-auto p-4">

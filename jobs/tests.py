@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from datetime import date
 
-from .models import JobPosting
+from .models import Application, JobPosting
 
 User = get_user_model()
 
@@ -53,6 +54,32 @@ class JobViewTests(SecureClientMixin, TestCase):
         self.client.force_login(self.user)
         response = self.get(reverse("jobs:list"))
         self.assertEqual(response.status_code, 200)
+
+    def test_dashboard_exposes_drawer_and_inline_edit_hooks(self):
+        Application.objects.create(
+            user=self.user,
+            applied_on=date.today(),
+            employer_name="Acme",
+            job_title="Engineer",
+        )
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:list"))
+        self.assertContains(response, "openDrawer")
+        self.assertContains(response, "drawer-content")
+        self.assertContains(response, "inline-update")
+
+    def test_drawer_endpoints_require_login(self):
+        for name in ("plan_drawer", "profile_drawer", "application_drawer"):
+            with self.subTest(name=name):
+                response = self.get(reverse(f"jobs:{name}"))
+                self.assertEqual(response.status_code, 302)
+
+    def test_drawer_endpoints_render_for_authenticated_user(self):
+        self.client.force_login(self.user)
+        for name in ("plan_drawer", "profile_drawer", "application_drawer"):
+            with self.subTest(name=name):
+                response = self.get(reverse(f"jobs:{name}"))
+                self.assertEqual(response.status_code, 200)
 
 
 class JobFilterFavoriteTests(SecureClientMixin, TestCase):

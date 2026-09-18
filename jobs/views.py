@@ -12,7 +12,7 @@ from django.views.generic import (
     View,
 )
 from django.views.generic.edit import FormMixin
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -472,7 +472,6 @@ class ToggleFavoriteView(LoginRequiredMixin, View):
 # Nachweis von Eigenbemühungen (Agentur für Arbeit / Jobcenter)
 # ---------------------------------------------------------------------------
 
-from django.http import HttpResponse
 from .forms import (
     ApplicationForm,
     ObligationPlanForm,
@@ -481,52 +480,6 @@ from .forms import (
     AbsenceForm,
     ObstacleForm,
 )
-
-
-def _parse_period(request, default_month=None):
-    """Return (start, end, label) from GET params: month / rolling / custom."""
-    month = request.GET.get("month") or default_month
-    if request.GET.get("period") == "rolling":
-        end = date.today()
-        return end - timedelta(days=29), end, _("Last 30 days")
-    if request.GET.get("period") == "custom":
-        try:
-            start = date.fromisoformat(request.GET.get("start"))
-            end = date.fromisoformat(request.GET.get("end"))
-            return start, end, f"{start:%d.%m.%Y} – {end:%d.%m.%Y}"
-        except (ValueError, TypeError):
-            pass
-    if month:
-        try:
-            year, mon = (int(part) for part in month.split("-"))
-            start = date(year, mon, 1)
-            if mon == 12:
-                end = date(year + 1, 1, 1) - timedelta(days=1)
-            else:
-                end = date(year, mon + 1, 1) - timedelta(days=1)
-            return start, end, start.strftime("%Y-%m")
-        except (ValueError, TypeError):
-            pass
-    today = date.today()
-    start = today.replace(day=1)
-    if today.month == 12:
-        end = date(today.year + 1, 1, 1) - timedelta(days=1)
-    else:
-        end = date(today.year, today.month + 1, 1) - timedelta(days=1)
-    return start, end, start.strftime("%Y-%m")
-
-
-def _nachweisbar_qs(user, start, end):
-    return Application.objects.filter(
-        user=user,
-        applied_on__gte=start,
-        applied_on__lte=end,
-    ).exclude(job_title="").exclude(employer_name="").order_by("applied_on")
-
-
-def _export_profile(request):
-    raw = request.GET.get("profile", "")
-    return raw if raw in EXPORT_PROFILES else nachweis_pdf.JOBCENTER_LIST
 
 
 class NachweisDashboardView(LoginRequiredMixin, ListView):
