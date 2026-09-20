@@ -50,6 +50,16 @@ class JobViewTests(SecureClientMixin, TestCase):
         response = self.get(reverse("jobs:add"))
         self.assertEqual(response.status_code, 302)
 
+    def test_add_renders_complete_skills_modal(self):
+        self.client.force_login(self.user)
+        response = self.get(reverse("jobs:add"))
+
+        self.assertContains(response, '<dialog id="required-skills-modal"', html=False)
+        self.assertContains(response, 'aria-label="Search skills"', html=False)
+        self.assertContains(response, "Selected Skills")
+        self.assertContains(response, "Save changes")
+        self.assertNotContains(response, "</dialog>\n            <button")
+
     def test_list_renders_for_authenticated_user(self):
         self.client.force_login(self.user)
         response = self.get(reverse("jobs:list"))
