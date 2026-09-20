@@ -448,7 +448,7 @@ class JobCreateView(LoginRequiredMixin, CreateView):
 class JobPostingUpdateView(LoginRequiredMixin, UpdateView):
     model = JobPosting
     form_class = JobPostingForm
-    template_name = 'jobs/edit.html'
+    template_name = 'jobs/add.html'
     
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)

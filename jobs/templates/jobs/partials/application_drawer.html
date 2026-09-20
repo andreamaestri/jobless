@@ -17,7 +17,7 @@
         <label class="label text-sm mb-1" for="{{ form.job_posting.id_for_label }}">
           {% translate "Link to existing job" %}
         </label>
-        {% render_field form.job_posting class="select select-bordered w-full" hx-get="" hx-trigger="change" hx-target="#drawer-content" %}
+        {% render_field form.job_posting class="select w-full" hx-get="" hx-trigger="change" hx-target="#drawer-content" %}
         <p class="text-xs text-base-content/60 mt-1">{% translate "Select a saved job to auto-fill employer and title" %}</p>
       </div>
 
@@ -26,7 +26,7 @@
         <label class="label text-sm mb-1" for="{{ form.applied_on.id_for_label }}">
           {{ form.applied_on.label }}{% if form.applied_on.field.required %} <span class="text-error">*</span>{% endif %}
         </label>
-        {% render_field form.applied_on class="input input-bordered w-full" %}
+        {% render_field form.applied_on class="input w-full" %}
       </div>
 
       <!-- Employer + Title -->
@@ -35,13 +35,13 @@
           <label class="label text-sm mb-1" for="{{ form.employer_name.id_for_label }}">
             {{ form.employer_name.label }}{% if form.employer_name.field.required %} <span class="text-error">*</span>{% endif %}
           </label>
-          {% render_field form.employer_name class="input input-bordered w-full" %}
+          {% render_field form.employer_name class="input w-full" %}
         </div>
         <div>
           <label class="label text-sm mb-1" for="{{ form.job_title.id_for_label }}">
             {{ form.job_title.label }}{% if form.job_title.field.required %} <span class="text-error">*</span>{% endif %}
           </label>
-          {% render_field form.job_title class="input input-bordered w-full" %}
+          {% render_field form.job_title class="input w-full" %}
         </div>
       </div>
 
@@ -49,18 +49,18 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="label text-sm mb-1" for="{{ form.channel.id_for_label }}">{{ form.channel.label }}</label>
-          {% render_field form.channel class="select select-bordered w-full" %}
+          {% render_field form.channel class="select w-full" %}
         </div>
         <div>
           <label class="label text-sm mb-1" for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
-          {% render_field form.source class="select select-bordered w-full" %}
+          {% render_field form.source class="select w-full" %}
         </div>
       </div>
 
       <!-- Result -->
       <div>
         <label class="label text-sm mb-1" for="{{ form.result.id_for_label }}">{{ form.result.label }}</label>
-        {% render_field form.result class="select select-bordered w-full" %}
+        {% render_field form.result class="select w-full" %}
       </div>
 
       <!-- Collapsible details -->
@@ -69,43 +69,43 @@
         <div class="collapse-content space-y-3">
           <div>
             <label class="label text-sm mb-1" for="{{ form.employer_address.id_for_label }}">{{ form.employer_address.label }}</label>
-            {% render_field form.employer_address class="input input-bordered w-full" %}
+            {% render_field form.employer_address class="input w-full" %}
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="label text-sm mb-1" for="{{ form.employer_phone.id_for_label }}">{{ form.employer_phone.label }}</label>
-              {% render_field form.employer_phone class="input input-bordered w-full" %}
+              {% render_field form.employer_phone class="input w-full" %}
             </div>
             <div>
               <label class="label text-sm mb-1" for="{{ form.employer_email.id_for_label }}">{{ form.employer_email.label }}</label>
-              {% render_field form.employer_email class="input input-bordered w-full" %}
+              {% render_field form.employer_email class="input w-full" %}
             </div>
           </div>
           <div>
             <label class="label text-sm mb-1" for="{{ form.contact_person.id_for_label }}">{{ form.contact_person.label }}</label>
-            {% render_field form.contact_person class="input input-bordered w-full" %}
+            {% render_field form.contact_person class="input w-full" %}
           </div>
           <div>
             <label class="label text-sm mb-1" for="{{ form.source_ref.id_for_label }}">{{ form.source_ref.label }}</label>
-            {% render_field form.source_ref class="input input-bordered w-full" %}
+            {% render_field form.source_ref class="input w-full" %}
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="label text-sm mb-1" for="{{ form.result_date.id_for_label }}">{{ form.result_date.label }}</label>
-              {% render_field form.result_date class="input input-bordered w-full" %}
+              {% render_field form.result_date class="input w-full" %}
             </div>
             <div>
               <label class="label text-sm mb-1" for="{{ form.result_note.id_for_label }}">{{ form.result_note.label }}</label>
-              {% render_field form.result_note class="input input-bordered w-full" %}
+              {% render_field form.result_note class="input w-full" %}
             </div>
           </div>
           <div>
             <label class="label text-sm mb-1" for="{{ form.effort_type.id_for_label }}">{{ form.effort_type.label }}</label>
-            {% render_field form.effort_type class="select select-bordered w-full" %}
+            {% render_field form.effort_type class="select w-full" %}
           </div>
           <div>
             <label class="label text-sm mb-1" for="{{ form.costs_cents.id_for_label }}">{{ form.costs_cents.label }}</label>
-            {% render_field form.costs_cents class="input input-bordered w-full" %}
+            {% render_field form.costs_cents class="input w-full" %}
           </div>
         </div>
       </details>
