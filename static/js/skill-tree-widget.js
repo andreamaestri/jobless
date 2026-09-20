@@ -17,7 +17,7 @@ document.addEventListener("alpine:init", () => {
       return skill ? skill.proficiency : null;
     },
 
-    async init() {
+    init() {
       // Initialize store data first
       const store = Alpine.store("app");
       if (!store?.skills) {
@@ -26,14 +26,10 @@ document.addEventListener("alpine:init", () => {
       }
 
       // Load initial data
-      await this.loadSkillsData();
-      
-      if (window.TAGULOUS_INITIAL_TAGS?.length) {
-        this.loadInitialSkills(window.TAGULOUS_INITIAL_TAGS);
-      }
-
-      // Set up form validation listener
-      this.$nextTick(() => {
+      this.loadSkillsData().then(() => {
+        if (window.TAGULOUS_INITIAL_TAGS?.length) {
+          this.loadInitialSkills(window.TAGULOUS_INITIAL_TAGS);
+        }
         this.setupFormValidation();
       });
 
