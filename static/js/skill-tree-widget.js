@@ -1,8 +1,9 @@
 document.addEventListener("alpine:init", () => {
   Alpine.data("skillSelector", () => ({
-    viewMode: "search",
+    viewMode: "categories",
     searchQuery: "",
     categories: [],
+    selectedCategory: null,
     selectedSkills: [],
     allSkills: [],
     errors: [],
@@ -167,6 +168,10 @@ document.addEventListener("alpine:init", () => {
       );
     },
 
+    get categorySkills() {
+      return this.selectedCategory ? this.selectedCategory.skills : [];
+    },
+
     get skillsJson() {
       return JSON.stringify(
         this.selectedSkills.map(skill => ({
@@ -177,8 +182,19 @@ document.addEventListener("alpine:init", () => {
       );
     },
 
-    toggleCategory(category) {
-      category.expanded = !category.expanded;
+    openCategory(category) {
+      this.selectedCategory = category;
+      this.viewMode = "category";
+    },
+
+    backToCategories() {
+      this.selectedCategory = null;
+      this.viewMode = "categories";
+    },
+
+    showSearch() {
+      this.viewMode = "search";
+      this.searchQuery = "";
     },
 
     isSelected(skillId) {

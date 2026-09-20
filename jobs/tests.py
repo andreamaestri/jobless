@@ -56,7 +56,9 @@ class JobViewTests(SecureClientMixin, TestCase):
 
         self.assertContains(response, '<dialog id="required-skills-modal"', html=False)
         self.assertContains(response, 'aria-label="Search skills"', html=False)
-        self.assertContains(response, "Selected Skills")
+        self.assertContains(response, "Selected skills")
+        self.assertContains(response, "Job areas")
+        self.assertContains(response, "All job areas")
         self.assertContains(response, "Save changes")
         self.assertNotContains(response, "</dialog>\n            <button")
 

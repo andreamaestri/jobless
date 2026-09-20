@@ -1,5 +1,4 @@
 from django.urls import path
-from django.views.generic import RedirectView
 import django_tagulous.views
 from . import views
 from .models import SkillTag, ApplicationTag
@@ -29,8 +28,8 @@ urlpatterns = [
         {'tag_model': ApplicationTag},
         name='application_tags_autocomplete'
     ),
-    # Nachweis von Eigenbemühungen — unified into the main dashboard
-    path('nachweis/', RedirectView.as_view(pattern_name='jobs:list', permanent=False), name='nachweis'),
+    # Keep the standalone Nachweis dashboard as a backward-compatible fallback.
+    path('nachweis/', views.NachweisDashboardView.as_view(), name='nachweis'),
     path('nachweis/add/', views.ApplicationCreateView.as_view(), name='application_add'),
     path('nachweis/<int:pk>/', views.ApplicationDetailView.as_view(), name='application_detail'),
     path('nachweis/<int:pk>/edit/', views.ApplicationUpdateView.as_view(), name='application_edit'),
