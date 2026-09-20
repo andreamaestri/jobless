@@ -1,3 +1,5 @@
+from datetime import date
+
 from django import forms
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
@@ -73,6 +75,35 @@ class SkillTreeWidget(forms.SelectMultiple):
 
 
 class JobPostingForm(forms.ModelForm):
+    paste_description = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'textarea textarea-bordered w-full min-h-[120px]',
+            'placeholder': _('Paste the job posting here...'),
+        }),
+        required=False,
+        label=_('Paste job posting'),
+        help_text=_('AI will extract the details'),
+    )
+    record_effort = forms.BooleanField(
+        required=False,
+        initial=True,
+        label=_('Also record as job-search effort'),
+        help_text=_('Creates a Nachweis entry with today\'s date'),
+        widget=forms.CheckboxInput(attrs={'class': 'toggle toggle-primary'}),
+    )
+    effort_date = forms.DateField(
+        required=False,
+        initial=date.today,
+        label=_('Effort date'),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'input w-full'}),
+    )
+    effort_channel = forms.ChoiceField(
+        required=False,
+        initial='ONLINE',
+        label=_('How did you apply?'),
+        choices=[('', _('—'))] + [(c.name, c.label) for c in Application.Channel],
+        widget=forms.Select(attrs={'class': 'select w-full'}),
+    )
     skills = forms.CharField(
         widget=SkillTreeWidget(attrs={'class': 'skill-tree-select'}),
         required=False  # Skills are optional

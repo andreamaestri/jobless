@@ -1,17 +1,25 @@
 {% load i18n %}
 <!-- Enhanced Skill Selection Modal -->
-<div x-data="skillSelector"
+<div id="required-skills-modal"
+     x-data="skillSelector"
      x-cloak
      x-show="$store.app.skills.modal.open"
      class="modal"
      :class="{ 'modal-open': $store.app.skills.modal.open }"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="required-skills-title"
      @keydown.escape.window="$store.app.skills.closeModal()"
      @click.self="$store.app.skills.closeModal()">
     
-     <div class="modal-box max-w-3xl bg-base-100 text-base-content opacity-100!">
+     <div class="modal-box max-w-4xl bg-base-100 text-base-content">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-bold">{% translate "Manage Skills" %}</h3>
-            <button class="btn btn-ghost btn-sm btn-square"
+            <div>
+                <h3 id="required-skills-title" class="text-lg font-bold">{% translate "Choose required skills" %}</h3>
+                <p class="text-sm text-base-content/60 mt-1">{% translate "Search or browse categories, then set the importance of each skill." %}</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm btn-square"
+                     aria-label="{% translate 'Close skill picker' %}"
                      @click="$store.app.skills.closeModal()">
                 <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
             </button>
@@ -20,19 +28,20 @@
         <!-- Skill Search and View Toggle -->
         <div class="flex gap-4 mb-4">
             <div class="flex-1">
-                <input type="text"
+                <input type="search"
                         class="input w-full"
+                       aria-label="{% translate 'Search skills' %}"
                        placeholder="{% translate 'Search skills ...' %}"
                        x-model="searchQuery"
                        @input="filterSkills">
             </div>
             <div class="flex gap-2">
-                <button class="btn btn-ghost btn-sm"
+                <button type="button" class="btn btn-ghost btn-sm"
                         :class="{'btn-active': viewMode === 'search'}"
                         @click="viewMode = 'search'">
                     <iconify-icon icon="heroicons:magnifying-glass" class="text-lg"></iconify-icon>
                 </button>
-                <button class="btn btn-ghost btn-sm"
+                <button type="button" class="btn btn-ghost btn-sm"
                         :class="{'btn-active': viewMode === 'tree'}"
                         @click="viewMode = 'tree'">
                     <iconify-icon icon="heroicons:squares-2x2" class="text-lg"></iconify-icon>
@@ -43,7 +52,7 @@
         <!-- Skill Browser -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Skill Tree/Search Results -->
-            <div class="border rounded-lg bg-base-100">
+            <div class="card card-border bg-base-100">
                 <!-- Tree View -->
                 <div x-show="viewMode === 'tree'" class="p-4 max-h-96 overflow-y-auto">
                     <template x-for="category in categories" :key="category.path">
@@ -56,12 +65,13 @@
                             </div>
                             <div x-show="category.expanded" class="ml-6">
                                 <template x-for="skill in category.skills" :key="skill.id">
-                                    <div class="skill-item flex items-center gap-2 p-2 cursor-pointer hover:bg-base-200 rounded"
+                                    <button type="button" class="skill-item flex items-center gap-2 p-2 cursor-pointer hover:bg-base-200 rounded w-full text-left"
                                          :class="{'bg-primary/10': isSelected(skill.id)}"
                                          @click="toggleSkill(skill)">
                                         <iconify-icon :icon="skill.icon" class="text-xl"></iconify-icon>
                                         <span x-text="skill.label"></span>
-                                    </div>
+                                        <iconify-icon x-show="isSelected(skill.id)" icon="heroicons:check" class="ml-auto text-primary"></iconify-icon>
+                                    </button>
                                 </template>
                             </div>
                         </div>
@@ -71,18 +81,19 @@
                 <!-- Search Results -->
                 <div x-show="viewMode === 'search'" class="p-4 max-h-96 overflow-y-auto">
                     <template x-for="skill in filteredSkills" :key="skill.id">
-                        <div class="skill-item flex items-center gap-2 p-2 cursor-pointer hover:bg-base-200 rounded mb-2"
+                        <button type="button" class="skill-item flex items-center gap-2 p-2 cursor-pointer hover:bg-base-200 rounded mb-2 w-full text-left"
                              :class="{'bg-primary/10': isSelected(skill.id)}"
                              @click="toggleSkill(skill)">
                             <iconify-icon :icon="skill.icon" class="text-xl"></iconify-icon>
                             <span x-text="skill.label"></span>
-                        </div>
+                            <iconify-icon x-show="isSelected(skill.id)" icon="heroicons:check" class="ml-auto text-primary"></iconify-icon>
+                        </button>
                     </template>
                 </div>
             </div>
 
             <!-- Selected Skills -->
-            <div class="border rounded-lg bg-base-100 p-4">
+            <div class="card card-border bg-base-100 p-4">
                 <h4 class="font-medium mb-3">{% translate "Selected Skills" %}</h4>
                 <div class="space-y-2">
                     <template x-for="skill in selectedSkills" :key="skill.id">
@@ -96,7 +107,8 @@
                                 <option value="preferred">{% translate "Preferred" %}</option>
                                 <option value="bonus">{% translate "Nice to have" %}</option>
                             </select>
-                            <button class="btn btn-ghost btn-sm btn-square"
+                            <button type="button" class="btn btn-ghost btn-sm btn-square"
+                                    :aria-label="`${gettext('Remove')} ${skill.label}`"
                                     @click="removeSkill(skill)">
                                 <iconify-icon icon="heroicons:x-mark" class="text-lg"></iconify-icon>
                             </button>
@@ -108,8 +120,8 @@
 
         <!-- Modal Actions -->
         <div class="modal-action">
-            <button class="btn" @click="$store.app.skills.closeModal()">{% translate "Cancel" %}</button>
-            <button class="btn btn-primary" @click="saveSkills">
+            <button type="button" class="btn" @click="$store.app.skills.closeModal()">{% translate "Cancel" %}</button>
+            <button type="button" class="btn btn-primary" @click="saveSkills">
                 {% translate "Save changes" %}
             </button>
         </div>

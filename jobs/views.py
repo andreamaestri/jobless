@@ -421,7 +421,27 @@ class JobCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         response = super().form_valid(form)
-        messages.success(self.request, 'Job added successfully.')
+        messages.success(self.request, _('Job added successfully.'))
+
+        if form.cleaned_data.get('record_effort'):
+            effort_date = form.cleaned_data.get('effort_date') or date.today()
+            channel_raw = form.cleaned_data.get('effort_channel')
+            channel = int(channel_raw) if channel_raw and channel_raw.isdigit() else None
+            Application.objects.create(
+                user=self.request.user,
+                job_posting=form.instance,
+                employer_name=form.instance.company,
+                job_title=form.instance.title,
+                applied_on=effort_date,
+                channel=channel,
+                source=Application.Source.COMPANY_SITE,
+                effort_type=Application.EffortType.BEWERBUNG,
+            )
+            messages.success(
+                self.request,
+                _('Effort recorded for %(date)s — linked to this job.') % {'date': effort_date},
+            )
+
         return response
 
 
@@ -438,7 +458,35 @@ class JobPostingUpdateView(LoginRequiredMixin, UpdateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Job updated successfully.')
+        messages.success(self.request, _('Job updated successfully.'))
+
+        if form.cleaned_data.get('record_effort'):
+            effort_date = form.cleaned_data.get('effort_date') or date.today()
+            channel_raw = form.cleaned_data.get('effort_channel')
+            channel = int(channel_raw) if channel_raw and channel_raw.isdigit() else None
+            existing = Application.objects.filter(
+                user=self.request.user,
+                job_posting=form.instance,
+                applied_on=effort_date,
+            ).first()
+            if not existing:
+                Application.objects.create(
+                    user=self.request.user,
+                    job_posting=form.instance,
+                    employer_name=form.instance.company,
+                    job_title=form.instance.title,
+                    applied_on=effort_date,
+                    channel=channel,
+                    source=Application.Source.COMPANY_SITE,
+                    effort_type=Application.EffortType.BEWERBUNG,
+                )
+                messages.success(
+                    self.request,
+                    _('Effort recorded for %(date)s.') % {'date': effort_date},
+                )
+            else:
+                messages.info(self.request, _('Effort for this date already exists.'))
+
         return response
 
 

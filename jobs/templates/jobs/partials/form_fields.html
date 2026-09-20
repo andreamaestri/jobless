@@ -2,7 +2,7 @@
 
 <form id="job-form" method="post" class="space-y-6">
     {% csrf_token %}
-    
+
     <!-- AI Parser Section -->
     <div class="mb-8 bg-secondary/10 rounded-xl p-6">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -11,7 +11,13 @@
         </h2>
         <div class="space-y-4">
             {{ form.paste_description }}
-            <div id="description-parser" data-url="{% url 'jobs:parse_description' %}" class="flex flex-wrap gap-4 items-start">
+            <div id="description-parser"
+                 data-url="{% url 'jobs:parse_description' %}"
+                 data-msg-empty="{% translate "Please paste a job posting first." %}"
+                 data-msg-error="{% translate "AI service is unavailable. Please fill in manually." %}"
+                 data-msg-processing="{% translate "Processing..." %}"
+                 data-msg-ready="{% translate "Process with AI" %}"
+                 class="flex flex-wrap gap-4 items-start">
                 <button id="parse-button" type="button" class="btn btn-secondary gap-2">
                     <span class="loading loading-spinner loading-sm hidden"></span>
                     <span class="button-text">{% translate "Process with AI" %}</span>
@@ -21,54 +27,20 @@
                     <iconify-icon icon="heroicons:x-circle"></iconify-icon>
                     <span></span>
                 </div>
+                <div id="parse-success" class="alert alert-success hidden">
+                    <iconify-icon icon="heroicons:check-circle"></iconify-icon>
+                    <span>{% translate "Job details extracted and filled in!" %}</span>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Parse Results -->
-    {% if parsed %}
-    <div id="parse-results">
-        <div class="alert alert-success mb-4">
-            <iconify-icon icon="heroicons:check-circle"></iconify-icon>
-                    <span>{% translate "Job details successfully extracted!" %}</span>
-        </div>
-        
-        <script>
-            (function() {
-                function setFieldValue(fieldId, value) {
-                    const field = document.getElementById(fieldId);
-                    if (field && !field.value) {
-                        field.value = value;
-                        field.dispatchEvent(new Event('change', { bubbles: true }));
-                        field.setAttribute('data-ai-filled', 'true');
-                    }
-                }
-                
-                setFieldValue('id_title', '{{ parsed.title|escapejs }}');
-                setFieldValue('id_company', '{{ parsed.company|escapejs }}');
-                setFieldValue('id_location', '{{ parsed.location|escapejs }}');
-                setFieldValue('id_salary_range', '{{ parsed.salary_range|escapejs }}');
-                
-                const description = `{{ parsed.description|escapejs }}`.replace(/\\n/g, '\n');
-                setFieldValue('id_description', description);
-                
-                const charCounter = document.getElementById('char-counter');
-                const descField = document.getElementById('id_description');
-                if (charCounter && descField) {
-                    const descLength = descField.value.length;
-                    charCounter.textContent = `${descLength}/4000`;
-                }
-            })();
-        </script>
-    </div>
-    {% endif %}
 
     <!-- Basic Information -->
     <div class="space-y-6">
         <h2 class="text-xl font-semibold">{% translate "Basic Information" %}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Title -->
-            <div class="form-control">
+            <div>
                 <label for="id_title" class="label">
                     <span class="label-text text-base-content">{% translate "Job Title" %}<span class="text-error">*</span></span>
                 </label>
@@ -76,7 +48,7 @@
             </div>
 
             <!-- Company -->
-            <div class="form-control">
+            <div>
                 <label for="id_company" class="label">
                     <span class="label-text text-base-content">{% translate "Company" %}<span class="text-error">*</span></span>
                 </label>
@@ -84,7 +56,7 @@
             </div>
 
             <!-- Location -->
-            <div class="form-control">
+            <div>
                 <label for="id_location" class="label">
                     <span class="label-text text-base-content">{% translate "Location" %}<span class="text-error">*</span></span>
                 </label>
@@ -92,7 +64,7 @@
             </div>
 
             <!-- URL -->
-            <div class="form-control">
+            <div>
                 <label for="id_url" class="label">
                     <span class="label-text">{% translate "Job posting URL" %}</span>
                 </label>
@@ -100,7 +72,7 @@
             </div>
 
             <!-- Salary Range -->
-            <div class="form-control">
+            <div>
                 <label for="id_salary_range" class="label">
                     <span class="label-text">{% translate "Salary Range" %}</span>
                 </label>
@@ -108,7 +80,7 @@
             </div>
 
             <!-- Status -->
-            <div class="form-control">
+            <div>
                 <label for="id_status" class="label">
                     <span class="label-text">{% translate "Status" %}<span class="text-error">*</span></span>
                 </label>
@@ -117,10 +89,37 @@
         </div>
     </div>
 
+    <!-- Record as effort -->
+    <div class="bg-base-200/50 rounded-xl p-6 space-y-4">
+        <div class="flex items-center gap-3">
+            {{ form.record_effort }}
+            <label for="id_record_effort" class="label-text font-medium cursor-pointer">
+                {% translate "Also record as job-search effort (Nachweis)" %}
+            </label>
+        </div>
+        <p class="text-xs text-base-content/60 -mt-2 ml-12">
+            {% translate "Creates an effort entry so you can export it for the Jobcentre." %}
+        </p>
+        <div id="effort-fields" class="grid grid-cols-1 md:grid-cols-2 gap-4 ml-12">
+            <div>
+                <label for="id_effort_date" class="label">
+                    <span class="label-text">{% translate "Effort date" %}</span>
+                </label>
+                {{ form.effort_date }}
+            </div>
+            <div>
+                <label for="id_effort_channel" class="label">
+                    <span class="label-text">{% translate "How did you apply?" %}</span>
+                </label>
+                {{ form.effort_channel }}
+            </div>
+        </div>
+    </div>
+
     <!-- Skills -->
     <div class="space-y-6">
         <h2 class="text-xl font-semibold">{% translate "Skills" %}</h2>
-        <div class="form-control">
+        <div>
             <label for="id_skills" class="label">
                 <span class="label-text">{% translate "Required Skills" %}</span>
             </label>
@@ -134,8 +133,117 @@
                 <span>{% translate "Job Description" %}</span>
             <span id="char-counter" class="text-sm text-base-content/60">0/4000</span>
         </h2>
-        <div class="form-control">
+        <div>
             {{ form.description }}
         </div>
     </div>
 </form>
+
+<script>
+(function() {
+    const parser = document.getElementById('description-parser');
+    const parseBtn = document.getElementById('parse-button');
+    const parseUrl = parser?.dataset.url;
+    const errorBox = document.getElementById('parse-error');
+    const errorSpan = errorBox?.querySelector('span');
+    const successBox = document.getElementById('parse-success');
+    const spinner = parseBtn?.querySelector('.loading');
+
+    if (!parseBtn || !parseUrl) return;
+
+    const msgEmpty = parser.dataset.msgEmpty || 'Please paste a job posting first.';
+    const msgError = parser.dataset.msgError || 'AI service is unavailable.';
+    const msgProcessing = parser.dataset.msgProcessing || 'Processing...';
+    const msgReady = parser.dataset.msgReady || 'Process with AI';
+
+    function setField(id, value) {
+        const el = document.getElementById(id);
+        if (el && value) {
+            el.value = value;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+
+    function updateCharCounter() {
+        const counter = document.getElementById('char-counter');
+        const desc = document.getElementById('id_description');
+        if (counter && desc) counter.textContent = desc.value.length + '/4000';
+    }
+
+    parseBtn.addEventListener('click', async function() {
+        const textarea = document.querySelector('textarea[name="paste_description"]');
+        const text = textarea?.value?.trim();
+        if (!text) {
+            errorBox?.classList.remove('hidden');
+            if (errorSpan) errorSpan.textContent = msgEmpty;
+            return;
+        }
+
+        errorBox?.classList.add('hidden');
+        successBox?.classList.add('hidden');
+        parseBtn.disabled = true;
+        spinner?.classList.remove('hidden');
+        parseBtn.querySelector('.button-text').textContent = msgProcessing;
+
+        try {
+            const csrfToken = (document.cookie.match(/(^|; )csrftoken=([^;]+)/) || [])[2] || '';
+            const res = await fetch(parseUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                body: new URLSearchParams({ description: text }),
+            });
+            const data = await res.json();
+
+            if (!res.ok || data.error) {
+                throw new Error(data.error || msgError);
+            }
+
+            setField('id_title', data.title);
+            setField('id_company', data.company);
+            setField('id_location', data.location);
+            setField('id_salary_range', data.salary_range);
+
+            if (data.description) {
+                const descField = document.getElementById('id_description');
+                if (descField) {
+                    descField.value = data.description;
+                    descField.dispatchEvent(new Event('input', { bubbles: true }));
+                    updateCharCounter();
+                }
+            }
+
+            if (data.url) setField('id_url', data.url);
+
+            successBox?.classList.remove('hidden');
+            setTimeout(() => successBox?.classList.add('hidden'), 5000);
+        } catch (err) {
+            errorBox?.classList.remove('hidden');
+            if (errorSpan) errorSpan.textContent = err.message || msgError;
+        } finally {
+            parseBtn.disabled = false;
+            spinner?.classList.add('hidden');
+            parseBtn.querySelector('.button-text').textContent = msgReady;
+        }
+    });
+
+    const descField = document.getElementById('id_description');
+    if (descField) {
+        updateCharCounter();
+        descField.addEventListener('input', updateCharCounter);
+    }
+
+    // Toggle effort fields visibility
+    const effortCheckbox = document.getElementById('id_record_effort');
+    const effortFields = document.getElementById('effort-fields');
+    if (effortCheckbox && effortFields) {
+        const toggle = () => { effortFields.style.display = effortCheckbox.checked ? '' : 'none'; };
+        toggle();
+        effortCheckbox.addEventListener('change', toggle);
+    }
+})();
+</script>
