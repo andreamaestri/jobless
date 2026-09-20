@@ -30,6 +30,12 @@ class SkillTag(django_tagulous.models.TagTreeModel):
 class SkillTreeModel(models.Model):
     name = models.CharField(max_length=100)
     label = models.CharField(max_length=100)
+    label_de = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        help_text=_("German display name (e.g. 'SPS-Programmierung')")
+    )
     icon = models.CharField(
         max_length=100,
         blank=True,
@@ -43,6 +49,20 @@ class SkillTreeModel(models.Model):
         to=SkillTag,
         help_text=_("Enter hierarchical tags (e.g. programming/python/django)"),
         blank=True
+    )
+    dqr_level = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        help_text=_("DQR/EQF qualification level (1–8)")
+    )
+    is_mangelberuf = models.BooleanField(
+        default=False,
+        help_text=_("Official BA Engpassberuf (shortage occupation)")
+    )
+    certifications = models.JSONField(
+        default=list,
+        blank=True,
+        help_text=_("List of certification names (e.g. ['PersCert TÜV', 'Siemens Certified'])")
     )
 
     @property
@@ -65,16 +85,16 @@ class SkillTreeModel(models.Model):
         if self.icon:
             return self.icon
         
-        # Try ICON_NAME_MAPPING
-        from .utils.skill_icons import ICON_NAME_MAPPING
+        from .utils.skill_icons import SKILL_ICON_MAP, ICON_NAME_MAPPING
+        if self.name in SKILL_ICON_MAP:
+            return SKILL_ICON_MAP[self.name]
         if self.name in ICON_NAME_MAPPING:
             return ICON_NAME_MAPPING[self.name]
             
-        # Log the missing icon mapping
         import logging
         logger = logging.getLogger(__name__)
         logger.warning(f"No icon found for skill: {self.name}")
-        return 'heroicons:academic-cap'  # Default icon
+        return 'heroicons:academic-cap'
 
     def to_dict(self):
         """Convert skill to dictionary format for JSON serialization"""
@@ -82,10 +102,14 @@ class SkillTreeModel(models.Model):
             'id': self.pk,
             'name': self.name,
             'label': self.label,
+            'label_de': self.label_de or self.label,
             'path': self.path,
             'taxonomy_path': self.taxonomy_path,
             'icon': self.get_icon(),
             'description': self.description or '',
+            'dqr_level': self.dqr_level,
+            'is_mangelberuf': self.is_mangelberuf,
+            'certifications': self.certifications or [],
             'proficiency_levels': dict(JobSkill.PROFICIENCY_LEVELS)
         }
 

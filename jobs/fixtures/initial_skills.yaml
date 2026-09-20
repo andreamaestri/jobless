@@ -3,767 +3,1797 @@
   fields:
     name: "programming"
     label: "Programming"
+    label_de: ""
     icon: "heroicons:code-bracket"
     description: "Core programming concepts and skills"
     tags: "programming"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "frontend"
     label: "Frontend"
+    label_de: ""
     icon: "heroicons:computer-desktop"
     description: "Frontend development skills"
     tags: "frontend"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "backend"
     label: "Backend"
+    label_de: ""
     icon: "heroicons:server"
     description: ""
     tags: "backend"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Programming
 - model: jobs.skilltreemodel
   fields:
     name: "languages"
     label: "Languages"
+    label_de: ""
     icon: "heroicons:command-line"
     description: "Programming languages"
     tags: "programming/languages"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Programming Languages
 - model: jobs.skilltreemodel
   fields:
     name: "python"
     label: "Python"
+    label_de: ""
     icon: "skill-icons:python-dark"
     description: ""
     tags: "programming/languages/python"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "javascript"
     label: "JavaScript"
+    label_de: ""
     icon: "skill-icons:javascript"
     description: ""
     tags: "programming/languages/javascript"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Frontend
 - model: jobs.skilltreemodel
   fields:
     name: "core"
     label: "Core Technologies"
+    label_de: ""
     icon: "heroicons:code-bracket"
     description: ""
     tags: "frontend/core"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Frontend Core
 - model: jobs.skilltreemodel
   fields:
     name: "html"
     label: "HTML"
+    label_de: ""
     icon: "skill-icons:html"
     description: ""
     tags: "frontend/core/html"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "css"
     label: "CSS"
+    label_de: ""
     icon: "skill-icons:css"
     description: ""
     tags: "frontend/core/css"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Frontend Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "frameworks"
     label: "Frameworks"
+    label_de: ""
     icon: "heroicons:cube"
     description: ""
     tags: "frontend/frameworks"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Frontend Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "react"
     label: "React"
+    label_de: ""
     icon: "skill-icons:react-dark"
     description: ""
     tags: "frontend/frameworks/react"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "vue"
     label: "Vue"
+    label_de: ""
     icon: "skill-icons:vuejs-dark"
     description: ""
     tags: "frontend/frameworks/vue"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Backend Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "django"
     label: "Django"
+    label_de: ""
     icon: "skill-icons:django"
     description: ""
     tags: "backend/frameworks/django"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "nodejs"
     label: "Node.js"
+    label_de: ""
     icon: "skill-icons:nodejs-dark"
     description: ""
     tags: "backend/frameworks/nodejs"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
 # Level 2 - Backend
 - model: jobs.skilltreemodel
   fields:
     name: "databases"
     label: "Databases"
+    label_de: ""
     icon: "heroicons:circle-stack"
     description: "Database management systems and technologies"
     tags: "backend/databases"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Backend Databases
 - model: jobs.skilltreemodel
   fields:
     name: "postgresql"
     label: "PostgreSQL"
+    label_de: ""
     icon: "skill-icons:postgresql-dark"
     description: ""
     tags: "backend/databases/postgresql"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "mysql"
     label: "MySQL"
+    label_de: ""
     icon: "skill-icons:mysql-dark"
     description: ""
     tags: "backend/databases/mysql"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "mongodb"
     label: "MongoDB"
+    label_de: ""
     icon: "skill-icons:mongodb"
     description: ""
     tags: "backend/databases/mongodb"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "redis"
     label: "Redis"
+    label_de: ""
     icon: "skill-icons:redis-dark"
     description: ""
     tags: "backend/databases/redis"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - DevOps
 - model: jobs.skilltreemodel
   fields:
     name: "containerization"
     label: "Containerization"
+    label_de: ""
     icon: "heroicons:cube-transparent"
     description: "Technologies for containerizing applications"
     tags: "devops/containerization"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - DevOps Containerization
 - model: jobs.skilltreemodel
   fields:
     name: "docker"
     label: "Docker"
+    label_de: ""
     icon: "skill-icons:docker"
     description: ""
     tags: "devops/containerization/docker"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "kubernetes"
     label: "Kubernetes"
+    label_de: ""
     icon: "skill-icons:kubernetes"
     description: ""
     tags: "devops/containerization/kubernetes"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Cloud Platforms
 - model: jobs.skilltreemodel
   fields:
     name: "cloud"
     label: "Cloud Platforms"
+    label_de: ""
     icon: "heroicons:cloud"
     description: "Cloud-based technologies and platforms"
     tags: "devops/cloud"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Cloud Platforms
 - model: jobs.skilltreemodel
   fields:
     name: "aws"
     label: "AWS"
+    label_de: ""
     icon: "skill-icons:aws-dark"
     description: ""
     tags: "devops/cloud/aws"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "azure"
     label: "Azure"
+    label_de: ""
     icon: "skill-icons:azure-dark"
     description: ""
     tags: "devops/cloud/azure"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "gcp"
     label: "Google Cloud Platform"
+    label_de: ""
     icon: "skill-icons:gcp-dark"
     description: ""
     tags: "devops/cloud/gcp"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Tools
 - model: jobs.skilltreemodel
   fields:
     name: "vcs"
     label: "Version Control"
+    label_de: ""
     icon: "heroicons:code-bracket-square"
     description: "Version control systems"
     tags: "tools/vcs"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Version Control Tools
 - model: jobs.skilltreemodel
   fields:
     name: "git"
     label: "Git"
+    label_de: ""
     icon: "skill-icons:git"
     description: ""
     tags: "tools/vcs/git"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "github"
     label: "GitHub"
+    label_de: ""
     icon: "skill-icons:github-dark"
     description: ""
     tags: "tools/vcs/github"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "gitlab"
     label: "GitLab"
+    label_de: ""
     icon: "skill-icons:gitlab-dark"
     description: ""
     tags: "tools/vcs/gitlab"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Mobile Development
 - model: jobs.skilltreemodel
   fields:
     name: "mobile"
     label: "Mobile Development"
+    label_de: ""
     icon: "heroicons:device-mobile"
     description: "Technologies for mobile application development"
     tags: "mobile"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Mobile Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "flutter"
     label: "Flutter"
+    label_de: ""
     icon: "skill-icons:flutter-dark"
     description: ""
     tags: "mobile/flutter"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "react-native"
     label: "React Native"
+    label_de: ""
     icon: "skill-icons:react-dark"
     description: ""
     tags: "mobile/react-native"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Design
 - model: jobs.skilltreemodel
   fields:
     name: "ui"
     label: "UI Design"
+    label_de: ""
     icon: "heroicons:squares-2x2"
     description: "User interface design tools and techniques"
     tags: "design/ui"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Design Tools
 - model: jobs.skilltreemodel
   fields:
     name: "figma"
     label: "Figma"
+    label_de: ""
     icon: "skill-icons:figma-dark"
     description: ""
     tags: "design/ui/figma"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "photoshop"
     label: "Photoshop"
+    label_de: ""
     icon: "skill-icons:photoshop"
     description: ""
     tags: "design/ui/photoshop"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "illustrator"
     label: "Illustrator"
+    label_de: ""
     icon: "skill-icons:illustrator"
     description: ""
     tags: "design/ui/illustrator"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
 # Level 1 - Testing
 - model: jobs.skilltreemodel
   fields:
     name: "testing"
     label: "Testing"
+    label_de: ""
     icon: "heroicons:check-circle"
     description: "Skills and tools for software testing"
     tags: "testing"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Testing Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "testing/frameworks"
     label: "Testing Frameworks"
+    label_de: ""
     icon: "heroicons:chip"
     description: "Frameworks for automated and manual testing"
     tags: "testing/frameworks"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Testing Tools
 - model: jobs.skilltreemodel
   fields:
     name: "jest"
     label: "Jest"
+    label_de: ""
     icon: "skill-icons:jest"
     description: ""
     tags: "testing/frameworks/jest"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "selenium"
     label: "Selenium"
+    label_de: ""
     icon: "skill-icons:selenium"
     description: ""
     tags: "testing/frameworks/selenium"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 1 - Data Visualization
 - model: jobs.skilltreemodel
   fields:
     name: "data-visualization"
     label: "Data Visualization"
+    label_de: ""
     icon: "heroicons:chart-bar"
     description: "Skills and tools for creating visual representations of data"
     tags: "data-visualization"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Data Visualization Libraries
 - model: jobs.skilltreemodel
   fields:
     name: "libraries"
     label: "Libraries"
+    label_de: ""
     icon: "heroicons:chart-pie"
     description: "Libraries for building data visualizations"
     tags: "data-visualization/libraries"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Data Visualization Tools
 - model: jobs.skilltreemodel
   fields:
     name: "d3"
     label: "D3.js"
+    label_de: ""
     icon: "skill-icons:d3-dark"
     description: ""
     tags: "data-visualization/libraries/d3"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "chartjs"
     label: "Chart.js"
+    label_de: ""
     icon: "skill-icons:chartjs"
     description: ""
     tags: "data-visualization/libraries/chartjs"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 1 - Artificial Intelligence
 - model: jobs.skilltreemodel
   fields:
     name: "ai"
     label: "Artificial Intelligence"
+    label_de: ""
     icon: "heroicons:light-bulb"
     description: "Technologies and frameworks for AI development"
     tags: "ai"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - AI Frameworks
 - model: jobs.skilltreemodel
   fields:
     name: "frameworks"
     label: "Frameworks"
+    label_de: ""
     icon: "heroicons:chip"
     description: "Frameworks for developing AI applications"
     tags: "ai/frameworks"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - AI Tools
 - model: jobs.skilltreemodel
   fields:
     name: "tensorflow"
     label: "TensorFlow"
+    label_de: ""
     icon: "skill-icons:tensorflow-dark"
     description: ""
     tags: "ai/frameworks/tensorflow"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "pytorch"
     label: "PyTorch"
+    label_de: ""
     icon: "skill-icons:pytorch-dark"
     description: ""
     tags: "ai/frameworks/pytorch"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 1 - Cybersecurity
 - model: jobs.skilltreemodel
   fields:
     name: "cybersecurity"
     label: "Cybersecurity"
+    label_de: ""
     icon: "heroicons:shield-check"
     description: "Skills and tools for securing applications and systems"
     tags: "cybersecurity"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Cybersecurity Tools
 - model: jobs.skilltreemodel
   fields:
     name: "tools"
     label: "Tools"
+    label_de: ""
     icon: "heroicons:key"
     description: "Tools for cybersecurity and threat detection"
     tags: "cybersecurity/tools"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Cybersecurity Platforms
 - model: jobs.skilltreemodel
   fields:
     name: "aws-shield"
     label: "AWS Shield"
+    label_de: ""
     icon: "skill-icons:aws-dark"
     description: ""
     tags: "cybersecurity/tools/aws-shield"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "fortinet"
     label: "Fortinet"
+    label_de: ""
     icon: "skill-icons:fortinet"
     description: ""
     tags: "cybersecurity/tools/fortinet"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 1 - Game Development
 - model: jobs.skilltreemodel
   fields:
     name: "game-development"
     label: "Game Development"
+    label_de: ""
     icon: "heroicons:joystick"
     description: "Skills and tools for developing video games"
     tags: "game-development"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 2 - Game Engines
 - model: jobs.skilltreemodel
   fields:
     name: "engines"
     label: "Engines"
+    label_de: ""
     icon: "heroicons:cube"
     description: "Game engines for creating video games"
     tags: "game-development/engines"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Level 3 - Game Engines
 - model: jobs.skilltreemodel
   fields:
     name: "unity"
     label: "Unity"
+    label_de: ""
     icon: "skill-icons:unity-dark"
     description: ""
     tags: "game-development/engines/unity"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "unreal-engine"
     label: "Unreal Engine"
+    label_de: ""
     icon: "skill-icons:unrealengine"
     description: ""
     tags: "game-development/engines/unreal-engine"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 # Occupation domains beyond technology
 - model: jobs.skilltreemodel
   fields:
     name: "accounting"
     label: "Accounting"
+    label_de: ""
     icon: "heroicons:calculator"
     description: "Bookkeeping, reporting, and financial record keeping"
     tags: "business-finance/accounting"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "financial-analysis"
     label: "Financial Analysis"
+    label_de: ""
     icon: "heroicons:chart-bar"
     description: "Budgeting, forecasting, and financial analysis"
     tags: "business-finance/finance/financial-analysis"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "project-management"
     label: "Project Management"
+    label_de: ""
     icon: "heroicons:clipboard-document-check"
     description: "Planning, delivery, and coordination of projects"
     tags: "business-finance/management/project-management"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "customer-service"
     label: "Customer Service"
+    label_de: ""
     icon: "heroicons:chat-bubble-left-right"
     description: "Customer support, service communication, and issue resolution"
     tags: "office-customer-support/service/customer-service"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "sales"
     label: "Sales"
+    label_de: ""
     icon: "heroicons:banknotes"
     description: "Consultative selling, account development, and negotiation"
     tags: "sales-marketing/sales"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "digital-marketing"
     label: "Digital Marketing"
+    label_de: ""
     icon: "heroicons:megaphone"
     description: "Campaigns, content, and performance marketing"
     tags: "sales-marketing/marketing/digital-marketing"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "recruiting"
     label: "Recruiting"
+    label_de: ""
     icon: "heroicons:user-group"
     description: "Candidate sourcing, interviews, and hiring coordination"
     tags: "business-finance/human-resources/recruiting"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "nursing"
     label: "Nursing"
+    label_de: ""
     icon: "heroicons:heart"
     description: "Patient care, clinical documentation, and health support"
     tags: "healthcare/care/nursing"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "medical-assistance"
     label: "Medical Assistance"
+    label_de: ""
     icon: "heroicons:plus-circle"
     description: "Clinical assistance, appointments, and patient administration"
     tags: "healthcare/care/medical-assistance"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "physiotherapy"
     label: "Physiotherapy"
+    label_de: ""
     icon: "heroicons:bolt"
     description: "Movement therapy, rehabilitation, and patient guidance"
     tags: "healthcare/therapy/physiotherapy"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "teaching"
     label: "Teaching"
+    label_de: ""
     icon: "heroicons:book-open"
     description: "Instruction, lesson planning, and learner support"
     tags: "education/teaching"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "early-childhood-education"
     label: "Early Childhood Education"
+    label_de: ""
     icon: "heroicons:sparkles"
     description: "Early learning, childcare, and child development"
     tags: "education/childcare/early-childhood-education"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "curriculum-development"
     label: "Curriculum Development"
+    label_de: ""
     icon: "heroicons:document-text"
     description: "Learning materials, curriculum design, and assessment"
     tags: "education/teaching/curriculum-development"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "electrical-installation"
     label: "Electrical Installation"
+    label_de: ""
     icon: "heroicons:bolt"
     description: "Electrical installation, maintenance, and safety"
     tags: "engineering-trades/electrical/electrical-installation"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "mechanical-maintenance"
     label: "Mechanical Maintenance"
+    label_de: ""
     icon: "heroicons:wrench-screwdriver"
     description: "Repair, maintenance, and troubleshooting of machinery"
     tags: "engineering-trades/mechanical/mechanical-maintenance"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "welding"
     label: "Welding"
+    label_de: ""
     icon: "heroicons:fire"
     description: "Metal joining, fabrication, and workshop safety"
     tags: "engineering-trades/manufacturing/welding"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "carpentry"
     label: "Carpentry"
+    label_de: ""
     icon: "heroicons:home-modern"
     description: "Woodwork, construction, and practical building skills"
     tags: "engineering-trades/construction/carpentry"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "warehouse-operations"
     label: "Warehouse Operations"
+    label_de: ""
     icon: "heroicons:building-storefront"
     description: "Goods receiving, storage, picking, and inventory processes"
     tags: "logistics-operations/warehouse/warehouse-operations"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "supply-chain"
     label: "Supply Chain"
+    label_de: ""
     icon: "heroicons:arrow-path-rounded-square"
     description: "Purchasing, planning, and supply chain coordination"
     tags: "logistics-operations/supply-chain"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "driving"
     label: "Driving"
+    label_de: ""
     icon: "heroicons:truck"
     description: "Safe vehicle operation, route planning, and delivery"
     tags: "logistics-operations/transport/driving"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "food-safety"
     label: "Food Safety"
+    label_de: ""
     icon: "heroicons:shield-check"
     description: "Food hygiene, safe preparation, and compliance"
     tags: "hospitality-tourism/food-service/food-safety"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "front-office"
     label: "Front Office"
+    label_de: ""
     icon: "heroicons:building-office"
     description: "Reception, reservations, and guest communication"
     tags: "hospitality-tourism/hotels/front-office"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "event-coordination"
     label: "Event Coordination"
+    label_de: ""
     icon: "heroicons:calendar-days"
     description: "Planning, logistics, and delivery of events"
     tags: "hospitality-tourism/events/event-coordination"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "case-management"
     label: "Case Management"
+    label_de: ""
     icon: "heroicons:folder-open"
     description: "Client support, referrals, documentation, and case coordination"
     tags: "public-social-services/social-work/case-management"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "public-administration"
     label: "Public Administration"
+    label_de: ""
     icon: "heroicons:building-library"
     description: "Public services, records, procedures, and citizen support"
     tags: "public-social-services/public-administration"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "legal-research"
     label: "Legal Research"
+    label_de: ""
     icon: "heroicons:scale"
     description: "Legal research, case preparation, and document review"
     tags: "public-social-services/legal/legal-research"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "graphic-design"
     label: "Graphic Design"
+    label_de: ""
     icon: "heroicons:paint-brush"
     description: "Visual concepts, layouts, and brand assets"
     tags: "creative-media/design/graphic-design"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "copywriting"
     label: "Copywriting"
+    label_de: ""
     icon: "heroicons:pencil-square"
     description: "Writing clear persuasive copy for print and digital channels"
     tags: "creative-media/writing/copywriting"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "video-production"
     label: "Video Production"
+    label_de: ""
     icon: "heroicons:video-camera"
     description: "Filming, editing, and publishing video content"
     tags: "creative-media/video/video-production"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "laboratory-techniques"
     label: "Laboratory Techniques"
+    label_de: ""
     icon: "heroicons:beaker"
     description: "Laboratory procedures, measurement, and sample handling"
     tags: "science-environment/laboratory/laboratory-techniques"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "data-analysis"
     label: "Data Analysis"
+    label_de: ""
     icon: "heroicons:chart-pie"
     description: "Interpreting data, reporting findings, and using analytical tools"
     tags: "science-environment/analysis/data-analysis"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "environmental-management"
     label: "Environmental Management"
+    label_de: ""
     icon: "heroicons:globe-europe-africa"
     description: "Environmental compliance, sustainability, and conservation"
     tags: "science-environment/environment/environmental-management"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "office-administration"
     label: "Office Administration"
+    label_de: ""
     icon: "heroicons:inbox"
     description: "Scheduling, correspondence, records, and office coordination"
     tags: "office-customer-support/administration/office-administration"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "technical-writing"
     label: "Technical Writing"
+    label_de: ""
     icon: "heroicons:document-text"
     description: "Clear documentation, procedures, and knowledge-base content"
     tags: "office-customer-support/communication/technical-writing"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
 
 - model: jobs.skilltreemodel
   fields:
     name: "quality-assurance"
     label: "Quality Assurance"
+    label_de: ""
     icon: "heroicons:check-badge"
     description: "Quality checks, corrective actions, and process improvement"
     tags: "engineering-trades/quality/quality-assurance"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+# ============================================================================
+# NEW SKILLS — German Market Taxonomy
+# ============================================================================
+
+# ── language/german ─────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "lang_de_a1"
+    label: "Deutsch A1/A2 (Basic German)"
+    label_de: "Deutsch A1/A2 (Grundstufe)"
+    icon: "heroicons:language"
+    description: ""
+    tags: "language/german/lang_de_a1"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "lang_de_b1"
+    label: "Deutsch B1/B2 (Intermediate German)"
+    label_de: "Deutsch B1/B2 (Mittelstufe)"
+    icon: "heroicons:language"
+    description: ""
+    tags: "language/german/lang_de_b1"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "lang_de_c1"
+    label: "Deutsch C1 (Advanced German)"
+    label_de: "Deutsch C1 (Oberstufe)"
+    icon: "heroicons:language"
+    description: ""
+    tags: "language/german/lang_de_c1"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "lang_de_med"
+    label: "Medizinische Fachsprachprüfung (C1)"
+    label_de: "Medizinische Fachsprachprüfung (C1)"
+    icon: "heroicons:heart"
+    description: ""
+    tags: "language/german/lang_de_med"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "lang_de_care"
+    label: "Fachsprache Pflege (B2)"
+    label_de: "Fachsprache Pflege (B2)"
+    icon: "heroicons:heart"
+    description: ""
+    tags: "language/german/lang_de_care"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "lang_de_admin"
+    label: "Verwaltungssprache & Fachrecht"
+    label_de: "Verwaltungssprache & Fachrecht"
+    icon: "heroicons:building-library"
+    description: ""
+    tags: "language/german/lang_de_admin"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+# ── certifications/ihk ─────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "cert_ihk_beruf"
+    label: "IHK Berufsabschluss"
+    label_de: "IHK Berufsabschluss"
+    icon: "heroicons:academic-cap"
+    description: ""
+    tags: "certifications/ihk/cert_ihk_beruf"
+    dqr_level: 4
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "cert_ihk_fachwirt"
+    label: "Wirtschaftsfachwirt IHK"
+    label_de: "Wirtschaftsfachwirt IHK"
+    icon: "heroicons:academic-cap"
+    description: ""
+    tags: "certifications/ihk/cert_ihk_fachwirt"
+    dqr_level: 6
+    is_mangelberuf: false
+    certifications: []
+
+# ── certifications/hwk ─────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "cert_hwk_geselle"
+    label: "HWK Gesellenbrief"
+    label_de: "HWK Gesellenbrief"
+    icon: "heroicons:badge-check"
+    description: ""
+    tags: "certifications/hwk/cert_hwk_geselle"
+    dqr_level: 4
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "cert_hwk_meister"
+    label: "Handwerksmeister (Meister)"
+    label_de: "Handwerksmeister (Meister)"
+    icon: "heroicons:badge-check"
+    description: ""
+    tags: "certifications/hwk/cert_hwk_meister"
+    dqr_level: 6
+    is_mangelberuf: false
+    certifications: []
+
+# ── certifications/aevo ────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "cert_aevo"
+    label: "Ausbildereignung (AEVO)"
+    label_de: "Ausbildereignung (AEVO)"
+    icon: "heroicons:academic-cap"
+    description: ""
+    tags: "certifications/aevo/cert_aevo"
+    dqr_level: 5
+    is_mangelberuf: false
+    certifications: ["AEVO Schein", "BBiG §30"]
+
+# ── engineering/automation ──────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_sps_tia"
+    label: "SPS-Programmierung (Siemens TIA)"
+    label_de: "SPS-Programmierung (Siemens TIA)"
+    icon: "heroicons:cpu-chip"
+    description: ""
+    tags: "engineering/automation/eng_sps_tia"
+    dqr_level: 5
+    is_mangelberuf: true
+    certifications: ["PersCert TÜV", "Siemens Certified Programmer"]
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_elek_vde"
+    label: "Elektrotechnik (DIN VDE)"
+    label_de: "Elektrotechnik (DIN VDE)"
+    icon: "heroicons:bolt"
+    description: ""
+    tags: "engineering/automation/eng_elek_vde"
+    dqr_level: 4
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_mach_design"
+    label: "Maschinenbau & Konstruktion"
+    label_de: "Maschinenbau & Konstruktion"
+    icon: "heroicons:wrench-screwdriver"
+    description: ""
+    tags: "engineering/automation/eng_mach_design"
+    dqr_level: 6
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_industrial_bus"
+    label: "Industrial Communication & Bus Systems"
+    label_de: "Industriekommunikation & Bussysteme"
+    icon: "heroicons:signal"
+    description: ""
+    tags: "engineering/automation/eng_industrial_bus"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_robotics"
+    label: "Robotik & Steuerungstechnik"
+    label_de: "Robotik & Steuerungstechnik"
+    icon: "heroicons:cog"
+    description: ""
+    tags: "engineering/automation/eng_robotics"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_mechatronics"
+    label: "Mechatronik & Wartungssysteme"
+    label_de: "Mechatronik & Wartungssysteme"
+    icon: "heroicons:wrench-screwdriver"
+    description: ""
+    tags: "engineering/automation/eng_mechatronics"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "eng_cnc_prog"
+    label: "CNC-Programmierung"
+    label_de: "CNC-Programmierung"
+    icon: "heroicons:cpu-chip"
+    description: ""
+    tags: "engineering/automation/eng_cnc_prog"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+# ── healthcare/nursing ─────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "care_geriatric"
+    label: "Altenpflege & Geriatrische Betreuung"
+    label_de: "Altenpflege & Geriatrische Betreuung"
+    icon: "heroicons:heart"
+    description: ""
+    tags: "healthcare/nursing/care_geriatric"
+    dqr_level: 3
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "care_clinical"
+    label: "Gesundheits- und Krankenpflege"
+    label_de: "Gesundheits- und Krankenpflege"
+    icon: "heroicons:heart"
+    description: ""
+    tags: "healthcare/nursing/care_clinical"
+    dqr_level: 3
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "care_medtech"
+    label: "Medizintechnik & MDR"
+    label_de: "Medizintechnik & MDR"
+    icon: "heroicons:academic-cap"
+    description: ""
+    tags: "healthcare/nursing/care_medtech"
+    dqr_level: 5
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "care_therapies"
+    label: "Ergotherapie, Logopädie & Physiotherapie"
+    label_de: "Ergotherapie, Logopädie & Physiotherapie"
+    icon: "heroicons:hand-raised"
+    description: ""
+    tags: "healthcare/nursing/care_therapies"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "care_midwifery"
+    label: "Hebammenwissenschaft"
+    label_de: "Hebammenwissenschaft"
+    icon: "heroicons:heart"
+    description: ""
+    tags: "healthcare/nursing/care_midwifery"
+    dqr_level: 6
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "care_paramedic"
+    label: "Rettungsdienst & Notfallmedizin"
+    label_de: "Rettungsdienst & Notfallmedizin"
+    icon: "heroicons:exclamation-triangle"
+    description: ""
+    tags: "healthcare/nursing/care_paramedic"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+# ── energy/solar ───────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "ene_pv_systems"
+    label: "Photovoltaik- & Solaranlagenbau"
+    label_de: "Photovoltaik- & Solaranlagenbau"
+    icon: "heroicons:sun"
+    description: ""
+    tags: "energy/solar/ene_pv_systems"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+# ── energy/hvac ────────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "ene_heat_pumps"
+    label: "Wärmepumpentechnik & HVAC"
+    label_de: "Wärmepumpentechnik & HVAC"
+    icon: "heroicons:fire"
+    description: ""
+    tags: "energy/hvac/ene_heat_pumps"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+# ── energy/wind ────────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "ene_wind_tech"
+    label: "Windenergieanlagentechnik"
+    label_de: "Windenergieanlagentechnik"
+    icon: "heroicons:arrow-trending-up"
+    description: ""
+    tags: "energy/wind/ene_wind_tech"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+# ── energy/management ──────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "ene_management"
+    label: "Energiemanagement & Auditierung"
+    label_de: "Energiemanagement & Auditierung"
+    icon: "heroicons:chart-bar"
+    description: ""
+    tags: "energy/management/ene_management"
+    dqr_level: 6
+    is_mangelberuf: false
+    certifications: []
+
+# ── energy/emobility ───────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "ene_ev_infra"
+    label: "Elektromobilität & Ladeinfrastruktur"
+    label_de: "Elektromobilität & Ladeinfrastruktur"
+    icon: "heroicons:bolt"
+    description: ""
+    tags: "energy/emobility/ene_ev_infra"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+# ── construction/trades ────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "trade_shk_sanitation"
+    label: "Sanitär-, Heizungs- und Klimatechnik"
+    label_de: "Sanitär-, Heizungs- und Klimatechnik"
+    icon: "heroicons:wrench-screwdriver"
+    description: ""
+    tags: "construction/trades/trade_shk_sanitation"
+    dqr_level: 4
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "trade_roofing"
+    label: "Dachdecker- & Gebäudetechnik"
+    label_de: "Dachdecker- & Gebäudetechnik"
+    icon: "heroicons:home-modern"
+    description: ""
+    tags: "construction/trades/trade_roofing"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "trade_elec_building"
+    label: "Elektroinstallation & Gebäudesystemtechnik"
+    label_de: "Elektroinstallation & Gebäudesystemtechnik"
+    icon: "heroicons:bolt"
+    description: ""
+    tags: "construction/trades/trade_elec_building"
+    dqr_level: 4
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "trade_site_supervision"
+    label: "Bauleitung & Projektsteuerung"
+    label_de: "Bauleitung & Projektsteuerung"
+    icon: "heroicons:clipboard-document-check"
+    description: ""
+    tags: "construction/trades/trade_site_supervision"
+    dqr_level: 6
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "trade_masonry"
+    label: "Mauerwerks- & Stahlbetonbau"
+    label_de: "Mauerwerks- & Stahlbetonbau"
+    icon: "heroicons:cube"
+    description: ""
+    tags: "construction/trades/trade_masonry"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "trade_joinery"
+    label: "Tischler- & Innenausbau"
+    label_de: "Tischler- & Innenausbau"
+    icon: "heroicons:home-modern"
+    description: ""
+    tags: "construction/trades/trade_joinery"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+# ── it/sap ─────────────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "it_sap_s4"
+    label: "SAP S/4HANA Core"
+    label_de: "SAP S/4HANA Kern"
+    icon: "heroicons:server"
+    description: ""
+    tags: "it/sap/it_sap_s4"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: ["SAP Certified Application Associate"]
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "it_sap_abap"
+    label: "SAP ABAP & BTP"
+    label_de: "SAP ABAP & BTP"
+    icon: "heroicons:code-bracket"
+    description: ""
+    tags: "it/sap/it_sap_abap"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: ["SAP Certified Development Associate"]
+
+# ── it/security ────────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "it_bsi_cybersec"
+    label: "IT-Sicherheit & BSI Grundschutz"
+    label_de: "IT-Sicherheit & BSI Grundschutz"
+    icon: "heroicons:shield-check"
+    description: ""
+    tags: "it/security/it_bsi_cybersec"
+    dqr_level: null
+    is_mangelberuf: true
+    certifications: ["CISM", "CISSP", "BSI IT-Grundschutz"]
+
+# ── it/service_mgmt ────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "it_itil_mgmt"
+    label: "ITIL & IT-Service-Management"
+    label_de: "ITIL & IT-Service-Management"
+    icon: "heroicons:cog"
+    description: ""
+    tags: "it/service_mgmt/it_itil_mgmt"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: ["ITIL 4 Foundation"]
+
+# ── it/architecture ────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "it_togaf_arch"
+    label: "Cloud-Architektur & TOGAF"
+    label_de: "Cloud-Architektur & TOGAF"
+    icon: "heroicons:cloud"
+    description: ""
+    tags: "it/architecture/it_togaf_arch"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: ["TOGAF Standard"]
+
+# ── business/finance ───────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "biz_controlling"
+    label: "Controlling & Kostenrechnung"
+    label_de: "Controlling & Kostenrechnung"
+    icon: "heroicons:calculator"
+    description: ""
+    tags: "business/finance/biz_controlling"
+    dqr_level: 6
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "biz_bilanz_hgb"
+    label: "Bilanzierung (HGB & IFRS)"
+    label_de: "Bilanzierung (HGB & IFRS)"
+    icon: "heroicons:document-text"
+    description: ""
+    tags: "business/finance/biz_bilanz_hgb"
+    dqr_level: 5
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "biz_tax_law"
+    label: "Steuerrecht & Deklaration"
+    label_de: "Steuerrecht & Deklaration"
+    icon: "heroicons:scale"
+    description: ""
+    tags: "business/finance/biz_tax_law"
+    dqr_level: 6
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "biz_risk_management"
+    label: "Risk Management & Compliance"
+    label_de: "Risikomanagement & Compliance"
+    icon: "heroicons:shield-check"
+    description: ""
+    tags: "business/finance/biz_risk_management"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+# ── business/compliance ────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "biz_gdpr_dsgvo"
+    label: "Datenschutz & GDPR (DSGVO)"
+    label_de: "Datenschutz & GDPR (DSGVO)"
+    icon: "heroicons:shield-check"
+    description: ""
+    tags: "business/compliance/biz_gdpr_dsgvo"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: ["TÜV DSB"]
+
+# ── public_sector ──────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "pub_vfa_clerk"
+    label: "Verwaltungsfachangestellte/r"
+    label_de: "Verwaltungsfachangestellte/r"
+    icon: "heroicons:building-library"
+    description: ""
+    tags: "public_sector/pub_vfa_clerk"
+    dqr_level: 4
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "pub_admin_law"
+    label: "Verwaltungsrecht & Behörden"
+    label_de: "Verwaltungsrecht & Behörden"
+    icon: "heroicons:scale"
+    description: ""
+    tags: "public_sector/pub_admin_law"
+    dqr_level: 5
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "pub_social_law"
+    label: "Sozialrecht (SGB)"
+    label_de: "Sozialrecht (SGB)"
+    icon: "heroicons:heart"
+    description: ""
+    tags: "public_sector/pub_social_law"
+    dqr_level: 5
+    is_mangelberuf: true
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "pub_ozg_digital"
+    label: "Digitalisierung & E-Government"
+    label_de: "Digitalisierung & E-Government"
+    icon: "heroicons:computer-desktop"
+    description: ""
+    tags: "public_sector/pub_ozg_digital"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+# ── soft_skills ────────────────────────────────────────────────────────────
+- model: jobs.skilltreemodel
+  fields:
+    name: "soft_team_leadership"
+    label: "Teamführung & Personalführung"
+    label_de: "Teamführung & Personalführung"
+    icon: "heroicons:user-group"
+    description: ""
+    tags: "soft_skills/soft_team_leadership"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "soft_intercultural"
+    label: "Interkulturelle Kompetenz"
+    label_de: "Interkulturelle Kompetenz"
+    icon: "heroicons:globe-alt"
+    description: ""
+    tags: "soft_skills/soft_intercultural"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "soft_conflict_resolution"
+    label: "Konfliktlösung & Verhandlung"
+    label_de: "Konfliktlösung & Verhandlung"
+    icon: "heroicons:chat-bubble-left-right"
+    description: ""
+    tags: "soft_skills/soft_conflict_resolution"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []
+
+- model: jobs.skilltreemodel
+  fields:
+    name: "soft_time_management"
+    label: "Zeitmanagement & Arbeitsorganisation"
+    label_de: "Zeitmanagement & Arbeitsorganisation"
+    icon: "heroicons:clock"
+    description: ""
+    tags: "soft_skills/soft_time_management"
+    dqr_level: null
+    is_mangelberuf: false
+    certifications: []

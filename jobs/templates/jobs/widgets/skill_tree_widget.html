@@ -38,11 +38,11 @@
 
     <div x-show="selectedSkills.length > 0" class="flex flex-wrap gap-2 mb-4" aria-live="polite">
         <template x-for="skill in selectedSkills" :key="skill.id">
-            <button type="button"
+                    <button type="button"
                     class="badge badge-primary badge-outline gap-1"
                     @click="removeSkill(skill); updateFormField(); dispatchSkillUpdate()"
                     :aria-label="`${gettext('Remove')} ${skill.label}`">
-                <span x-text="skill.label"></span>
+                <span x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de : skill.label"></span>
                 <iconify-icon icon="heroicons:x-mark" aria-hidden="true"></iconify-icon>
             </button>
         </template>
@@ -72,7 +72,7 @@
                                 'btn-ghost': !isSelected(skill.id)
                             }">
                         <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
-                        <span x-text="skill.label" class="flex-1 text-left"></span>
+                        <span x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de : skill.label" class="flex-1 text-left"></span>
                         <template x-if="isSelected(skill.id)">
                             <iconify-icon :icon="proficiencyLevels.find(p => p.value === getSkillProficiency(skill.id))?.icon"
                                         class="text-lg"></iconify-icon>
@@ -117,6 +117,9 @@
                         <iconify-icon :icon="category.expanded ? 'heroicons:chevron-down' : 'heroicons:chevron-right'"
                                     class="text-lg" aria-hidden="true"></iconify-icon>
                         <h3 class="card-title text-base" x-text="category.label"></h3>
+                        <template x-if="category.mangelberufCount > 0">
+                            <span class="badge badge-sm badge-warning" x-text="category.mangelberufCount + ' Mangelberufe'"></span>
+                        </template>
                         <span class="badge badge-ghost badge-sm ml-auto" x-text="category.count"></span>
                     </button>
                     <div x-show="category.expanded" x-collapse
@@ -127,7 +130,10 @@
                                         :class="isSelected(skill.id) ? 'btn-primary' : 'btn-ghost'"
                                         @click="toggleSkill(skill)">
                                     <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
-                                    <span x-text="skill.label"></span>
+                                    <span x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de : skill.label"></span>
+                                    <template x-if="skill.is_mangelberuf">
+                                        <span class="badge badge-xs badge-warning">M</span>
+                                    </template>
                                 </button>
                             </template>
                         </div>

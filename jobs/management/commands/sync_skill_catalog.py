@@ -36,9 +36,13 @@ class Command(BaseCommand):
             if was_created:
                 skill = SkillTreeModel(name=fields["name"])
             skill.label = fields["label"]
+            skill.label_de = fields.get("label_de", "")
             skill.icon = fields.get("icon", "")
             skill.description = fields.get("description", "")
             skill.tags = fields.get("tags", fields["name"])
+            skill.dqr_level = fields.get("dqr_level")
+            skill.is_mangelberuf = fields.get("is_mangelberuf", False)
+            skill.certifications = fields.get("certifications", [])
             skill.save()
             if was_created:
                 created += 1

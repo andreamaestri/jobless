@@ -6,7 +6,8 @@
         aria-labelledby="required-skills-title"
         @close="$store.app.skills.modal.open = false"
         @keydown.escape.window="$store.app.skills.closeModal()">
-    <div class="modal-box w-11/12 max-w-3xl bg-base-100 text-base-content">
+    <div class="modal-box w-11/12 max-w-4xl bg-base-100 text-base-content">
+        <!-- Header -->
         <div class="flex items-start justify-between gap-4">
             <div>
                 <h3 id="required-skills-title" class="text-lg font-bold">
@@ -24,31 +25,42 @@
             </button>
         </div>
 
-        <div class="tabs tabs-box mt-6 w-fit">
-            <button type="button"
-                    class="tab gap-2"
-                    :class="{ 'tab-active': viewMode !== 'search' }"
-                    @click="backToCategories()">
-                <iconify-icon icon="heroicons:squares-2x2"></iconify-icon>
-                {% translate "Categories" %}
-            </button>
-            <button type="button"
-                    class="tab gap-2"
-                    :class="{ 'tab-active': viewMode === 'search' }"
-                    @click="showSearch()">
-                <iconify-icon icon="heroicons:magnifying-glass"></iconify-icon>
-                {% translate "Search" %}
-            </button>
+        <!-- Controls bar: tabs + Mangelberufe filter -->
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+            <div class="tabs tabs-box">
+                <button type="button" class="tab gap-2"
+                        :class="{ 'tab-active': viewMode !== 'search' }"
+                        @click="backToCategories()">
+                    <iconify-icon icon="heroicons:squares-2x2"></iconify-icon>
+                    {% translate "Categories" %}
+                </button>
+                <button type="button" class="tab gap-2"
+                        :class="{ 'tab-active': viewMode === 'search' }"
+                        @click="showSearch()">
+                    <iconify-icon icon="heroicons:magnifying-glass"></iconify-icon>
+                    {% translate "Search" %}
+                </button>
+            </div>
+            <label class="flex cursor-pointer items-center gap-2 text-sm">
+                <input type="checkbox" class="checkbox checkbox-sm checkbox-accent"
+                       x-model="showMangelberufeOnly">
+                <iconify-icon icon="heroicons:exclamation-triangle" class="text-warning"></iconify-icon>
+                <span>{% translate "Mangelberufe only" %}</span>
+                <span class="badge badge-sm badge-accent"
+                      x-text="allSkills.filter(s => s.is_mangelberuf).length"></span>
+            </label>
         </div>
 
+        <!-- Content area -->
         <div class="mt-5">
+            <!-- CATEGORIES VIEW -->
             <div x-show="viewMode === 'categories'" x-cloak>
                 <div class="mb-3 flex items-center justify-between">
                     <h4 class="font-semibold">{% translate "Job areas" %}</h4>
-                    <span class="badge badge-ghost" x-text="categories.length"></span>
+                    <span class="badge badge-ghost" x-text="filteredCategories.length"></span>
                 </div>
                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <template x-for="category in categories" :key="category.path">
+                    <template x-for="category in filteredCategories" :key="category.path">
                         <button type="button"
                                 class="btn btn-ghost h-auto min-h-16 justify-between gap-3 border border-base-300 px-4 py-3 text-left normal-case"
                                 @click="openCategory(category)">
@@ -56,15 +68,21 @@
                                 <iconify-icon icon="heroicons:folder" class="shrink-0 text-xl text-primary"></iconify-icon>
                                 <span class="truncate font-medium" x-text="category.label"></span>
                             </span>
-                            <span class="badge badge-sm badge-ghost" x-text="category.count"></span>
+                            <span class="flex items-center gap-2">
+                                <template x-if="category.mangelberufCount > 0">
+                                    <span class="badge badge-sm badge-warning" x-text="category.mangelberufCount + ' M'"></span>
+                                </template>
+                                <span class="badge badge-sm badge-ghost" x-text="category.count"></span>
+                            </span>
                         </button>
                     </template>
                 </div>
-                <p x-show="categories.length === 0" class="py-8 text-center text-sm text-base-content/60" x-cloak>
+                <p x-show="filteredCategories.length === 0" class="py-8 text-center text-sm text-base-content/60" x-cloak>
                     {% translate "Skills are still loading." %}
                 </p>
             </div>
 
+            <!-- CATEGORY VIEW (with optional subcategories) -->
             <div x-show="viewMode === 'category'" x-cloak>
                 <div class="mb-4 flex items-center gap-3">
                     <button type="button" class="btn btn-ghost btn-sm gap-2" @click="backToCategories()">
@@ -74,6 +92,30 @@
                     <span class="divider divider-horizontal mx-0"></span>
                     <h4 class="font-semibold" x-text="selectedCategory?.label"></h4>
                 </div>
+
+                <!-- Subcategory buttons (if present) -->
+                <div x-show="selectedCategory?.subcategories?.length > 0" class="mb-4">
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <template x-for="sub in selectedCategory.subcategories" :key="sub.path">
+                            <button type="button"
+                                    class="btn btn-ghost h-auto justify-between gap-3 border border-base-300 px-4 py-3 text-left normal-case"
+                                    @click="openSubcategory(sub)">
+                                <span class="flex min-w-0 items-center gap-3">
+                                    <iconify-icon icon="heroicons:folder-open" class="shrink-0 text-lg text-secondary"></iconify-icon>
+                                    <span class="truncate font-medium" x-text="sub.label"></span>
+                                </span>
+                                <span class="flex items-center gap-2">
+                                    <template x-if="sub.mangelberufCount > 0">
+                                        <span class="badge badge-sm badge-warning" x-text="sub.mangelberufCount + ' M'"></span>
+                                    </template>
+                                    <span class="badge badge-sm badge-ghost" x-text="sub.count"></span>
+                                </span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Direct skills (no subcategories) -->
                 <div class="grid max-h-80 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
                     <template x-for="skill in categorySkills" :key="skill.id">
                         <button type="button"
@@ -81,13 +123,60 @@
                                 :class="{ 'btn-primary': isSelected(skill.id) }"
                                 @click="toggleSkill(skill)">
                             <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
-                            <span class="flex-1 text-left" x-text="skill.label"></span>
+                            <span class="flex-1 text-left">
+                                <span x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de : skill.label"></span>
+                                <template x-if="skill.label_de && skill.label_de !== skill.label">
+                                    <span class="text-xs text-base-content/50" x-text="' (' + skill.label + ')'"></span>
+                                </template>
+                            </span>
+                            <template x-if="skill.is_mangelberuf">
+                                <span class="badge badge-xs badge-warning">Mangelberuf</span>
+                            </template>
+                            <template x-if="skill.dqr_level">
+                                <span class="badge badge-xs badge-ghost" x-text="'DQR ' + skill.dqr_level"></span>
+                            </template>
                             <iconify-icon x-show="isSelected(skill.id)" icon="heroicons:check"></iconify-icon>
                         </button>
                     </template>
                 </div>
             </div>
 
+            <!-- SUBCATEGORY VIEW -->
+            <div x-show="viewMode === 'subcategory'" x-cloak>
+                <div class="mb-4 flex items-center gap-3">
+                    <button type="button" class="btn btn-ghost btn-sm gap-2" @click="backToCategory()">
+                        <iconify-icon icon="heroicons:arrow-left"></iconify-icon>
+                        <span x-text="selectedCategory?.label"></span>
+                    </button>
+                    <span class="divider divider-horizontal mx-0"></span>
+                    <h4 class="font-semibold" x-text="selectedSubcategory?.label"></h4>
+                </div>
+                <div class="grid max-h-80 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
+                    <template x-for="skill in subcategorySkills" :key="skill.id">
+                        <button type="button"
+                                class="btn btn-ghost justify-start gap-3 normal-case"
+                                :class="{ 'btn-primary': isSelected(skill.id) }"
+                                @click="toggleSkill(skill)">
+                            <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
+                            <span class="flex-1 text-left">
+                                <span x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de : skill.label"></span>
+                                <template x-if="skill.label_de && skill.label_de !== skill.label">
+                                    <span class="text-xs text-base-content/50" x-text="' (' + skill.label + ')'"></span>
+                                </template>
+                            </span>
+                            <template x-if="skill.is_mangelberuf">
+                                <span class="badge badge-xs badge-warning">Mangelberuf</span>
+                            </template>
+                            <template x-if="skill.dqr_level">
+                                <span class="badge badge-xs badge-ghost" x-text="'DQR ' + skill.dqr_level"></span>
+                            </template>
+                            <iconify-icon x-show="isSelected(skill.id)" icon="heroicons:check"></iconify-icon>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- SEARCH VIEW -->
             <div x-show="viewMode === 'search'" x-cloak>
                 <label class="input flex w-full items-center gap-2">
                     <iconify-icon icon="heroicons:magnifying-glass"></iconify-icon>
@@ -104,7 +193,18 @@
                                 :class="{ 'btn-primary': isSelected(skill.id) }"
                                 @click="toggleSkill(skill)">
                             <iconify-icon :icon="skill.icon" class="text-lg"></iconify-icon>
-                            <span class="flex-1 text-left" x-text="skill.label"></span>
+                            <span class="flex-1 text-left">
+                                <span x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de : skill.label"></span>
+                                <template x-if="skill.label_de && skill.label_de !== skill.label">
+                                    <span class="text-xs text-base-content/50" x-text="' (' + skill.label + ')'"></span>
+                                </template>
+                            </span>
+                            <template x-if="skill.is_mangelberuf">
+                                <span class="badge badge-xs badge-warning">Mangelberuf</span>
+                            </template>
+                            <template x-if="skill.dqr_level">
+                                <span class="badge badge-xs badge-ghost" x-text="'DQR ' + skill.dqr_level"></span>
+                            </template>
                             <iconify-icon x-show="isSelected(skill.id)" icon="heroicons:check"></iconify-icon>
                         </button>
                     </template>
@@ -115,6 +215,7 @@
             </div>
         </div>
 
+        <!-- Selected skills section -->
         <div class="divider"></div>
         <section aria-labelledby="selected-skills-title">
             <div class="mb-3 flex items-center justify-between">
@@ -126,7 +227,13 @@
                     <div class="flex items-center gap-2 rounded-box bg-base-200 p-2">
                         <span class="flex min-w-0 flex-1 items-center gap-2">
                             <iconify-icon :icon="skill.icon"></iconify-icon>
-                            <span class="truncate" x-text="skill.label"></span>
+                            <span class="truncate" x-text="skill.label_de && skill.label_de !== skill.label ? skill.label_de + ' (' + skill.label + ')' : skill.label"></span>
+                            <template x-if="skill.is_mangelberuf">
+                                <span class="badge badge-xs badge-warning">Mangelberuf</span>
+                            </template>
+                            <template x-if="skill.certifications && skill.certifications.length > 0">
+                                <span class="badge badge-xs badge-info" x-text="skill.certifications[0]"></span>
+                            </template>
                         </span>
                         <select class="select select-sm w-auto"
                                 x-model="skill.proficiency"

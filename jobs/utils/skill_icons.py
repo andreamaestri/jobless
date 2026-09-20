@@ -259,6 +259,83 @@ ICON_NAME_MAPPING = {
     'Web Components': 'skill-icons:html',
 }
 
+# Explicit icon mappings for German-market / non-tech skills (canonical key → icon identifier)
+SKILL_ICON_MAP = {
+    # Language Proficiency
+    "lang_de_a1": "heroicons:language",
+    "lang_de_b1": "heroicons:language",
+    "lang_de_c1": "heroicons:language",
+    "lang_de_med": "heroicons:heart",
+    "lang_de_care": "heroicons:heart",
+    "lang_de_admin": "heroicons:building-library",
+
+    # Certifications
+    "cert_ihk_beruf": "heroicons:academic-cap",
+    "cert_ihk_fachwirt": "heroicons:academic-cap",
+    "cert_hwk_geselle": "heroicons:badge-check",
+    "cert_hwk_meister": "heroicons:badge-check",
+    "cert_aevo": "heroicons:academic-cap",
+
+    # Engineering & Automation
+    "eng_sps_tia": "heroicons:cpu-chip",
+    "eng_elek_vde": "heroicons:bolt",
+    "eng_mach_design": "heroicons:wrench-screwdriver",
+    "eng_industrial_bus": "heroicons:signal",
+    "eng_robotics": "heroicons:cog",
+    "eng_mechatronics": "heroicons:wrench-screwdriver",
+    "eng_cnc_prog": "heroicons:cpu-chip",
+
+    # Healthcare
+    "care_geriatric": "heroicons:heart",
+    "care_clinical": "heroicons:heart",
+    "care_medtech": "heroicons:academic-cap",
+    "care_therapies": "heroicons:hand-raised",
+    "care_midwifery": "heroicons:heart",
+    "care_paramedic": "heroicons:exclamation-triangle",
+
+    # Energy
+    "ene_pv_systems": "heroicons:sun",
+    "ene_heat_pumps": "heroicons:fire",
+    "ene_wind_tech": "heroicons:arrow-trending-up",
+    "ene_management": "heroicons:chart-bar",
+    "ene_ev_infra": "heroicons:bolt",
+
+    # Construction & Trades
+    "trade_shk_sanitation": "heroicons:wrench-screwdriver",
+    "trade_roofing": "heroicons:home-modern",
+    "trade_elec_building": "heroicons:bolt",
+    "trade_site_supervision": "heroicons:clipboard-document-check",
+    "trade_masonry": "heroicons:cube",
+    "trade_joinery": "heroicons:home-modern",
+
+    # IT / SAP
+    "it_sap_s4": "heroicons:server",
+    "it_sap_abap": "heroicons:code-bracket",
+    "it_bsi_cybersec": "heroicons:shield-check",
+    "it_itil_mgmt": "heroicons:cog",
+    "it_togaf_arch": "heroicons:cloud",
+
+    # Business / Finance
+    "biz_controlling": "heroicons:calculator",
+    "biz_bilanz_hgb": "heroicons:document-text",
+    "biz_tax_law": "heroicons:scale",
+    "biz_risk_management": "heroicons:shield-check",
+    "biz_gdpr_dsgvo": "heroicons:shield-check",
+
+    # Public Sector
+    "pub_vfa_clerk": "heroicons:building-library",
+    "pub_admin_law": "heroicons:scale",
+    "pub_social_law": "heroicons:heart",
+    "pub_ozg_digital": "heroicons:computer-desktop",
+
+    # Soft Skills
+    "soft_team_leadership": "heroicons:user-group",
+    "soft_intercultural": "heroicons:globe-alt",
+    "soft_conflict_resolution": "heroicons:chat-bubble-left-right",
+    "soft_time_management": "heroicons:clock",
+}
+
+
 def get_icon_variant(base_name, theme='dark'):
     """Helper function to get the appropriate icon variant"""
     if base_name in THEME_VARIANTS:
