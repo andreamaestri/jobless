@@ -24,6 +24,7 @@ env.py
 .env
 .env.*
 !.env.example
+files/server_jobless.env
 *.pem
 *.key
 .ssh/id_rsa
