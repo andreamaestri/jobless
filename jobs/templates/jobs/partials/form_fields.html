@@ -117,14 +117,41 @@
     </div>
 
     <!-- Skills -->
-    <div class="space-y-6">
-        <h2 class="text-xl font-semibold">{% translate "Skills" %}</h2>
-        <div>
-            <label for="id_skills" class="label">
-                <span class="label-text">{% translate "Required Skills" %}</span>
-            </label>
-            {{ form.skills }}
+    <div class="space-y-4" x-data x-init="$nextTick(() => $store.app.skills.updateSelectedSkillsDisplay())">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-xl font-semibold">{% translate "Required Skills" %}</h2>
+                <p class="text-sm text-base-content/60">
+                    {% translate "Add only the skills that matter for this job." %}
+                </p>
+            </div>
+            <button type="button"
+                    class="btn btn-primary btn-sm gap-2 self-start sm:self-auto"
+                    @click="$store.app.skills.openModal()">
+                <iconify-icon icon="heroicons:squares-plus"></iconify-icon>
+                {% translate "Choose skills" %}
+            </button>
         </div>
+        <div class="card card-border bg-base-200/40">
+            <div class="card-body p-4">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-sm font-medium text-base-content/80">
+                        {% translate "Selected for this job" %}
+                    </span>
+                    <span class="badge badge-ghost" x-text="$store.app.skills.selected.length"></span>
+                </div>
+                <div class="selected-skills flex flex-wrap gap-2 min-h-8" aria-live="polite">
+                    <div class="text-sm text-base-content/60">
+                        {% translate "No required skills selected yet." %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden"
+               id="id_skills"
+               name="skills"
+               :value="$store.app.skills.skillsJson"
+               data-skills="{{ form.initial.skills|default:'[]'|safe }}">
     </div>
 
     <!-- Description -->
@@ -138,6 +165,10 @@
         </div>
     </div>
 </form>
+
+<template x-teleport="body">
+    {% include "jobs/modals/skills_modal.html" %}
+</template>
 
 <script>
 (function() {

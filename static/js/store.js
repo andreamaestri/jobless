@@ -191,6 +191,14 @@ export function initializeStore() {
                 }
             },
 
+            get skillsJson() {
+                return JSON.stringify(this.selected.map(skill => ({
+                    skill: skill.id || skill.name,
+                    proficiency: skill.proficiency || 'required',
+                    name: skill.name
+                })));
+            },
+
             updateSelectedSkillsDisplay() {
                 const container = document.querySelector('.selected-skills');
                 if (!container) return;
@@ -236,11 +244,15 @@ export function initializeStore() {
                 this.modal.ready = true;
                 this.search = '';
                 this.filterSkills('');
+                const dialog = document.getElementById('required-skills-modal');
+                if (dialog && !dialog.open) dialog.showModal();
             },
 
             closeModal() {
                 this.modal.open = false;
                 this.search = '';
+                const dialog = document.getElementById('required-skills-modal');
+                if (dialog?.open) dialog.close();
             }
         }
     };

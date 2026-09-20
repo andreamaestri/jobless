@@ -1,14 +1,12 @@
 {% load i18n %}
 <!-- Enhanced Skill Selection Modal -->
-<div id="required-skills-modal"
+<dialog id="required-skills-modal"
      x-data="skillSelector"
-     x-cloak
-     x-show="$store.app.skills.modal.open"
      class="modal"
-     :class="{ 'modal-open': $store.app.skills.modal.open }"
      role="dialog"
      aria-modal="true"
      aria-labelledby="required-skills-title"
+     @close="$store.app.skills.modal.open = false"
      @keydown.escape.window="$store.app.skills.closeModal()"
      @click.self="$store.app.skills.closeModal()">
     
@@ -17,7 +15,7 @@
             <div>
                 <h3 id="required-skills-title" class="text-lg font-bold">{% translate "Choose required skills" %}</h3>
                 <p class="text-sm text-base-content/60 mt-1">{% translate "Search or browse categories, then set the importance of each skill." %}</p>
-            </div>
+            </dialog>
             <button type="button" class="btn btn-ghost btn-sm btn-square"
                      aria-label="{% translate 'Close skill picker' %}"
                      @click="$store.app.skills.closeModal()">
