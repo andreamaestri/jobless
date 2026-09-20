@@ -83,3 +83,27 @@ msgstr "Fähigkeiten verwalten"
 #: static/js/store.js:222
 msgid "Remove skill"
 msgstr "Fähigkeit entfernen"
+
+#: static/js/skill-tree-widget.js
+msgid "Other"
+msgstr "Sonstiges"
+
+#: static/js/skill-tree-widget.js
+msgid "Mangelberufe only"
+msgstr "Nur Mangelberufe"
+
+#: static/js/skill-tree-widget.js
+msgid "All job areas"
+msgstr "Alle Berufsbereiche"
+
+#: static/js/skill-tree-widget.js
+msgid "No skills selected yet."
+msgstr "Noch keine Fähigkeiten ausgewählt."
+
+#: static/js/skill-tree-widget.js
+msgid "Close skill picker"
+msgstr "Fähigkeitsauswahl schließen"
+
+#: static/js/skill-tree-widget.js
+msgid "importance"
+msgstr "Wichtigkeit"

@@ -525,10 +525,8 @@ msgid "Networking event"
 msgstr "Netzwerkveranstaltung"
 
 #: events/models.py:13
-#, fuzzy
-#| msgid "Zum Beratungstermin mitbringen"
 msgid "Beratungstermin / Meldetermin"
-msgstr "Zum Beratungstermin mitbringen"
+msgstr "Beratungstermin / Meldetermin"
 
 #: events/templates/events/add.html:18
 msgid "Add New Event"
@@ -974,10 +972,8 @@ msgstr "Art der Bewerbung"
 
 #: jobs/forms.py:233 jobs/models.py:495
 #: jobs/templates/jobs/nachweis/application_detail.html:36
-#, fuzzy
-#| msgid "Paste job posting"
 msgid "Linked job posting"
-msgstr "Stellenausschreibung einfügen"
+msgstr "Verknüpfte Stellenausschreibung"
 
 #: jobs/forms.py:234 jobs/templates/jobs/nachweis/application_detail.html:41
 msgid "Tags"
@@ -1023,10 +1019,8 @@ msgid "Result note"
 msgstr "Bemerkung zum Ergebnis"
 
 #: jobs/forms.py:243 jobs/models.py:522
-#, fuzzy
-#| msgid "Event type"
 msgid "Effort type"
-msgstr "Terminart"
+msgstr "Art der Eigenbemühung"
 
 #: jobs/forms.py:244 jobs/models.py:528
 msgid "Related to placement proposal"
@@ -1054,16 +1048,12 @@ msgid "Valid to"
 msgstr "Gültig bis"
 
 #: jobs/forms.py:297
-#, fuzzy
-#| msgid "Notes (verbatim from your plan)"
 msgid "Which efforts (copy from your plan)"
-msgstr "Notizen (wörtlich aus deinem Plan)"
+msgstr "Welche Bemühungen (aus deinem Plan übernehmen)"
 
 #: jobs/forms.py:298 jobs/models.py:340
-#, fuzzy
-#| msgid "Required"
 msgid "Required count"
-msgstr "Erforderlich"
+msgstr "Erforderliche Anzahl"
 
 #: jobs/forms.py:299 jobs/models.py:343
 msgid "Period"
@@ -1074,16 +1064,12 @@ msgid "Due rule"
 msgstr "Frist"
 
 #: jobs/forms.py:301 jobs/models.py:348
-#, fuzzy
-#| msgid "Enter notes"
 msgid "Due rule notes"
-msgstr "Notizen eingeben"
+msgstr "Hinweise zur Frist"
 
 #: jobs/forms.py:302 jobs/models.py:349
-#, fuzzy
-#| msgid "Accepted"
 msgid "Accepted channels"
-msgstr "Angenommen"
+msgstr "Akzeptierte Kanäle"
 
 #: jobs/forms.py:303 jobs/models.py:351
 msgid "Proof form"
@@ -1098,10 +1084,8 @@ msgid "Notes (verbatim from your plan)"
 msgstr "Notizen (wörtlich aus deinem Plan)"
 
 #: jobs/forms.py:306 jobs/models.py:361
-#, fuzzy
-#| msgid "Interviews and meetings"
 msgid "Interviews count as effort"
-msgstr "Interviews und Termine"
+msgstr "Interviews zählen als Eigenbemühung"
 
 #: jobs/forms.py:307 jobs/models.py:364
 msgid "Measures count as effort"
@@ -1112,10 +1096,8 @@ msgid "Job board search counts as effort"
 msgstr "Jobbörsen-Recherche zählt als Eigenbemühung"
 
 #: jobs/forms.py:309 jobs/models.py:370
-#, fuzzy
-#| msgid "Activate"
 msgid "Active"
-msgstr "Aktivieren"
+msgstr "Aktiv"
 
 #: jobs/forms.py:344 jobs/models.py:707
 msgid "Received on"
@@ -1123,20 +1105,16 @@ msgstr "Erhalten am"
 
 #: jobs/forms.py:345 jobs/models.py:708
 #: jobs/templates/jobs/nachweis/vv_list.html:32
-#, fuzzy
-#| msgid "Apply"
 msgid "Apply by"
-msgstr "Anwenden"
+msgstr "Bewerben bis"
 
 #: jobs/forms.py:346 jobs/models.py:710
 msgid "Rechtsfolgenbelehrung included"
 msgstr "Rechtsfolgenbelehrung enthalten"
 
 #: jobs/forms.py:348
-#, fuzzy
-#| msgid "Active applications"
 msgid "Linked application"
-msgstr "Aktive Bewerbungen"
+msgstr "Verknüpfte Bewerbung"
 
 #: jobs/forms.py:349 jobs/models.py:515 jobs/models.py:722
 msgid "Source reference"
@@ -1160,20 +1138,16 @@ msgid "To"
 msgstr "Bis"
 
 #: jobs/forms.py:375 jobs/models.py:767
-#, fuzzy
-#| msgid "Description"
 msgid "Destination"
-msgstr "Beschreibung"
+msgstr "Reiseziel"
 
 #: jobs/forms.py:376 jobs/models.py:768
 msgid "Notified on"
 msgstr "Gemeldet am"
 
 #: jobs/forms.py:377 jobs/models.py:770
-#, fuzzy
-#| msgid "Application status"
 msgid "Approval status"
-msgstr "Bewerbungsstatus"
+msgstr "Genehmigungsstatus"
 
 #: jobs/forms.py:393 jobs/models.py:801 jobs/templates/jobs/dashboard.html:243
 #: jobs/templates/jobs/detail.html:116
@@ -1190,10 +1164,8 @@ msgid "Evidence file"
 msgstr "Nachweisdatei"
 
 #: jobs/forms.py:425 jobs/models.py:266
-#, fuzzy
-#| msgid "First name"
 msgid "Full name"
-msgstr "Vorname"
+msgstr "Vollständiger Name"
 
 #: jobs/forms.py:426 jobs/models.py:267
 msgid "Kundennummer"
@@ -1204,14 +1176,10 @@ msgid "BG-Nummer"
 msgstr "BG-Nummer"
 
 #: jobs/forms.py:428 jobs/models.py:269
-#, fuzzy
-#| msgid "IP Address"
 msgid "Address"
-msgstr "IP-Adresse"
+msgstr "Adresse"
 
 #: jobs/forms.py:429 jobs/models.py:270 jobs/models.py:456
-#, fuzzy
-#| msgid "Email"
 msgid "E-mail"
 msgstr "E-Mail"
 
@@ -1224,10 +1192,8 @@ msgid "Office"
 msgstr "Dienststelle"
 
 #: jobs/forms.py:433 jobs/models.py:277
-#, fuzzy
-#| msgid "Preferred"
 msgid "Preferred locale"
-msgstr "Bevorzugt"
+msgstr "Bevorzugte Sprache"
 
 #: jobs/models.py:36
 msgid "Icon code (e.g. skill-icons:python)"
@@ -1299,16 +1265,12 @@ msgid "Grundsicherung/Bürgergeld — Jobcenter"
 msgstr "Grundsicherung/Bürgergeld — Jobcenter"
 
 #: jobs/models.py:283
-#, fuzzy
-#| msgid "View Profile"
 msgid "User profile"
-msgstr "Profil anzeigen"
+msgstr "Benutzerprofil"
 
 #: jobs/models.py:284
-#, fuzzy
-#| msgid "View Profile"
 msgid "User profiles"
-msgstr "Profil anzeigen"
+msgstr "Benutzerprofile"
 
 #: jobs/models.py:297 jobs/templates/jobs/dashboard.html:119
 #: jobs/templates/jobs/dashboard.html:126
@@ -1370,20 +1332,16 @@ msgid "Verpflichtungsbescheid (§ 15a SGB II)"
 msgstr "Verpflichtungsbescheid (§ 15a SGB II)"
 
 #: jobs/models.py:336
-#, fuzzy
-#| msgid "Notes (verbatim)"
 msgid "Which efforts (verbatim)"
-msgstr "Notizen (wörtlich)"
+msgstr "Welche Bemühungen (wörtlich)"
 
 #: jobs/models.py:359
 msgid "Notes (verbatim)"
 msgstr "Notizen (wörtlich)"
 
 #: jobs/models.py:369
-#, fuzzy
-#| msgid "Last updated:"
 msgid "Last submitted on"
-msgstr "Zuletzt aktualisiert:"
+msgstr "Zuletzt vorgelegt am"
 
 #: jobs/models.py:376 jobs/models.py:380 jobs/templates/jobs/dashboard.html:404
 #: jobs/templates/jobs/nachweis/dashboard.html:229
@@ -1417,10 +1375,8 @@ msgid "Stepstone"
 msgstr "Stepstone"
 
 #: jobs/models.py:462
-#, fuzzy
-#| msgid "Company"
 msgid "Company website"
-msgstr "Unternehmen"
+msgstr "Webseite des Unternehmens"
 
 #: jobs/models.py:463
 msgid "Newspaper"
@@ -1455,22 +1411,16 @@ msgid "Aborted"
 msgstr "Abgebrochen"
 
 #: jobs/models.py:478
-#, fuzzy
-#| msgid "Application Status"
 msgid "Application"
-msgstr "Bewerbungsstatus"
+msgstr "Bewerbung"
 
 #: jobs/models.py:479
-#, fuzzy
-#| msgid "Active applications"
 msgid "Initiative application"
-msgstr "Aktive Bewerbungen"
+msgstr "Initiativbewerbung"
 
 #: jobs/models.py:480
-#, fuzzy
-#| msgid "Phone"
 msgid "Phone call"
-msgstr "Telefon"
+msgstr "Telefonanruf"
 
 #: jobs/models.py:481
 msgid "Personal visit"
@@ -1489,10 +1439,8 @@ msgid "Tags, comma-separated (e.g. remote, handwerk, vertrieb)"
 msgstr "Tags, kommagetrennt (z. B. remote, handwerk, vertrieb)"
 
 #: jobs/models.py:510
-#, fuzzy
-#| msgid "Change Email"
 msgid "Channel"
-msgstr "E-Mail ändern"
+msgstr "Kanal"
 
 #: jobs/models.py:517
 msgid "Result"
@@ -1507,16 +1455,12 @@ msgid "Job search efforts"
 msgstr "Eigenbemühungen"
 
 #: jobs/models.py:575
-#, fuzzy
-#| msgid "Application Status"
 msgid "Application copy"
-msgstr "Bewerbungsstatus"
+msgstr "Bewerbungskopie"
 
 #: jobs/models.py:576
-#, fuzzy
-#| msgid "Rejected"
 msgid "Rejection"
-msgstr "Abgelehnt"
+msgstr "Ablehnung"
 
 #: jobs/models.py:577
 msgid "Invitation"
@@ -1535,22 +1479,16 @@ msgid "File"
 msgstr "Datei"
 
 #: jobs/models.py:594
-#, fuzzy
-#| msgid "Event type"
 msgid "Evidence type"
-msgstr "Terminart"
+msgstr "Nachweisart"
 
 #: jobs/models.py:599
-#, fuzzy
-#| msgid "First name"
 msgid "Filename"
-msgstr "Vorname"
+msgstr "Dateiname"
 
 #: jobs/models.py:600
-#, fuzzy
-#| msgid "Event type"
 msgid "MIME type"
-msgstr "Terminart"
+msgstr "MIME-Typ"
 
 #: jobs/models.py:601
 msgid "Size"
@@ -1565,10 +1503,8 @@ msgid "Evidence files"
 msgstr "Nachweisdateien"
 
 #: jobs/models.py:640
-#, fuzzy
-#| msgid "Actions"
 msgid "Action"
-msgstr "Aktionen"
+msgstr "Aktion"
 
 #: jobs/models.py:641
 msgid "Field"
@@ -1611,16 +1547,12 @@ msgid "Rows"
 msgstr "Einträge"
 
 #: jobs/models.py:677
-#, fuzzy
-#| msgid "Sessions"
 msgid "Submission"
-msgstr "Sitzungen"
+msgstr "Vorlage"
 
 #: jobs/models.py:678
-#, fuzzy
-#| msgid "Sessions"
 msgid "Submissions"
-msgstr "Sitzungen"
+msgstr "Vorlagen"
 
 #: jobs/models.py:699
 msgid "Declined — wichtiger Grund"
@@ -1646,10 +1578,8 @@ msgid "Not yet reported"
 msgstr "Noch nicht gemeldet"
 
 #: jobs/models.py:758
-#, fuzzy
-#| msgid "Verified"
 msgid "Notified"
-msgstr "Verifiziert"
+msgstr "Benachrichtigt"
 
 #: jobs/models.py:759
 msgid "Approved"
@@ -1758,10 +1688,8 @@ msgstr ""
 
 #: jobs/templates/jobs/dashboard.html:63
 #: jobs/templates/jobs/nachweis/dashboard.html:48
-#, fuzzy
-#| msgid "Edit Event"
 msgid "Edit plan"
-msgstr "Termin bearbeiten"
+msgstr "Plan bearbeiten"
 
 #: jobs/templates/jobs/dashboard.html:72
 #: jobs/templates/jobs/nachweis/dashboard.html:140
@@ -1848,10 +1776,8 @@ msgid "Favorites"
 msgstr "Favoriten"
 
 #: jobs/templates/jobs/dashboard.html:202 jobs/templates/jobs/list.html:83
-#, fuzzy
-#| msgid "Job skills"
 msgid "All skills"
-msgstr "Fähigkeiten der Stelle"
+msgstr "Alle Fähigkeiten"
 
 #: jobs/templates/jobs/dashboard.html:225 jobs/templates/jobs/list.html:114
 msgid "Start tracking your applications and organize everything in one place"
@@ -1895,10 +1821,8 @@ msgstr "Keine offenen Vermittlungsvorschläge."
 
 #: jobs/templates/jobs/dashboard.html:367
 #: jobs/templates/jobs/nachweis/dashboard.html:104 jobs/views.py:297
-#, fuzzy
-#| msgid "no export yet"
 msgid "not reported"
-msgstr "noch nichts vorgelegt"
+msgstr "nicht gemeldet"
 
 #: jobs/templates/jobs/dashboard.html:372
 #: jobs/templates/jobs/nachweis/dashboard.html:109
@@ -1936,20 +1860,16 @@ msgid "View original job posting"
 msgstr "Originale Stellenausschreibung ansehen"
 
 #: jobs/templates/jobs/detail.html:90
-#, fuzzy
-#| msgid "Proof of efforts"
 msgid "Proof of effort (Eigenbemühung)"
-msgstr "Nachweis"
+msgstr "Nachweis der Eigenbemühung"
 
 #: jobs/templates/jobs/detail.html:92
 msgid "Linking a job posting to an effort makes it part of your Nachweis."
 msgstr "Wenn du eine Stellenausschreibung mit einer Eigenbemühung verknüpfst, wird sie Teil deines Nachweises."
 
 #: jobs/templates/jobs/detail.html:98
-#, fuzzy
-#| msgid "Measures count as effort"
 msgid "Record as effort"
-msgstr "Maßnahmen zählen als Eigenbemühung"
+msgstr "Als Eigenbemühung erfassen"
 
 #: jobs/templates/jobs/detail.html:106
 msgid ""
@@ -1966,16 +1886,12 @@ msgid "incomplete"
 msgstr "unvollständig"
 
 #: jobs/templates/jobs/detail.html:135
-#, fuzzy
-#| msgid "Complete Sign Up"
 msgid "Complete"
-msgstr "Registrierung abschließen"
+msgstr "Vollständig"
 
 #: jobs/templates/jobs/detail.html:145
-#, fuzzy
-#| msgid "Skills linked to this job posting"
 msgid "No effort linked to this job posting yet."
-msgstr "Mit dieser Stellenausschreibung verknüpfte Fähigkeiten"
+msgstr "Noch keine Eigenbemühung mit dieser Stelle verknüpft."
 
 #: jobs/templates/jobs/detail.html:168 jobs/templates/jobs/edit.html:15
 msgid "Edit job"
@@ -2028,50 +1944,33 @@ msgid "Selected Skills"
 msgstr "Ausgewählte Fähigkeiten"
 
 #: jobs/templates/jobs/nachweis/absence_delete.html:4
-#, fuzzy
-#| msgid "Delete Event"
 msgid "Delete absence"
-msgstr "Termin löschen"
+msgstr "Ortsabwesenheit löschen"
 
 #: jobs/templates/jobs/nachweis/absence_delete.html:12
-#, fuzzy
-#| msgid "Delete Event"
 msgid "Delete absence?"
-msgstr "Termin löschen"
+msgstr "Ortsabwesenheit löschen?"
 
 #: jobs/templates/jobs/nachweis/absence_delete.html:14
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "              Delete “%(employer)s” from %(date)s? This cannot be "
-#| "undone.\n"
-#| "            "
 msgid ""
 "\n"
 "              Delete the absence %(from)s–%(to)s? This cannot be undone.\n"
 "            "
 msgstr ""
 "\n"
-"              Ortsabwesenheit %(from)s–%(to)s löschen? Das kann nicht "
+"              Ortsabwesenheit %(from)s–%(to)s löschen? Dies kann nicht "
 "rückgängig gemacht werden.\n"
-"            \n"
-"              „%(employer)s“ vom %(date)s löschen? Das kann nicht rückgängig "
-"gemacht werden.\n"
 "            "
 
 #: jobs/templates/jobs/nachweis/absence_form.html:5
 #: jobs/templates/jobs/nachweis/absence_form.html:13
-#, fuzzy
-#| msgid "Edit Event"
 msgid "Edit absence"
-msgstr "Termin bearbeiten"
+msgstr "Ortsabwesenheit bearbeiten"
 
 #: jobs/templates/jobs/nachweis/absence_form.html:5
 #: jobs/templates/jobs/nachweis/absence_form.html:13
-#, fuzzy
-#| msgid "Add Event"
 msgid "Add absence"
-msgstr "Termin hinzufügen"
+msgstr "Ortsabwesenheit hinzufügen"
 
 #: jobs/templates/jobs/nachweis/absence_form.html:16
 msgid ""
@@ -2140,16 +2039,12 @@ msgstr ""
 "ist optional."
 
 #: jobs/templates/jobs/nachweis/application_form.html:31
-#, fuzzy
-#| msgid "Skills linked to this job posting"
 msgid "Linked to job posting"
-msgstr "Mit dieser Stellenausschreibung verknüpfte Fähigkeiten"
+msgstr "Verknüpft mit Stellenausschreibung"
 
 #: jobs/templates/jobs/nachweis/application_form.html:46
-#, fuzzy
-#| msgid "View"
 msgid "View job"
-msgstr "Anzeigen"
+msgstr "Stelle ansehen"
 
 #: jobs/templates/jobs/nachweis/application_form.html:51
 msgid ""
@@ -2275,16 +2170,12 @@ msgstr ""
 "Kooperationsplan / Eingliederungsvereinbarung / Bescheid."
 
 #: jobs/templates/jobs/nachweis/obstacle_delete.html:4
-#, fuzzy
-#| msgid "Delete Contact"
 msgid "Delete obstacle"
-msgstr "Kontakt löschen"
+msgstr "Hindernis löschen"
 
 #: jobs/templates/jobs/nachweis/obstacle_delete.html:12
-#, fuzzy
-#| msgid "Delete Contact"
 msgid "Delete obstacle?"
-msgstr "Kontakt löschen"
+msgstr "Hindernis löschen?"
 
 #: jobs/templates/jobs/nachweis/obstacle_delete.html:13
 msgid "This cannot be undone."
@@ -2292,10 +2183,8 @@ msgstr "Das kann nicht rückgängig gemacht werden."
 
 #: jobs/templates/jobs/nachweis/obstacle_form.html:5
 #: jobs/templates/jobs/nachweis/obstacle_form.html:13
-#, fuzzy
-#| msgid "Edit Contact"
 msgid "Edit obstacle"
-msgstr "Kontakt bearbeiten"
+msgstr "Hindernis bearbeiten"
 
 #: jobs/templates/jobs/nachweis/obstacle_form.html:5
 #: jobs/templates/jobs/nachweis/obstacle_form.html:13
@@ -2342,12 +2231,6 @@ msgid "Delete Vermittlungsvorschlag?"
 msgstr "Vermittlungsvorschlag löschen?"
 
 #: jobs/templates/jobs/nachweis/vv_delete.html:14
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "              Delete “%(employer)s” from %(date)s? This cannot be "
-#| "undone.\n"
-#| "            "
 msgid ""
 "\n"
 "              Delete “%(employer)s” (received %(date)s)? This cannot be "
@@ -2355,11 +2238,8 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"              „%(employer)s“ (erhalten am %(date)s) löschen? Das kann nicht "
-"rückgängig gemacht werden.\n"
-"            \n"
-"              „%(employer)s“ vom %(date)s löschen? Das kann nicht rückgängig "
-"gemacht werden.\n"
+"              Vermittlungsvorschlag „%(employer)s“ (erhalten am %(date)s) "
+"löschen? Dies kann nicht rückgängig gemacht werden.\n"
 "            "
 
 #: jobs/templates/jobs/nachweis/vv_form.html:5
@@ -2517,26 +2397,20 @@ msgid "Vermittlungsvorschlag updated."
 msgstr "Vermittlungsvorschlag aktualisiert."
 
 #: jobs/views.py:967
-#, fuzzy
-#| msgid "Evidence file saved."
 msgid "Absence saved."
-msgstr "Nachweisdatei gespeichert."
+msgstr "Ortsabwesenheit gespeichert."
 
 #: jobs/views.py:983
-#, fuzzy
-#| msgid "Job search effort updated."
 msgid "Absence updated."
-msgstr "Eigenbemühung aktualisiert."
+msgstr "Ortsabwesenheit aktualisiert."
 
 #: jobs/views.py:1015
 msgid "Obstacle logged."
 msgstr "Hindernis erfasst."
 
 #: jobs/views.py:1036
-#, fuzzy
-#| msgid "Last updated:"
 msgid "Obstacle updated."
-msgstr "Zuletzt aktualisiert:"
+msgstr "Hindernis aktualisiert."
 
 #: templates/account/account_inactive.html:5
 #: templates/account/account_inactive.html:9
@@ -3843,3 +3717,24 @@ msgstr "Andere Sitzungen abmelden"
 
 #~ msgid "KI-Assistent"
 #~ msgstr "KI-Assistent"
+
+# New strings for German market skills taxonomy
+#: jobs/templates/jobs/modals/skills_modal.html
+msgid "Mangelberufe only"
+msgstr "Nur Mangelberufe"
+
+#: jobs/templates/jobs/modals/skills_modal.html
+msgid "All job areas"
+msgstr "Alle Berufsbereiche"
+
+#: jobs/templates/jobs/modals/skills_modal.html
+msgid "No skills selected yet."
+msgstr "Noch keine Fähigkeiten ausgewählt."
+
+#: jobs/templates/jobs/modals/skills_modal.html
+msgid "importance"
+msgstr "Wichtigkeit"
+
+#: jobs/templates/jobs/modals/skills_modal.html
+msgid "Close skill picker"
+msgstr "Fähigkeitsauswahl schließen"
